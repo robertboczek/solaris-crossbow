@@ -65,29 +65,29 @@
   <dia:layer name="Front" visible="true" active="true">
     <dia:object type="Standard - Line" version="0" id="O0">
       <dia:attribute name="obj_pos">
-        <dia:point val="-4.17685,-0.34816"/>
+        <dia:point val="-4.17685,0.05184"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-4.22685,-0.39816;2.84789,-0.29816"/>
+        <dia:rectangle val="-4.22685,0.00184;2.84789,0.10184"/>
       </dia:attribute>
       <dia:attribute name="conn_endpoints">
-        <dia:point val="-4.17685,-0.34816"/>
-        <dia:point val="2.79789,-0.34816"/>
+        <dia:point val="-4.17685,0.05184"/>
+        <dia:point val="2.79789,0.05184"/>
       </dia:attribute>
       <dia:attribute name="numcp">
         <dia:int val="1"/>
       </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O3" connection="16"/>
-        <dia:connection handle="1" to="O2" connection="22"/>
+        <dia:connection handle="1" to="O2" connection="24"/>
       </dia:connections>
     </dia:object>
     <dia:object type="Standard - Text" version="1" id="O1">
       <dia:attribute name="obj_pos">
-        <dia:point val="-0.68948,-0.34816"/>
+        <dia:point val="-0.68948,0.05184"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-2.19073,-1.12191;0.81177,0.42559"/>
+        <dia:rectangle val="-2.19073,-0.72191;0.81177,0.82559"/>
       </dia:attribute>
       <dia:attribute name="text">
         <dia:composite type="text">
@@ -102,7 +102,7 @@ removes#</dia:string>
             <dia:real val="0.80000000000000004"/>
           </dia:attribute>
           <dia:attribute name="pos">
-            <dia:point val="-0.68948,-0.52691"/>
+            <dia:point val="-0.68948,-0.12691"/>
           </dia:attribute>
           <dia:attribute name="color">
             <dia:color val="#000000"/>
@@ -124,7 +124,7 @@ removes#</dia:string>
         <dia:point val="2.84698,-4.94816"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="2.79698,-4.99816;25.342,4.30184"/>
+        <dia:rectangle val="2.79698,-4.99816;25.342,5.10184"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="2.84698,-4.94816"/>
@@ -133,7 +133,7 @@ removes#</dia:string>
         <dia:real val="22.445"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
-        <dia:real val="9.1999999999999993"/>
+        <dia:real val="10"/>
       </dia:attribute>
       <dia:attribute name="name">
         <dia:string>#FlowMBean#</dia:string>
@@ -522,6 +522,36 @@ removes#</dia:string>
             </dia:composite>
           </dia:attribute>
         </dia:composite>
+        <dia:composite type="umloperation">
+          <dia:attribute name="name">
+            <dia:string>#isTemporary#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="stereotype">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="type">
+            <dia:string>#boolean#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="visibility">
+            <dia:enum val="0"/>
+          </dia:attribute>
+          <dia:attribute name="comment">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="abstract">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="inheritance_type">
+            <dia:enum val="2"/>
+          </dia:attribute>
+          <dia:attribute name="query">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="class_scope">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="parameters"/>
+        </dia:composite>
       </dia:attribute>
       <dia:attribute name="template">
         <dia:boolean val="false"/>
@@ -530,13 +560,13 @@ removes#</dia:string>
     </dia:object>
     <dia:object type="UML - Class" version="0" id="O3">
       <dia:attribute name="obj_pos">
-        <dia:point val="-25.5167,-2.94816"/>
+        <dia:point val="-25.5167,-2.54816"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-25.5667,-2.99816;-4.1767,2.30184"/>
+        <dia:rectangle val="-25.5667,-2.59816;-4.1767,2.70184"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="-25.5167,-2.94816"/>
+        <dia:point val="-25.5167,-2.54816"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
         <dia:real val="21.289999999999999"/>
@@ -695,7 +725,7 @@ removes#</dia:string>
         </dia:composite>
         <dia:composite type="umloperation">
           <dia:attribute name="name">
-            <dia:string>#add#</dia:string>
+            <dia:string>#create#</dia:string>
           </dia:attribute>
           <dia:attribute name="stereotype">
             <dia:string>##</dia:string>
@@ -731,23 +761,6 @@ removes#</dia:string>
               </dia:attribute>
               <dia:attribute name="value">
                 <dia:string>##</dia:string>
-              </dia:attribute>
-              <dia:attribute name="comment">
-                <dia:string>##</dia:string>
-              </dia:attribute>
-              <dia:attribute name="kind">
-                <dia:enum val="0"/>
-              </dia:attribute>
-            </dia:composite>
-            <dia:composite type="umlparameter">
-              <dia:attribute name="name">
-                <dia:string>#temporary#</dia:string>
-              </dia:attribute>
-              <dia:attribute name="type">
-                <dia:string>#boolean#</dia:string>
-              </dia:attribute>
-              <dia:attribute name="value">
-                <dia:string>#false#</dia:string>
               </dia:attribute>
               <dia:attribute name="comment">
                 <dia:string>##</dia:string>
@@ -831,13 +844,13 @@ removes#</dia:string>
     </dia:object>
     <dia:object type="UML - Class" version="0" id="O4">
       <dia:attribute name="obj_pos">
-        <dia:point val="-18.1554,6.38125"/>
+        <dia:point val="-18.1554,6.88125"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-18.2054,6.33125;-11.5379,8.63125"/>
+        <dia:rectangle val="-18.2054,6.83125;-11.5379,9.13125"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="-18.1554,6.38125"/>
+        <dia:point val="-18.1554,6.88125"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
         <dia:real val="6.5674999999999999"/>
@@ -941,14 +954,14 @@ removes#</dia:string>
     </dia:object>
     <dia:object type="Standard - PolyLine" version="0" id="O5">
       <dia:attribute name="obj_pos">
-        <dia:point val="-14.8717,7.48125"/>
+        <dia:point val="-14.8717,7.98125"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-15.2026,-0.459963;-14.5408,6.38245"/>
+        <dia:rectangle val="-15.2026,-0.0599634;-14.5408,6.88085"/>
       </dia:attribute>
       <dia:attribute name="poly_points">
-        <dia:point val="-14.8717,7.48125"/>
-        <dia:point val="-14.8717,-0.34816"/>
+        <dia:point val="-14.8717,7.98125"/>
+        <dia:point val="-14.8717,0.05184"/>
       </dia:attribute>
       <dia:attribute name="line_style">
         <dia:enum val="4"/>
@@ -969,19 +982,19 @@ removes#</dia:string>
     </dia:object>
     <dia:object type="UML - Class" version="0" id="O6">
       <dia:attribute name="obj_pos">
-        <dia:point val="5.34948,6.38125"/>
+        <dia:point val="5.34948,6.88125"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="5.29948,6.33125;22.8395,15.4313"/>
+        <dia:rectangle val="5.29948,6.83125;22.8395,16.7312"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="5.34948,6.38125"/>
+        <dia:point val="5.34948,6.88125"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
         <dia:real val="17.440000000000001"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
-        <dia:real val="9"/>
+        <dia:real val="9.8000000000000007"/>
       </dia:attribute>
       <dia:attribute name="name">
         <dia:string>#Flow#</dia:string>
@@ -1380,6 +1393,54 @@ removes#</dia:string>
             </dia:composite>
           </dia:attribute>
         </dia:composite>
+        <dia:composite type="umloperation">
+          <dia:attribute name="name">
+            <dia:string>#setTemporary#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="stereotype">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="type">
+            <dia:string>#void#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="visibility">
+            <dia:enum val="0"/>
+          </dia:attribute>
+          <dia:attribute name="comment">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="abstract">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="inheritance_type">
+            <dia:enum val="2"/>
+          </dia:attribute>
+          <dia:attribute name="query">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="class_scope">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="parameters">
+            <dia:composite type="umlparameter">
+              <dia:attribute name="name">
+                <dia:string>#temporary#</dia:string>
+              </dia:attribute>
+              <dia:attribute name="type">
+                <dia:string>#boolean#</dia:string>
+              </dia:attribute>
+              <dia:attribute name="value">
+                <dia:string>##</dia:string>
+              </dia:attribute>
+              <dia:attribute name="comment">
+                <dia:string>##</dia:string>
+              </dia:attribute>
+              <dia:attribute name="kind">
+                <dia:enum val="0"/>
+              </dia:attribute>
+            </dia:composite>
+          </dia:attribute>
+        </dia:composite>
       </dia:attribute>
       <dia:attribute name="template">
         <dia:boolean val="false"/>
@@ -1388,14 +1449,14 @@ removes#</dia:string>
     </dia:object>
     <dia:object type="Standard - PolyLine" version="0" id="O7">
       <dia:attribute name="obj_pos">
-        <dia:point val="14.0695,10.8812"/>
+        <dia:point val="14.0695,11.7812"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="13.7386,-0.459963;14.4004,6.38127"/>
+        <dia:rectangle val="13.7386,-0.0599634;14.4004,6.88112"/>
       </dia:attribute>
       <dia:attribute name="poly_points">
-        <dia:point val="14.0695,10.8812"/>
-        <dia:point val="14.0695,-0.34816"/>
+        <dia:point val="14.0695,11.7812"/>
+        <dia:point val="14.0695,0.05184"/>
       </dia:attribute>
       <dia:attribute name="line_style">
         <dia:enum val="4"/>
@@ -1410,8 +1471,8 @@ removes#</dia:string>
         <dia:real val="0.5"/>
       </dia:attribute>
       <dia:connections>
-        <dia:connection handle="0" to="O6" connection="26"/>
-        <dia:connection handle="1" to="O2" connection="22"/>
+        <dia:connection handle="0" to="O6" connection="28"/>
+        <dia:connection handle="1" to="O2" connection="24"/>
       </dia:connections>
     </dia:object>
   </dia:layer>

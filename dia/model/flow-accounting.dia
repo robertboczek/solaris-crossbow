@@ -78,16 +78,16 @@
         <dia:int val="1"/>
       </dia:attribute>
       <dia:connections>
-        <dia:connection handle="0" to="O2" connection="16"/>
+        <dia:connection handle="0" to="O2" connection="18"/>
         <dia:connection handle="1" to="O3" connection="38"/>
       </dia:connections>
     </dia:object>
     <dia:object type="Standard - Text" version="1" id="O1">
       <dia:attribute name="obj_pos">
-        <dia:point val="4.37658,30.2581"/>
+        <dia:point val="4.37657,30.2581"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="3.00658,29.5106;5.74658,30.2581"/>
+        <dia:rectangle val="3.00657,29.5106;5.74657,30.2581"/>
       </dia:attribute>
       <dia:attribute name="text">
         <dia:composite type="text">
@@ -101,7 +101,7 @@
             <dia:real val="0.80000000000000004"/>
           </dia:attribute>
           <dia:attribute name="pos">
-            <dia:point val="4.37658,30.1056"/>
+            <dia:point val="4.37657,30.1056"/>
           </dia:attribute>
           <dia:attribute name="color">
             <dia:color val="#000000"/>
@@ -120,19 +120,19 @@
     </dia:object>
     <dia:object type="UML - Class" version="0" id="O2">
       <dia:attribute name="obj_pos">
-        <dia:point val="-24.736,27.6581"/>
+        <dia:point val="-24.736,27.2581"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-24.786,27.6081;0.839,32.9081"/>
+        <dia:rectangle val="-24.786,27.2081;0.839,33.3081"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="-24.736,27.6581"/>
+        <dia:point val="-24.736,27.2581"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
         <dia:real val="25.524999999999999"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
-        <dia:real val="5.2000000000000002"/>
+        <dia:real val="6"/>
       </dia:attribute>
       <dia:attribute name="name">
         <dia:string>#FlowAccountingManagerMBean#</dia:string>
@@ -223,6 +223,36 @@
       </dia:attribute>
       <dia:attribute name="attributes"/>
       <dia:attribute name="operations">
+        <dia:composite type="umloperation">
+          <dia:attribute name="name">
+            <dia:string>#isAccountingEnabled#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="stereotype">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="type">
+            <dia:string>#boolean#</dia:string>
+          </dia:attribute>
+          <dia:attribute name="visibility">
+            <dia:enum val="0"/>
+          </dia:attribute>
+          <dia:attribute name="comment">
+            <dia:string>##</dia:string>
+          </dia:attribute>
+          <dia:attribute name="abstract">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="inheritance_type">
+            <dia:enum val="2"/>
+          </dia:attribute>
+          <dia:attribute name="query">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="class_scope">
+            <dia:boolean val="false"/>
+          </dia:attribute>
+          <dia:attribute name="parameters"/>
+        </dia:composite>
         <dia:composite type="umloperation">
           <dia:attribute name="name">
             <dia:string>#enableAccounting#</dia:string>
@@ -1229,7 +1259,7 @@
       </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O4" connection="10"/>
-        <dia:connection handle="1" to="O2" connection="16"/>
+        <dia:connection handle="1" to="O2" connection="18"/>
       </dia:connections>
     </dia:object>
   </dia:layer>
