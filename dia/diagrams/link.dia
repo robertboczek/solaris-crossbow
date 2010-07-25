@@ -325,10 +325,10 @@
           <dia:attribute name="parameters">
             <dia:composite type="umlparameter">
               <dia:attribute name="name">
-                <dia:string>#updateTime#</dia:string>
+                <dia:string>#timer#</dia:string>
               </dia:attribute>
               <dia:attribute name="type">
-                <dia:string>#Integer#</dia:string>
+                <dia:string>#Timer#</dia:string>
               </dia:attribute>
               <dia:attribute name="value">
                 <dia:string>##</dia:string>
@@ -1427,8 +1427,8 @@
       <dia:attribute name="orth_points">
         <dia:point val="55.9834,15.4739"/>
         <dia:point val="55.9834,17.4005"/>
-        <dia:point val="55.9572,17.4005"/>
-        <dia:point val="55.9572,19.327"/>
+        <dia:point val="55.9571,17.4005"/>
+        <dia:point val="55.9571,19.327"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="1"/>
@@ -2302,7 +2302,7 @@ lists existing vnics
         <dia:point val="21.2988,4.9281"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="10.6818,4.8781;22.1488,11.7244"/>
+        <dia:rectangle val="10.6745,4.8781;22.1488,11.7241"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
@@ -2310,8 +2310,8 @@ lists existing vnics
       <dia:attribute name="orth_points">
         <dia:point val="21.2988,4.9281"/>
         <dia:point val="21.2988,7.14024"/>
-        <dia:point val="10.7695,7.14024"/>
-        <dia:point val="10.7322,11.674"/>
+        <dia:point val="10.7322,7.14024"/>
+        <dia:point val="10.7246,11.674"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="1"/>
@@ -2656,13 +2656,13 @@ lists existing vnics
         <dia:point val="-10.6951,11.0236"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-10.7451,10.9736;3.3299,14.6736"/>
+        <dia:rectangle val="-10.7451,10.9736;0.6349,14.6736"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
         <dia:point val="-10.6951,11.0236"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
-        <dia:real val="13.975"/>
+        <dia:real val="11.279999999999999"/>
       </dia:attribute>
       <dia:attribute name="elem_height">
         <dia:real val="3.5999999999999996"/>
@@ -2817,10 +2817,10 @@ lists existing vnics
           <dia:attribute name="parameters">
             <dia:composite type="umlparameter">
               <dia:attribute name="name">
-                <dia:string>#updateTime#</dia:string>
+                <dia:string>#timer#</dia:string>
               </dia:attribute>
               <dia:attribute name="type">
-                <dia:string>#Integer#</dia:string>
+                <dia:string>#Timer#</dia:string>
               </dia:attribute>
               <dia:attribute name="value">
                 <dia:string>##</dia:string>
@@ -2842,13 +2842,13 @@ lists existing vnics
     </dia:object>
     <dia:object type="UML - Class" version="0" id="O15">
       <dia:attribute name="obj_pos">
-        <dia:point val="-6.3926,19.4773"/>
+        <dia:point val="-7.7426,18.8773"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-6.4426,19.4273;-1.0476,21.7273"/>
+        <dia:rectangle val="-7.7926,18.8273;-2.3976,21.1273"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="-6.3926,19.4773"/>
+        <dia:point val="-7.7426,18.8773"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
         <dia:real val="5.2949999999999999"/>
@@ -2952,19 +2952,19 @@ lists existing vnics
     </dia:object>
     <dia:object type="UML - Realizes" version="1" id="O16">
       <dia:attribute name="obj_pos">
-        <dia:point val="-3.7076,14.6741"/>
+        <dia:point val="-5.0551,14.6741"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="-4.5576,14.6241;-2.8576,19.477"/>
+        <dia:rectangle val="-5.9051,14.6241;-4.2051,18.877"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="-3.7076,14.6741"/>
-        <dia:point val="-3.7076,17.0505"/>
-        <dia:point val="-3.7451,17.0505"/>
-        <dia:point val="-3.7451,19.427"/>
+        <dia:point val="-5.0551,14.6741"/>
+        <dia:point val="-5.0551,16.7505"/>
+        <dia:point val="-5.0951,16.7505"/>
+        <dia:point val="-5.0951,18.827"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="1"/>
@@ -2993,14 +2993,14 @@ lists existing vnics
     </dia:object>
     <dia:object type="Standard - Line" version="0" id="O17">
       <dia:attribute name="obj_pos">
-        <dia:point val="8.41689,12.8236"/>
+        <dia:point val="8.41488,12.8236"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="3.28008,12.7736;8.46689,12.8736"/>
+        <dia:rectangle val="0.584792,12.7736;8.46488,12.8736"/>
       </dia:attribute>
       <dia:attribute name="conn_endpoints">
-        <dia:point val="8.41689,12.8236"/>
-        <dia:point val="3.33008,12.8236"/>
+        <dia:point val="8.41488,12.8236"/>
+        <dia:point val="0.634792,12.8236"/>
       </dia:attribute>
       <dia:attribute name="numcp">
         <dia:int val="1"/>
@@ -3012,10 +3012,10 @@ lists existing vnics
     </dia:object>
     <dia:object type="Standard - Text" version="1" id="O18">
       <dia:attribute name="obj_pos">
-        <dia:point val="5.87349,12.8236"/>
+        <dia:point val="4.52483,12.8236"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="5.33349,12.0511;6.41349,12.8236"/>
+        <dia:rectangle val="3.98483,12.0511;5.06483,12.8236"/>
       </dia:attribute>
       <dia:attribute name="text">
         <dia:composite type="text">
@@ -3029,7 +3029,7 @@ lists existing vnics
             <dia:real val="0.80000000000000004"/>
           </dia:attribute>
           <dia:attribute name="pos">
-            <dia:point val="5.87349,12.6911"/>
+            <dia:point val="4.52483,12.6911"/>
           </dia:attribute>
           <dia:attribute name="color">
             <dia:color val="#000000"/>
