@@ -331,7 +331,7 @@
         </dia:composite>
         <dia:composite type="umloperation">
           <dia:attribute name="name">
-            <dia:string>#register#</dia:string>
+            <dia:string>#discover#</dia:string>
           </dia:attribute>
           <dia:attribute name="stereotype">
             <dia:string>##</dia:string>
@@ -1232,21 +1232,21 @@
         <dia:point val="15.375,-5.70958"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="15.325,-5.70958;15.475,-2.77957"/>
+        <dia:rectangle val="14.525,-5.75958;16.225,-2.80028"/>
       </dia:attribute>
       <dia:attribute name="meta">
         <dia:composite type="dict"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="15.375,-5.70958"/>
-        <dia:point val="15.375,-5.70958"/>
-        <dia:point val="15.375,-2.85028"/>
-        <dia:point val="15.375,-2.85028"/>
+        <dia:point val="15.375,-4.27993"/>
+        <dia:point val="15.3749,-4.27993"/>
+        <dia:point val="15.3749,-2.85028"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
-        <dia:enum val="0"/>
         <dia:enum val="1"/>
         <dia:enum val="0"/>
+        <dia:enum val="1"/>
       </dia:attribute>
       <dia:attribute name="orth_autoroute">
         <dia:boolean val="true"/>
