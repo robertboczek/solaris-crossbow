@@ -1,0 +1,4 @@
+
+List<String, String> properties - Mapa zawierająca parametry Linków(Etherstub, Nic, VNic). Podobnie jak w przypadku mapy parameters Stringi zostaną zastąpione odpowiednimi typami wyliczeniowymi. Przykladowe parametry dotyczace qos to: maxbw, cpus, priority. Dotyczace zonek: zone(do ktorej zonki zostal przypisany dany link. Property mtu zostanie omninięte gdyż jest pobierane przez parameters. 
+
+List<String, String> parameters - Parametry odpowiednio Etherstub'ów, Nic'ów, VNic'ów. Klucze i wartości mapy zostaną zastąpione odpowiednimi typami wyliczeniowymi w zależności od możliwych wartości jakie mogą przyjmować. Przykładowe parametry to mtu, over(pod czym dany link działa), jak również kolejne typy w zależności od potrzeb i wymagań 
