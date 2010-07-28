@@ -1,12 +1,10 @@
 package agh.msc.xbowbase;
 
 import agh.msc.xbowbase.flow.FlowManager;
-import agh.msc.xbowbase.jna.JNAFlowadm;
 import agh.msc.xbowbase.lib.Flowadm;
 import java.lang.management.ManagementFactory;
 import java.util.Date;
 import javax.management.MBeanServer;
-import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.timer.Timer;
 
