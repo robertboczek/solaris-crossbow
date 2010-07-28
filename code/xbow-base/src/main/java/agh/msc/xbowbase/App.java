@@ -20,8 +20,9 @@ public class App {
 		System.out.println( "libflowadm initialized, rc == " + flowadm.init() );
 
 		FlowManager flowManager = new FlowManager();
-		flowManager.setFlowadm( flowadm );
-
+                flowManager.setFlowadm( flowadm );
+		
+                System.out.println(args[0]);
 		flowManager.remove( args[ 0 ], true );
 
 	}
