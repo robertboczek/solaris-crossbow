@@ -1,8 +1,14 @@
 package agh.msc.xbowbase;
 
 import agh.msc.xbowbase.flow.FlowManager;
+import agh.msc.xbowbase.jna.JNAFlowadm;
 import agh.msc.xbowbase.lib.Flowadm;
-import com.sun.jna.Native;
+import java.lang.management.ManagementFactory;
+import java.util.Date;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+import javax.management.timer.Timer;
 
 
 /**
@@ -13,16 +19,25 @@ import com.sun.jna.Native;
  */
 public class App {
 
-	public static void main( String args[] ) {
+	public static void main( String args[] ) throws Exception {
 
-		Flowadm flowadm = ( Flowadm ) Native.loadLibrary( "wrapper", Flowadm.class );
-
-		System.out.println( "libflowadm initialized, rc == " + flowadm.init() );
+		// Flowadm flowadm = new JNAFlowadm();
+		Flowadm flowadm = null;
 
 		FlowManager flowManager = new FlowManager();
 		flowManager.setFlowadm( flowadm );
 
-		flowManager.remove( args[ 0 ], true );
+		MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+
+		Timer timer = new Timer();
+		timer.addNotification( "discovery", "discover", null, new Date(), 5000 );
+		timer.addNotificationListener( flowManager, null, null );
+
+		mbs.registerMBean( flowManager, new ObjectName( "agh.msc.xbowbase:type=Hello" ) );
+		mbs.registerMBean( timer, new ObjectName( "agh.msc.xbowbase:type=Timer" ) );
+
+		System.out.println("Waiting forever...");
+		Thread.sleep(Long.MAX_VALUE);
 
 	}
 

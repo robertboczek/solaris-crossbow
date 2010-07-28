@@ -1,5 +1,6 @@
 package agh.msc.xbowbase.flow;
 
+import agh.msc.xbowbase.lib.Flowadm;
 import java.util.Map;
 
 
@@ -9,68 +10,110 @@ import java.util.Map;
  */
 public class Flow implements FlowMBean {
 
-  public Flow() {
+	public Flow() {
 
-  }
+	}
 
-  public void setName (String name) {
+	public void setName( String name ) {
+		this.name = name;
+	}
 
-  }
+	public void setLink( String link ) {
+		this.link = link;
+	}
 
-  public void setLink (String link) {
+	public void setAttrs( Map< String, String > attrs ) {
+		this.attrs = attrs;
+	}
 
-  }
+	public void setProps( Map< String, String > props ) {
+		this.props = props;
+	}
 
-  public void setAttrs (Map< String, String > attrs) {
-
-  }
-
-  public void setProps (Map< String, String > props) {
-
-  }
-
-  public void setTemporary (boolean temporary) {
-
-  }
+	public void setTemporary( boolean temporary ) {
+		this.temporary = temporary;
+	}
 
 	@Override
 	public String getName() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		return name;
 	}
 
 	@Override
 	public String getLink() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		return link;
 	}
 
 	@Override
-	public void setAttributes(Map<String, String> attributes) {
-		throw new UnsupportedOperationException("Not supported yet.");
+	public void setAttributes( Map< String, String > attributes ) {
+
+		try {
+
+			flowadm.setAttributes( name, attributes );
+			attributes = flowadm.getAttributes( name );
+
+		} catch ( Exception e ) {
+
+			// TODO-DAWID: do sth here
+
+		}
+
+	}
+
+
+	@Override
+	public Map< String, String > getAttributes() {
+		return attrs;
+	}
+
+
+	@Override
+	public void setProperties( Map< String, String > properties, boolean temporary ) {
+
+		try {
+
+			flowadm.setProperties( name, properties, temporary );
+			props = flowadm.getProperties( name );
+
+		} catch ( Exception e ) {
+
+			// TODO-DAWID: do sth
+
+		}
+
 	}
 
 	@Override
-	public Map<String, String> getAttributes() {
-		throw new UnsupportedOperationException("Not supported yet.");
+	public Map< String, String > getProperties() {
+		return props;
 	}
 
-	@Override
-	public void setProperties(Map<String, String> properties, boolean temporary) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
 
 	@Override
-	public Map<String, String> getProperties() {
-		throw new UnsupportedOperationException("Not supported yet.");
+	public void resetProperties( Map< String, String > properties, boolean temporary ) {
+
+		try {
+
+			flowadm.resetProperties( name, properties, temporary );
+			props = flowadm.getProperties( name );
+
+		} catch ( Exception e ) {
+
+			// TODO-DAWID: do sth
+
+		}
+
 	}
 
-	@Override
-	public void resetProperties(Map<String, String> properties, boolean temporary) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
 
 	@Override
 	public boolean isTemporary() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		return temporary;
+	}
+
+
+	void setFlowadm( Flowadm flowadm ) {
+		this.flowadm = flowadm;
 	}
 
 	protected String name;
@@ -78,5 +121,7 @@ public class Flow implements FlowMBean {
 	protected Map< String, String > attrs;
 	protected Map< String, String > props;
 	protected boolean temporary;
+
+	private Flowadm flowadm = null;
 
 }
