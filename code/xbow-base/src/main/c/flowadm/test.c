@@ -1,4 +1,4 @@
-#include "flowadm_wrapper.c"
+#include "flowadm_wrapper.h"
 
 
 int main( int agrc, char** argv )
@@ -24,6 +24,12 @@ int main( int agrc, char** argv )
 
 	{
 		get_properties( "flow" );
+	}
+
+	{
+		flow_info_t arg;
+
+		create( arg );
 	}
 
 	return 0;

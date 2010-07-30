@@ -26,8 +26,13 @@ public class FlowManager implements FlowManagerMBean, NotificationListener {
 
 
 	@Override
-	public void create(FlowMBean flow) {
-		throw new UnsupportedOperationException("Not supported yet.");
+	public void create( FlowMBean flow ) {
+
+		// TODO-DAWID:
+
+		flowadm.create( new FlowInfo( flow ) );
+
+		// throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 

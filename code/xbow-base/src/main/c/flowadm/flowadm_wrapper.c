@@ -1,82 +1,35 @@
-#include <libdlflow.h>
 #include <libdllink.h>
 #include <libdladm.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#define LEN( array )  ( sizeof( array ) / sizeof( array[ 0 ] ) )
+#include "defs.h"
+#include "flowadm_wrapper.h"
+#include "functor.h"
+#include "types.h"
 
-
-
-// TODO-DAWID: replace with proper include
-#define MAX_PROP_LINE  256
 
 
 dladm_handle_t handle = 0;
 
 
-/**
- * \brief  Initializes the library.
- *
- * \return  0        on success
- * \return  non-zero otherwise
- */
 int init()
 {
 	return dladm_open( &handle );
 }
 
 
-/**
- * \brief  Removes a flow.
- *
- * \param  flow       flow name
- * \param  temporary  determines is the change temporary
- *
- * \return  0         on success
- * \return  non-zero  otherwise
- */
 int remove_flow( char* flow, int temporary )
 {
 	return dladm_flow_remove( handle, flow, temporary, "" );
 }
 
 
-int count( dladm_handle_t handle, dladm_flow_attr_t* flow_attr,
-           void* counter )
-{
-	*( ( int* ) counter ) += 1;
-	return DLADM_WALK_CONTINUE;
-}
-
-static int get_attrs( dladm_handle_t handle, dladm_flow_attr_t* flow_attr,
-                      void* arg )
-{
-	dladm_flow_attr_t** attrs = arg;
-
-	memcpy( *attrs, flow_attr, sizeof( *flow_attr ) );
-	++( *attrs );
-
-	return DLADM_WALK_CONTINUE;
-}
-
-
-/**
- * \brief Retrieves flows' attributes.
- *
- * Allocates and fills *flow_attrs array with attributes
- * for flows assigned do link_name. *len is filled with flows count.
- *
- * \param  link_name
- * \param  flow_attrs
- * \param  len
- */
 void collect_flow_attrs( char* link_name,
                          dladm_flow_attr_t** flow_attrs, int* len )
 {
-	unsigned int link_id;
-
+	datalink_id_t link_id;
 	dladm_name2info( handle, link_name, &link_id, NULL, NULL, NULL );
 
 	dladm_walk_flow( &count, handle, link_id, len, 0 );
@@ -87,13 +40,6 @@ void collect_flow_attrs( char* link_name,
 }
 
 
-/**
- *
- * \return  NULL-terminated array of strings containing discovered flows' names
- *
- * \warning  Caller is responsible for freeing result[ 0 ], result[ 1 ], ...
- *           as well as result itself!
- */
 char** get_names()
 {
 	int i, len = 0;
@@ -131,61 +77,6 @@ int set_property( char* flow, char* key, char* values[], unsigned int values_len
 }
 
 
-typedef struct
-{
-	char* flow;
-	char* out;
-}
-get_props_arg_t;
-
-
-static int get_props( void* arg, const char* propname )
-{
-	// TODO-DAWID: no hardcoded numbers!
-
-	char* values[ 10 ];
-	int i, values_len = 10;
-
-	get_props_arg_t* argg = arg;
-
-	for ( i = 0; i < LEN( values ); ++i )
-	{
-		values[ i ] = malloc( MAX_PROP_LINE );
-	}
-
-	argg->out = malloc( LEN( values ) * MAX_PROP_LINE );
-	argg->out[ 0 ] = '\0';
-
-	dladm_get_flowprop( handle, argg->flow, DLADM_PROP_VAL_CURRENT,
-	                    propname, values, &values_len );
-
-	for ( i = 0; i < values_len; ++i )
-	{
-		strcat( argg->out, values[ i ] );
-		strcat( argg->out, " " );
-
-		free( values[ i ] );
-
-		// printf( "PROP %s\n", values[ i ] );
-	}
-
-	argg->out[ strlen( argg->out ) - 1 ] = '\0';
-
-	printf( "%s\n", argg->out );
-
-	return DLADM_WALK_CONTINUE;
-}
-
-
-#if 1
-typedef struct
-{
-	char *key, *value;
-}
-key_value_pair_t;
-#endif
-
-
 key_value_pair_t* get_properties( char* flow )
 {
 	get_props_arg_t arg;
@@ -201,5 +92,37 @@ key_value_pair_t* get_properties( char* flow )
 	res->value = arg.out;
 
 	return res;
+}
+
+
+int create( flow_info_t* flow_info )
+{
+	dladm_arg_list_t* proplist = NULL;
+	dladm_arg_list_t* attrlist = NULL;
+	datalink_id_t link_id;
+
+	printf( "%s\n", flow_info->link );
+	printf( "%s\n", flow_info->attrs );
+	printf( "%s\n", flow_info->props );
+	printf( "%d\n", flow_info->temporary );
+
+	dladm_name2info( handle, flow_info->link, &link_id, NULL, NULL, NULL );
+
+	printf( "%d\n",
+	dladm_parse_flow_attrs( flow_info->attrs, &attrlist, B_FALSE ) );
+
+	printf( "%d\n",
+	dladm_parse_flow_props( flow_info->props, &proplist, B_FALSE ) );
+
+	printf( "%d\n",
+
+	dladm_flow_add( handle,
+	                link_id, attrlist, proplist, flow_info->name,
+	                flow_info->temporary ? B_TRUE : B_FALSE,
+	                NULL /* no root dir */ )
+
+	);
+
+	return 0;
 }
 

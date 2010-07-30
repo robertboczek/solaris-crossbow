@@ -1,6 +1,7 @@
 package agh.msc.xbowbase.jna;
 
 import agh.msc.xbowbase.exception.ValidationException;
+import agh.msc.xbowbase.flow.FlowInfo;
 import agh.msc.xbowbase.flow.FlowMBean;
 import agh.msc.xbowbase.lib.Flowadm;
 import com.sun.jna.Library;
@@ -75,8 +76,8 @@ public class JNAFlowadm implements Flowadm {
 	}
 
 	@Override
-	public void create(FlowMBean flow) {
-		throw new UnsupportedOperationException("Not supported yet.");
+	public void create( FlowInfo flowInfo ) {
+		handle.create( new IFlowadm.FlowInfoStruct( flowInfo ) );
 	}
 
 
@@ -86,8 +87,57 @@ public class JNAFlowadm implements Flowadm {
 			public String key, value;
 		}
 
+		public class FlowInfoStruct extends Structure {
+
+			public FlowInfoStruct( FlowInfo flowInfo ) {
+				this.name = flowInfo.getName();
+				this.link = flowInfo.getLink();
+				this.attrs = flatten( flowInfo.attributes );
+				this.props = flatten( flowInfo.properties );
+				this.temporary = ( flowInfo.temporary ? 1 : 0 );
+			}
+
+
+			String flatten( Map< String, String > attrs ) {
+
+				StringBuffer stringBuffer = new StringBuffer();
+				final String link = ",";
+
+				for ( Map.Entry< String, String > entry : attrs.entrySet() ) {
+					stringBuffer.append( entry.getKey() + "=" + entry.getValue() + link );
+				}
+
+				stringBuffer.setLength( stringBuffer.length() - link.length() );
+
+				return stringBuffer.toString();
+
+			}
+
+
+			/*
+			String join( String arr[], String link ) {
+
+				StringBuffer stringBuffer = new StringBuffer();
+				for ( String s : arr ) {
+					stringBuffer.append( s + link );
+				}
+
+				if ( stringBuffer.length() > 0 ) {
+					stringBuffer.setLength( stringBuffer.length() - link.length() );
+				}
+
+				return stringBuffer.toString();
+
+			}
+			 */
+
+			public String name, link, attrs, props;
+			public int temporary;
+		}
+
 		public void init();
 		public String[] get_names();
+		public int create( FlowInfoStruct flowInfo );
 		public int remove( String flow );
 
 		public int set_property( String flow, String key, String values[], int values_len, int temporary );

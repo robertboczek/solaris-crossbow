@@ -1,15 +1,26 @@
+# Load build-environment-specific variables.
+#
+# INCDIR  passed to $(CC) with -I option
+# LIBDIR  passed to linker with -L option
+
+include Makefile.defs
+
+
 CC=gcc
-CFLAGS=-Wall -g
+CFLAGS=-std=c99 -Wall -pedantic \
+       -g
 LIBS=-ldladm
 BASENAME=flowadm_wrapper
-INC=/export/home/dawid/usr/include
+LIBFNAME=lib$(BASENAME).so
 
-wrapper:
-	$(CC) $(CFLAGS) -I$(INC) -fPIC -c $(BASENAME).c
-	$(CC) $(CFLAGS) -fPIC -shared -o lib$(BASENAME).so $(BASENAME).o $(LIBS)
+%.o: %.c
+	$(CC) $(CFLAGS) -I$(INCDIR) -fPIC -c $<
 
-test: test.c flowadm_wrapper.c
-	$(CC) $(CFLAGS) -I$(INC) -o test test.c $(LIBS)
+$(LIBFNAME): flowadm_wrapper.o functor.o
+	$(CC) $(CFLAGS) -fPIC -shared -o $(LIBFNAME) $^ $(LIBS)
+
+test: $(LIBFNAME)
+	$(CC) $(CFLAGS) -I$(INCDIR) -L$(LIBDIR) -o test test.c $(LIBS) -l$(BASENAME)
 
 clean:
 	rm *.o *.so

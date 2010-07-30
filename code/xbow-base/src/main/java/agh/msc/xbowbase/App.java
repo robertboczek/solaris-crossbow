@@ -56,6 +56,23 @@ public class App {
 			System.out.println( entry.toString() );
 		}
 
+
+		Map< String, String > newAttrs = new HashMap< String, String >();
+		newAttrs.put( "transport", "tcp" );
+
+		Map< String, String > newProps = new HashMap< String, String >();
+		newProps.put( "priority", "MEDIUM" );
+
+		Flow newFlow = new Flow();
+		newFlow.setName( "nowy" );
+		newFlow.setLink( "e1000g0" );
+		newFlow.setAttrs( newAttrs );
+		newFlow.setProps( newProps );
+		newFlow.setTemporary( false );
+
+		flowManager.create( newFlow );
+
+
 		System.out.println("Waiting forever...");
 		Thread.sleep(Long.MAX_VALUE);
 

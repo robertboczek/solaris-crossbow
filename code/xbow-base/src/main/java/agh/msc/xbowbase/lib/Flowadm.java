@@ -1,6 +1,7 @@
 package agh.msc.xbowbase.lib;
 
 import agh.msc.xbowbase.exception.ValidationException;
+import agh.msc.xbowbase.flow.FlowInfo;
 import agh.msc.xbowbase.flow.FlowMBean;
 import java.util.Map;
 
@@ -15,7 +16,7 @@ public interface Flowadm {
 
 	public String[] getNames();
 
-	public void create( FlowMBean flow );
+	public void create( FlowInfo flowInfo );
 
 	public int remove( String flow );
 
