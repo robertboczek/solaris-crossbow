@@ -1,9 +1,12 @@
 package agh.msc.xbowbase.jna;
 
 import agh.msc.xbowbase.exception.ValidationException;
+import agh.msc.xbowbase.flow.FlowMBean;
 import agh.msc.xbowbase.lib.Flowadm;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
+import com.sun.jna.Structure;
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -16,6 +19,7 @@ public class JNAFlowadm implements Flowadm {
 	public JNAFlowadm() {
 
 		handle = ( IFlowadm ) Native.loadLibrary( LIB_NAME, IFlowadm.class );
+		handle.init();
 
 	}
 
@@ -32,7 +36,7 @@ public class JNAFlowadm implements Flowadm {
 	}
 
 	@Override
-	public void setAttributes(String flowName, Map<String, String> attributes) {
+	public void setAttributes( String flowName, Map< String, String > attributes ) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
@@ -42,13 +46,27 @@ public class JNAFlowadm implements Flowadm {
 	}
 
 	@Override
-	public void setProperties(String flowName, Map<String, String> properties, boolean temporary) throws ValidationException {
-		throw new UnsupportedOperationException("Not supported yet.");
+	public void setProperties( String flowName, Map< String, String > properties, boolean temporary ) throws ValidationException {
+
+		for ( Map.Entry< String, String > entry : properties.entrySet() ) {
+
+			String values[] = entry.getValue().split( "," );
+			handle.set_property( flowName, entry.getKey(), values, values.length, 0 );
+
+		}
+
 	}
 
 	@Override
-	public Map<String, String> getProperties(String flowName) {
-		throw new UnsupportedOperationException("Not supported yet.");
+	public Map< String, String > getProperties( String flowName ) {
+
+		Map< String, String > properties = new HashMap< String, String >();
+
+		IFlowadm.KeyValuePair kvp = handle.get_properties( flowName );
+		properties.put( kvp.key, kvp.value );
+
+		return properties;
+
 	}
 
 	@Override
@@ -56,11 +74,24 @@ public class JNAFlowadm implements Flowadm {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
+	@Override
+	public void create(FlowMBean flow) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
 
 	private interface IFlowadm extends Library {
 
+		public class KeyValuePair extends Structure {
+			public String key, value;
+		}
+
+		public void init();
 		public String[] get_names();
 		public int remove( String flow );
+
+		public int set_property( String flow, String key, String values[], int values_len, int temporary );
+		public KeyValuePair get_properties( String flow );
 
 	}
 

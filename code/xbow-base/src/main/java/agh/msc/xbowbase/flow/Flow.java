@@ -112,7 +112,7 @@ public class Flow implements FlowMBean {
 	}
 
 
-	void setFlowadm( Flowadm flowadm ) {
+	public void setFlowadm( Flowadm flowadm ) {
 		this.flowadm = flowadm;
 	}
 
