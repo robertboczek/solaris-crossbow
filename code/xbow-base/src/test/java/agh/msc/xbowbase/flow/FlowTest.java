@@ -67,7 +67,7 @@ public class FlowTest {
 		 */
 
 		// assertNotNull( exception );
-		assertNull( flow.getProperties() );
+		assertEquals( new HashMap< String, String >(), flow.getProperties() );
 	
 	}
 

@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "flowadm_wrapper.h"
 
 
@@ -6,6 +8,8 @@ int main( int agrc, char** argv )
 	char** names;
 
 	init();
+
+	#if 0
 	names = get_names();
 
 	while ( *names != 0 )
@@ -25,11 +29,28 @@ int main( int agrc, char** argv )
 	{
 		get_properties( "flow" );
 	}
+	#endif
+
+	{
+		printf( "RESET PROPERTY START\n" );
+
+		printf( "%d\n",
+		reset_property( "nowy", "priority", 0 ) );
+
+		printf( "RESET PROPERTY END\n" );
+	}
 
 	{
 		flow_info_t arg;
 
-		create( arg );
+		create( &arg );
+	}
+
+	{
+		char* links[] = { "e1000g0" };
+		int len;
+
+		get_flows_info( links, &len );
 	}
 
 	return 0;

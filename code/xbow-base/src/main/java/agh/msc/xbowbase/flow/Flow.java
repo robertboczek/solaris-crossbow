@@ -1,6 +1,8 @@
 package agh.msc.xbowbase.flow;
 
 import agh.msc.xbowbase.lib.Flowadm;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -54,7 +56,7 @@ public class Flow implements FlowMBean {
 
 		} catch ( Exception e ) {
 
-			// TODO-DAWID: do sth here
+			e.printStackTrace();
 
 		}
 
@@ -77,7 +79,7 @@ public class Flow implements FlowMBean {
 
 		} catch ( Exception e ) {
 
-			// TODO-DAWID: do sth
+			e.printStackTrace();
 
 		}
 
@@ -90,7 +92,7 @@ public class Flow implements FlowMBean {
 
 
 	@Override
-	public void resetProperties( Map< String, String > properties, boolean temporary ) {
+	public void resetProperties( List< String > properties, boolean temporary ) {
 
 		try {
 
@@ -99,7 +101,7 @@ public class Flow implements FlowMBean {
 
 		} catch ( Exception e ) {
 
-			// TODO-DAWID: do sth
+			e.printStackTrace();
 
 		}
 
@@ -118,8 +120,8 @@ public class Flow implements FlowMBean {
 
 	protected String name;
 	protected String link;
-	protected Map< String, String > attrs;
-	protected Map< String, String > props;
+	protected Map< String, String > attrs = new HashMap< String, String >();
+	protected Map< String, String > props = new HashMap< String, String >();
 	protected boolean temporary;
 
 	private Flowadm flowadm = null;

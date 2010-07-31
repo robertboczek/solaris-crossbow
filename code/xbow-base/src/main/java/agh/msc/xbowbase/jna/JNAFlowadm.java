@@ -7,7 +7,10 @@ import agh.msc.xbowbase.lib.Flowadm;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Structure;
+import com.sun.jna.ptr.IntByReference;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 
@@ -52,7 +55,7 @@ public class JNAFlowadm implements Flowadm {
 		for ( Map.Entry< String, String > entry : properties.entrySet() ) {
 
 			String values[] = entry.getValue().split( "," );
-			handle.set_property( flowName, entry.getKey(), values, values.length, 0 );
+			handle.set_property( flowName, entry.getKey(), values, values.length, temporary ? 1 : 0 );
 
 		}
 
@@ -71,13 +74,52 @@ public class JNAFlowadm implements Flowadm {
 	}
 
 	@Override
-	public void resetProperties(String flowName, Map<String, String> properties, boolean temporary) throws ValidationException {
-		throw new UnsupportedOperationException("Not supported yet.");
+	public void resetProperties( String flowName, List< String > properties, boolean temporary ) throws ValidationException {
+
+		for ( String property : properties ) {
+			handle.reset_property( flowName, property, temporary ? 1 : 0 );
+		}
+
 	}
 
 	@Override
 	public void create( FlowInfo flowInfo ) {
 		handle.create( new IFlowadm.FlowInfoStruct( flowInfo ) );
+	}
+
+	@Override
+	public List< FlowInfo > getFlowsInfo() {
+
+		List< FlowInfo > res = new LinkedList< FlowInfo >();
+
+		// TODO-DAWID: translator, multiple links
+
+		IntByReference flowInfoLen = new IntByReference();
+
+		IFlowadm.FlowInfoStruct flowInfoStruct = handle.get_flows_info(
+			new String[]{ "e1000g0" },
+			flowInfoLen
+		);
+
+		IFlowadm.FlowInfoStruct flowInfoStructArray[] = new IFlowadm.FlowInfoStruct[ flowInfoLen.getValue() ];
+		flowInfoStruct.toArray( flowInfoStructArray );
+
+		for ( IFlowadm.FlowInfoStruct struct : flowInfoStructArray ) {
+
+			FlowInfo flowInfo = new FlowInfo();
+
+			flowInfo.name = struct.name;
+			flowInfo.link = struct.link;
+			flowInfo.attributes = new HashMap< String, String >();
+			flowInfo.properties = new HashMap< String, String >();
+			flowInfo.temporary = ( struct.temporary != 0 );
+
+			res.add( flowInfo );
+
+		}
+
+		return res;
+
 	}
 
 
@@ -88,6 +130,9 @@ public class JNAFlowadm implements Flowadm {
 		}
 
 		public class FlowInfoStruct extends Structure {
+
+			public FlowInfoStruct() {}
+
 
 			public FlowInfoStruct( FlowInfo flowInfo ) {
 				this.name = flowInfo.getName();
@@ -137,10 +182,12 @@ public class JNAFlowadm implements Flowadm {
 
 		public void init();
 		public String[] get_names();
+		public FlowInfoStruct get_flows_info( String links[], IntByReference flow_info_len );
 		public int create( FlowInfoStruct flowInfo );
 		public int remove( String flow );
 
 		public int set_property( String flow, String key, String values[], int values_len, int temporary );
+		public int reset_property( String flow, String key, int temporary );
 		public KeyValuePair get_properties( String flow );
 
 	}

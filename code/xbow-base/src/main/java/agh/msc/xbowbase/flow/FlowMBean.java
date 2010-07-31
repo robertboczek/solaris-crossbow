@@ -1,5 +1,6 @@
 package agh.msc.xbowbase.flow;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -21,7 +22,7 @@ public interface FlowMBean {
 
 	public Map< String, String > getProperties();
 
-	public void resetProperties( Map< String, String > properties, boolean temporary );
+	public void resetProperties( List< String > properties, boolean temporary );
 
 	public boolean isTemporary();
 

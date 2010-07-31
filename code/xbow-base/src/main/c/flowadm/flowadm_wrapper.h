@@ -56,6 +56,9 @@ int set_property( char* flow,
                   int temporary );
 
 
+int reset_property( char* flow, char* key, int temporary );
+
+
 key_value_pair_t* get_properties( char* flow );
 
 
