@@ -28,8 +28,16 @@ public class Flow implements FlowMBean {
 		this.attrs = attrs;
 	}
 
+	public Map< String, String > getAttrs() {
+		return attrs;
+	}
+
 	public void setProps( Map< String, String > props ) {
 		this.props = props;
+	}
+
+	public Map< String, String > getProps() {
+		return props;
 	}
 
 	public void setTemporary( boolean temporary ) {
@@ -65,7 +73,7 @@ public class Flow implements FlowMBean {
 
 	@Override
 	public Map< String, String > getAttributes() {
-		return attrs;
+		return flowadm.getAttributes( name );
 	}
 
 
@@ -104,6 +112,38 @@ public class Flow implements FlowMBean {
 			e.printStackTrace();
 
 		}
+
+	}
+
+
+	@Override
+	public boolean equals( Object o ) {
+
+		// TODO-DAWID: modify
+
+		if ( o instanceof Flow ) {
+
+			Flow flow = ( Flow ) o;
+
+			return flow.getName().equals( name );
+
+		} else {
+
+			return false;
+
+		}
+
+	}
+
+
+	@Override
+	public int hashCode() {
+
+		int hash = 7;
+		hash = 41 * hash + ( this.name != null ? this.name.hashCode() : 0 );
+		hash = 41 * hash + ( this.link != null ? this.link.hashCode() : 0 );
+		hash = 41 * hash + ( this.attrs != null ? this.attrs.hashCode() : 0 );
+		return hash;
 
 	}
 

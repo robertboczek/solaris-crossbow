@@ -70,13 +70,9 @@ int get_props( void* arg, const char* propname )
 		strcat( argg->out, " " );
 
 		free( values[ i ] );
-
-		// printf( "PROP %s\n", values[ i ] );
 	}
 
 	argg->out[ strlen( argg->out ) - 1 ] = '\0';
-
-	printf( "%s\n", argg->out );
 
 	return DLADM_WALK_CONTINUE;
 }

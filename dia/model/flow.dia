@@ -1477,13 +1477,13 @@ removes#</dia:string>
     </dia:object>
     <dia:object type="UML - Class" version="0" id="O8">
       <dia:attribute name="obj_pos">
-        <dia:point val="30.0939,2.85184"/>
+        <dia:point val="-39.0611,-1.04816"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="30.0439,2.80184;39.6614,5.10184"/>
+        <dia:rectangle val="-39.1111,-1.09816;-29.4936,1.20184"/>
       </dia:attribute>
       <dia:attribute name="elem_corner">
-        <dia:point val="30.0939,2.85184"/>
+        <dia:point val="-39.0611,-1.04816"/>
       </dia:attribute>
       <dia:attribute name="elem_width">
         <dia:real val="9.5175000000000001"/>
@@ -1587,15 +1587,15 @@ removes#</dia:string>
     </dia:object>
     <dia:object type="Standard - PolyLine" version="0" id="O9">
       <dia:attribute name="obj_pos">
-        <dia:point val="14.0695,11.7812"/>
+        <dia:point val="-14.8718,7.98125"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="22.7896,3.84004;35.1858,11.8862"/>
+        <dia:rectangle val="-34.6352,-0.0599627;-18.1557,8.0302"/>
       </dia:attribute>
       <dia:attribute name="poly_points">
-        <dia:point val="14.0695,11.7812"/>
-        <dia:point val="34.8846,11.8362"/>
-        <dia:point val="34.8527,3.95184"/>
+        <dia:point val="-14.8718,7.98125"/>
+        <dia:point val="-34.3299,7.975"/>
+        <dia:point val="-34.3024,0.05184"/>
       </dia:attribute>
       <dia:attribute name="line_style">
         <dia:enum val="4"/>
@@ -1610,7 +1610,7 @@ removes#</dia:string>
         <dia:real val="0.5"/>
       </dia:attribute>
       <dia:connections>
-        <dia:connection handle="0" to="O6" connection="28"/>
+        <dia:connection handle="0" to="O4" connection="8"/>
         <dia:connection handle="2" to="O8" connection="8"/>
       </dia:connections>
     </dia:object>

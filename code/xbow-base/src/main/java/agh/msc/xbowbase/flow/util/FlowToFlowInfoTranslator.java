@@ -10,19 +10,11 @@ import agh.msc.xbowbase.flow.FlowInfo;
  */
 public class FlowToFlowInfoTranslator {
 
-	// TODO-DAWID: write tests
-
 	public static FlowInfo toFlowInfo( Flow flow ) {
 
-		FlowInfo flowInfo = new FlowInfo();
-
-		flowInfo.name = flow.getName();
-		flowInfo.link = flow.getLink();
-		flowInfo.attributes = flow.getAttributes();
-		flowInfo.properties = flow.getProperties();
-		flowInfo.temporary = flow.isTemporary();
-
-		return flowInfo;
+		return new FlowInfo( flow.getName(), flow.getLink(),
+		                     flow.getAttrs(), flow.getProps(),
+		                     flow.isTemporary() );
 
 	}
 
@@ -31,11 +23,11 @@ public class FlowToFlowInfoTranslator {
 
 		Flow flow = new Flow();
 
-		flow.setAttrs( flowInfo.attributes );
-		flow.setProps( flowInfo.properties );
+		flow.setAttrs( flowInfo.getAttributes() );
+		flow.setProps( flowInfo.getProperties() );
 		flow.setLink( flowInfo.getLink() );
 		flow.setName( flowInfo.getName() );
-		flow.setTemporary( flowInfo.temporary );
+		flow.setTemporary( flowInfo.isTemporary() );
 
 		return flow;
 

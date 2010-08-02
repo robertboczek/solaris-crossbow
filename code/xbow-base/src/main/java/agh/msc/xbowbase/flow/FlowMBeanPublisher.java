@@ -1,5 +1,7 @@
 package agh.msc.xbowbase.flow;
 
+import java.util.LinkedList;
+import java.util.List;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -20,18 +22,28 @@ public class FlowMBeanPublisher implements Publisher {
 	@Override
 	public void publish( Object object ) {
 
-		FlowMBean flowMBean = ( FlowMBean ) object;
+		if ( published.contains( object ) ) {
 
-		try {
+			// TODO-DAWID: already published. do nothing. log?
 
-			mBeanServer.registerMBean( flowMBean, new ObjectName( String.format(
-				"agh.msc.xbowbase:type=Flow,link=%s,name=%s",
-				flowMBean.getLink(), flowMBean.getName()
-			) ) );
+		} else {
 
-		} catch ( Exception e ) {
+			FlowMBean flowMBean = ( FlowMBean ) object;
 
-			e.printStackTrace();
+			try {
+
+				mBeanServer.registerMBean( flowMBean, new ObjectName( String.format(
+					"agh.msc.xbowbase:type=Flow,link=%s,name=%s",
+					flowMBean.getLink(), flowMBean.getName()
+				) ) );
+
+				published.add( object );
+
+			} catch ( Exception e ) {
+
+				e.printStackTrace();
+
+			}
 
 		}
 
@@ -39,5 +51,6 @@ public class FlowMBeanPublisher implements Publisher {
 
 
 	private MBeanServer mBeanServer = null;
+	private List published = new LinkedList();
 
 }

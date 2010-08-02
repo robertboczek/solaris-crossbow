@@ -16,6 +16,14 @@ int init();
 
 
 /**
+ * \brief  Creates new flow.
+ *
+ * \param  flow_info  flow descriptor
+ */
+int create( flow_info_t* flow_info );
+
+
+/**
  * \brief  Removes a flow.
  *
  * \param  flow       flow name
@@ -62,7 +70,14 @@ int reset_property( char* flow, char* key, int temporary );
 key_value_pair_t* get_properties( char* flow );
 
 
-int create( flow_info_t* flow_info );
+/*
+ * Accounting-specific functions.
+ */
+
+int enable_accounting();
+
+int disable_accounting();
+
 
 #endif
 

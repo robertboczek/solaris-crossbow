@@ -15,13 +15,12 @@ public interface Flowadm {
 
 	/* Flow management methods. */
 
-	public String[] getNames();
-
 	public List< FlowInfo > getFlowsInfo();
+	public List< FlowInfo > getFlowsInfo( List< String > links );
 
 	public void create( FlowInfo flowInfo );
 
-	public int remove( String flow );
+	public int remove( String flow, boolean temporary );
 
 
 	/* Flow details management methods. */

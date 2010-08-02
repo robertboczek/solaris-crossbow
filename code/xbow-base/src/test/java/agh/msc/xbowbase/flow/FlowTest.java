@@ -46,7 +46,7 @@ public class FlowTest {
 		attributes.put( "key0", "val0" );
 
 		Flowadm flowadm = mock( Flowadm.class );
-		doThrow( new ValidationException() ).when( flowadm ).setAttributes( anyString(), eq( attributes ) );
+		doThrow( new ValidationException( "" ) ).when( flowadm ).setAttributes( anyString(), eq( attributes ) );
 
 		Flow flow = new Flow();
 		flow.setFlowadm( flowadm );

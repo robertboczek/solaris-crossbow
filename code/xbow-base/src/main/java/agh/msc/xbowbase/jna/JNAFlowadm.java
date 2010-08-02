@@ -2,7 +2,6 @@ package agh.msc.xbowbase.jna;
 
 import agh.msc.xbowbase.exception.ValidationException;
 import agh.msc.xbowbase.flow.FlowInfo;
-import agh.msc.xbowbase.flow.FlowMBean;
 import agh.msc.xbowbase.lib.Flowadm;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
@@ -29,15 +28,10 @@ public class JNAFlowadm implements Flowadm {
 
 
 	@Override
-	public int remove( String flow ) {
-		return handle.remove( flow );
+	public int remove( String flow, boolean temporary ) {
+		return handle.remove_flow( flow, temporary );
 	}
 
-
-	@Override
-	public String[] getNames() {
-		return handle.get_names();
-	}
 
 	@Override
 	public void setAttributes( String flowName, Map< String, String > attributes ) {
@@ -45,8 +39,16 @@ public class JNAFlowadm implements Flowadm {
 	}
 
 	@Override
-	public Map<String, String> getAttributes(String flowName) {
-		throw new UnsupportedOperationException("Not supported yet.");
+	public Map< String, String > getAttributes( String flowName ) {
+
+		for ( FlowInfo flowInfo : getFlowsInfo() ) {
+			if ( flowInfo.getName().equals( flowName ) ) {
+				return flowInfo.getAttributes();
+			}
+		}
+
+		return null;
+
 	}
 
 	@Override
@@ -55,7 +57,14 @@ public class JNAFlowadm implements Flowadm {
 		for ( Map.Entry< String, String > entry : properties.entrySet() ) {
 
 			String values[] = entry.getValue().split( "," );
-			handle.set_property( flowName, entry.getKey(), values, values.length, temporary ? 1 : 0 );
+
+			int rc = handle.set_property( flowName, entry.getKey(), values, values.length, temporary );
+
+			if ( rc == XbowStatus.XBOW_STATUS_PROP_PARSE_ERR.ordinal() ) {
+
+				throw new ValidationException( entry.getKey() + "=" + values );
+
+			}
 
 		}
 
@@ -77,7 +86,7 @@ public class JNAFlowadm implements Flowadm {
 	public void resetProperties( String flowName, List< String > properties, boolean temporary ) throws ValidationException {
 
 		for ( String property : properties ) {
-			handle.reset_property( flowName, property, temporary ? 1 : 0 );
+			handle.reset_property( flowName, property, temporary );
 		}
 
 	}
@@ -87,17 +96,22 @@ public class JNAFlowadm implements Flowadm {
 		handle.create( new IFlowadm.FlowInfoStruct( flowInfo ) );
 	}
 
+
 	@Override
 	public List< FlowInfo > getFlowsInfo() {
+		return getFlowsInfo( null );
+	}
+
+
+	@Override
+	public List< FlowInfo > getFlowsInfo( List< String > links ) {
 
 		List< FlowInfo > res = new LinkedList< FlowInfo >();
-
-		// TODO-DAWID: translator, multiple links
 
 		IntByReference flowInfoLen = new IntByReference();
 
 		IFlowadm.FlowInfoStruct flowInfoStruct = handle.get_flows_info(
-			new String[]{ "e1000g0" },
+			( null == links ) ? null : ( String[] ) links.toArray(),
 			flowInfoLen
 		);
 
@@ -106,15 +120,19 @@ public class JNAFlowadm implements Flowadm {
 
 		for ( IFlowadm.FlowInfoStruct struct : flowInfoStructArray ) {
 
-			FlowInfo flowInfo = new FlowInfo();
+			Map< String, String > attrs = new HashMap< String, String >();
 
-			flowInfo.name = struct.name;
-			flowInfo.link = struct.link;
-			flowInfo.attributes = new HashMap< String, String >();
-			flowInfo.properties = new HashMap< String, String >();
-			flowInfo.temporary = ( struct.temporary != 0 );
+			for ( String attr : struct.attrs.split( "," ) ) {
+				attrs.put( attr.split( "=" )[ 0 ], attr.split( "=" )[ 1 ] );
+			}
 
-			res.add( flowInfo );
+			res.add( new FlowInfo(
+				struct.name,
+				struct.link,
+				attrs,
+				new HashMap< String, String >(),
+				struct.temporary
+			) );
 
 		}
 
@@ -137,19 +155,19 @@ public class JNAFlowadm implements Flowadm {
 			public FlowInfoStruct( FlowInfo flowInfo ) {
 				this.name = flowInfo.getName();
 				this.link = flowInfo.getLink();
-				this.attrs = flatten( flowInfo.attributes );
-				this.props = flatten( flowInfo.properties );
-				this.temporary = ( flowInfo.temporary ? 1 : 0 );
+				this.attrs = flatten( flowInfo.getAttributes() );
+				this.props = flatten( flowInfo.getProperties() );
+				this.temporary = flowInfo.isTemporary();
 			}
 
 
 			String flatten( Map< String, String > attrs ) {
 
 				StringBuffer stringBuffer = new StringBuffer();
-				final String link = ",";
+				final String separator = ",";
 
 				for ( Map.Entry< String, String > entry : attrs.entrySet() ) {
-					stringBuffer.append( entry.getKey() + "=" + entry.getValue() + link );
+					stringBuffer.append( entry.getKey() + "=" + entry.getValue() + separator );
 				}
 
 				stringBuffer.setLength( stringBuffer.length() - link.length() );
@@ -159,35 +177,17 @@ public class JNAFlowadm implements Flowadm {
 			}
 
 
-			/*
-			String join( String arr[], String link ) {
-
-				StringBuffer stringBuffer = new StringBuffer();
-				for ( String s : arr ) {
-					stringBuffer.append( s + link );
-				}
-
-				if ( stringBuffer.length() > 0 ) {
-					stringBuffer.setLength( stringBuffer.length() - link.length() );
-				}
-
-				return stringBuffer.toString();
-
-			}
-			 */
-
 			public String name, link, attrs, props;
-			public int temporary;
+			public boolean temporary;
 		}
 
 		public void init();
-		public String[] get_names();
 		public FlowInfoStruct get_flows_info( String links[], IntByReference flow_info_len );
 		public int create( FlowInfoStruct flowInfo );
-		public int remove( String flow );
+		public int remove_flow( String flow, boolean temporary );
 
-		public int set_property( String flow, String key, String values[], int values_len, int temporary );
-		public int reset_property( String flow, String key, int temporary );
+		public int set_property( String flow, String key, String values[], int values_len, boolean temporary );
+		public int reset_property( String flow, String key, boolean temporary );
 		public KeyValuePair get_properties( String flow );
 
 	}

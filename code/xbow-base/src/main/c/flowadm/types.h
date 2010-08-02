@@ -16,8 +16,8 @@ typedef struct
 }
 key_value_pair_t;
 
-// TODO-DAWID: replace pointers with fixed-size arrays?
 
+// TODO-DAWID: replace pointers with fixed-size arrays?
 typedef struct
 {
 	char* name;

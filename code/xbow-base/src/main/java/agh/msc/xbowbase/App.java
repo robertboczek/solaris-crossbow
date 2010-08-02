@@ -1,6 +1,7 @@
 package agh.msc.xbowbase;
 
 import agh.msc.xbowbase.flow.Flow;
+import agh.msc.xbowbase.flow.FlowAccounting;
 import agh.msc.xbowbase.flow.FlowMBeanPublisher;
 import agh.msc.xbowbase.flow.FlowManager;
 import agh.msc.xbowbase.jna.JNAFlowadm;
@@ -33,18 +34,21 @@ public class App {
 		flowManager.setFlowadm( flowadm );
 		flowManager.setPublisher( new FlowMBeanPublisher( mbs ) );
 
+		FlowAccounting flowAccounting = new FlowAccounting();
+
 		Timer timer = new Timer();
 		timer.addNotification( "discovery", "discover", null, new Date(), 5000 );
 		timer.addNotificationListener( flowManager, null, null );
+		timer.start();
 
-		mbs.registerMBean( flowManager, new ObjectName( "agh.msc.xbowbase:type=Hello" ) );
+		mbs.registerMBean( flowManager, new ObjectName( "agh.msc.xbowbase:type=FlowManager" ) );
+		mbs.registerMBean( flowAccounting, new ObjectName( "agh.msc.xbowbase:type=FlowAccounting" ) );
 		mbs.registerMBean( timer, new ObjectName( "agh.msc.xbowbase:type=Timer" ) );
 
 		for ( String flow : flowManager.getFlows() ) {
 			System.out.println( flow );
 		}
 
-		/*
 		Flow flow = new Flow();
 
 		flow.setFlowadm( flowadm );
@@ -59,9 +63,6 @@ public class App {
 		for ( Map.Entry< String, String > entry : flow.getProperties().entrySet() ) {
 			System.out.println( entry.toString() );
 		}
-		 *
-		 */
-
 
 		Map< String, String > newAttrs = new HashMap< String, String >();
 		newAttrs.put( "transport", "tcp" );
@@ -69,7 +70,6 @@ public class App {
 		Map< String, String > newProps = new HashMap< String, String >();
 		newProps.put( "priority", "MEDIUM" );
 
-		/*
 		Flow newFlow = new Flow();
 		newFlow.setName( "yyynowyyy" );
 		newFlow.setLink( "e1000g0" );
@@ -82,8 +82,6 @@ public class App {
 		flowManager.create( newFlow );
 
 		newFlow.resetProperties( Arrays.asList( "priority" ), true );
-		 * *
-		 */
 
 		flowManager.discover();
 
