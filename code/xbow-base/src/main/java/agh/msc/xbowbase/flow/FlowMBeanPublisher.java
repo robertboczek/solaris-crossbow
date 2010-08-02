@@ -3,6 +3,7 @@ package agh.msc.xbowbase.flow;
 import java.util.LinkedList;
 import java.util.List;
 import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
 
@@ -32,10 +33,7 @@ public class FlowMBeanPublisher implements Publisher {
 
 			try {
 
-				mBeanServer.registerMBean( flowMBean, new ObjectName( String.format(
-					"agh.msc.xbowbase:type=Flow,link=%s,name=%s",
-					flowMBean.getLink(), flowMBean.getName()
-				) ) );
+				mBeanServer.registerMBean( flowMBean, createObjectName( flowMBean ) );
 
 				published.add( object );
 
@@ -46,6 +44,56 @@ public class FlowMBeanPublisher implements Publisher {
 			}
 
 		}
+
+	}
+
+
+	@Override
+	public void unpublish( Object object ) {
+
+		if ( object instanceof String ) {
+
+			String flowName = ( String ) object;
+
+			for ( Object o : published ) {
+
+				Flow flow = ( Flow ) o;
+
+				if ( flow.getName().equals( flowName ) ) {
+
+					try {
+						mBeanServer.unregisterMBean( createObjectName( flow ) );
+					} catch ( Exception e ) {
+						e.printStackTrace();
+					}
+
+				}
+
+			}
+
+		}
+
+	}
+
+
+	private ObjectName createObjectName( FlowMBean flowMBean ) {
+
+		ObjectName on = null;
+
+		try {
+
+			on = new ObjectName( String.format(
+				"agh.msc.xbowbase:type=Flow,link=%s,name=%s",
+				flowMBean.getLink(), flowMBean.getName()
+			) );
+
+		} catch ( MalformedObjectNameException e ) {
+
+			e.printStackTrace();
+
+		}
+
+		return on;
 
 	}
 

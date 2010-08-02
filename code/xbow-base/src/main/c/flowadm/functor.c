@@ -58,21 +58,22 @@ int get_props( void* arg, const char* propname )
 		values[ i ] = malloc( MAX_PROP_LINE );
 	}
 
-	argg->out = malloc( LEN( values ) * MAX_PROP_LINE );
-	argg->out[ 0 ] = '\0';
-
 	dladm_get_flowprop( handle, argg->flow, DLADM_PROP_VAL_CURRENT,
 	                    propname, values, &values_len );
 
-	for ( i = 0; i < values_len; ++i )
+	if ( values_len > 0 )
 	{
-		strcat( argg->out, values[ i ] );
-		strcat( argg->out, " " );
+		sprintf( argg->out + strlen( argg->out ), "%s=", propname );
 
-		free( values[ i ] );
+		for ( i = 0; i < values_len; ++i )
+		{
+			strcat( argg->out, values[ i ] );
+
+			free( values[ i ] );
+		}
+
+		strcat( argg->out, "," );
 	}
-
-	argg->out[ strlen( argg->out ) - 1 ] = '\0';
 
 	return DLADM_WALK_CONTINUE;
 }

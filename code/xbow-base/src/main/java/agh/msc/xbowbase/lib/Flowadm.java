@@ -1,6 +1,7 @@
 package agh.msc.xbowbase.lib;
 
 import agh.msc.xbowbase.exception.ValidationException;
+import agh.msc.xbowbase.exception.XbowException;
 import agh.msc.xbowbase.flow.FlowInfo;
 import agh.msc.xbowbase.flow.FlowMBean;
 import java.util.List;
@@ -18,9 +19,9 @@ public interface Flowadm {
 	public List< FlowInfo > getFlowsInfo();
 	public List< FlowInfo > getFlowsInfo( List< String > links );
 
-	public void create( FlowInfo flowInfo );
+	public void create( FlowInfo flowInfo ) throws XbowException;
 
-	public int remove( String flow, boolean temporary );
+	public void remove( String flow, boolean temporary ) throws XbowException;
 
 
 	/* Flow details management methods. */

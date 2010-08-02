@@ -64,6 +64,9 @@ int set_property( char* flow,
                   int temporary );
 
 
+flow_info_t* get_flows_info( char* link_name[], int* flow_info_len );
+
+
 int reset_property( char* flow, char* key, int temporary );
 
 

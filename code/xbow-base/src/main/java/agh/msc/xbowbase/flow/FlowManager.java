@@ -1,8 +1,8 @@
 package agh.msc.xbowbase.flow;
 
+import agh.msc.xbowbase.exception.XbowException;
 import agh.msc.xbowbase.flow.util.FlowToFlowInfoTranslator;
 import agh.msc.xbowbase.lib.Flowadm;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import javax.management.Notification;
@@ -50,7 +50,7 @@ public class FlowManager implements FlowManagerMBean, NotificationListener {
 
 
 	@Override
-	public void create( FlowMBean flow ) {
+	public void create( FlowMBean flow ) throws XbowException {
 
 		flowadm.create( FlowToFlowInfoTranslator.toFlowInfo( ( Flow ) flow ) );
 		publisher.publish( flow );
@@ -59,8 +59,10 @@ public class FlowManager implements FlowManagerMBean, NotificationListener {
 
 
 	@Override
-	public void remove( String flowName, boolean temporary ) {
+	public void remove( String flowName, boolean temporary ) throws XbowException {
+
 		flowadm.remove( flowName, temporary );
+		publisher.unpublish( flowName );
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package agh.msc.xbowbase.jna;
 
 import agh.msc.xbowbase.exception.ValidationException;
+import agh.msc.xbowbase.exception.XbowException;
 import agh.msc.xbowbase.flow.FlowInfo;
 import agh.msc.xbowbase.lib.Flowadm;
 import com.sun.jna.Library;
@@ -28,8 +29,13 @@ public class JNAFlowadm implements Flowadm {
 
 
 	@Override
-	public int remove( String flow, boolean temporary ) {
-		return handle.remove_flow( flow, temporary );
+	public void remove( String flow, boolean temporary ) throws XbowException {
+
+		int rc = handle.remove_flow( flow, temporary );
+
+		if ( rc != XbowStatus.XBOW_STATUS_OK.ordinal() ) {
+			throw new XbowException( "Could not remove " + flow );
+		}
 	}
 
 
@@ -75,8 +81,17 @@ public class JNAFlowadm implements Flowadm {
 
 		Map< String, String > properties = new HashMap< String, String >();
 
+		// TODO-DAWID: use array of kvp
+
 		IFlowadm.KeyValuePair kvp = handle.get_properties( flowName );
-		properties.put( kvp.key, kvp.value );
+
+		for ( String entry : kvp.value.split( "," ) ) {
+
+			if ( entry.split( "=" ).length > 1 ) {
+				properties.put( entry.split( "=" )[ 0 ], entry.split( "=" )[ 1 ] );
+			}
+
+		}
 
 		return properties;
 
@@ -92,8 +107,14 @@ public class JNAFlowadm implements Flowadm {
 	}
 
 	@Override
-	public void create( FlowInfo flowInfo ) {
-		handle.create( new IFlowadm.FlowInfoStruct( flowInfo ) );
+	public void create( FlowInfo flowInfo ) throws XbowException {
+
+		int rc = handle.create( new IFlowadm.FlowInfoStruct( flowInfo ) );
+
+		if ( rc != XbowStatus.XBOW_STATUS_OK.ordinal() ) {
+			throw new XbowException( "Creation failed." );
+		}
+
 	}
 
 
@@ -170,7 +191,7 @@ public class JNAFlowadm implements Flowadm {
 					stringBuffer.append( entry.getKey() + "=" + entry.getValue() + separator );
 				}
 
-				stringBuffer.setLength( stringBuffer.length() - link.length() );
+				stringBuffer.setLength( stringBuffer.length() - separator.length() );
 
 				return stringBuffer.toString();
 

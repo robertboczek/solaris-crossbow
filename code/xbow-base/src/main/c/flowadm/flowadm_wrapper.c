@@ -24,45 +24,64 @@ int init()
 
 int create( flow_info_t* flow_info )
 {
+	int rc = DLADM_STATUS_OK;
+
 	dladm_arg_list_t* proplist = NULL;
 	dladm_arg_list_t* attrlist = NULL;
-	datalink_id_t link_id;
 
-	dladm_name2info( handle, flow_info->link, &link_id, NULL, NULL, NULL );
+	// Parse attributes.
+	
+	rc = dladm_parse_flow_attrs( flow_info->attrs, &attrlist, B_FALSE );
 
-	printf( "%d\n",
-	dladm_parse_flow_attrs( flow_info->attrs, &attrlist, B_FALSE ) );
+	if ( DLADM_STATUS_OK == rc )
+	{
+		// Attributes valid. Parse properties.
+	
+		rc = dladm_parse_flow_props( flow_info->props, &proplist, B_FALSE );
 
-	printf( "%d\n",
-	dladm_parse_flow_props( flow_info->props, &proplist, B_FALSE ) );
+		if ( DLADM_STATUS_OK == rc )
+		{
+			// Properties valid. Retrieve link name.
 
-	printf( "%d\n",
+			datalink_id_t link_id;
+			rc = dladm_name2info( handle, flow_info->link, &link_id, NULL, NULL, NULL );
 
-	dladm_flow_add( handle,
-	                link_id, attrlist, proplist, flow_info->name,
-	                flow_info->temporary ? B_TRUE : B_FALSE,
-	                NULL /* no root dir */ )
+			if ( DLADM_STATUS_OK == rc )
+			{
+				// Try to create the flow.
 
-	);
+				rc = dladm_flow_add( handle,
+				                     link_id, attrlist, proplist, flow_info->name,
+				                     flow_info->temporary ? B_TRUE : B_FALSE,
+				                     NULL /* no root dir */ );
+			}
+		}
+	}
 
-	return 0;
+	return map_status( rc );
 }
 
 
 int remove_flow( char* flow, int temporary )
 {
-	return dladm_flow_remove( handle, flow, temporary, "" );
+	return map_status( dladm_flow_remove( handle, flow, temporary, "" ) );
 }
 
 
 void collect_flow_attrs( char* link_name,
                          dladm_flow_attr_t** flow_attrs, int* len )
 {
+	// Get link ID for link_name.
+
 	datalink_id_t link_id;
 	dladm_name2info( handle, link_name, &link_id, NULL, NULL, NULL );
 
+	// Count flows on the link.
+
 	*len = 0;
 	dladm_walk_flow( &count, handle, link_id, len, 0 );
+
+	// Collect attributes.
 
 	*flow_attrs = malloc( sizeof( dladm_flow_attr_t ) * ( *len ) );
 	dladm_walk_flow( &get_attrs, handle, link_id, flow_attrs, 0 );
@@ -119,7 +138,7 @@ flow_info_t* get_flows_info( char* link_name[], int* flow_info_len )
 	// flow_info_t* flow_info = malloc( sizeof( flow_info_t ) * flow_attrs_len );
 	// *flow_info_len = flow_attrs_len;
 
-	flow_info_t* flow_info = malloc( sizeof( flow_info_t ) * 10 );
+	flow_info_t* flow_info = malloc( sizeof( flow_info_t ) * 100 );
 
 	int flow_info_it = 0;
 
@@ -169,6 +188,8 @@ flow_info_t* get_flows_info( char* link_name[], int* flow_info_len )
 				strcat( flow_info[ flow_info_it ].attrs,
 								dladm_proto2str( flow_attrs[ i ].fa_flow_desc.fd_protocol ) );
 			}
+
+			// TODO-DAWID: all attrs
 
 			flow_info[ flow_info_it ].props = "";
 			flow_info[ flow_info_it ].temporary = 0;
@@ -227,7 +248,16 @@ key_value_pair_t* get_properties( char* flow )
 	get_props_arg_t arg;
 	arg.flow = flow;
 
+	// TODO-DAWID: refactor! no hardcoded numbers!
+
+	arg.out = malloc( 1000 );
+	arg.out[ 0 ] = '\0';
+
 	dladm_walk_flowprop( &get_props, flow, &arg );
+
+	// Remove terminating comma.
+
+	arg.out[ strlen( arg.out ) - 1 ] = '\0';
 
 	// TODO-DAWID: memory leaks!
 

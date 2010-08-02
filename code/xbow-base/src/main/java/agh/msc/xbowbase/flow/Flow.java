@@ -95,7 +95,10 @@ public class Flow implements FlowMBean {
 
 	@Override
 	public Map< String, String > getProperties() {
+
+		props = flowadm.getProperties( name );
 		return props;
+
 	}
 
 

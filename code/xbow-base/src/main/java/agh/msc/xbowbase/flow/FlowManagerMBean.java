@@ -1,5 +1,6 @@
 package agh.msc.xbowbase.flow;
 
+import agh.msc.xbowbase.exception.XbowException;
 import java.util.List;
 
 
@@ -13,8 +14,8 @@ public interface FlowManagerMBean {
 
 	public void discover();
 
-	public void create( FlowMBean flow );
+	public void create( FlowMBean flow ) throws XbowException;
 
-	public void remove( String flowName, boolean temporary );
+	public void remove( String flowName, boolean temporary ) throws XbowException;
 
 }

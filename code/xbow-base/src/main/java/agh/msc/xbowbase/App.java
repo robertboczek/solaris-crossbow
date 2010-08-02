@@ -1,5 +1,6 @@
 package agh.msc.xbowbase;
 
+import agh.msc.xbowbase.exception.XbowException;
 import agh.msc.xbowbase.flow.Flow;
 import agh.msc.xbowbase.flow.FlowAccounting;
 import agh.msc.xbowbase.flow.FlowMBeanPublisher;
@@ -28,50 +29,51 @@ public class App {
 
 		MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
 
+		// Initialize flowadm wrapper.
+
 		Flowadm flowadm = new JNAFlowadm();
+
+		// Create FlowManager.
 
 		FlowManager flowManager = new FlowManager();
 		flowManager.setFlowadm( flowadm );
 		flowManager.setPublisher( new FlowMBeanPublisher( mbs ) );
 
+		// Create FlowAccounting.
+
 		FlowAccounting flowAccounting = new FlowAccounting();
+
+		// Create Timer.
 
 		Timer timer = new Timer();
 		timer.addNotification( "discovery", "discover", null, new Date(), 5000 );
 		timer.addNotificationListener( flowManager, null, null );
 		timer.start();
 
+		// Register MBeans.
+
 		mbs.registerMBean( flowManager, new ObjectName( "agh.msc.xbowbase:type=FlowManager" ) );
 		mbs.registerMBean( flowAccounting, new ObjectName( "agh.msc.xbowbase:type=FlowAccounting" ) );
 		mbs.registerMBean( timer, new ObjectName( "agh.msc.xbowbase:type=Timer" ) );
+
+
+		/*     FLOW DISCOVERY TEST     */
 
 		for ( String flow : flowManager.getFlows() ) {
 			System.out.println( flow );
 		}
 
-		Flow flow = new Flow();
 
-		flow.setFlowadm( flowadm );
-		flow.setName( "flow" );
-
-
-		Map< String, String > properties = new HashMap< String, String >();
-		properties.put( "maxbw", "10M" );
-
-		flow.setProps( properties );
-
-		for ( Map.Entry< String, String > entry : flow.getProperties().entrySet() ) {
-			System.out.println( entry.toString() );
-		}
+		/*     FLOW CREATION TEST     */
 
 		Map< String, String > newAttrs = new HashMap< String, String >();
-		newAttrs.put( "transport", "tcp" );
+		newAttrs.put( "local_ip", "1.1.1.3" );
 
 		Map< String, String > newProps = new HashMap< String, String >();
 		newProps.put( "priority", "MEDIUM" );
 
 		Flow newFlow = new Flow();
-		newFlow.setName( "yyynowyyy" );
+		newFlow.setName( "wyjatkowy" );
 		newFlow.setLink( "e1000g0" );
 		newFlow.setAttrs( newAttrs );
 		newFlow.setProps( newProps );
@@ -79,11 +81,15 @@ public class App {
 
 		newFlow.setFlowadm( flowadm );
 
-		flowManager.create( newFlow );
+		try {
 
-		newFlow.resetProperties( Arrays.asList( "priority" ), true );
+			flowManager.create( newFlow );
 
-		flowManager.discover();
+		} catch ( XbowException e ) {
+
+			System.out.println( "Caught XBowException while creating " + newFlow.getName() + "." );
+
+		}
 
 		System.out.println("Waiting forever...");
 		Thread.sleep(Long.MAX_VALUE);
