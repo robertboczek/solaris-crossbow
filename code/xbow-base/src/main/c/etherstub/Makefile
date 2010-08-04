@@ -10,7 +10,8 @@ CC=gcc
 CFLAGS=-std=c99 -Wall -pedantic \
        -g
 LDFLAGS=-Wl,-R.
-LIBS=-ldladm
+LIBS=-ldladm -lsocket
+LIBS += -ldladm -ldlpi -lkstat -lsecdb -lbsm -ldevinfo
 BASENAME=etherstub_wrapper
 LIBFNAME=lib$(BASENAME).so
 

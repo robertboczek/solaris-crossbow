@@ -3,6 +3,8 @@
 
 #include <libdladm.h>
 #include <libdllink.h>
+#include <libdlvnic.h>
+#include <libdlstat.h>
 #include <string.h>
 #include <stropts.h>
 #include <stdlib.h>
@@ -12,19 +14,10 @@
 #include <sys/ethernet.h>
 #include <sys/param.h>
 #include <sys/mac.h>
+
+#include <ofmt.h>
 #include <netinet/vrrp.h>
-
-
-typedef enum {
-	VNIC_MAC_ADDR_TYPE_UNKNOWN = -1,
-	VNIC_MAC_ADDR_TYPE_FIXED,
-	VNIC_MAC_ADDR_TYPE_RANDOM,
-	VNIC_MAC_ADDR_TYPE_FACTORY,
-	VNIC_MAC_ADDR_TYPE_AUTO,
-	VNIC_MAC_ADDR_TYPE_PRIMARY,
-	VNIC_MAC_ADDR_TYPE_VRID
-} vnic_mac_addr_type_t;
-
+#include "types.h"
 
 int init();
 
@@ -51,5 +44,15 @@ int delete_etherstub( char* name, int temporary, char *rootDir );
  * \return  non-zero  otherwise (  )
 */
 int create_etherstub( char* name, int temporary, char *rootDir );
+
+/**
+ * \brief  Returns list of existing etherstubs.
+ * \param  names	will contain all etherstubs names
+ * \param  number_of_etherstubs  will contains numer of etherstubs
+ *
+ * \return  0         on success
+ * \return  non-zero  otherwise (  )
+*/
+int get_etherstub_names( char*** names, int *number_of_etherstubs);
 
 #endif

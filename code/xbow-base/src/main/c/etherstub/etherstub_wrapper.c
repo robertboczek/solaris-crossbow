@@ -1,7 +1,30 @@
 
 #include "etherstub_wrapper.h"
+#define MAXVNIC		256
 
 dladm_handle_t handle = 0;
+int number_of_elements = 0;
+/* array for etherstub names */
+char **names_array = NULL;
+
+typedef struct show_vnic_state {
+	datalink_id_t	vs_vnic_id;
+	datalink_id_t	vs_link_id;
+	char		vs_vnic[MAXLINKNAMELEN];
+	char		vs_link[MAXLINKNAMELEN];
+	boolean_t	vs_parsable;
+	boolean_t	vs_found;
+	boolean_t	vs_firstonly;
+	boolean_t	vs_donefirst;
+	boolean_t	vs_stats;
+	boolean_t	vs_printstats;
+	pktsum_t	vs_totalstats;
+	pktsum_t	vs_prevstats[MAXVNIC];
+	boolean_t	vs_etherstub;
+	dladm_status_t	vs_status;
+	uint32_t	vs_flags;
+	ofmt_handle_t	vs_ofmt;
+} show_vnic_state_t;
 
 
 /**
@@ -82,3 +105,34 @@ int create_etherstub( char* name, int temporary, char *rootDir )
 		return 1;
 	return 0;
 }
+
+int get_name(const char *name, void *prop){
+	
+	names_array[number_of_elements] = (char*)malloc(sizeof(char)*(strlen(name)+1));
+	strcpy(names_array[number_of_elements++], name);
+}
+
+int get_etherstub_names( char*** names, int *number_of_etherstubs)
+{
+
+	show_vnic_state_t	state;
+	dladm_status_t		status;
+	datalink_id_t		linkid = DATALINK_ALL_LINKID;
+	datalink_id_t		dev_linkid = DATALINK_ALL_LINKID;
+	uint32_t		flags = DLADM_OPT_ACTIVE;
+
+	names_array = (char**)malloc(sizeof(char*) * MAXVNIC);
+	number_of_elements = 0;
+
+	//walks through all etherstub's and invokes get_name function
+	if( dladm_walk(get_name, handle, &state,
+	    DATALINK_CLASS_ETHERSTUB, DATALINK_ANY_MEDIATYPE, flags) != DLADM_STATUS_OK){
+		return 1;
+	}
+
+	(*names) = names_array;
+	(*number_of_etherstubs) = number_of_elements;	
+
+	return 0;
+}
+
