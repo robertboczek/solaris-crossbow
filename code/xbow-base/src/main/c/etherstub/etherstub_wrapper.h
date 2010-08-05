@@ -24,35 +24,52 @@ int init();
 /**
  * \brief  Removes an etherstub.
  *
- * \param  name	      etherstub name
- * \param  temporary  determines is the change temporary ( 0 - temporary, != 0 persistent )
- * \param  rootDir    indicates the root dir catalog see man dladm for details
+ * \param  name	  	      	etherstub name
+ * \param  persistence_type  	determines whether the change will be temporary or persistent
+ * \param  rootDir    		indicates the root dir catalog see man dladm for details
  *
- * \return  0         on success
- * \return  non-zero  otherwise ( 1 - couldn't delete, 2 - invalid etherstub name )
+ * \return  etherstub_return_type_t See types.h to see more details
 */
-int delete_etherstub( char* name, int temporary, char *rootDir );
+etherstub_return_type_t delete_etherstub( char* name, persistence_type_t persistence_type, char *rootDir );
 
 /**
  * \brief  Creates an etherstub.
  *
- * \param  name	      etherstub name
- * \param  temporary  determines is the change temporary ( 0 - temporary, != 0 persistent )
- * \param  rootDir    indicates the root dir catalog see man dladm for details
+ * \param  name	             	etherstub name
+ * \param  persistence_type  	determines whether the change will be temporary or persistent
+ * \param  rootDir    		indicates the root dir catalog see man dladm for details
  *
- * \return  0         on success
- * \return  non-zero  otherwise (  )
+ * \return  etherstub_return_type_t See types.h to see more details
 */
-int create_etherstub( char* name, int temporary, char *rootDir );
+etherstub_return_type_t create_etherstub( char* name, persistence_type_t persistence_type, char *rootDir );
 
 /**
  * \brief  Returns list of existing etherstubs.
  * \param  names	will contain all etherstubs names
  * \param  number_of_etherstubs  will contains numer of etherstubs
  *
- * \return  0         on success
- * \return  non-zero  otherwise (  )
+ * \return  etherstub_return_type_t See types.h to see more details
 */
-int get_etherstub_names( char*** names, int *number_of_etherstubs);
+etherstub_return_type_t get_etherstub_names( char*** names, int *number_of_etherstubs );
+
+/**
+ * \brief Returns requested etherstub property
+ * \param  name		etherstub name
+ * \param  property  	type of requested property
+ * \param  value	pointer to char array where value should be copied
+ *
+ * \return  etherstub_return_type_t See types.h to see more details
+*/
+etherstub_return_type_t get_etherstub_property( char *name, etherstub_property_type_t property, char **value );
+
+/**
+ * \brief Returns requested etherstub statistics
+ * \param  name		etherstub name
+ * \param  property  	type of requested statistic
+ * \param  value	pointer to char array where value should be copied
+ *
+ * \return  etherstub_return_type_t See types.h to see more details
+*/
+etherstub_return_type_t get_etherstub_statistic( char *name, etherstub_statistic_type_t property, char **value );
 
 #endif
