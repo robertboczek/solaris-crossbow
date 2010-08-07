@@ -129,7 +129,7 @@ etherstub_return_type_t get_etherstub_names( char*** names, int *number_of_ether
 	return RESULT_OK;
 }
 
-etherstub_return_type_t get_etherstub_property( char *name, etherstub_property_type_t property, char **value )
+etherstub_return_type_t get_etherstub_parameter( char *name, etherstub_parameter_type_t parameter, char **value )
 {
 
 	dladm_status_t status;
@@ -142,26 +142,26 @@ etherstub_return_type_t get_etherstub_property( char *name, etherstub_property_t
 	if (status != DLADM_STATUS_OK)
 		return INVALID_ETHERSTUB_NAME;
 
-	char *property_type = (char*)malloc(sizeof(char)*MAXLENGTH);
-	switch(property){
+	char *parameter_type = (char*)malloc(sizeof(char)*MAXLENGTH);
+	switch(parameter){
 		case BRIDGE:
-			strcpy(property_type, "BRIDGE");
+			strcpy(parameter_type, "BRIDGE");
 			break;
 		case OVER:
-			strcpy(property_type, "OVER");
+			strcpy(parameter_type, "OVER");
 			break;
 		case STATE:
-			strcpy(property_type, "STATE");
+			strcpy(parameter_type, "STATE");
 			break;
 		case MTU:
-			strcpy(property_type, "MTU");
+			strcpy(parameter_type, "MTU");
 			break;
 	}
 
 	status = dladm_get_linkprop(handle, linkid,
-			    DLADM_PROP_VAL_CURRENT, property_type, value, &maxpropertycnt);
+			    DLADM_PROP_VAL_CURRENT, parameter_type, value, &maxpropertycnt);
 
-	free(property_type);
+	free(parameter_type);
 
 	if (status != DLADM_STATUS_OK)
 		return ETHERSTUB_PROPERTY_FAILURE;
@@ -225,4 +225,76 @@ etherstub_return_type_t get_etherstub_statistic( char *name, etherstub_statistic
 	return RESULT_OK;
 }
 
+void set_property_type(etherstub_property_type_t property, char **property_type){
 
+	switch(property){
+		case MAXBW:
+			strcpy(*property_type, "maxbw");
+			break;
+		case CPUS:
+			strcpy(*property_type, "cpus");
+			break;
+		case LEARN_LIMIT:
+			strcpy(*property_type, "learn_limit");
+			break;
+		case PRIORITY:
+			strcpy(*property_type, "priority");
+			break;
+	}
+}
+
+etherstub_return_type_t set_etherstub_property( char *name, etherstub_property_type_t property, char *value )
+{
+
+	dladm_status_t status;
+	datalink_id_t linkid;
+	uint32_t	flags = DLADM_OPT_ACTIVE | DLADM_OPT_PERSIST | DLADM_OPT_FORCE;
+	uint_t		maxpropertycnt = 1;
+
+	status = dladm_name2info(handle, name, &linkid, NULL, NULL,
+	    NULL);
+
+	if (status != DLADM_STATUS_OK)
+		return INVALID_ETHERSTUB_NAME;
+
+	char *property_type = (char*)malloc(sizeof(char)*MAXLENGTH);
+
+	set_property_type(property, &property_type);
+	
+	status = dladm_set_linkprop(handle, linkid,
+			    property_type, &value, maxpropertycnt, flags);
+
+	free(property_type);
+
+	if (status != DLADM_STATUS_OK)
+		return ETHERSTUB_PROPERTY_FAILURE;
+
+	return RESULT_OK;
+}
+
+etherstub_return_type_t get_etherstub_property( char *name, etherstub_property_type_t property, char **value )
+{
+	dladm_status_t status;
+	datalink_id_t linkid;
+	uint_t		maxpropertycnt = 1;
+
+	status = dladm_name2info(handle, name, &linkid, NULL, NULL,
+	    NULL);
+
+	if (status != DLADM_STATUS_OK)
+		return INVALID_ETHERSTUB_NAME;
+
+	char *property_type = (char*)malloc(sizeof(char)*MAXLENGTH);
+	
+	set_property_type(property, &property_type);
+
+	status = dladm_get_linkprop(handle, linkid,
+			    DLADM_PROP_VAL_CURRENT, property_type, value, &maxpropertycnt);
+
+	free(property_type);
+
+	if (status != DLADM_STATUS_OK)
+		return ETHERSTUB_PROPERTY_FAILURE;
+
+	return RESULT_OK;
+}

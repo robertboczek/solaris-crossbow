@@ -8,7 +8,7 @@ typedef struct
 }
 key_value_pair_t;
 
-/** Possible types of etherstub properties
+/** Possible types of etherstub parameters
  *  deliberately CLASS is omitted as its etherstub
 */
 typedef enum {
@@ -16,7 +16,17 @@ typedef enum {
 	OVER,
 	STATE,
 	MTU
+} etherstub_parameter_type_t;
+
+/** Possible types of etherstub properties
+*/
+typedef enum {
+	MAXBW = 1, /* bandwidth specified in megabytes - minimum bandwidth is 1.2 MB */
+	LEARN_LIMIT,
+	CPUS,/*@todo test how to pass two or more processors names*/
+	PRIORITY
 } etherstub_property_type_t;
+
 
 /** Possible types of etherstub statistics */
 typedef enum {

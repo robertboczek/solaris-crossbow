@@ -53,14 +53,14 @@ etherstub_return_type_t create_etherstub( char* name, persistence_type_t persist
 etherstub_return_type_t get_etherstub_names( char*** names, int *number_of_etherstubs );
 
 /**
- * \brief Returns requested etherstub property
+ * \brief Returns requested etherstub parameter
  * \param  name		etherstub name
- * \param  property  	type of requested property
+ * \param  property  	type of requested parameter
  * \param  value	pointer to char array where value should be copied
  *
  * \return  etherstub_return_type_t See types.h to see more details
 */
-etherstub_return_type_t get_etherstub_property( char *name, etherstub_property_type_t property, char **value );
+etherstub_return_type_t get_etherstub_parameter( char *name, etherstub_parameter_type_t parameter, char **value );
 
 /**
  * \brief Returns requested etherstub statistics
@@ -71,5 +71,22 @@ etherstub_return_type_t get_etherstub_property( char *name, etherstub_property_t
  * \return  etherstub_return_type_t See types.h to see more details
 */
 etherstub_return_type_t get_etherstub_statistic( char *name, etherstub_statistic_type_t property, char **value );
-
+/**
+ * \brief Sets requested etherstub property
+ * \param  name		etherstub name
+ * \param  property  	type of property to be set
+ * \param  value	requested value of the property
+ *
+ * \return  etherstub_return_type_t See types.h to see more details
+*/
+etherstub_return_type_t set_etherstub_property( char *name, etherstub_property_type_t property, char *value );
+/**
+ * \brief Returns requested etherstub property
+ * \param  name		etherstub name
+ * \param  property  	type of property to be read
+ * \param  value	pointer to char array where property value should be copied
+ *
+ * \return  etherstub_return_type_t See types.h to see more details
+*/
+etherstub_return_type_t get_etherstub_property( char *name, etherstub_property_type_t property, char **value );
 #endif
