@@ -42,7 +42,7 @@ int init()
 	return dladm_open( &handle );
 }
 
-etherstub_return_type_t delete_etherstub( char* name, persistence_type_t persistence_type, char *rootDir )
+etherstub_return_type_t delete_etherstub( char* name, persistence_type_t persistence_type )
 {
 
 	datalink_id_t linkid;
@@ -69,7 +69,7 @@ etherstub_return_type_t delete_etherstub( char* name, persistence_type_t persist
 	return RESULT_OK;
 }
 
-etherstub_return_type_t create_etherstub( char* name, persistence_type_t persistence_type, char *rootDir )
+etherstub_return_type_t create_etherstub( char* name, persistence_type_t persistence_type )
 {
 	uint32_t flags;
 	dladm_status_t status;
@@ -108,13 +108,15 @@ int get_name(const char *name, void *prop){
 }
 
 /** Gets all names of etherstubs in the system */
-etherstub_return_type_t get_etherstub_names( char*** names, int *number_of_etherstubs)
+char** get_etherstub_names()
 {
 
 	show_vnic_state_t	state;
 	uint32_t		flags = DLADM_OPT_ACTIVE;
 
 	names_array = (char**)malloc(sizeof(char*) * MAXVNIC);
+	bzero(names_array, sizeof(names_array));
+
 	number_of_elements = 0;
 
 	//walks through all etherstub's and invokes get_name function
@@ -123,10 +125,9 @@ etherstub_return_type_t get_etherstub_names( char*** names, int *number_of_ether
 		return LIST_ETHERSTUB_NAMES_ERROR;
 	}
 
-	(*names) = names_array;
-	(*number_of_etherstubs) = number_of_elements;	
+	names_array[number_of_elements] = NULL;
 
-	return RESULT_OK;
+	return names_array;
 }
 
 etherstub_return_type_t get_etherstub_parameter( char *name, etherstub_parameter_type_t parameter, char **value )

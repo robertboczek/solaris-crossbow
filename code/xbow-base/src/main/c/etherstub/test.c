@@ -10,28 +10,27 @@ int main( int agrc, char** argv )
 	if(strcmp(argv[1], "delete") == RESULT_OK)
 	{
 		//delete persistently
-		int result = delete_etherstub( argv[2], PERSISTENT, NULL);
+		int result = delete_etherstub( argv[2], PERSISTENT );
 		printf( "Delete etherstub functon result: %d \n", result );
 	}
 	else if(strcmp(argv[1], "create") == RESULT_OK)
 	{
 		//create persistently
-		int result = create_etherstub( argv[2], PERSISTENT, NULL );
+		int result = create_etherstub( argv[2], PERSISTENT );
 		printf( "Created etherstub %s functon result: %d \n", argv[1], result );
 	}
 	else if(strcmp(argv[1], "list") == RESULT_OK)
 	{
 		
 		char **names;
-		int number_of_el;
 		printf(" List of all etherstubs: \n");
-		if(get_etherstub_names(&names, &number_of_el) == RESULT_OK){
-			printf("%d \n", number_of_el);
-			for(int i=0; i<number_of_el; i++){
-				printf("%s \n", names[i]);
-			}
+		names = get_etherstub_names();
+		if(names != NULL){
+			int i = 0;
+			while(names[i] != NULL){
+				printf("%s\n", names[i++]);
+			}	
 		}
-
 	}
 	else if(strcmp(argv[1], "get") == RESULT_OK)
 	{

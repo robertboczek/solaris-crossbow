@@ -26,31 +26,29 @@ int init();
  *
  * \param  name	  	      	etherstub name
  * \param  persistence_type  	determines whether the change will be temporary or persistent
- * \param  rootDir    		indicates the root dir catalog see man dladm for details
  *
  * \return  etherstub_return_type_t See types.h to see more details
 */
-etherstub_return_type_t delete_etherstub( char* name, persistence_type_t persistence_type, char *rootDir );
+etherstub_return_type_t delete_etherstub( char* name, persistence_type_t persistence_type );
 
 /**
  * \brief  Creates an etherstub.
  *
  * \param  name	             	etherstub name
  * \param  persistence_type  	determines whether the change will be temporary or persistent
- * \param  rootDir    		indicates the root dir catalog see man dladm for details
  *
  * \return  etherstub_return_type_t See types.h to see more details
 */
-etherstub_return_type_t create_etherstub( char* name, persistence_type_t persistence_type, char *rootDir );
+etherstub_return_type_t create_etherstub( char* name, persistence_type_t persistence_type );
 
 /**
  * \brief  Returns list of existing etherstubs.
- * \param  names	will contain all etherstubs names
  * \param  number_of_etherstubs  will contains numer of etherstubs
  *
- * \return  etherstub_return_type_t See types.h to see more details
+ * \return  will contain all etherstubs names or NULL if there is no etherstubs existing, 
+ * 		caller is responsible for freeing the memory
 */
-etherstub_return_type_t get_etherstub_names( char*** names, int *number_of_etherstubs );
+char** get_etherstub_names( );
 
 /**
  * \brief Returns requested etherstub parameter
