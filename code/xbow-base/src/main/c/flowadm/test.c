@@ -57,7 +57,7 @@ int main( int agrc, char** argv )
 		char* links[] = { "e1000g1", NULL };
 		int len;
 
-		get_flows_info( links, &len );
+		get_flows_info( links );
 	}
 
 	{
@@ -65,10 +65,7 @@ int main( int agrc, char** argv )
 	}
 
 	{
-		int a;
-		get_flows_info( NULL, &a );
-
-		printf( "%d\n", a );
+		get_flows_info( NULL );
 	}
 
 	return 0;
