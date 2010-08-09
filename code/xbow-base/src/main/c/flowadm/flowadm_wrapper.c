@@ -194,6 +194,8 @@ flow_infos_t* get_flows_info( char* link_name[] )
 
 			++flow_info_it;
 		}
+
+		free( flow_attrs );
 	}
 
 	flow_infos->flow_infos_len = flow_info_it;
@@ -257,14 +259,12 @@ key_value_pair_t* get_properties( char* flow )
 
 	arg.out[ strlen( arg.out ) - 1 ] = '\0';
 
-	// TODO-DAWID: memory leaks!
+	key_value_pair_t* key_value_pair = malloc_key_value_pair();
 
-	key_value_pair_t* res = malloc( sizeof( key_value_pair_t ) );
+	strcpy( key_value_pair->value, arg.out );
+	free( arg.out );
 
-	res->key = NULL;
-	res->value = arg.out;
-
-	return res;
+	return key_value_pair;
 }
 
 

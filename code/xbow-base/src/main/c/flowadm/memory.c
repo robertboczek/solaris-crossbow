@@ -5,6 +5,17 @@
 #include "memory.h"
 
 
+key_value_pair_t* malloc_key_value_pair()
+{
+	key_value_pair_t* key_value_pair = malloc( sizeof( *key_value_pair ) );
+
+	key_value_pair->key = NULL;
+	key_value_pair->value = malloc( 1000 );  // TODO-DAWID: change
+
+	return key_value_pair;
+}
+
+
 void free_key_value_pair( key_value_pair_t* key_value_pair )
 {
 	free( key_value_pair->key );
