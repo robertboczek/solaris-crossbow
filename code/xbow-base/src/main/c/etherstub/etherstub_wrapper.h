@@ -54,21 +54,21 @@ char** get_etherstub_names( );
  * \brief Returns requested etherstub parameter
  * \param  name		etherstub name
  * \param  property  	type of requested parameter
- * \param  value	pointer to char array where value should be copied
  *
- * \return  etherstub_return_type_t See types.h to see more details
+ * \return  will contain value of requested parameter
+ * 		caller is responsible for freeing the memory
 */
-etherstub_return_type_t get_etherstub_parameter( char *name, etherstub_parameter_type_t parameter, char **value );
+char* get_etherstub_parameter( char *name, etherstub_parameter_type_t parameter);
 
 /**
  * \brief Returns requested etherstub statistics
  * \param  name		etherstub name
  * \param  property  	type of requested statistic
- * \param  value	pointer to char array where value should be copied
  *
- * \return  etherstub_return_type_t See types.h to see more details
+ * \return  will contain value of requested statistic
+ * 		caller is responsible for freeing the memory
 */
-etherstub_return_type_t get_etherstub_statistic( char *name, etherstub_statistic_type_t property, char **value );
+char* get_etherstub_statistic( char *name, etherstub_statistic_type_t property);
 /**
  * \brief Sets requested etherstub property
  * \param  name		etherstub name
@@ -82,9 +82,10 @@ etherstub_return_type_t set_etherstub_property( char *name, etherstub_property_t
  * \brief Returns requested etherstub property
  * \param  name		etherstub name
  * \param  property  	type of property to be read
- * \param  value	pointer to char array where property value should be copied
  *
- * \return  etherstub_return_type_t See types.h to see more details
+ * \return  will contain values of requested property
+ * 		caller is responsible for freeing the memory
+
 */
-etherstub_return_type_t get_etherstub_property( char *name, etherstub_property_type_t property, char **value );
+char* get_etherstub_property( char *name, etherstub_property_type_t property);
 #endif
