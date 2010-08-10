@@ -4,6 +4,9 @@
 #include "types.h"
 
 
+key_value_pairs_t* malloc_key_value_pairs( size_t len );
+void free_key_value_pairs( key_value_pairs_t* key_value_pairs );
+
 key_value_pair_t* malloc_key_value_pair();
 void free_key_value_pair( key_value_pair_t* key_value_pair );
 

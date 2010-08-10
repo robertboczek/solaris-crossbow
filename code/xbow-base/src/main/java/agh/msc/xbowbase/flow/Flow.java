@@ -4,6 +4,7 @@ import agh.msc.xbowbase.lib.Flowadm;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.log4j.Logger;
 
 
 /**
@@ -64,7 +65,7 @@ public class Flow implements FlowMBean {
 
 		} catch ( Exception e ) {
 
-			e.printStackTrace();
+			logger.error( "Error while setting " + name + "'s attributes.", e );
 
 		}
 
@@ -87,7 +88,7 @@ public class Flow implements FlowMBean {
 
 		} catch ( Exception e ) {
 
-			e.printStackTrace();
+			logger.error( "Error while setting " + name + "'s properties.", e );
 
 		}
 
@@ -112,7 +113,7 @@ public class Flow implements FlowMBean {
 
 		} catch ( Exception e ) {
 
-			e.printStackTrace();
+			logger.error( "Error while resetting " + name + "'s properties.", e );
 
 		}
 
@@ -168,5 +169,7 @@ public class Flow implements FlowMBean {
 	protected boolean temporary;
 
 	private Flowadm flowadm = null;
+
+	private static final Logger logger = Logger.getLogger( Flow.class );
 
 }

@@ -8,11 +8,11 @@ import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import com.sun.jna.ptr.IntByReference;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import org.apache.log4j.Logger;
 
 
 /**
@@ -34,9 +34,12 @@ public class JNAFlowadm implements Flowadm {
 
 		int rc = handle.remove_flow( flow, temporary );
 
+		logger.debug( "remove_flow returned with rc == " + rc + " ." );
+
 		if ( rc != XbowStatus.XBOW_STATUS_OK.ordinal() ) {
 			throw new XbowException( "Could not remove " + flow );
 		}
+
 	}
 
 
@@ -67,6 +70,8 @@ public class JNAFlowadm implements Flowadm {
 
 			int rc = handle.set_property( flowName, entry.getKey(), values, values.length, temporary );
 
+			logger.debug( "set_property returned with rc == " + rc + " ." );
+
 			if ( rc == XbowStatus.XBOW_STATUS_PROP_PARSE_ERR.ordinal() ) {
 
 				throw new ValidationException( entry.getKey() + "=" + values );
@@ -82,18 +87,16 @@ public class JNAFlowadm implements Flowadm {
 
 		Map< String, String > properties = new HashMap< String, String >();
 
-		// TODO-DAWID: use array of kvp
+		IFlowadm.KeyValuePairsStruct kvps = handle.get_properties( flowName );
 
-		IFlowadm.KeyValuePair kvp = handle.get_properties( flowName );
-		handle.free_key_value_pair( kvp );
+		for ( Pointer p : kvps.keyValuePairs.getPointerArray( 0, kvps.keyValuePairsLen ) ) {
 
-		for ( String entry : kvp.value.split( "," ) ) {
-
-			if ( entry.split( "=" ).length > 1 ) {
-				properties.put( entry.split( "=" )[ 0 ], entry.split( "=" )[ 1 ] );
-			}
+			IFlowadm.KeyValuePairStruct kvp = new IFlowadm.KeyValuePairStruct( p );
+			properties.put( kvp.key, kvp.value );
 
 		}
+
+		handle.free_key_value_pairs( kvps );
 
 		return properties;
 
@@ -113,6 +116,8 @@ public class JNAFlowadm implements Flowadm {
 
 		int rc = handle.create( new IFlowadm.FlowInfoStruct( flowInfo ) );
 
+		logger.debug( "create returned with rc == " + rc + " ." );
+
 		if ( rc != XbowStatus.XBOW_STATUS_OK.ordinal() ) {
 			throw new XbowException( "Creation failed." );
 		}
@@ -131,11 +136,11 @@ public class JNAFlowadm implements Flowadm {
 
 		List< FlowInfo > res = new LinkedList< FlowInfo >();
 
-		IntByReference flowInfoLen = new IntByReference();
-
 		IFlowadm.FlowInfosStruct flowInfosStruct = handle.get_flows_info(
 			( null == links ) ? null : ( String[] ) links.toArray()
 		);
+
+		logger.debug( "get_flows_info returned " + flowInfosStruct.flowInfosLen + " FlowInfoStruct(s)." );
 
 		for ( Pointer p : flowInfosStruct.flowInfos.getPointerArray( 0, flowInfosStruct.flowInfosLen ) ) {
 
@@ -166,8 +171,24 @@ public class JNAFlowadm implements Flowadm {
 
 	private interface IFlowadm extends Library {
 
-		public class KeyValuePair extends Structure {
+		public class KeyValuePairsStruct extends Structure {
+			public Pointer keyValuePairs;
+			public int keyValuePairsLen;
+		}
+
+		public class KeyValuePairStruct extends Structure {
+
+			public KeyValuePairStruct() {}
+
+
+			public KeyValuePairStruct( Pointer p ) {
+				super( p );
+				read();
+			}
+
+
 			public String key, value;
+
 		}
 
 		public class FlowInfosStruct extends Structure {
@@ -222,9 +243,9 @@ public class JNAFlowadm implements Flowadm {
 
 		public int set_property( String flow, String key, String values[], int values_len, boolean temporary );
 		public int reset_property( String flow, String key, boolean temporary );
-		public KeyValuePair get_properties( String flow );
+		public KeyValuePairsStruct get_properties( String flow );
 
-		public void free_key_value_pair( KeyValuePair kvp );
+		public void free_key_value_pairs( KeyValuePairsStruct kvp );
 		public void free_flow_infos( FlowInfosStruct fis );
 
 	}
@@ -233,5 +254,7 @@ public class JNAFlowadm implements Flowadm {
 	private static final String LIB_NAME = "flowadm_wrapper";
 
 	IFlowadm handle = null;
+
+	private static final Logger logger = Logger.getLogger( JNAFlowadm.class );
 
 }

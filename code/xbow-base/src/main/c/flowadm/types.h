@@ -4,17 +4,25 @@
 
 typedef struct
 {
-	char* flow;
-	char* out;
+	char *key, *value;
 }
-get_props_arg_t;
+key_value_pair_t;
 
 
 typedef struct
 {
-	char *key, *value;
+	key_value_pair_t** key_value_pairs;
+	size_t key_value_pairs_len;
 }
-key_value_pair_t;
+key_value_pairs_t;
+
+
+typedef struct
+{
+	char* flow;
+	key_value_pair_t** key_value_pair_it;
+}
+get_props_arg_t;
 
 
 typedef struct

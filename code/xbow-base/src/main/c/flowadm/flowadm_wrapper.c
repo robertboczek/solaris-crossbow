@@ -93,14 +93,12 @@ void collect_flow_attrs( char* link_name,
 int collect_link_names( dladm_handle_t handle,
                         datalink_id_t link_id, void* arg )
 {
-	char* link_name = malloc( MAXLINKNAMELEN );
-	char*** it = arg;
+	char** it = arg;
 
 	dladm_datalink_id2info( handle, link_id, NULL, NULL, NULL,
-	                        link_name, MAXLINKNAMELEN );
+	                        *it, MAXLINKNAMELEN );
 
-	**it = link_name;
-	++( *it );
+	*it += MAXLINKNAMELEN;
 
 	return DLADM_WALK_CONTINUE;
 }
@@ -108,31 +106,30 @@ int collect_link_names( dladm_handle_t handle,
 
 flow_infos_t* get_flows_info( char* link_name[] )
 {
-	char *links[ 10 ];
-	char** links_it;
+	char links[ 10 ][ MAXLINKNAMELEN ];
 	int links_len;
 
 	if ( NULL == link_name )
 	{
-		links_it = links;
+		char* links_it = links[ 0 ];
 
 		dladm_walk_datalink_id( &collect_link_names, handle, &links_it,
 		                        DATALINK_CLASS_ALL, DATALINK_ANY_MEDIATYPE,
 		                        DLADM_OPT_ACTIVE | DLADM_OPT_PERSIST );
 
-		links_len = links_it - links;
+		links_len = ( links_it - links[ 0 ] ) / sizeof( *links );
 	}
 	else
 	{
-		links_it = link_name;
-
-		while ( *links_it != NULL )
+		int i = 0;
+		while ( link_name[ i ] != NULL )
 		{
-			++links_it;
+			strcpy( links[ i ], link_name[ i ] );
+
+			++i;
 		}
 
-		links_len = links_it - link_name;
-		memcpy( links, link_name, sizeof( link_name[ 0 ] ) * links_len );
+		links_len = i;
 	}
 
 	flow_infos_t* flow_infos = malloc_flow_infos( 100 );
@@ -243,28 +240,20 @@ int reset_property( char* flow, char* key, int temporary )
 }
 
 
-key_value_pair_t* get_properties( char* flow )
+key_value_pairs_t* get_properties( char* flow )
 {
+	key_value_pairs_t* key_value_pairs = malloc_key_value_pairs( MAXFLOWPROPERTIESLEN );
+
 	get_props_arg_t arg;
 	arg.flow = flow;
-
-	// TODO-DAWID: refactor! no hardcoded numbers!
-
-	arg.out = malloc( 1000 );
-	arg.out[ 0 ] = '\0';
+	arg.key_value_pair_it = key_value_pairs->key_value_pairs;
 
 	dladm_walk_flowprop( &get_props, flow, &arg );
 
-	// Remove terminating comma.
+	key_value_pairs->key_value_pairs_len = arg.key_value_pair_it
+	                                       - key_value_pairs->key_value_pairs;
 
-	arg.out[ strlen( arg.out ) - 1 ] = '\0';
-
-	key_value_pair_t* key_value_pair = malloc_key_value_pair();
-
-	strcpy( key_value_pair->value, arg.out );
-	free( arg.out );
-
-	return key_value_pair;
+	return key_value_pairs;
 }
 
 

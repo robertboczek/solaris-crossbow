@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.management.Notification;
 import javax.management.NotificationListener;
+import org.apache.log4j.Logger;
 
 
 /**
@@ -24,6 +25,8 @@ public class FlowManager implements FlowManagerMBean, NotificationListener {
 		for ( FlowInfo flowInfo : flowsInfo ) {
 			names.add( flowInfo.getName() );
 		}
+
+		logger.debug( names.size() + " flow(s) present." );
 
 		return names;
 
@@ -55,6 +58,8 @@ public class FlowManager implements FlowManagerMBean, NotificationListener {
 		flowadm.create( FlowToFlowInfoTranslator.toFlowInfo( ( Flow ) flow ) );
 		publisher.publish( flow );
 
+		logger.info( flow.getName() + " flow created and published." );
+
 	}
 
 
@@ -63,6 +68,9 @@ public class FlowManager implements FlowManagerMBean, NotificationListener {
 
 		flowadm.remove( flowName, temporary );
 		publisher.unpublish( flowName );
+
+		logger.info( flowName + " flow removed and unpublished." );
+
 	}
 
 	@Override
@@ -81,5 +89,7 @@ public class FlowManager implements FlowManagerMBean, NotificationListener {
 
 	private Flowadm flowadm = null;
 	private Publisher publisher = null;
+
+	private static final Logger logger = Logger.getLogger( FlowManager.class );
 
 }

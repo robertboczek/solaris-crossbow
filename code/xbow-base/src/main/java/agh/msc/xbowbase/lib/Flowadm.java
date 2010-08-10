@@ -3,7 +3,6 @@ package agh.msc.xbowbase.lib;
 import agh.msc.xbowbase.exception.ValidationException;
 import agh.msc.xbowbase.exception.XbowException;
 import agh.msc.xbowbase.flow.FlowInfo;
-import agh.msc.xbowbase.flow.FlowMBean;
 import java.util.List;
 import java.util.Map;
 

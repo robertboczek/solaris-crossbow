@@ -8,7 +8,6 @@ import agh.msc.xbowbase.flow.FlowManager;
 import agh.msc.xbowbase.jna.JNAFlowadm;
 import agh.msc.xbowbase.lib.Flowadm;
 import java.lang.management.ManagementFactory;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;

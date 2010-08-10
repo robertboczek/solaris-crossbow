@@ -49,16 +49,6 @@ void collect_flow_attrs( char* link_name,
                          dladm_flow_attr_t** flow_attrs, int* len );
 
 
-/**
- *
- * \return  NULL-terminated array of strings containing discovered flows' names
- *
- * \warning  Caller is responsible for freeing result[ 0 ], result[ 1 ], ...
- *           as well as result itself!
- */
-char** get_names();
-
-
 int set_property( char* flow,
                   char* key, char* values[], unsigned int values_len,
                   int temporary );
@@ -70,7 +60,7 @@ flow_infos_t* get_flows_info( char* link_name[] );
 int reset_property( char* flow, char* key, int temporary );
 
 
-key_value_pair_t* get_properties( char* flow );
+key_value_pairs_t* get_properties( char* flow );
 
 
 /*

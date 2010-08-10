@@ -2,6 +2,8 @@
 #define FLOWADM_WRAPPER_DEFS_H
 
 
+#define MAXFLOWPROPERTIESLEN 4
+
 #define LEN( array )  ( sizeof( array ) / sizeof( array[ 0 ] ) )
 
 
