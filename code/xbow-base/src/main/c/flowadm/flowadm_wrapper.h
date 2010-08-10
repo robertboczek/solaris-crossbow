@@ -64,7 +64,7 @@ int set_property( char* flow,
                   int temporary );
 
 
-flow_info_t* get_flows_info( char* link_name[], int* flow_info_len );
+flow_infos_t* get_flows_info( char* link_name[] );
 
 
 int reset_property( char* flow, char* key, int temporary );
@@ -80,7 +80,6 @@ key_value_pair_t* get_properties( char* flow );
 int enable_accounting();
 
 int disable_accounting();
-
 
 #endif
 

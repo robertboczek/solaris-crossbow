@@ -6,6 +6,7 @@ import agh.msc.xbowbase.flow.FlowInfo;
 import agh.msc.xbowbase.lib.Flowadm;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
+import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.ptr.IntByReference;
 import java.util.HashMap;
@@ -84,6 +85,7 @@ public class JNAFlowadm implements Flowadm {
 		// TODO-DAWID: use array of kvp
 
 		IFlowadm.KeyValuePair kvp = handle.get_properties( flowName );
+		handle.free_key_value_pair( kvp );
 
 		for ( String entry : kvp.value.split( "," ) ) {
 
@@ -131,15 +133,13 @@ public class JNAFlowadm implements Flowadm {
 
 		IntByReference flowInfoLen = new IntByReference();
 
-		IFlowadm.FlowInfoStruct flowInfoStruct = handle.get_flows_info(
-			( null == links ) ? null : ( String[] ) links.toArray(),
-			flowInfoLen
+		IFlowadm.FlowInfosStruct flowInfosStruct = handle.get_flows_info(
+			( null == links ) ? null : ( String[] ) links.toArray()
 		);
 
-		IFlowadm.FlowInfoStruct flowInfoStructArray[] = new IFlowadm.FlowInfoStruct[ flowInfoLen.getValue() ];
-		flowInfoStruct.toArray( flowInfoStructArray );
+		for ( Pointer p : flowInfosStruct.flowInfos.getPointerArray( 0, flowInfosStruct.flowInfosLen ) ) {
 
-		for ( IFlowadm.FlowInfoStruct struct : flowInfoStructArray ) {
+			IFlowadm.FlowInfoStruct struct = new IFlowadm.FlowInfoStruct( p );
 
 			Map< String, String > attrs = new HashMap< String, String >();
 
@@ -157,6 +157,8 @@ public class JNAFlowadm implements Flowadm {
 
 		}
 
+		handle.free_flow_infos( flowInfosStruct );
+
 		return res;
 
 	}
@@ -168,9 +170,20 @@ public class JNAFlowadm implements Flowadm {
 			public String key, value;
 		}
 
+		public class FlowInfosStruct extends Structure {
+			public Pointer flowInfos;
+			public int flowInfosLen;
+		}
+
 		public class FlowInfoStruct extends Structure {
 
 			public FlowInfoStruct() {}
+
+
+			public FlowInfoStruct( Pointer p ) {
+				super( p );
+				read();
+			}
 
 
 			public FlowInfoStruct( FlowInfo flowInfo ) {
@@ -203,13 +216,16 @@ public class JNAFlowadm implements Flowadm {
 		}
 
 		public void init();
-		public FlowInfoStruct get_flows_info( String links[], IntByReference flow_info_len );
+		public FlowInfosStruct get_flows_info( String links[] );
 		public int create( FlowInfoStruct flowInfo );
 		public int remove_flow( String flow, boolean temporary );
 
 		public int set_property( String flow, String key, String values[], int values_len, boolean temporary );
 		public int reset_property( String flow, String key, boolean temporary );
 		public KeyValuePair get_properties( String flow );
+
+		public void free_key_value_pair( KeyValuePair kvp );
+		public void free_flow_infos( FlowInfosStruct fis );
 
 	}
 

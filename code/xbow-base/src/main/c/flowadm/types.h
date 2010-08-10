@@ -17,7 +17,6 @@ typedef struct
 key_value_pair_t;
 
 
-// TODO-DAWID: replace pointers with fixed-size arrays?
 typedef struct
 {
 	char* name;
@@ -27,6 +26,14 @@ typedef struct
 	int temporary;
 }
 flow_info_t;
+
+
+typedef struct
+{
+	flow_info_t** flow_infos;
+	size_t flow_infos_len;
+}
+flow_infos_t;
 
 #endif
 

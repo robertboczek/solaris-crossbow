@@ -10,6 +10,7 @@
 #include "defs.h"
 #include "flowadm_wrapper.h"
 #include "functor.h"
+#include "memory.h"
 #include "types.h"
 
 
@@ -105,7 +106,7 @@ int collect_link_names( dladm_handle_t handle,
 }
 
 
-flow_info_t* get_flows_info( char* link_name[], int* flow_info_len )
+flow_infos_t* get_flows_info( char* link_name[] )
 {
 	char *links[ 10 ];
 	char** links_it;
@@ -134,11 +135,7 @@ flow_info_t* get_flows_info( char* link_name[], int* flow_info_len )
 		memcpy( links, link_name, sizeof( link_name[ 0 ] ) * links_len );
 	}
 
-	// TODO-DAWID: free it!
-	// flow_info_t* flow_info = malloc( sizeof( flow_info_t ) * flow_attrs_len );
-	// *flow_info_len = flow_attrs_len;
-
-	flow_info_t* flow_info = malloc( sizeof( flow_info_t ) * 100 );
+	flow_infos_t* flow_infos = malloc_flow_infos( 100 );
 
 	int flow_info_it = 0;
 
@@ -151,56 +148,57 @@ flow_info_t* get_flows_info( char* link_name[], int* flow_info_len )
 
 		for ( i = 0; i < flow_attrs_len; ++i )
 		{
-			flow_info[ flow_info_it ].name = malloc( MAXFLOWNAMELEN );
-			strcpy( flow_info[ flow_info_it ].name, flow_attrs[ i ].fa_flowname );
+			flow_info_t* flow_info = flow_infos->flow_infos[ flow_info_it ];
 
-			flow_info[ flow_info_it ].link = malloc( MAXLINKNAMELEN );
-			strcpy( flow_info[ flow_info_it ].link, links[ j ] );
+			strcpy( flow_info->name, flow_attrs[ i ].fa_flowname );
+
+			strcpy( flow_info->link, links[ j ] );
 
 			// Attributes processing
 			
-			flow_info[ flow_info_it ].attrs = malloc( 100 );  // TODO-DAWID: refactor
-			flow_info[ flow_info_it ].attrs[ 0 ] = '\0';
+			flow_info->attrs[ 0 ] = '\0';
 
 			// Local IP
 
 			if ( flow_attrs[ i ].fa_flow_desc.fd_mask & FLOW_IP_LOCAL )
 			{
-				strcat( flow_info[ flow_info_it ].attrs, "local_ip=" );
+				strcat( flow_info->attrs, "local_ip=" );
 				dladm_flow_attr_ip2str( flow_attrs + i,
-																flow_info[ flow_info_it ].attrs + strlen( flow_info[ flow_info_it ].attrs ), INET6_ADDRSTRLEN + 4 );
+																flow_info->attrs + strlen( flow_info->attrs ),
+				                        INET6_ADDRSTRLEN + 4 );
 			}
 
 			// Remote IP
 
 			if ( flow_attrs[ i ].fa_flow_desc.fd_mask & FLOW_IP_REMOTE )
 			{
-				strcat( flow_info[ flow_info_it ].attrs, "remote_ip=" );
+				strcat( flow_info->attrs, "remote_ip=" );
 				dladm_flow_attr_ip2str( flow_attrs + i,
-																flow_info[ flow_info_it ].attrs + strlen( flow_info[ flow_info_it ].attrs ), INET6_ADDRSTRLEN + 4 );
+																flow_info->attrs + strlen( flow_info->attrs ),
+				                        INET6_ADDRSTRLEN + 4 );
 			}
 
 			// Protocol
 
 			if ( flow_attrs[ i ].fa_flow_desc.fd_mask & FLOW_IP_PROTOCOL )
 			{
-				strcat( flow_info[ flow_info_it ].attrs, "protocol=" );
-				strcat( flow_info[ flow_info_it ].attrs,
+				strcat( flow_info->attrs, "protocol=" );
+				strcat( flow_info->attrs,
 								dladm_proto2str( flow_attrs[ i ].fa_flow_desc.fd_protocol ) );
 			}
 
 			// TODO-DAWID: all attrs
 
-			flow_info[ flow_info_it ].props = "";
-			flow_info[ flow_info_it ].temporary = 0;
+			// flow_info[ flow_info_it ].props = "";
+			flow_info->temporary = 0;
 
 			++flow_info_it;
 		}
 	}
 
-	*flow_info_len = flow_info_it;
+	flow_infos->flow_infos_len = flow_info_it;
 
-	return flow_info;
+	return flow_infos;
 }
 
 
@@ -263,7 +261,7 @@ key_value_pair_t* get_properties( char* flow )
 
 	key_value_pair_t* res = malloc( sizeof( key_value_pair_t ) );
 
-	res->key = "props";
+	res->key = NULL;
 	res->value = arg.out;
 
 	return res;
