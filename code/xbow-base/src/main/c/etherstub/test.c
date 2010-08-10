@@ -46,11 +46,9 @@ int main( int agrc, char** argv )
 			type = OVER;
 		}
 
-		char *value = (char*)malloc(sizeof(char)*20);
-		if(get_etherstub_parameter(argv[2], type, &value) == RESULT_OK)
-		{
-			printf("%s \n", value);
-		}
+		char *value = get_etherstub_parameter(argv[2], type);
+		printf("%s \n", value);
+
 		free(value);
 	}
 	else if(strcmp(argv[1], "statistic") == RESULT_OK)
@@ -71,13 +69,8 @@ int main( int agrc, char** argv )
 			type = OERRORS;
 		}
 
-		char *value = (char*)malloc(sizeof(char)*20);
-		value[0] = '\0';
-
-		if(get_etherstub_statistic(argv[2], type, &value) == RESULT_OK)
-		{
-			printf("%s \n", value);
-		}
+		char *value = get_etherstub_statistic(argv[2], type);
+		printf("%s \n", value);
 		free(value);
 	}
 	else if(strcmp(argv[1], "setproperty") == RESULT_OK)
@@ -118,13 +111,8 @@ int main( int agrc, char** argv )
 			type = PRIORITY;
 		}
 
-		char *value = (char*)malloc(sizeof(char)*20);
-
-		if(get_etherstub_property(argv[2], type, &value) == RESULT_OK)
-		{
-			printf("Property value is: %s \n", value);
-		}
-		
+		char *value = get_etherstub_property(argv[2], type);
+		printf("Property value is: %s \n", value);
 		free(value);
 	}
 	return 0;

@@ -1,11 +1,14 @@
-
 package agh.msc.xbowbase.etherstub;
 
+import agh.msc.xbowbase.etherstub.enums.EtherstubParameters;
+import agh.msc.xbowbase.etherstub.enums.EtherstubProperties;
+import agh.msc.xbowbase.etherstub.enums.EtherstubStatistics;
+import agh.msc.xbowbase.exception.EtherstubException;
 import java.util.Map;
 
 /**
  *
- * @author robert
+ * @author robert boczekk
  */
 public interface EtherstubMBean {
 
@@ -13,10 +16,9 @@ public interface EtherstubMBean {
 
     public boolean isTemporary();
 
-    public String getRootDir();
+    public Map<EtherstubProperties, String> getProperties() throws EtherstubException;
 
-    public Map<String, String> getProperties();
-    
-    public Map<String, String> getParameters();
+    public Map<EtherstubParameters, String> getParameters() throws EtherstubException;
 
+    public Map<EtherstubStatistics, String> getStatistics() throws EtherstubException;
 }

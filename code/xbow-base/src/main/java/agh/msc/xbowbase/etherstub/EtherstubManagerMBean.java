@@ -1,19 +1,23 @@
-
 package agh.msc.xbowbase.etherstub;
 
+import agh.msc.xbowbase.exception.EtherstubException;
 import java.util.List;
 
 /**
  *
- * @author robert
+ * @author robert boczek
  */
 public interface EtherstubManagerMBean {
 
-    void create(EtherstubMBean etherstubMBean);
+    void create(EtherstubMBean etherstubMBean) throws EtherstubException;
 
-    void delete(String name, boolean temporary);
+    void delete(String name, boolean temporary) throws EtherstubException;
 
-    List<String> getEtherstubsNames();
+    List<String> getEtherstubsNames() throws EtherstubException;
 
-    void discover();
+    /**
+     * Removes unexisting beans and registers new ones
+     * @throws EtherstubException
+     */
+    void discover() throws EtherstubException;
 }
