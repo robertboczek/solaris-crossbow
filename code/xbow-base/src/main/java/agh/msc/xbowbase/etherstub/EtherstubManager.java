@@ -132,8 +132,10 @@ public class EtherstubManager implements EtherstubManagerMBean {
      * @param etherstubMBean New etherstub to be registered
      */
     private void registerNewEtherstubMBean(EtherstubMBean etherstubMBean) {
-        //register in the mbean server
-        publisher.publish(etherstubMBean);
+        if(publisher != null){
+            //register in the mbean server
+            publisher.publish(etherstubMBean);
+        }
         //add to the set
         this.etherstubsSet.add(etherstubMBean);
     }
@@ -146,7 +148,9 @@ public class EtherstubManager implements EtherstubManagerMBean {
 
         for(EtherstubMBean etherstubMBean : etherstubMBeansToRemove){
             try {
-                this.publisher.unpublish(etherstubMBean);
+                if(publisher != null){
+                    this.publisher.unpublish(etherstubMBean);
+                }
             } catch (NotPublishedException ex) {
                 logger.error("Etherstub object : " + etherstubMBean + " has not been registered in the mbean server");
             }
