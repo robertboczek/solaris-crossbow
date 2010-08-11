@@ -11,6 +11,7 @@ import javax.management.Notification;
 import javax.management.NotificationListener;
 import org.apache.log4j.Logger;
 
+
 /**
  * The class implements NicManagerMBean functionality.
  *
@@ -18,17 +19,13 @@ import org.apache.log4j.Logger;
  */
 public class NicManager implements NicManagerMBean, NotificationListener {
 
-    /** Logger */
-    private static final Logger logger = Logger.getLogger(Nic.class);
-
-
 	/**
 	 * @see  NicManagerMBean#getNicsList()
 	 */
 	@Override
 	public List< String > getNicsList() {
-            //@todo use jna library to get list of nic names
-            throw new UnsupportedOperationException( "Not supported yet." );
+		//@todo use jna library to get list of nic names
+		throw new UnsupportedOperationException( "Not supported yet." );
 	}
 
 
@@ -44,11 +41,11 @@ public class NicManager implements NicManagerMBean, NotificationListener {
 
 				List< NicInfo > nicsInfo = nicHelper.getNicsInfo();
 
-				// logger.debug( nicsInfo.size() + " nic(s) discovered." );
+				logger.debug( nicsInfo.size() + " nic(s) discovered." );
 
 				for ( NicInfo nicInfo : nicsInfo ) {
 
-					// Create new Flow object, initialize and register it.
+					// Create new Nic object, initialize and register it.
 
 					Nic nic = NicToNicInfoTranslator.toNic( nicInfo );
 					nic.setNicHelper( nicHelper );
@@ -57,7 +54,7 @@ public class NicManager implements NicManagerMBean, NotificationListener {
 
 				}
 
-				// Unpublish flows user deleted manually.
+				// Unpublish nics user deleted.
 
 				Set< String > published = new HashSet< String >();
 				for ( Object nic : publisher.getPublished() ) {
@@ -66,7 +63,7 @@ public class NicManager implements NicManagerMBean, NotificationListener {
 
 				Set< String > discovered = new HashSet< String >();
 				for ( Object nicInfo : nicsInfo ) {
-					discovered.add( ( ( NicInfo ) nicInfo ).name );
+					discovered.add( ( ( NicInfo ) nicInfo ).getName() );
 				}
 
 				published.removeAll( discovered );
@@ -75,7 +72,7 @@ public class NicManager implements NicManagerMBean, NotificationListener {
 					try {
 						publisher.unpublish( ( String ) nicName );
 					} catch ( NotPublishedException e ) {
-						// logger.fatal( "Error while removing stale flows.", e );
+						logger.fatal( "Error while removing stale nics.", e );
 					}
 
 				}
@@ -110,5 +107,7 @@ public class NicManager implements NicManagerMBean, NotificationListener {
 
 	Publisher publisher;
 	NicHelper nicHelper;
+
+	private static final Logger logger = Logger.getLogger( Nic.class );
 
 }

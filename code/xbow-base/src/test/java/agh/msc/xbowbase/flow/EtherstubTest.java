@@ -5,8 +5,8 @@ import agh.msc.xbowbase.enums.LinkParameters;
 import agh.msc.xbowbase.enums.LinkProperties;
 import agh.msc.xbowbase.enums.LinkStatistics;
 import agh.msc.xbowbase.exception.EtherstubException;
-import agh.msc.xbowbase.jna.JNAEtherstubadm;
-import agh.msc.xbowbase.lib.Etherstubadm;
+import agh.msc.xbowbase.jna.JNAEtherstubHelper;
+import agh.msc.xbowbase.lib.EtherstubHelper;
 import java.util.Map;
 import org.junit.After;
 import org.junit.Before;
@@ -20,13 +20,13 @@ import static org.junit.Assert.*;
  */
 public class EtherstubTest {
 
-    private Etherstubadm etherstubadm;
+    private EtherstubHelper etherstubadm;
     private Etherstub etherstub;
 
     @Before
     public void setUp() {
 
-        etherstubadm = mock(JNAEtherstubadm.class);
+        etherstubadm = mock(JNAEtherstubHelper.class);
         etherstub = new Etherstub("etherstub1", false);
         etherstub.setEtherstubadm(etherstubadm);
     }

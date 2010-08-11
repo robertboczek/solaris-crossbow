@@ -2,7 +2,7 @@ package agh.msc.xbowbase.flow;
 
 import agh.msc.xbowbase.exception.NoSuchFlowException;
 import agh.msc.xbowbase.exception.ValidationException;
-import agh.msc.xbowbase.lib.Flowadm;
+import agh.msc.xbowbase.lib.FlowHelper;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -245,7 +245,7 @@ public class Flow implements FlowMBean {
 	 *
 	 * @param  flowadm  flow helper
 	 */
-	public void setFlowadm( Flowadm flowadm ) {
+	public void setFlowadm( FlowHelper flowadm ) {
 		this.flowadm = flowadm;
 	}
 
@@ -256,7 +256,7 @@ public class Flow implements FlowMBean {
 	protected Map< String, String > props = new HashMap< String, String >();
 	protected boolean temporary;
 
-	private Flowadm flowadm = null;
+	private FlowHelper flowadm = null;
 
 	private static final Logger logger = Logger.getLogger( Flow.class );
 

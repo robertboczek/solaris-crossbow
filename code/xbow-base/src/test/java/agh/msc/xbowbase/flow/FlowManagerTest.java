@@ -1,7 +1,7 @@
 package agh.msc.xbowbase.flow;
 
 import agh.msc.xbowbase.flow.util.FlowToFlowInfoTranslator;
-import agh.msc.xbowbase.lib.Flowadm;
+import agh.msc.xbowbase.lib.FlowHelper;
 import agh.msc.xbowbase.publisher.Publisher;
 import agh.msc.xbowbase.publisher.exception.NotPublishedException;
 import java.util.Arrays;
@@ -40,7 +40,7 @@ public class FlowManagerTest {
 	@Before
 	public void setUp() {
 
-		helper = mock( Flowadm.class );
+		helper = mock( FlowHelper.class );
 		publisher = mock( Publisher.class );
 
 		flowManager = new FlowManager();
@@ -121,7 +121,7 @@ public class FlowManagerTest {
 
 
 	private FlowManager flowManager;
-	private Flowadm helper;
+	private FlowHelper helper;
 	private Publisher publisher;
 
 }

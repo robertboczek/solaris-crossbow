@@ -5,9 +5,9 @@ import agh.msc.xbowbase.flow.Flow;
 import agh.msc.xbowbase.flow.FlowAccounting;
 import agh.msc.xbowbase.publisher.FlowMBeanPublisher;
 import agh.msc.xbowbase.flow.FlowManager;
-import agh.msc.xbowbase.jna.JNAFlowadm;
-import agh.msc.xbowbase.jna.JNANic;
-import agh.msc.xbowbase.lib.Flowadm;
+import agh.msc.xbowbase.jna.JNAFlowHelper;
+import agh.msc.xbowbase.jna.JNALinkHelper;
+import agh.msc.xbowbase.lib.FlowHelper;
 import agh.msc.xbowbase.lib.NicHelper;
 import agh.msc.xbowbase.link.NicManager;
 import agh.msc.xbowbase.publisher.NicMBeanPublisher;
@@ -34,8 +34,8 @@ public class App {
 
 		// Initialize flowadm wrapper.
 
-		Flowadm flowadm = new JNAFlowadm();
-		NicHelper nicHelper = new JNANic();
+		FlowHelper flowadm = new JNAFlowHelper();
+		NicHelper nicHelper = new JNALinkHelper();
 
 		// Create FlowManager.
 

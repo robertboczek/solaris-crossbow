@@ -4,9 +4,9 @@ import agh.msc.xbowbase.exception.NoSuchFlowException;
 import agh.msc.xbowbase.exception.ValidationException;
 import agh.msc.xbowbase.exception.XbowException;
 import agh.msc.xbowbase.flow.FlowInfo;
-import agh.msc.xbowbase.jna.mapping.IFlowadm;
+import agh.msc.xbowbase.jna.mapping.FlowHandle;
 import agh.msc.xbowbase.jna.util.MapToKeyValuePairsTranslator;
-import agh.msc.xbowbase.lib.Flowadm;
+import agh.msc.xbowbase.lib.FlowHelper;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import java.util.LinkedList;
@@ -20,14 +20,14 @@ import org.apache.log4j.Logger;
  *
  * @author cieplik
  */
-public class JNAFlowadm implements Flowadm {
+public class JNAFlowHelper implements FlowHelper {
 
 	/**
 	 * Creates the helper object and initializes underlying handler.
 	 */
-	public JNAFlowadm() {
+	public JNAFlowHelper() {
 
-		handle = ( IFlowadm ) Native.loadLibrary( LIB_NAME, IFlowadm.class );
+		handle = ( FlowHandle ) Native.loadLibrary( LIB_NAME, FlowHandle.class );
 		handle.init();
 
 	}
@@ -38,13 +38,13 @@ public class JNAFlowadm implements Flowadm {
 	 *
 	 * @param  handle  JNA handle
 	 */
-	public JNAFlowadm( IFlowadm handle ) {
+	public JNAFlowHelper( FlowHandle handle ) {
 		this.handle = handle;
 	}
 
 
 	/**
-	 * @see  Flowadm#remove(java.lang.String, boolean)
+	 * @see  FlowHelper#remove(java.lang.String, boolean)
 	 */
 	@Override
 	public void remove( String flow, boolean temporary ) throws XbowException,
@@ -69,7 +69,7 @@ public class JNAFlowadm implements Flowadm {
 
 
 	/**
-	 * @see  Flowadm#getAttributes(java.lang.String)
+	 * @see  FlowHelper#getAttributes(java.lang.String)
 	 */
 	@Override
 	public Map< String, String > getAttributes( String flowName ) throws NoSuchFlowException {
@@ -88,7 +88,7 @@ public class JNAFlowadm implements Flowadm {
 
 
 	/**
-	 * @see  Flowadm#setProperties(java.lang.String, java.util.Map, boolean)
+	 * @see  FlowHelper#setProperties(java.lang.String, java.util.Map, boolean)
 	 */
 	@Override
 	public void setProperties( String flowName, Map< String, String > properties, boolean temporary ) throws ValidationException {
@@ -117,7 +117,7 @@ public class JNAFlowadm implements Flowadm {
 
 
 	/**
-	 * @see  Flowadm#getProperties(java.lang.String)
+	 * @see  FlowHelper#getProperties(java.lang.String)
 	 */
 	@Override
 	public Map< String, String > getProperties( String flowName ) throws NoSuchFlowException {
@@ -126,7 +126,7 @@ public class JNAFlowadm implements Flowadm {
 
 		// Query the library.
 
-		IFlowadm.KeyValuePairsStruct kvps = handle.get_properties( flowName );
+		FlowHandle.KeyValuePairsStruct kvps = handle.get_properties( flowName );
 
 		Map< String, String > properties = MapToKeyValuePairsTranslator.toMap( kvps );
 
@@ -140,7 +140,7 @@ public class JNAFlowadm implements Flowadm {
 
 
 	/**
-	 * @see  Flowadm#resetProperties(java.lang.String, java.util.List, boolean)
+	 * @see  FlowHelper#resetProperties(java.lang.String, java.util.List, boolean)
 	 */
 	@Override
 	public void resetProperties( String flowName, List< String > properties, boolean temporary )
@@ -169,12 +169,12 @@ public class JNAFlowadm implements Flowadm {
 
 
 	/**
-	 * @see  Flowadm#create(agh.msc.xbowbase.flow.FlowInfo)
+	 * @see  FlowHelper#create(agh.msc.xbowbase.flow.FlowInfo)
 	 */
 	@Override
 	public void create( FlowInfo flowInfo ) throws XbowException {
 
-		int rc = handle.create( new IFlowadm.FlowInfoStruct( flowInfo ), flowInfo.isTemporary() );
+		int rc = handle.create( new FlowHandle.FlowInfoStruct( flowInfo ), flowInfo.isTemporary() );
 
 		logger.debug( "create returned with rc == " + rc + " ." );
 
@@ -186,7 +186,7 @@ public class JNAFlowadm implements Flowadm {
 
 
 	/**
-	 * @see  Flowadm#getFlowsInfo()
+	 * @see  FlowHelper#getFlowsInfo()
 	 */
 	@Override
 	public List< FlowInfo > getFlowsInfo() {
@@ -195,7 +195,7 @@ public class JNAFlowadm implements Flowadm {
 
 
 	/**
-	 * @see  Flowadm#getFlowsInfo(java.util.List)
+	 * @see  FlowHelper#getFlowsInfo(java.util.List)
 	 */
 	@Override
 	public List< FlowInfo > getFlowsInfo( List< String > links ) {
@@ -204,7 +204,7 @@ public class JNAFlowadm implements Flowadm {
 
 		// Call helper function.
 
-		IFlowadm.FlowInfosStruct flowInfosStruct = handle.get_flows_info(
+		FlowHandle.FlowInfosStruct flowInfosStruct = handle.get_flows_info(
 			( null == links ) ? null : ( String[] ) links.toArray()
 		);
 
@@ -214,7 +214,7 @@ public class JNAFlowadm implements Flowadm {
 
 		for ( Pointer p : flowInfosStruct.flowInfos.getPointerArray( 0, flowInfosStruct.flowInfosLen ) ) {
 
-			IFlowadm.FlowInfoStruct struct = new IFlowadm.FlowInfoStruct( p );
+			FlowHandle.FlowInfoStruct struct = new FlowHandle.FlowInfoStruct( p );
 
 			// Append to the resulting list.
 
@@ -239,8 +239,8 @@ public class JNAFlowadm implements Flowadm {
 
 	private static final String LIB_NAME = "flowadm_wrapper";
 
-	IFlowadm handle = null;
+	FlowHandle handle = null;
 
-	private static final Logger logger = Logger.getLogger( JNAFlowadm.class );
+	private static final Logger logger = Logger.getLogger( JNAFlowHelper.class );
 
 }

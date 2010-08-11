@@ -12,7 +12,7 @@ import com.sun.jna.Structure;
  *
  * @author cieplik
  */
-public interface IFlowadm extends Library {
+public interface FlowHandle extends Library {
 
 	/*
 	 * Types

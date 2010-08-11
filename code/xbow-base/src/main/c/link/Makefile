@@ -19,7 +19,7 @@ LIBFNAME=lib$(BASENAME).so
 
 all: $(LIBFNAME)
 
-$(LIBFNAME): link.o
+$(LIBFNAME): link.o memory.o
 	$(CC) $(CFLAGS) -fPIC -shared -o $(LIBFNAME) $^ $(LIBS)
 
 test: test.c $(LIBFNAME)

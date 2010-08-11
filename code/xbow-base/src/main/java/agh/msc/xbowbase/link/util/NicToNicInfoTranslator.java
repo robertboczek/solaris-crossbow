@@ -14,7 +14,7 @@ public class NicToNicInfoTranslator {
 
 		Nic nic = new Nic();
 
-		nic.setName( nicInfo.name );
+		nic.setName( nicInfo.getName() );
 
 		return nic;
 

@@ -11,7 +11,7 @@ import agh.msc.xbowbase.exception.EtherstubException;
  * Used to manage etherstub's
  * @author robert boczek
  */
-public interface Etherstubadm extends Library {
+public interface EtherstubHelper extends Library {
 
     /**
      *  Removes etherstub with specified name

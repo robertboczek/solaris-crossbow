@@ -3,7 +3,7 @@ package agh.msc.xbowbase.flow;
 import agh.msc.xbowbase.publisher.Publisher;
 import agh.msc.xbowbase.exception.XbowException;
 import agh.msc.xbowbase.flow.util.FlowToFlowInfoTranslator;
-import agh.msc.xbowbase.lib.Flowadm;
+import agh.msc.xbowbase.lib.FlowHelper;
 import agh.msc.xbowbase.publisher.exception.NotPublishedException;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -177,7 +177,7 @@ public class FlowManager implements FlowManagerMBean, NotificationListener {
 	 *
 	 * @param  flowadm  helper used to manipulate flows
 	 */
-	public void setFlowadm( Flowadm flowadm ) {
+	public void setFlowadm( FlowHelper flowadm ) {
 		this.flowadm = flowadm;
 	}
 
@@ -192,7 +192,7 @@ public class FlowManager implements FlowManagerMBean, NotificationListener {
 	}
 
 
-	private Flowadm flowadm = null;
+	private FlowHelper flowadm = null;
 	private Publisher publisher = null;
 
 	private static final Logger logger = Logger.getLogger( FlowManager.class );

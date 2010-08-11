@@ -18,4 +18,9 @@ public class NotPublishedException extends Exception {
 		super( message );
 	}
 
+
+	public NotPublishedException( Object o ) {
+		super( o.toString() );
+	}
+
 }
