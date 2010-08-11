@@ -7,7 +7,6 @@
 #include <libdlstat.h>
 #include <string.h>
 #include <stropts.h>
-#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/types.h>

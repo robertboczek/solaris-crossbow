@@ -4,32 +4,6 @@
 #define MAXLENGTH	100
 
 dladm_handle_t handle = 0;
-int number_of_elements = 0;
-/* array for etherstub names */
-char **names_array = NULL;
-
-/**
- * Struture with vnic states attributes
-*/
-typedef struct show_vnic_state {
-	datalink_id_t	vs_vnic_id;
-	datalink_id_t	vs_link_id;
-	char		vs_vnic[MAXLINKNAMELEN];
-	char		vs_link[MAXLINKNAMELEN];
-	boolean_t	vs_parsable;
-	boolean_t	vs_found;
-	boolean_t	vs_firstonly;
-	boolean_t	vs_donefirst;
-	boolean_t	vs_stats;
-	boolean_t	vs_printstats;
-	pktsum_t	vs_totalstats;
-	pktsum_t	vs_prevstats[MAXVNIC];
-	boolean_t	vs_etherstub;
-	dladm_status_t	vs_status;
-	uint32_t	vs_flags;
-	ofmt_handle_t	vs_ofmt;
-} show_vnic_state_t;
-
 
 /**
  * \brief  Initializes the library.
@@ -103,30 +77,32 @@ etherstub_return_type_t create_etherstub( char* name, int temporary )
 
 int get_name(const char *name, void *prop){
 	
-	names_array[number_of_elements] = (char*)malloc(sizeof(char)*(strlen(name)+1));
-	strcpy(names_array[number_of_elements++], name);
+	etherstub_names_t* etherstub_names =  (etherstub_names_t*)prop;
+	etherstub_names->array[etherstub_names->number_of_elements] = (char*)malloc(sizeof(char)*(strlen(name)+1));
+	strcpy(etherstub_names->array[etherstub_names->number_of_elements++], name);
 }
 
 /** Gets all names of etherstubs in the system */
 char** get_etherstub_names()
 {
 
-	show_vnic_state_t	state;
 	uint32_t		flags = DLADM_OPT_ACTIVE;
 
-	names_array = (char**)malloc(sizeof(char*) * MAXVNIC);
+	etherstub_names_t etherstub_names;
 
-	number_of_elements = 0;
+	etherstub_names.array = (char**)malloc(sizeof(char*) * MAXVNIC);
+	etherstub_names.number_of_elements = 0;
 
 	//walks through all etherstub's and invokes get_name function
-	if( dladm_walk(get_name, handle, &state,
+	if( dladm_walk(get_name, handle, &etherstub_names,
 	    DATALINK_CLASS_ETHERSTUB, DATALINK_ANY_MEDIATYPE, flags) != DLADM_STATUS_OK){
 		return LIST_ETHERSTUB_NAMES_ERROR;
 	}
 
-	names_array[number_of_elements] = NULL;
+	//the element after the last one must be null
+	etherstub_names.array[etherstub_names.number_of_elements] = NULL;
 
-	return names_array;
+	return etherstub_names.array;
 }
 
 char* get_etherstub_parameter( char *name, etherstub_parameter_type_t parameter)

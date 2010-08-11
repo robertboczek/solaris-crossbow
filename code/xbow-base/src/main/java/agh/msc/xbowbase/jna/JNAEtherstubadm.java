@@ -81,8 +81,9 @@ public class JNAEtherstubadm implements Etherstubadm {
         Pointer pointer = handle.get_etherstub_names();
 
         if(pointer != null){
+            
             String []array = pointer.getStringArray(0);
-            pointer.clear(0);
+            handle.free_char_array(pointer);
             return array;
         }else{
             return new String[]{};
@@ -98,7 +99,7 @@ public class JNAEtherstubadm implements Etherstubadm {
         logger.info("Trying to read etherstub's : " + name + ", parameter : " + parameter);
 
         Pointer p = handle.get_etherstub_parameter(name, parameter.ordinal());
-        return (p != null) ? p.getString(0) : null;
+        return getStringFromPointer(p);
     }
 
     /**
@@ -110,7 +111,7 @@ public class JNAEtherstubadm implements Etherstubadm {
         logger.info("Trying to read etherstub's : " + name + ", statistic : " + statistic);
 
         Pointer p = handle.get_etherstub_statistic(name, statistic.ordinal());
-        return (p != null) ? p.getString(0) : null;
+        return getStringFromPointer(p);
     }
 
     /**
@@ -149,7 +150,7 @@ public class JNAEtherstubadm implements Etherstubadm {
         logger.info("Trying to read etherstub's : " + name + ", property : " + property);
 
         Pointer p = handle.get_etherstub_property( name, property.ordinal());
-        return (p != null) ? p.getString(0) : null;
+        return getStringFromPointer(p);
     }
 
     /**
@@ -159,6 +160,18 @@ public class JNAEtherstubadm implements Etherstubadm {
      */
     private int checkPersistenceType(boolean temporary) {
         return (temporary) ? 1 : 0;
+    }
+
+    /**
+     * Method return string on which Pointer p points and frees the memory allocated by the library
+     * @param p Pointer from the JNA library
+     * @return String on which pointer points
+     */
+    private String getStringFromPointer(Pointer p) {
+        String value = (p != null) ? p.getString(0) : null;
+        handle.free_char_string(p);
+
+        return value;
     }
 
     /**
@@ -181,5 +194,9 @@ public class JNAEtherstubadm implements Etherstubadm {
         public Pointer get_etherstub_property( String name, int property);
 
         public int set_etherstub_property( String name, int property, String value );
+
+        public void free_char_array( Pointer pointer );
+
+        public void free_char_string( Pointer pointer );
     }
 }

@@ -20,7 +20,7 @@ LIBFNAME=lib$(BASENAME).so
 
 all: $(LIBFNAME) test
 
-$(LIBFNAME): etherstub_wrapper.o
+$(LIBFNAME): etherstub_wrapper.o memory.o
 	$(CC) $(CFLAGS) -fPIC -shared -o $(LIBFNAME) $^ $(LIBS)
 
 test: test.c $(LIBFNAME)

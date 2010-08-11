@@ -67,7 +67,7 @@ public interface Etherstubadm extends Library {
      * Returns value of requested property
      * @param name Name of etherstub
      * @param property Type of requested property
-     * @return Value of requested
+     * @return Value of requested property
      * @throws EtherstubException Exception thrown when error while reading value occur
      */
     public String getEtherstubProperty(String name, EtherstubProperties property) throws EtherstubException;
