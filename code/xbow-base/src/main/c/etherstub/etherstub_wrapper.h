@@ -60,7 +60,7 @@ char** get_etherstub_names( );
  * \return  will contain value of requested parameter
  * 		caller is responsible for freeing the memory
 */
-char* get_etherstub_parameter( char *name, etherstub_parameter_type_t parameter);
+char* get_etherstub_parameter( char *name, char* parameter);
 
 /**
  * \brief Returns requested etherstub statistics
@@ -70,7 +70,7 @@ char* get_etherstub_parameter( char *name, etherstub_parameter_type_t parameter)
  * \return  will contain value of requested statistic
  * 		caller is responsible for freeing the memory
 */
-char* get_etherstub_statistic( char *name, etherstub_statistic_type_t property);
+char* get_etherstub_statistic( char *name, char* property);
 /**
  * \brief Sets requested etherstub property
  * \param  name		etherstub name
@@ -79,7 +79,7 @@ char* get_etherstub_statistic( char *name, etherstub_statistic_type_t property);
  *
  * \return  etherstub_return_type_t See types.h to see more details
 */
-etherstub_return_type_t set_etherstub_property( char *name, etherstub_property_type_t property, char *value );
+etherstub_return_type_t set_etherstub_property( char *name, char* property, char *value );
 /**
  * \brief Returns requested etherstub property
  * \param  name		etherstub name
@@ -89,5 +89,5 @@ etherstub_return_type_t set_etherstub_property( char *name, etherstub_property_t
  * 		caller is responsible for freeing the memory
 
 */
-char* get_etherstub_property( char *name, etherstub_property_type_t property);
+char* get_etherstub_property( char *name, char* property);
 #endif

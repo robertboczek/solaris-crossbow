@@ -1,6 +1,6 @@
 package agh.msc.xbowbase.jna;
 
-import agh.msc.xbowbase.etherstub.enums.EtherstubProperties;
+import agh.msc.xbowbase.enums.LinkProperties;
 import agh.msc.xbowbase.exception.EtherstubException;
 import agh.msc.xbowbase.lib.Etherstubadm;
 import org.junit.After;
@@ -81,29 +81,29 @@ public class JNAEtherstubadmTest {
     @Test(expected=EtherstubException.class)
     public void testTryingToSetPropertyToUnexistingEtherstub() throws EtherstubException{
 
-        when(handle.set_etherstub_property(anyString(), anyInt(), anyString()))
+        when(handle.set_etherstub_property(anyString(), anyString(), anyString()))
                 .thenReturn(EtherstubReturn.INVALID_ETHERSTUB_NAME.ordinal());
 
-        etherstubadm.setEtherstubProperty("efdsfdsjkfdsjlk", EtherstubProperties.PRIORITY, "high");
+        etherstubadm.setEtherstubProperty("efdsfdsjkfdsjlk", LinkProperties.PRIORITY, "high");
     }
 
     @Test(expected=EtherstubException.class)
     public void testTryingToSetInvalidPropertyValue() throws EtherstubException{
 
-        when(handle.set_etherstub_property(anyString(), anyInt(), anyString()))
+        when(handle.set_etherstub_property(anyString(), anyString(), anyString()))
                 .thenReturn(EtherstubReturn.ETHERSTUB_PROPERTY_FAILURE.ordinal());
 
-        etherstubadm.setEtherstubProperty("etherstub1", EtherstubProperties.PRIORITY, "veryhigh");
+        etherstubadm.setEtherstubProperty("etherstub1", LinkProperties.PRIORITY, "veryhigh");
     }
 
     
     @Test
     public void testSucessfulTryingToSetPropertyToEtherstub() throws EtherstubException{
 
-        when(handle.set_etherstub_property(anyString(), anyInt(), anyString()))
+        when(handle.set_etherstub_property(anyString(), anyString(), anyString()))
                 .thenReturn(EtherstubReturn.RESULT_OK.ordinal());
 
-        etherstubadm.setEtherstubProperty("etherstub1", EtherstubProperties.PRIORITY, "high");
+        etherstubadm.setEtherstubProperty("etherstub1", LinkProperties.PRIORITY, "high");
     }
     
 }

@@ -105,7 +105,7 @@ char** get_etherstub_names()
 	return etherstub_names.array;
 }
 
-char* get_etherstub_parameter( char *name, etherstub_parameter_type_t parameter)
+char* get_etherstub_parameter( char *name, char* parameter)
 {
 
 	dladm_status_t status;
@@ -118,38 +118,19 @@ char* get_etherstub_parameter( char *name, etherstub_parameter_type_t parameter)
 	if (status != DLADM_STATUS_OK)
 		return NULL;
 
-	char *parameter_type = (char*)malloc(MAXLENGTH);
 	char *value = (char*)malloc(MAXLENGTH);
 
-	switch(parameter){
-		case BRIDGE:
-			strcpy(parameter_type, "BRIDGE");
-			break;
-		case OVER:
-			strcpy(parameter_type, "OVER");
-			break;
-		case STATE:
-			strcpy(parameter_type, "STATE");
-			break;
-		case MTU:
-			strcpy(parameter_type, "MTU");
-			break;
-	}
-
 	status = dladm_get_linkprop(handle, linkid,
-			    DLADM_PROP_VAL_CURRENT, parameter_type, &value, &maxpropertycnt);
-
-	free(parameter_type);
+			    DLADM_PROP_VAL_CURRENT, parameter, &value, &maxpropertycnt);
 
 	if (status != DLADM_STATUS_OK){
 		free(value);
 		value = NULL;
 	}
-
 	return value;
 }
 
-char* get_etherstub_statistic( char *name, etherstub_statistic_type_t property){
+char* get_etherstub_statistic( char *name, char* property){
 
 	dladm_status_t status;
 	datalink_id_t linkid;
@@ -176,51 +157,24 @@ char* get_etherstub_statistic( char *name, etherstub_statistic_type_t property){
 	(void) kstat_close(kcp);
 	char* tmp = (char*)malloc(sizeof(char)*MAXLENGTH);
 
-	switch(property){
-		case IPACKETS:
-			sprintf(tmp, "%d", (int)stats.ipackets); 
-			break;
-		case IERRORS:
-			sprintf(tmp, "%d", (int)stats.ierrors); 
-			break;
-		case OPACKETS:
-			sprintf(tmp, "%d", (int)stats.opackets); 
-			break;
-		case OERRORS:
-			sprintf(tmp, "%d", (int)stats.oerrors); 
-			break;
-		case RBYTES:
-			sprintf(tmp, "%d", (int)stats.rbytes); 
-			break;
-
-		case OBYTES:
-			sprintf(tmp, "%d", (int)stats.obytes); 
-			break;
-
+	if(strcmp(property, "IPACKETS") == 0){
+		sprintf(tmp, "%d", (int)stats.ipackets); 
+	}else if(strcmp(property, "IERRORS") == 0){
+		sprintf(tmp, "%d", (int)stats.ierrors); 
+	}else if(strcmp(property, "OPACKETS") == 0){
+		sprintf(tmp, "%d", (int)stats.opackets); 
+	}else if(strcmp(property, "OERRORS") == 0){
+		sprintf(tmp, "%d", (int)stats.oerrors); 
+	}else if(strcmp(property, "RBYTES") == 0){
+		sprintf(tmp, "%d", (int)stats.rbytes); 
+	}else if(strcmp(property, "OBYTES") == 0){
+		sprintf(tmp, "%d", (int)stats.obytes); 
 	}
 
 	return tmp;
 }
 
-void set_property_type(etherstub_property_type_t property, char **property_type){
-
-	switch(property){
-		case MAXBW:
-			strcpy(*property_type, "maxbw");
-			break;
-		case CPUS:
-			strcpy(*property_type, "cpus");
-			break;
-		case LEARN_LIMIT:
-			strcpy(*property_type, "learn_limit");
-			break;
-		case PRIORITY:
-			strcpy(*property_type, "priority");
-			break;
-	}
-}
-
-etherstub_return_type_t set_etherstub_property( char *name, etherstub_property_type_t property, char *value)
+etherstub_return_type_t set_etherstub_property( char *name, char* property, char *value)
 {
 
 	dladm_status_t status;
@@ -234,14 +188,9 @@ etherstub_return_type_t set_etherstub_property( char *name, etherstub_property_t
 	if (status != DLADM_STATUS_OK)
 		return INVALID_ETHERSTUB_NAME;
 
-	char *property_type = (char*)malloc(sizeof(char)*MAXLENGTH);
-
-	set_property_type(property, &property_type);
 	
 	status = dladm_set_linkprop(handle, linkid,
-			    property_type, &value, maxpropertycnt, flags);
-
-	free(property_type);
+			    property, &value, maxpropertycnt, flags);
 
 	if (status != DLADM_STATUS_OK)
 		return ETHERSTUB_PROPERTY_FAILURE;
@@ -249,7 +198,7 @@ etherstub_return_type_t set_etherstub_property( char *name, etherstub_property_t
 	return RESULT_OK;
 }
 
-char* get_etherstub_property( char *name, etherstub_property_type_t property )
+char* get_etherstub_property( char *name, char* property )
 {
 	dladm_status_t status;
 	datalink_id_t linkid;
@@ -261,16 +210,10 @@ char* get_etherstub_property( char *name, etherstub_property_type_t property )
 	if (status != DLADM_STATUS_OK)
 		return NULL;
 
-	char *property_type = (char*)malloc(sizeof(char)*MAXLENGTH);
 	char *value = (char*)malloc(sizeof(char)*MAXLENGTH);
 
-	
-	set_property_type(property, &property_type);
-
 	status = dladm_get_linkprop(handle, linkid,
-			    DLADM_PROP_VAL_CURRENT, property_type, &value, &maxpropertycnt);
-
-	free(property_type);
+			    DLADM_PROP_VAL_CURRENT, property, &value, &maxpropertycnt);
 
 	if (status != DLADM_STATUS_OK){
 		free(value);

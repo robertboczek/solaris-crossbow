@@ -1,10 +1,9 @@
 package agh.msc.xbowbase.etherstub;
 
-import agh.msc.xbowbase.etherstub.enums.EtherstubParameters;
-import agh.msc.xbowbase.etherstub.enums.EtherstubProperties;
-import agh.msc.xbowbase.etherstub.enums.EtherstubStatistics;
+import agh.msc.xbowbase.enums.LinkParameters;
+import agh.msc.xbowbase.enums.LinkProperties;
+import agh.msc.xbowbase.enums.LinkStatistics;
 import agh.msc.xbowbase.exception.EtherstubException;
-import agh.msc.xbowbase.exception.XbowException;
 import agh.msc.xbowbase.lib.Etherstubadm;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,9 +20,9 @@ public class Etherstub implements EtherstubMBean {
 
     private String name;
     private boolean temporary;
-    private Map<EtherstubParameters, String> parameters;
-    private Map<EtherstubProperties, String> properties; //some properties contain a few values like names of cpus
-    private Map<EtherstubStatistics, String> statistis;
+    private Map<LinkParameters, String> parameters;
+    private Map<LinkProperties, String> properties; //some properties contain a few values like names of cpus
+    private Map<LinkStatistics, String> statistis;
     private Etherstubadm etherstubadm = null;
 
     /**
@@ -34,9 +33,9 @@ public class Etherstub implements EtherstubMBean {
     public Etherstub(String name, boolean temporary) {
         this.name = name;
         this.temporary = temporary;
-        this.parameters = new HashMap<EtherstubParameters, String>();
-        this.properties = new HashMap<EtherstubProperties, String>();
-        this.statistis = new HashMap<EtherstubStatistics, String>();
+        this.parameters = new HashMap<LinkParameters, String>();
+        this.properties = new HashMap<LinkProperties, String>();
+        this.statistis = new HashMap<LinkStatistics, String>();
     }
 
     /**
@@ -59,8 +58,8 @@ public class Etherstub implements EtherstubMBean {
      * @see EtherstubMBean#getProperties()
      */
     @Override
-    public Map<EtherstubProperties, String> getProperties() throws EtherstubException {
-        for (EtherstubProperties property : EtherstubProperties.values()) {
+    public Map<LinkProperties, String> getProperties() throws EtherstubException {
+        for (LinkProperties property : LinkProperties.values()) {
             this.properties.put(property, etherstubadm.getEtherstubProperty(name, property));
         }
         return this.properties;
@@ -70,8 +69,8 @@ public class Etherstub implements EtherstubMBean {
      * @see EtherstubMBean#getParameters()
      */
     @Override
-    public Map<EtherstubParameters, String> getParameters() throws EtherstubException {
-        for (EtherstubParameters parameter : EtherstubParameters.values()) {
+    public Map<LinkParameters, String> getParameters() throws EtherstubException {
+        for (LinkParameters parameter : LinkParameters.values()) {
             this.parameters.put(parameter, etherstubadm.getEtherstubParameter(name, parameter));
         }
         return this.parameters;
@@ -81,20 +80,18 @@ public class Etherstub implements EtherstubMBean {
      * @see EtherstubMBean#getStatistics()
      */
     @Override
-    public Map<EtherstubStatistics, String> getStatistics() throws EtherstubException {
-        for (EtherstubStatistics statistic : EtherstubStatistics.values()) {
+    public Map<LinkStatistics, String> getStatistics() throws EtherstubException {
+        for (LinkStatistics statistic : LinkStatistics.values()) {
             this.statistis.put(statistic, etherstubadm.getEtherstubStatistic(name, statistic));
         }
         return this.statistis;
     }
 
     /**
-     * Sets requested property value specified by the user
-     * @param etherstubProperty Type of property to be set
-     * @param value Requested value
-     * @throws XbowException Exeption thrown in case of error
+     * @see EtherstubMBean#setProperty(agh.msc.xbowbase.enums.LinkProperties, java.lang.String) 
      */
-    public void setProperty(EtherstubProperties etherstubProperty, String value) throws EtherstubException {
+    @Override
+    public void setProperty(LinkProperties etherstubProperty, String value) throws EtherstubException {
 
         logger.info("Setting new property value to property " + etherstubProperty
                 + " to etherstub: " + this.name + " with value: " + value);
