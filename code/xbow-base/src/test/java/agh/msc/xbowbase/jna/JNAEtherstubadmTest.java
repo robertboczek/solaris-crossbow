@@ -101,7 +101,7 @@ public class JNAEtherstubadmTest {
     public void testSucessfulTryingToSetPropertyToEtherstub() throws EtherstubException{
 
         when(handle.set_etherstub_property(anyString(), anyInt(), anyString()))
-                .thenReturn(EtherstubReturn.INVALID_ETHERSTUB_NAME.ordinal());
+                .thenReturn(EtherstubReturn.RESULT_OK.ordinal());
 
         etherstubadm.setEtherstubProperty("etherstub1", EtherstubProperties.PRIORITY, "high");
     }

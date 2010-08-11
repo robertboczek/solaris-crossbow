@@ -38,12 +38,6 @@ typedef enum {
 	OERRORS
 } etherstub_statistic_type_t;
 
-/** Temporary or persistent enum*/
-typedef enum {
-	PERSISTENT = 0,
-	TEMPORARY
-} persistence_type_t;
-
 /** Result type enum*/
 typedef enum {
 	RESULT_OK = 0,

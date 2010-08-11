@@ -10,13 +10,13 @@ int main( int agrc, char** argv )
 	if(strcmp(argv[1], "delete") == RESULT_OK)
 	{
 		//delete persistently
-		int result = delete_etherstub( argv[2], PERSISTENT );
+		int result = delete_etherstub( argv[2], 0 );
 		printf( "Delete etherstub functon result: %d \n", result );
 	}
 	else if(strcmp(argv[1], "create") == RESULT_OK)
 	{
 		//create persistently
-		int result = create_etherstub( argv[2], PERSISTENT );
+		int result = create_etherstub( argv[2], 0 );
 		printf( "Created etherstub %s functon result: %d \n", argv[1], result );
 	}
 	else if(strcmp(argv[1], "list") == RESULT_OK)

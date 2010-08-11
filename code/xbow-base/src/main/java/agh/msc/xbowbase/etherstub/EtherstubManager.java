@@ -10,7 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import java.util.logging.Level;
 import org.apache.log4j.Logger;
 
 /**
@@ -43,7 +42,7 @@ public class EtherstubManager implements EtherstubManagerMBean {
             this.etherstubadm.createEtherstub(etherstubMBean.getName(), etherstubMBean.isTemporary());
             discover();
         }catch(EtherstubException e){
-            logger.error("Etherstub " + etherstubMBean + " couldn't be created");
+            logger.error("Etherstub " + etherstubMBean + " couldn't be created", e);
             throw e;
         }
     }
@@ -57,7 +56,7 @@ public class EtherstubManager implements EtherstubManagerMBean {
             this.etherstubadm.deleteEtherstub(name, temporary);
             discover();
         }catch(EtherstubException e){
-            logger.error("Etherstub " + name + " couldn't be deleted");
+            logger.error("Etherstub " + name + " couldn't be deleted", e);
             throw e;
         }
     }
@@ -156,11 +155,10 @@ public class EtherstubManager implements EtherstubManagerMBean {
     }
 
     /**
-     * @see EtherstubManagerMBean#setPublisher(agh.msc.xbowbase.publisher.Publisher)
+     * Injects the publisher object, used to publish new etherstubs and removes unexisting ones
+     * @param publisher Instance of Publisher to be used by EtherstubManagerMBean
      */
-    @Override
-    public void setPublisher(Publisher publisher) {
-
+    public void setPublisher(Publisher publisher){
         this.publisher = publisher;
     }
 }

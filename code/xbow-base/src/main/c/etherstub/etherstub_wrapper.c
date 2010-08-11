@@ -42,7 +42,7 @@ int init()
 	return dladm_open( &handle );
 }
 
-etherstub_return_type_t delete_etherstub( char* name, persistence_type_t persistence_type )
+etherstub_return_type_t delete_etherstub( char* name, int temporary )
 {
 
 	datalink_id_t linkid;
@@ -50,7 +50,7 @@ etherstub_return_type_t delete_etherstub( char* name, persistence_type_t persist
 
 	//indicates whether should be removed temporary or persistently
 	uint32_t flags = DLADM_OPT_ACTIVE | DLADM_OPT_PERSIST;
-	if( persistence_type == TEMPORARY ){
+	if( temporary != 0 ){
 		flags &= ~DLADM_OPT_PERSIST;
 	}
 
@@ -69,7 +69,7 @@ etherstub_return_type_t delete_etherstub( char* name, persistence_type_t persist
 	return RESULT_OK;
 }
 
-etherstub_return_type_t create_etherstub( char* name, persistence_type_t persistence_type )
+etherstub_return_type_t create_etherstub( char* name, int temporary )
 {
 	uint32_t flags;
 	dladm_status_t status;
@@ -81,7 +81,7 @@ etherstub_return_type_t create_etherstub( char* name, persistence_type_t persist
 
 	flags = DLADM_OPT_ANCHOR | DLADM_OPT_ACTIVE | DLADM_OPT_PERSIST;
 
-	if(persistence_type == TEMPORARY ){
+	if( temporary != 0 ){
 		flags &= ~DLADM_OPT_PERSIST;
 	}
 
@@ -115,7 +115,6 @@ char** get_etherstub_names()
 	uint32_t		flags = DLADM_OPT_ACTIVE;
 
 	names_array = (char**)malloc(sizeof(char*) * MAXVNIC);
-	bzero(names_array, sizeof(names_array));
 
 	number_of_elements = 0;
 
@@ -143,8 +142,8 @@ char* get_etherstub_parameter( char *name, etherstub_parameter_type_t parameter)
 	if (status != DLADM_STATUS_OK)
 		return NULL;
 
-	char *parameter_type = (char*)malloc(sizeof(char)*MAXLENGTH);
-	char *value = (char*)malloc(sizeof(char)*MAXLENGTH);
+	char *parameter_type = (char*)malloc(MAXLENGTH);
+	char *value = (char*)malloc(MAXLENGTH);
 
 	switch(parameter){
 		case BRIDGE:
@@ -166,8 +165,10 @@ char* get_etherstub_parameter( char *name, etherstub_parameter_type_t parameter)
 
 	free(parameter_type);
 
-	if (status != DLADM_STATUS_OK)
+	if (status != DLADM_STATUS_OK){
 		free(value);
+		value = NULL;
+	}
 
 	return value;
 }

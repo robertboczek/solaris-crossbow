@@ -97,7 +97,7 @@ public class Etherstub implements EtherstubMBean {
     public void setProperty(EtherstubProperties etherstubProperty, String value) throws EtherstubException {
 
         logger.info("Setting new property value to property " + etherstubProperty
-                + " to etherstub: " + this.name );
+                + " to etherstub: " + this.name + " with value: " + value);
         etherstubadm.setEtherstubProperty(this.name, etherstubProperty, value);
         this.properties.put(etherstubProperty, value);
     }

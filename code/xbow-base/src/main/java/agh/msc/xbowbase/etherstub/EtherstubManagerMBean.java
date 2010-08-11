@@ -38,10 +38,4 @@ public interface EtherstubManagerMBean {
      * @throws EtherstubException Exception thrown in case of error
      */
     void discover() throws EtherstubException;
-
-    /**
-     * Injects the publisher object, used to publish new etherstubs and removes unexisting ones
-     * @param publisher Instance of Publisher to be used by EtherstubManagerMBean
-     */
-    public void setPublisher(Publisher publisher);
 }

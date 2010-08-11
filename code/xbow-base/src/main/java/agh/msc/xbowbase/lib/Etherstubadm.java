@@ -31,7 +31,7 @@ public interface Etherstubadm extends Library {
 
     /**
      * Return list of existing etherstubs
-     * @return Array of names of existing etherstubs
+     * @return Array of names of existing etherstubs (empty array when there's no etherstub's existing)
      * @throws EtherstubException Exception thrown when error while reading names occur
      */
     public String[] getEtherstubNames() throws EtherstubException;

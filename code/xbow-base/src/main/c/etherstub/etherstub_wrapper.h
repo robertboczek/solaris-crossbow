@@ -19,27 +19,30 @@
 #include <netinet/vrrp.h>
 #include "types.h"
 
+/**
+ * \brief  Inits the etherstub library
+*/
 int init();
 
 /**
  * \brief  Removes an etherstub.
  *
- * \param  name	  	      	etherstub name
- * \param  persistence_type  	determines whether the change will be temporary or persistent
+ * \param  name	  	etherstub name
+ * \param  temporary  	determines whether the change will be temporary or persistent ( 0 - persistent, any other value - temporary )
  *
  * \return  etherstub_return_type_t See types.h to see more details
 */
-etherstub_return_type_t delete_etherstub( char* name, persistence_type_t persistence_type );
+etherstub_return_type_t delete_etherstub( char* name, int temporary );
 
 /**
  * \brief  Creates an etherstub.
  *
- * \param  name	             	etherstub name
- * \param  persistence_type  	determines whether the change will be temporary or persistent
+ * \param  name	        etherstub name
+ * \param  temporary  	determines whether the change will be temporary or persistent ( 0 - persistent, any other value - temporary )
  *
  * \return  etherstub_return_type_t See types.h to see more details
 */
-etherstub_return_type_t create_etherstub( char* name, persistence_type_t persistence_type );
+etherstub_return_type_t create_etherstub( char* name, int temporary );
 
 /**
  * \brief  Returns list of existing etherstubs.

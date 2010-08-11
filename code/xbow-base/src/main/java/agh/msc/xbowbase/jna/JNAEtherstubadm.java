@@ -67,6 +67,7 @@ public class JNAEtherstubadm implements Etherstubadm {
         if (rc != EtherstubReturn.RESULT_OK.ordinal()) {
             throw new EtherstubException("Etherstub deletion failed.");
         }
+        logger.info("Etherstub : " + name + " sucessfully created");
     }
 
     /**
@@ -78,7 +79,14 @@ public class JNAEtherstubadm implements Etherstubadm {
         logger.info("Trying to read names of exisitng etherstubs");
 
         Pointer pointer = handle.get_etherstub_names();
-        return (pointer != null) ? pointer.getStringArray(0) : null;
+
+        if(pointer != null){
+            String []array = pointer.getStringArray(0);
+            pointer.clear(0);
+            return array;
+        }else{
+            return new String[]{};
+        }
     }
 
     /**
@@ -117,20 +125,16 @@ public class JNAEtherstubadm implements Etherstubadm {
 
 
         String errorMessage;
-        switch(returnValue){
-            case 0:
-                errorMessage = null;
-                break;
-            case 2:
-                errorMessage = "Invalid etherstub name " + property;
-                break;
-            case 6:
-                errorMessage = "Unable to set property " + property;
-                break;
-            default:
-                errorMessage = "Unknown error while setting property " + property;
-                break;
+        if (returnValue == EtherstubReturn.RESULT_OK.ordinal()) {
+            errorMessage = null;
+        } else if (returnValue == EtherstubReturn.INVALID_ETHERSTUB_NAME.ordinal()) {
+            errorMessage = "Invalid etherstub name " + property;
+        } else if (returnValue == EtherstubReturn.ETHERSTUB_PROPERTY_FAILURE.ordinal()) {
+            errorMessage = "Unable to set property " + property;
+        } else {
+            errorMessage = "Unknown error while setting property " + property;
         }
+
         if(errorMessage != null){
             throw new EtherstubException(errorMessage);
         }
@@ -154,7 +158,7 @@ public class JNAEtherstubadm implements Etherstubadm {
      * @return Flag specifies requested persistence type accustomed to 'c' library
      */
     private int checkPersistenceType(boolean temporary) {
-        return (temporary) ? 2 : 1;
+        return (temporary) ? 1 : 0;
     }
 
     /**
@@ -164,9 +168,9 @@ public class JNAEtherstubadm implements Etherstubadm {
 
         public int init();
 
-        public int delete_etherstub(String name, int persistenceType);
+        public int delete_etherstub(String name, int temporary);
 
-        public int create_etherstub(String name, int persitenceType);
+        public int create_etherstub(String name, int temporary);
 
         public Pointer get_etherstub_names();
 
