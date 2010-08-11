@@ -23,7 +23,7 @@ public class EtherstubManager implements EtherstubManagerMBean {
     private static final Logger logger = Logger.getLogger(Etherstub.class);
 
     private Etherstubadm etherstubadm;
-    private Set<EtherstubMBean> etherstubsSet;
+    private final Set<EtherstubMBean> etherstubsSet;
     private Publisher publisher;
 
     /**
@@ -40,6 +40,9 @@ public class EtherstubManager implements EtherstubManagerMBean {
     public void create(EtherstubMBean etherstubMBean) throws EtherstubException {
         try{
             this.etherstubadm.createEtherstub(etherstubMBean.getName(), etherstubMBean.isTemporary());
+            synchronized(etherstubsSet){
+                registerNewEtherstubMBean(etherstubMBean);
+            }
             discover();
         }catch(EtherstubException e){
             logger.error("Etherstub " + etherstubMBean + " couldn't be created", e);
@@ -53,7 +56,11 @@ public class EtherstubManager implements EtherstubManagerMBean {
     @Override
     public void delete(String name, boolean temporary) throws EtherstubException {
         try{
+            EtherstubMBean etherstubMBean = new Etherstub(name, temporary);
             this.etherstubadm.deleteEtherstub(name, temporary);
+            synchronized(etherstubsSet){
+                removeNoMoreExistingEtherstubMBeans(Arrays.asList(new EtherstubMBean[] { etherstubMBean }));
+            }
             discover();
         }catch(EtherstubException e){
             logger.error("Etherstub " + name + " couldn't be deleted", e);
@@ -79,27 +86,31 @@ public class EtherstubManager implements EtherstubManagerMBean {
      * @see EtherstubManagerMBean#discover()
      */
     @Override
-    public synchronized void discover() throws EtherstubException {
+    public void discover() throws EtherstubException {
 
-        Set<EtherstubMBean> currentMBeans = convertToSet(this.etherstubadm.getEtherstubNames());
+        synchronized(etherstubsSet){
 
-        //check for new Etherstubs
-        for (EtherstubMBean etherstubMBean : currentMBeans) {
-            if (this.etherstubsSet.contains(etherstubMBean) == false) {
-                //create and register new EtherstubMBean
-                registerNewEtherstubMBean(etherstubMBean);
+            Set<EtherstubMBean> currentMBeans = convertToSet(this.etherstubadm.getEtherstubNames());
+
+            //check for new Etherstubs
+            for (EtherstubMBean etherstubMBean : currentMBeans) {
+                if (this.etherstubsSet.contains(etherstubMBean) == false) {
+                    //create and register new EtherstubMBean
+                    registerNewEtherstubMBean(etherstubMBean);
+                }
             }
-        }
 
-        List<EtherstubMBean> etherstubMBeansToRemove = new LinkedList<EtherstubMBean>();
-        //remove etherstubs that don't exist anymore
-        for (EtherstubMBean etherstubMBean : this.etherstubsSet) {
-            if (currentMBeans.contains(etherstubMBean) == false) {
-                //save this etherstub as one to be removed
-                etherstubMBeansToRemove.add(etherstubMBean);
+            List<EtherstubMBean> etherstubMBeansToRemove = new LinkedList<EtherstubMBean>();
+            //remove etherstubs that don't exist anymore
+            for (EtherstubMBean etherstubMBean : this.etherstubsSet) {
+                if (currentMBeans.contains(etherstubMBean) == false) {
+                    //save this etherstub as one to be removed
+                    etherstubMBeansToRemove.add(etherstubMBean);
+                }
             }
+            removeNoMoreExistingEtherstubMBeans(etherstubMBeansToRemove);
         }
-        removeNoMoreExistingEtherstubMBeans(etherstubMBeansToRemove);
+        
     }
 
     /**
