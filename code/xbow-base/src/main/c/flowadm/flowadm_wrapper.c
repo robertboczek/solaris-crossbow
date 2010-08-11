@@ -244,9 +244,10 @@ key_value_pairs_t* get_properties( char* flow )
 {
 	key_value_pairs_t* key_value_pairs = malloc_key_value_pairs( MAXFLOWPROPERTIESLEN );
 
-	get_props_arg_t arg;
-	arg.flow = flow;
-	arg.key_value_pair_it = key_value_pairs->key_value_pairs;
+	get_props_arg_t arg = {
+		.flow = flow,
+		.key_value_pair_it = key_value_pairs->key_value_pairs
+	};
 
 	dladm_walk_flowprop( &get_props, flow, &arg );
 
