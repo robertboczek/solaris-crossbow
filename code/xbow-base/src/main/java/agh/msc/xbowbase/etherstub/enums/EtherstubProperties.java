@@ -1,22 +1,12 @@
 package agh.msc.xbowbase.etherstub.enums;
 
 /**
- *
+ * Possible etherstub properties to read or set
  * @author robert boczek
  */
 public enum EtherstubProperties {
-    	MAXBW(1),
-	LEARN_LIMIT(2),
-	CPUS(3),
-	PRIORITY(4);
-
-    private EtherstubProperties(int value) {
-        this.value = value;
-    }
-
-    public int getValue(){
-        return this.value;
-    }
-
-    private int value;
+    	MAXBW, /** Maximum bandwidth for this etherstub */
+	LEARN_LIMIT, /** Number of MAC ADDRESSES ETHERSTUB CAN LEARN */
+	CPUS, /** Names of processors that can perform operations for this etherstub */
+	PRIORITY /** Priority of this etherstub */
 }

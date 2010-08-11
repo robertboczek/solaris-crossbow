@@ -8,12 +8,16 @@ import agh.msc.xbowbase.exception.XbowException;
 import agh.msc.xbowbase.lib.Etherstubadm;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.log4j.Logger;
 
 /**
- *
+ * Implementation of EtherstubMBean interface
  * @author robert boczek
  */
 public class Etherstub implements EtherstubMBean {
+
+    /** Logger */
+    private static final Logger logger = Logger.getLogger(Etherstub.class);
 
     private String name;
     private boolean temporary;
@@ -23,9 +27,9 @@ public class Etherstub implements EtherstubMBean {
     private Etherstubadm etherstubadm = null;
 
     /**
-     * 
-     * @param name
-     * @param temporary
+     * Constructor of Etherstub Class, it's the only way to set up name and temporary values
+     * @param name Etherstub name
+     * @param temporary Flag specifies whether Etherstub is temporary or persistent between reboots
      */
     public Etherstub(String name, boolean temporary) {
         this.name = name;
@@ -35,16 +39,25 @@ public class Etherstub implements EtherstubMBean {
         this.statistis = new HashMap<EtherstubStatistics, String>();
     }
 
+    /**
+     * @see EtherstubMBean#getName()
+     */
     @Override
     public String getName() {
         return this.name;
     }
 
+    /**
+     * @see EtherstubMBean#isTemporary()
+     */
     @Override
     public boolean isTemporary() {
         return this.temporary;
     }
 
+    /**
+     * @see EtherstubMBean#getProperties()
+     */
     @Override
     public Map<EtherstubProperties, String> getProperties() throws EtherstubException {
         for (EtherstubProperties property : EtherstubProperties.values()) {
@@ -53,6 +66,9 @@ public class Etherstub implements EtherstubMBean {
         return this.properties;
     }
 
+    /**
+     * @see EtherstubMBean#getParameters()
+     */
     @Override
     public Map<EtherstubParameters, String> getParameters() throws EtherstubException {
         for (EtherstubParameters parameter : EtherstubParameters.values()) {
@@ -61,6 +77,9 @@ public class Etherstub implements EtherstubMBean {
         return this.parameters;
     }
 
+    /**
+     * @see EtherstubMBean#getStatistics()
+     */
     @Override
     public Map<EtherstubStatistics, String> getStatistics() throws EtherstubException {
         for (EtherstubStatistics statistic : EtherstubStatistics.values()) {
@@ -69,16 +88,31 @@ public class Etherstub implements EtherstubMBean {
         return this.statistis;
     }
 
-    public void setProperty(EtherstubProperties etherstubProperty, String value) throws XbowException {
+    /**
+     * Sets requested property value specified by the user
+     * @param etherstubProperty Type of property to be set
+     * @param value Requested value
+     * @throws XbowException Exeption thrown in case of error
+     */
+    public void setProperty(EtherstubProperties etherstubProperty, String value) throws EtherstubException {
 
+        logger.info("Setting new property value to property " + etherstubProperty
+                + " to etherstub: " + this.name );
         etherstubadm.setEtherstubProperty(this.name, etherstubProperty, value);
         this.properties.put(etherstubProperty, value);
     }
 
+    /**
+     * Sets the implementation of Etherstubadm
+     * @param etherstubadm Conrete implementation of Ehterstubadm
+     */
     public void setEtherstubadm(Etherstubadm etherstubadm) {
         this.etherstubadm = etherstubadm;
     }
 
+    /**
+     * Etherstub's are equal when their attributes name's are equal
+     */
     @Override
     public boolean equals(Object object) {
         if (object instanceof EtherstubMBean) {
@@ -87,6 +121,9 @@ public class Etherstub implements EtherstubMBean {
         return false;
     }
 
+    /**
+     * Etherstub's hashCode is eqaul to their attributes name's hashCode value
+     */
     @Override
     public int hashCode() {
         return this.name.hashCode();

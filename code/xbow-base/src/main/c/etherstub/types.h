@@ -12,7 +12,7 @@ key_value_pair_t;
  *  deliberately CLASS is omitted as its etherstub
 */
 typedef enum {
-	BRIDGE = 1,
+	BRIDGE = 0,
 	OVER,
 	STATE,
 	MTU
@@ -21,7 +21,7 @@ typedef enum {
 /** Possible types of etherstub properties
 */
 typedef enum {
-	MAXBW = 1, /* bandwidth specified in megabytes - minimum bandwidth is 1.2 MB */
+	MAXBW = 0, /* bandwidth specified in megabytes - minimum bandwidth is 1.2 MB */
 	LEARN_LIMIT,
 	CPUS,/*@todo test how to pass two or more processors names*/
 	PRIORITY
@@ -30,7 +30,7 @@ typedef enum {
 
 /** Possible types of etherstub statistics */
 typedef enum {
-	IPACKETS = 1,
+	IPACKETS = 0,
 	RBYTES,
 	IERRORS,
 	OPACKETS,
@@ -40,7 +40,7 @@ typedef enum {
 
 /** Temporary or persistent enum*/
 typedef enum {
-	PERSISTENT = 1,
+	PERSISTENT = 0,
 	TEMPORARY
 } persistence_type_t;
 
