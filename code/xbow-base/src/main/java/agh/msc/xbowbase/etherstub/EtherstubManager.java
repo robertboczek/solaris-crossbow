@@ -4,7 +4,6 @@ import agh.msc.xbowbase.exception.EtherstubException;
 import agh.msc.xbowbase.lib.Etherstubadm;
 import agh.msc.xbowbase.publisher.Publisher;
 import agh.msc.xbowbase.publisher.exception.NotPublishedException;
-import java.util.logging.Level;
 import javax.management.Notification;
 import javax.management.NotificationListener;
 import java.util.Arrays;
@@ -25,15 +24,7 @@ public class EtherstubManager implements EtherstubManagerMBean, NotificationList
     /** Logger */
     private static final Logger logger = Logger.getLogger(Etherstub.class);
     private Etherstubadm etherstubadm;
-    private final Set<EtherstubMBean> etherstubsSet;
     private Publisher publisher;
-
-    /**
-     * Construtor of EtherstubManager, creates empty map of existing etherstubs
-     */
-    public EtherstubManager() {
-        this.etherstubsSet = new HashSet<EtherstubMBean>();
-    }
 
     /**
      * @see EtherstubManagerMBean#create(agh.msc.xbowbase.etherstub.EtherstubMBean) 
@@ -42,9 +33,7 @@ public class EtherstubManager implements EtherstubManagerMBean, NotificationList
     public void create(EtherstubMBean etherstubMBean) throws EtherstubException {
         try {
             this.etherstubadm.createEtherstub(etherstubMBean.getName(), etherstubMBean.isTemporary());
-            synchronized (etherstubsSet) {
-                registerNewEtherstubMBean(etherstubMBean);
-            }
+            registerNewEtherstubMBean(etherstubMBean);
             discover();
         } catch (EtherstubException e) {
             logger.error("Etherstub " + etherstubMBean + " couldn't be created", e);
@@ -60,9 +49,7 @@ public class EtherstubManager implements EtherstubManagerMBean, NotificationList
         try {
             EtherstubMBean etherstubMBean = new Etherstub(name, temporary);
             this.etherstubadm.deleteEtherstub(name, temporary);
-            synchronized (etherstubsSet) {
-                removeNoMoreExistingEtherstubMBeans(Arrays.asList(new EtherstubMBean[]{etherstubMBean}));
-            }
+            removeNoMoreExistingEtherstubMBeans(Arrays.asList(new EtherstubMBean[]{etherstubMBean}));
             discover();
         } catch (EtherstubException e) {
             logger.error("Etherstub " + name + " couldn't be deleted", e);
@@ -88,14 +75,16 @@ public class EtherstubManager implements EtherstubManagerMBean, NotificationList
      */
     @Override
     public void discover() throws EtherstubException {
+        logger.info("TherstubManager.discover()... searching for new etherstubs's and ones that don't exist any more");
 
-        synchronized (etherstubsSet) {
-
+        
+        if(publisher != null){
             Set<EtherstubMBean> currentMBeans = convertToSet(this.etherstubadm.getEtherstubNames());
+            Set<Object> etherstubsSet = new HashSet<Object>(publisher.getPublished());
 
             //check for new Etherstubs
             for (EtherstubMBean etherstubMBean : currentMBeans) {
-                if (this.etherstubsSet.contains(etherstubMBean) == false) {
+                if (etherstubsSet.contains(etherstubMBean) == false) {
                     //create and register new EtherstubMBean
                     registerNewEtherstubMBean(etherstubMBean);
                 }
@@ -103,10 +92,10 @@ public class EtherstubManager implements EtherstubManagerMBean, NotificationList
 
             List<EtherstubMBean> etherstubMBeansToRemove = new LinkedList<EtherstubMBean>();
             //remove etherstubs that don't exist anymore
-            for (EtherstubMBean etherstubMBean : this.etherstubsSet) {
-                if (currentMBeans.contains(etherstubMBean) == false) {
+            for (Object object : etherstubsSet) {
+                if (currentMBeans.contains((EtherstubMBean)object) == false) {
                     //save this etherstub as one to be removed
-                    etherstubMBeansToRemove.add(etherstubMBean);
+                    etherstubMBeansToRemove.add((EtherstubMBean)object);
                 }
             }
             removeNoMoreExistingEtherstubMBeans(etherstubMBeansToRemove);
@@ -159,12 +148,11 @@ public class EtherstubManager implements EtherstubManagerMBean, NotificationList
      * @param etherstubMBean New etherstub to be registered
      */
     private void registerNewEtherstubMBean(EtherstubMBean etherstubMBean) {
+        
         if (publisher != null) {
             //register in the mbean server
             publisher.publish(etherstubMBean);
         }
-        //add to the set
-        this.etherstubsSet.add(etherstubMBean);
     }
 
     /**
@@ -181,7 +169,6 @@ public class EtherstubManager implements EtherstubManagerMBean, NotificationList
             } catch (NotPublishedException ex) {
                 logger.error("Etherstub object : " + etherstubMBean + " has not been registered in the mbean server");
             }
-            this.etherstubsSet.remove(etherstubMBean);
         }
     }
 
