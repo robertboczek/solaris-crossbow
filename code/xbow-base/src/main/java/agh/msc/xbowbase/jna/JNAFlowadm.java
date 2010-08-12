@@ -1,5 +1,6 @@
 package agh.msc.xbowbase.jna;
 
+import agh.msc.xbowbase.exception.NoSuchFlowException;
 import agh.msc.xbowbase.exception.ValidationException;
 import agh.msc.xbowbase.exception.XbowException;
 import agh.msc.xbowbase.flow.FlowInfo;
@@ -16,11 +17,15 @@ import org.apache.log4j.Logger;
 
 
 /**
+ * Flow helper implementation based on Java Native Access.
  *
  * @author cieplik
  */
 public class JNAFlowadm implements Flowadm {
 
+	/**
+	 * Creates the helper object and initializes underlying handler.
+	 */
 	public JNAFlowadm() {
 
 		handle = ( IFlowadm ) Native.loadLibrary( LIB_NAME, IFlowadm.class );
@@ -29,12 +34,17 @@ public class JNAFlowadm implements Flowadm {
 	}
 
 
+	/**
+	 * @see  Flowadm#remove(java.lang.String, boolean)
+	 */
 	@Override
 	public void remove( String flow, boolean temporary ) throws XbowException {
 
 		int rc = handle.remove_flow( flow, temporary );
 
 		logger.debug( "remove_flow returned with rc == " + rc + " ." );
+
+		// If remove_flow didn't finish successfully, map rc to exception and throw it.
 
 		if ( rc != XbowStatus.XBOW_STATUS_OK.ordinal() ) {
 			throw new XbowException( "Could not remove " + flow );
@@ -43,13 +53,11 @@ public class JNAFlowadm implements Flowadm {
 	}
 
 
+	/**
+	 * @see  Flowadm#getAttributes(java.lang.String)
+	 */
 	@Override
-	public void setAttributes( String flowName, Map< String, String > attributes ) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	@Override
-	public Map< String, String > getAttributes( String flowName ) {
+	public Map< String, String > getAttributes( String flowName ) throws NoSuchFlowException {
 
 		for ( FlowInfo flowInfo : getFlowsInfo() ) {
 			if ( flowInfo.getName().equals( flowName ) ) {
@@ -57,12 +65,20 @@ public class JNAFlowadm implements Flowadm {
 			}
 		}
 
-		return null;
+		// The flow could not be found - raise exception.
+
+		throw new NoSuchFlowException( flowName );
 
 	}
 
+
+	/**
+	 * @see  Flowadm#setProperties(java.lang.String, java.util.Map, boolean)
+	 */
 	@Override
 	public void setProperties( String flowName, Map< String, String > properties, boolean temporary ) throws ValidationException {
+
+		// Call set_property sequentially, each time setting single property.
 
 		for ( Map.Entry< String, String > entry : properties.entrySet() ) {
 
@@ -71,6 +87,8 @@ public class JNAFlowadm implements Flowadm {
 			int rc = handle.set_property( flowName, entry.getKey(), values, values.length, temporary );
 
 			logger.debug( "set_property returned with rc == " + rc + " ." );
+
+			// Check the rc and map it to exception, if necessary.
 
 			if ( rc == XbowStatus.XBOW_STATUS_PROP_PARSE_ERR.ordinal() ) {
 
@@ -82,12 +100,22 @@ public class JNAFlowadm implements Flowadm {
 
 	}
 
+
+	/**
+	 * @see  Flowadm#getProperties(java.lang.String)
+	 */
 	@Override
-	public Map< String, String > getProperties( String flowName ) {
+	public Map< String, String > getProperties( String flowName ) throws NoSuchFlowException {
+
+		// TODO-DAWID: rc z helpera (obsluga sytuacji, gdy flow nie istnieje)
 
 		Map< String, String > properties = new HashMap< String, String >();
 
+		// Query the library.
+
 		IFlowadm.KeyValuePairsStruct kvps = handle.get_properties( flowName );
+
+		// Put the properties into map.
 
 		for ( Pointer p : kvps.keyValuePairs.getPointerArray( 0, kvps.keyValuePairsLen ) ) {
 
@@ -96,21 +124,47 @@ public class JNAFlowadm implements Flowadm {
 
 		}
 
+		// Free the memory.
+
 		handle.free_key_value_pairs( kvps );
 
 		return properties;
 
 	}
 
+
+	/**
+	 * @see  Flowadm#resetProperties(java.lang.String, java.util.List, boolean)
+	 */
 	@Override
-	public void resetProperties( String flowName, List< String > properties, boolean temporary ) throws ValidationException {
+	public void resetProperties( String flowName, List< String > properties, boolean temporary )
+		throws NoSuchFlowException,
+		       ValidationException {
+
+		// TODO-DAWID: NoSuchFlowException
+
+		// Reset properties sequentially.
 
 		for ( String property : properties ) {
-			handle.reset_property( flowName, property, temporary );
+
+			int rc = handle.reset_property( flowName, property, temporary );
+
+			logger.debug( "reset_property returned with rc == " + rc );
+
+			// Check the rc and map it to exception, if necessary.
+
+			if ( XbowStatus.XBOW_STATUS_PROP_PARSE_ERR.ordinal() == rc ) {
+				throw new ValidationException( property );
+			}
+
 		}
 
 	}
 
+
+	/**
+	 * @see  Flowadm#create(agh.msc.xbowbase.flow.FlowInfo)
+	 */
 	@Override
 	public void create( FlowInfo flowInfo ) throws XbowException {
 
@@ -125,22 +179,32 @@ public class JNAFlowadm implements Flowadm {
 	}
 
 
+	/**
+	 * @see  Flowadm#getFlowsInfo()
+	 */
 	@Override
 	public List< FlowInfo > getFlowsInfo() {
 		return getFlowsInfo( null );
 	}
 
 
+	/**
+	 * @see  Flowadm#getFlowsInfo(java.util.List)
+	 */
 	@Override
 	public List< FlowInfo > getFlowsInfo( List< String > links ) {
 
 		List< FlowInfo > res = new LinkedList< FlowInfo >();
+
+		// Call helper function.
 
 		IFlowadm.FlowInfosStruct flowInfosStruct = handle.get_flows_info(
 			( null == links ) ? null : ( String[] ) links.toArray()
 		);
 
 		logger.debug( "get_flows_info returned " + flowInfosStruct.flowInfosLen + " FlowInfoStruct(s)." );
+
+		// Process returned structs.
 
 		for ( Pointer p : flowInfosStruct.flowInfos.getPointerArray( 0, flowInfosStruct.flowInfosLen ) ) {
 
@@ -152,6 +216,8 @@ public class JNAFlowadm implements Flowadm {
 				attrs.put( attr.split( "=" )[ 0 ], attr.split( "=" )[ 1 ] );
 			}
 
+			// Append to the resulting list.
+
 			res.add( new FlowInfo(
 				struct.name,
 				struct.link,
@@ -162,6 +228,8 @@ public class JNAFlowadm implements Flowadm {
 
 		}
 
+		// Free the memory.
+
 		handle.free_flow_infos( flowInfosStruct );
 
 		return res;
@@ -169,7 +237,14 @@ public class JNAFlowadm implements Flowadm {
 	}
 
 
+	/**
+	 * C <-> Java mappings.
+	 */
 	private interface IFlowadm extends Library {
+
+		/*
+		 * Types
+		 */
 
 		public class KeyValuePairsStruct extends Structure {
 			public Pointer keyValuePairs;
@@ -180,12 +255,10 @@ public class JNAFlowadm implements Flowadm {
 
 			public KeyValuePairStruct() {}
 
-
 			public KeyValuePairStruct( Pointer p ) {
 				super( p );
 				read();
 			}
-
 
 			public String key, value;
 
@@ -200,12 +273,10 @@ public class JNAFlowadm implements Flowadm {
 
 			public FlowInfoStruct() {}
 
-
 			public FlowInfoStruct( Pointer p ) {
 				super( p );
 				read();
 			}
-
 
 			public FlowInfoStruct( FlowInfo flowInfo ) {
 				this.name = flowInfo.getName();
@@ -214,7 +285,6 @@ public class JNAFlowadm implements Flowadm {
 				this.props = flatten( flowInfo.getProperties() );
 				this.temporary = flowInfo.isTemporary();
 			}
-
 
 			String flatten( Map< String, String > attrs ) {
 
@@ -231,10 +301,13 @@ public class JNAFlowadm implements Flowadm {
 
 			}
 
-
 			public String name, link, attrs, props;
 			public boolean temporary;
 		}
+
+		/*
+		 * Functions
+		 */
 
 		public void init();
 		public FlowInfosStruct get_flows_info( String links[] );

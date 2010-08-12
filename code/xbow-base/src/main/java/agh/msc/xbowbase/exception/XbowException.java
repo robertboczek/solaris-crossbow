@@ -11,7 +11,7 @@ import java.io.Serializable;
 public class XbowException extends Exception implements Serializable {
 
 	/**
-	 * Creates new exception class and sets message to s.
+	 * Creates new exception object and sets message to s.
 	 *
 	 * @param  s  message
 	 */

@@ -2,6 +2,7 @@ package agh.msc.xbowbase.jna;
 
 
 /**
+ * Contains Xbow statuses returned by helper methods.
  *
  * @author cieplik
  */

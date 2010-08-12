@@ -1,5 +1,6 @@
 package agh.msc.xbowbase.flow;
 
+import agh.msc.xbowbase.exception.NoSuchFlowException;
 import agh.msc.xbowbase.exception.ValidationException;
 import agh.msc.xbowbase.lib.Flowadm;
 import java.util.HashMap;
@@ -57,7 +58,7 @@ public class Flow implements FlowMBean {
 	 * @see  FlowMBean#getAttributes()
 	 */
 	@Override
-	public Map< String, String > getAttributes() {
+	public Map< String, String > getAttributes() throws NoSuchFlowException {
 		return flowadm.getAttributes( name );
 	}
 
@@ -91,7 +92,7 @@ public class Flow implements FlowMBean {
 	 * @see  FlowMBean#getProperties()
 	 */
 	@Override
-	public Map< String, String > getProperties() {
+	public Map< String, String > getProperties() throws NoSuchFlowException {
 		props = flowadm.getProperties( name );
 		return props;
 	}
@@ -218,6 +219,12 @@ public class Flow implements FlowMBean {
 		hash = 41 * hash + ( this.attrs != null ? this.attrs.hashCode() : 0 );
 		return hash;
 
+	}
+
+
+	@Override
+	public String toString() {
+		return name + "@" + link;
 	}
 
 

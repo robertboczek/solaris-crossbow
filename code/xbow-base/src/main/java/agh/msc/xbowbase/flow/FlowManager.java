@@ -11,11 +11,15 @@ import org.apache.log4j.Logger;
 
 
 /**
+ * The class implements FlowManagerMBean functionality.
  *
  * @author cieplik
  */
 public class FlowManager implements FlowManagerMBean, NotificationListener {
 
+	/**
+	 * @see  FlowManagerMBean#getFlows()
+	 */
 	@Override
 	public List< String > getFlows() {
 
@@ -33,12 +37,24 @@ public class FlowManager implements FlowManagerMBean, NotificationListener {
 	}
 
 
+	/**
+	 * Discovers flows present in the system and, if a publisher has been set,
+	 * publishes each discovered flow.
+	 *
+	 * @see FlowManagerMBean#discover()
+	 */
 	@Override
 	public void discover() {
 
 		if ( publisher != null ) {
 
-			for ( FlowInfo flowInfo : flowadm.getFlowsInfo() ) {
+			List< FlowInfo > flowsInfo = flowadm.getFlowsInfo();
+
+			logger.debug( flowsInfo.size() + " flow(s) discovered." );
+
+			for ( FlowInfo flowInfo : flowsInfo ) {
+
+				// Create new Flow object, initialize and register it.
 
 				Flow flow = FlowToFlowInfoTranslator.toFlow( flowInfo );
 				flow.setFlowadm( flowadm );
@@ -52,36 +68,80 @@ public class FlowManager implements FlowManagerMBean, NotificationListener {
 	}
 
 
+	/**
+	 * @see  FlowManagerMBean#create(agh.msc.xbowbase.flow.FlowMBean)
+	 */
 	@Override
 	public void create( FlowMBean flow ) throws XbowException {
 
-		flowadm.create( FlowToFlowInfoTranslator.toFlowInfo( ( Flow ) flow ) );
-		publisher.publish( flow );
+		// Create the flow.
 
-		logger.info( flow.getName() + " flow created and published." );
+		flowadm.create( FlowToFlowInfoTranslator.toFlowInfo( ( Flow ) flow ) );
+		logger.info( flow.getName() + " flow created." );
+
+		// Publish, if publisher set.
+
+		if ( publisher != null ) {
+
+			publisher.publish( flow );
+			logger.info( flow.getName() + " flow published." );
+
+		}
 
 	}
 
 
+	/**
+	 * Removes flow from the system and unpublishes, if publisher exists.
+	 *
+	 * @see  FlowManagerMBean#remove(java.lang.String, boolean)
+	 */
 	@Override
 	public void remove( String flowName, boolean temporary ) throws XbowException {
 
-		flowadm.remove( flowName, temporary );
-		publisher.unpublish( flowName );
+		// Remove from the system.
 
-		logger.info( flowName + " flow removed and unpublished." );
+		flowadm.remove( flowName, temporary );
+		logger.info( flowName + " flow removed." );
+
+		// Unpublish, if publisher exists.
+
+		if ( publisher != null ) {
+
+			publisher.unpublish( flowName );
+			logger.info( flowName + " flow unpublished." );
+
+		}
 
 	}
 
+
+	/**
+	 * Executes discover() in response to notification.
+	 *
+	 * @see  NotificationListener#handleNotification(javax.management.Notification, java.lang.Object)
+	 */
 	@Override
 	public void handleNotification( Notification ntfctn, Object o ) {
 		discover();
 	}
 
+
+	/**
+	 * @brief  Flow helper setter method.
+	 *
+	 * @param  flowadm  helper used to manipulate flows
+	 */
 	public void setFlowadm( Flowadm flowadm ) {
 		this.flowadm = flowadm;
 	}
 
+
+	/**
+	 * @brief  Publisher setter method.
+	 *
+	 * @param  publisher  object responsible for registering discovered and created flows
+	 */
 	public void setPublisher( Publisher publisher ) {
 		this.publisher = publisher;
 	}

@@ -9,7 +9,7 @@ package agh.msc.xbowbase.exception;
 public class ValidationException extends XbowException {
 
 	/**
-	 * Creates the exception class and sets message to s.
+	 * Creates the exception object and sets message to s.
 	 *
 	 * @param  s  message
 	 */

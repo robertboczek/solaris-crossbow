@@ -1,5 +1,6 @@
 package agh.msc.xbowbase.flow;
 
+import agh.msc.xbowbase.exception.NoSuchFlowException;
 import agh.msc.xbowbase.exception.ValidationException;
 import java.util.List;
 import java.util.Map;
@@ -31,16 +32,20 @@ public interface FlowMBean {
 	/**
 	 * @brief  Attributes getter method.
 	 *
+	 * @throw  NoSuchFlowException  the flow hasn't been created in the system
+	 *
 	 * @return  flow attributes map
 	 */
-	public Map< String, String > getAttributes();
+	public Map< String, String > getAttributes() throws NoSuchFlowException;
 
 	/**
 	 * @brief  Properties getter method.
 	 *
+	 * @throw  NoSuchFlowException  the flow hasn't been created in the system
+	 *
 	 * @return  flow properties map
 	 */
-	public Map< String, String > getProperties();
+	public Map< String, String > getProperties() throws NoSuchFlowException;
 
 	/**
 	 * @brief  Properties setter method.
