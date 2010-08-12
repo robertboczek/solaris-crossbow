@@ -1,5 +1,16 @@
 
-#include "etherstub_wrapper.h"
+#include <libdladm.h>
+#include <libdllink.h>
+#include <libdlvnic.h>
+#include <libdlstat.h>
+
+#include <string.h>
+#include <stropts.h>
+
+#include <netinet/vrrp.h>
+
+#include "etherstub.h"
+
 #define MAXVNIC		256
 #define MAXLENGTH	100
 
