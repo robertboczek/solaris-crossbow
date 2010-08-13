@@ -19,7 +19,7 @@ dladm_handle_t handle = 0;
 
 int init()
 {
-	return dladm_open( &handle );
+	return map_status( dladm_open( &handle ) );
 }
 
 
@@ -65,12 +65,29 @@ int create( flow_info_t* flow_info )
 
 int remove_flow( char* flow, int temporary )
 {
-	return map_status( dladm_flow_remove( handle, flow, temporary, "" ) );
+	// Just call dladm_flow_remove directly and returned mapped rc.
+
+	return map_status( dladm_flow_remove(
+		handle, flow,
+		temporary, "" /* no root dir */
+	) );
 }
 
 
-void collect_flow_attrs( char* link_name,
-                         dladm_flow_attr_t** flow_attrs, int* len )
+/**
+ * \brief Retrieves flows' attributes.
+ *
+ * Allocates and fills *flow_attrs array with attributes
+ * for flows assigned do link_name. *len is filled with flows count.
+ *
+ * \param  link_name    link name
+ * \param  flow_attrs   pointer to array of flow attributes
+ *                      the function allocates and fills
+ * \param  len          number of elements *flow_attrs has
+ *                      after execution of the function
+ */
+static void collect_flow_attrs( char* link_name,
+                                dladm_flow_attr_t** flow_attrs, int* len )
 {
 	// Get link ID for link_name.
 
@@ -87,20 +104,6 @@ void collect_flow_attrs( char* link_name,
 	*flow_attrs = malloc( sizeof( dladm_flow_attr_t ) * ( *len ) );
 	dladm_walk_flow( &get_attrs, handle, link_id, flow_attrs, 0 );
 	*flow_attrs -= *len;
-}
-
-
-int collect_link_names( dladm_handle_t handle,
-                        datalink_id_t link_id, void* arg )
-{
-	char** it = arg;
-
-	dladm_datalink_id2info( handle, link_id, NULL, NULL, NULL,
-	                        *it, MAXLINKNAMELEN );
-
-	*it += MAXLINKNAMELEN;
-
-	return DLADM_WALK_CONTINUE;
 }
 
 

@@ -77,3 +77,21 @@ int get_props( void* arg, const char* propname )
 	return DLADM_WALK_CONTINUE;
 }
 
+  
+/*
+ * dladm_walk_datalink_id functors
+ */
+
+int collect_link_names( dladm_handle_t handle,
+                        datalink_id_t link_id, void* arg )
+{
+	char** it = arg;
+
+	dladm_datalink_id2info( handle, link_id, NULL, NULL, NULL,
+	                        *it, MAXLINKNAMELEN );
+
+	*it += MAXLINKNAMELEN;
+
+	return DLADM_WALK_CONTINUE;
+}
+

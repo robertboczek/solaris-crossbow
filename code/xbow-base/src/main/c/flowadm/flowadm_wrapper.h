@@ -9,8 +9,8 @@
 /**
  * \brief  Initializes the library.
  *
- * \return  0        on success
- * \return  non-zero otherwise
+ * \return  XBOW_STATUS_OK           on success
+ * \return  XBOW_STATUS_UNKNOWN_ERR  otherwise
  */
 int init();
 
@@ -19,6 +19,10 @@ int init();
  * \brief  Creates new flow.
  *
  * \param  flow_info  flow descriptor
+ *
+ * \return  XBOW_STATUS_OK              on success
+ * \return  XBOW_STATUS_PROP_PARSE_ERR  properties validation failed
+ * \return  XBOW_STATUS_UNKNOWN_ERR     other error
  */
 int create( flow_info_t* flow_info );
 
@@ -29,37 +33,72 @@ int create( flow_info_t* flow_info );
  * \param  flow       flow name
  * \param  temporary  determines is the change temporary
  *
- * \return  0         on success
- * \return  non-zero  otherwise
+ * \return  XBOW_STATUS_OK           on success
+ * \return  XBOW_STATUS_UNKNOWN_ERR  otherwise
  */
 int remove_flow( char* flow, int temporary );
 
 
 /**
- * \brief Retrieves flows' attributes.
+ * \brief  Sets flow properties.
  *
- * Allocates and fills *flow_attrs array with attributes
- * for flows assigned do link_name. *len is filled with flows count.
+ * \param  flow        flow name
+ * \param  key         property key
+ * \param  values      array of values to be set
+ * \param  values_len  number of elements values array has
+ * \param  temporary   determines if the operation is temporary
  *
- * \param  link_name
- * \param  flow_attrs
- * \param  len
+ * \return  XBOW_STATUS_OK           on success
+ * \return  XBOW_STATUS_UNKNOWN_ERR  otherwise
  */
-void collect_flow_attrs( char* link_name,
-                         dladm_flow_attr_t** flow_attrs, int* len );
-
-
 int set_property( char* flow,
                   char* key, char* values[], unsigned int values_len,
                   int temporary );
 
 
+/**
+ * \brief  Retrieves flows info.
+ *
+ * Returns a pointer to flow_infos_t structure filled with
+ * data for flows created over links specified by link_name.
+ *
+ * If NULL == link_name, data for all flows is returned.
+ *
+ * \param  link_name  NULL-terminated array of link names
+ *                    or NULL pointer
+ *
+ * \return  pointer to flow_infos_t filled with data for specified flows.
+ *
+ * \warning  The caller is responsible for freeing returned pointer
+ *           with free_flow_infos function.
+ */
 flow_infos_t* get_flows_info( char* link_name[] );
 
 
+/**
+ * \brief  Resets flow property.
+ *
+ * \param  flow       flow name
+ * \param  key        property key
+ * \param  temporary  determines whether the operation is temporary
+ *
+ * \return  XBOW_STATUS_OK           on success
+ * \return  XBOW_STATUS_UNKNOWN_ERR  otherwise
+ */
 int reset_property( char* flow, char* key, int temporary );
 
 
+/**
+ * \brief  Returns properties for a flow.
+ *
+ * \param  flow  flow name
+ *
+ * \return  a pointer to key_value_pairs_t that contains
+ *          flow's properties
+ *
+ * \warning  The caller is responsible for freeing returned pointer
+ *           with free_key_value_pairs function.
+ */
 key_value_pairs_t* get_properties( char* flow );
 
 
