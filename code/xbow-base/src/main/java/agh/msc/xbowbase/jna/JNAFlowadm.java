@@ -35,10 +35,21 @@ public class JNAFlowadm implements Flowadm {
 
 
 	/**
+	 * Creates the helper object using user-provided JNA handle.
+	 *
+	 * @param  handle  JNA handle
+	 */
+	public JNAFlowadm( IFlowadm handle ) {
+		this.handle = handle;
+	}
+
+
+	/**
 	 * @see  Flowadm#remove(java.lang.String, boolean)
 	 */
 	@Override
-	public void remove( String flow, boolean temporary ) throws XbowException {
+	public void remove( String flow, boolean temporary ) throws XbowException,
+	                                                            NoSuchFlowException {
 
 		int rc = handle.remove_flow( flow, temporary );
 
@@ -47,7 +58,12 @@ public class JNAFlowadm implements Flowadm {
 		// If remove_flow didn't finish successfully, map rc to exception and throw it.
 
 		if ( rc != XbowStatus.XBOW_STATUS_OK.ordinal() ) {
-			throw new XbowException( "Could not remove " + flow );
+
+			if ( XbowStatus.XBOW_STATUS_NOTFOUND.ordinal() == rc ) {
+				throw new NoSuchFlowException( flow );
+			} else {
+				throw new XbowException( "Could not remove " + flow );
+			}
 		}
 
 	}
@@ -237,10 +253,13 @@ public class JNAFlowadm implements Flowadm {
 	}
 
 
+	// TODO-DAWID: v that becomes ugly and has to be refactored
+
+
 	/**
 	 * C <-> Java mappings.
 	 */
-	private interface IFlowadm extends Library {
+	public interface IFlowadm extends Library {
 
 		/*
 		 * Types

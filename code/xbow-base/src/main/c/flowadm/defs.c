@@ -1,23 +1,72 @@
 #include <libdlflow.h>
 
+#include <stdlib.h>
+
 #include "defs.h"
+
+
+static int mappings[][ 2 ] = {
+
+	{ DLADM_STATUS_OK,             XBOW_STATUS_OK },
+	{ DLADM_STATUS_PROP_PARSE_ERR, XBOW_STATUS_PROP_PARSE_ERR },
+	{ DLADM_STATUS_NOTFOUND,       XBOW_STATUS_NOTFOUND }
+
+};
 
 
 int map_status( int dladm_status )
 {
-	// TODO-DAWID: refactor (array)
+	static int max_dladm_status = -1;
+	static int* internal_mappings;
+	static int initialized = 0;
 
-	if ( DLADM_STATUS_OK == dladm_status )
+	if ( ! initialized )
 	{
-		return XBOW_STATUS_OK;
+		// If internal mappings array is not initialized, setup it.
+		
+		// Find the maximum status number.
+
+		for ( int i = 0; i < LEN( mappings ); ++i )
+		{
+			if ( max_dladm_status < mappings[ i ][ 0 ] )
+			{
+				max_dladm_status = mappings[ i ][ 0 ];
+			}
+		}
+
+		// Allocate array big enough to handle all supported DLADM_STATUSes.
+
+		internal_mappings = malloc( sizeof( *internal_mappings )
+		                            * ( max_dladm_status + 1 ) );
+		
+		// Assume we don't know any mappings.
+
+		for ( int i = 0; i < max_dladm_status + 1; ++i )
+		{
+			internal_mappings[ i ] = XBOW_STATUS_UNKNOWN_ERR;
+		}
+
+		// Fill internal mappings with user-defined mappings.
+
+		for ( int i = 0; i < LEN( mappings ); ++i )
+		{
+			internal_mappings[ mappings[ i ][ 0 ] ] = mappings[ i ][ 1 ];
+		}
+
+		// Set the flag.
+
+		initialized = 1;
 	}
-	else if ( DLADM_STATUS_PROP_PARSE_ERR == dladm_status )
+
+	int xbow_status = XBOW_STATUS_UNKNOWN_ERR;
+
+	if ( dladm_status <= max_dladm_status )
 	{
-		return XBOW_STATUS_PROP_PARSE_ERR;
+		// The mapping can be read from internal_mappings array. Get it.
+
+		xbow_status = internal_mappings[ dladm_status ];
 	}
-	else
-	{
-		return XBOW_STATUS_UNKNOWN_ERR;
-	}
+
+	return xbow_status;
 }
 

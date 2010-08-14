@@ -1,4 +1,6 @@
-package agh.msc.xbowbase.flow;
+package agh.msc.xbowbase.publisher;
+
+import agh.msc.xbowbase.publisher.exception.NotPublishedException;
 
 
 /**
@@ -19,7 +21,9 @@ public interface Publisher {
 	 * Unpublishes object.
 	 *
 	 * @param  object  implementation-specific identifier of the object to be unregistered.
+	 *
+	 * @throws  NotPublishedException  if the object hasn't been registered with the publisher
 	 */
-	public void unpublish( Object object );
+	public void unpublish( Object object ) throws NotPublishedException;
 
 }

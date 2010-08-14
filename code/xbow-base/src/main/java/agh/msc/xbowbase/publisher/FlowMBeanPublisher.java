@@ -1,5 +1,8 @@
-package agh.msc.xbowbase.flow;
+package agh.msc.xbowbase.publisher;
 
+import agh.msc.xbowbase.flow.Flow;
+import agh.msc.xbowbase.flow.FlowMBean;
+import agh.msc.xbowbase.publisher.exception.NotPublishedException;
 import java.util.LinkedList;
 import java.util.List;
 import javax.management.MBeanServer;
@@ -74,7 +77,11 @@ public class FlowMBeanPublisher implements Publisher {
 	 * @see  Publisher#unpublish(java.lang.Object)
 	 */
 	@Override
-	public void unpublish( Object object ) {
+	public void unpublish( Object object ) throws NotPublishedException {
+
+		// Assume the object is not published.
+
+		boolean found = false;
 
 		if ( object instanceof String ) {
 
@@ -85,6 +92,8 @@ public class FlowMBeanPublisher implements Publisher {
 				Flow flow = ( Flow ) o;
 
 				if ( flow.getName().equals( flowName ) ) {
+
+					found = true;
 
 					try {
 
@@ -99,6 +108,10 @@ public class FlowMBeanPublisher implements Publisher {
 
 				}
 
+			}
+
+			if ( ! found ) {
+				throw new NotPublishedException( flowName );
 			}
 
 		} else {

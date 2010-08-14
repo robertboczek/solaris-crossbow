@@ -1,8 +1,10 @@
 package agh.msc.xbowbase.flow;
 
+import agh.msc.xbowbase.publisher.Publisher;
 import agh.msc.xbowbase.exception.XbowException;
 import agh.msc.xbowbase.flow.util.FlowToFlowInfoTranslator;
 import agh.msc.xbowbase.lib.Flowadm;
+import agh.msc.xbowbase.publisher.exception.NotPublishedException;
 import java.util.LinkedList;
 import java.util.List;
 import javax.management.Notification;
@@ -108,8 +110,16 @@ public class FlowManager implements FlowManagerMBean, NotificationListener {
 
 		if ( publisher != null ) {
 
-			publisher.unpublish( flowName );
-			logger.info( flowName + " flow unpublished." );
+			try {
+
+				publisher.unpublish( flowName );
+				logger.info( flowName + " flow unpublished." );
+
+			} catch ( NotPublishedException e ) {
+
+				logger.error( "Error while unpublishing " + flowName + ".", e );
+
+			}
 
 		}
 

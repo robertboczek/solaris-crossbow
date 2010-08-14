@@ -11,6 +11,7 @@ enum
 {
 	XBOW_STATUS_OK,
 	XBOW_STATUS_PROP_PARSE_ERR,
+	XBOW_STATUS_NOTFOUND,
 	XBOW_STATUS_UNKNOWN_ERR,
 	XBOW_STATUS_LEN_             // auxiliary, don't use it as a return code
 };

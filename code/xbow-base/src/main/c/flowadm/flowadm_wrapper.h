@@ -34,6 +34,7 @@ int create( flow_info_t* flow_info );
  * \param  temporary  determines is the change temporary
  *
  * \return  XBOW_STATUS_OK           on success
+ * \return  XBOW_STATUS_NOTFOUND     specified flow was not found
  * \return  XBOW_STATUS_UNKNOWN_ERR  otherwise
  */
 int remove_flow( char* flow, int temporary );

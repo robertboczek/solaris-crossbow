@@ -3,7 +3,7 @@ package agh.msc.xbowbase;
 import agh.msc.xbowbase.exception.XbowException;
 import agh.msc.xbowbase.flow.Flow;
 import agh.msc.xbowbase.flow.FlowAccounting;
-import agh.msc.xbowbase.flow.FlowMBeanPublisher;
+import agh.msc.xbowbase.publisher.FlowMBeanPublisher;
 import agh.msc.xbowbase.flow.FlowManager;
 import agh.msc.xbowbase.jna.JNAFlowadm;
 import agh.msc.xbowbase.lib.Flowadm;

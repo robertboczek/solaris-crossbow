@@ -50,9 +50,11 @@ public interface Flowadm {
 	 * @param  flow       name of the flow to be removed
 	 * @param  temporary  determines if the operation is temporary
 	 *
-	 * @throws  XbowException  removal failed
+	 * @throws  NoSuchFlowException  specified flow doesn't exist
+	 * @throws  XbowException        removal failed
 	 */
-	public void remove( String flow, boolean temporary ) throws XbowException;
+	public void remove( String flow, boolean temporary ) throws XbowException,
+	                                                            NoSuchFlowException;
 
 
 	/**
