@@ -1,8 +1,12 @@
 package agh.msc.xbowbase.flow;
 
+import agh.msc.xbowbase.exception.NoSuchFlowException;
 import agh.msc.xbowbase.exception.ValidationException;
+import agh.msc.xbowbase.exception.XbowException;
 import agh.msc.xbowbase.lib.Flowadm;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -30,8 +34,15 @@ public class FlowTest {
 	public static void tearDownClass() throws Exception {
 	}
 
+
 	@Before
 	public void setUp() {
+
+		helper = mock( Flowadm.class );
+
+		flow = new Flow();
+		flow.setFlowadm( helper );
+
 	}
 
 	@After
@@ -40,38 +51,112 @@ public class FlowTest {
 
 
 	@Test
-	public void testPropertiesManagement() throws ValidationException {
+	public void testSettersAndGetters() {
 
-		/*
-		Map< String, String > attributes = new HashMap< String, String >();
-		attributes.put( "key0", "val0" );
+		String name = "koszalek";
+		String link = "e1000g1";
 
-		Flowadm flowadm = mock( Flowadm.class );
-		doThrow( new ValidationException( "" ) ).when( flowadm ).setAttributes( anyString(), eq( attributes ) );
+		Map< String, String > attrs = new HashMap< String, String >();
+		attrs.put( "transport", "udp" );
 
-		Flow flow = new Flow();
-		flow.setFlowadm( flowadm );
+		Map< String, String > props = new HashMap< String, String >();
+		props.put( "maxbw", "10M" );
 
-		Object exception = null;
-		 *
-		 */
+		boolean temporary = false;
 
-		/*
-		try {
+		flow.setName( name );
+		flow.setLink( link );
+		flow.setAttrs( attrs );
+		flow.setProps( props );
+		flow.setTemporary( temporary );
 
-			flow.setProperties( attributes, true );
+		assertEquals( name, flow.getName() );
+		assertEquals( link, flow.getLink() );
+		assertEquals( attrs, flow.getAttrs() );
+		assertEquals( props, flow.getProps() );
+		assertEquals( temporary, flow.isTemporary() );
 
-		} catch ( ValidationException e ) {
-
-			exception = e;
-
-		}
-		 *
-		 */
-
-		// assertNotNull( exception );
-		// assertEquals( new HashMap< String, String >(), flow.getProperties() );
-	
 	}
+
+
+	@Test( expected = NoSuchFlowException.class )
+	public void testGetNonInstantiatedFlowsAttributes() throws NoSuchFlowException {
+
+		when( helper.getAttributes( flow.getName() ) )
+			.thenThrow( new NoSuchFlowException( flow.getName() ) );
+
+		flow.getAttributes();
+
+	}
+
+
+	@Test( expected = NoSuchFlowException.class )
+	public void testGetNonInstantiatedFlowsProperties() throws NoSuchFlowException {
+
+		when( helper.getProperties( flow.getName() ) )
+			.thenThrow( new NoSuchFlowException( flow.getName() ) );
+
+		flow.getProperties();
+
+	}
+
+
+	@Test( expected = NoSuchFlowException.class )
+	public void testSetNonInstantiatedFlowsProperties() throws XbowException {
+
+		Map< String, String > props = new HashMap< String, String >();
+
+		doThrow( new NoSuchFlowException( flow.getName() ) )
+			.when( helper ).setProperties( eq( flow.getName() ), eq( props ), anyBoolean() );
+
+		flow.setProperties( props, true );
+
+	}
+
+
+	@Test( expected = ValidationException.class )
+	public void testSetInvalidFlowProperties() throws XbowException {
+
+		Map< String, String > props = new HashMap< String, String >();
+		props.put( "prioority", "medum" );
+
+		doThrow( new ValidationException( props.keySet().toArray( new String[]{} )[ 0 ] ) )
+			.when( helper ).setProperties( eq( flow.getName() ), eq( props ), anyBoolean() );
+
+		flow.setProperties( props, true );
+
+	}
+
+
+	@Test( expected = NoSuchFlowException.class )
+	public void testResetNonInstantiatedFlowsProperties() throws XbowException {
+
+		List< String > props = new LinkedList< String >();
+
+		doThrow( new NoSuchFlowException( flow.getName() ) )
+			.when( helper ).resetProperties( eq( flow.getName() ), eq( props ), anyBoolean() );
+
+		flow.resetProperties( props, true );
+
+	}
+
+
+	@Test( expected = ValidationException.class )
+	public void testResetInvalidFlowProperties() throws XbowException {
+
+		List< String > props = new LinkedList< String >();
+		props.add( "prioority" );
+
+		doThrow( new ValidationException( props.get( 0 ) ) )
+			.when( helper ).resetProperties( eq( flow.getName() ), eq( props ), anyBoolean() );
+
+		flow.resetProperties( props, true );
+
+	}
+
+
+	private Flow flow;
+
+	private Flowadm helper;
 
 }

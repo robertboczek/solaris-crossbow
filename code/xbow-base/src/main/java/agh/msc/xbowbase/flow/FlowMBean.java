@@ -32,7 +32,7 @@ public interface FlowMBean {
 	/**
 	 * @brief  Attributes getter method.
 	 *
-	 * @throw  NoSuchFlowException  the flow hasn't been created in the system
+	 * @throws  NoSuchFlowException  the flow hasn't been created in the system
 	 *
 	 * @return  flow attributes map
 	 */
@@ -41,7 +41,7 @@ public interface FlowMBean {
 	/**
 	 * @brief  Properties getter method.
 	 *
-	 * @throw  NoSuchFlowException  the flow hasn't been created in the system
+	 * @throws  NoSuchFlowException  the flow hasn't been created in the system
 	 *
 	 * @return  flow properties map
 	 */
@@ -54,17 +54,23 @@ public interface FlowMBean {
 	 * @param  temporary   indicates whether the operation is temporary.
 	 *                     If so, the properties will be reset after syste reboot
 	 *
+	 * @throws  NoSuchFlowException  the flow hasn't been created in the system
 	 * @throws  ValidationException  properties validation failed
 	 */
-	public void setProperties( Map< String, String > properties, boolean temporary ) throws ValidationException;
+	public void setProperties( Map< String, String > properties, boolean temporary ) throws NoSuchFlowException,
+	                                                                                        ValidationException;
 
 	/**
 	 * @brief  Resets flow's properties.
 	 *
 	 * @param  properties  properties map
 	 * @param  temporary   indicates whether the operation is temporary
+	 *
+	 * @throws  NoSuchFlowException  the flow hasn't been created in the system
+	 * @throws  ValidationException  properties validation failed
 	 */
-	public void resetProperties( List< String > properties, boolean temporary ) throws ValidationException;
+	public void resetProperties( List< String > properties, boolean temporary ) throws NoSuchFlowException,
+	                                                                                   ValidationException;
 
 	/**
 	 * @brief  Temporary getter method.

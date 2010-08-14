@@ -55,7 +55,7 @@ public class JNAFlowadm implements Flowadm {
 
 		logger.debug( "remove_flow returned with rc == " + rc + " ." );
 
-		// If remove_flow didn't finish successfully, map rc to exception and throw it.
+		// If remove_flow failed, map rc to exception and throw it.
 
 		if ( rc != XbowStatus.XBOW_STATUS_OK.ordinal() ) {
 

@@ -103,12 +103,18 @@ public class Flow implements FlowMBean {
 	 * @see  FlowMBean#setProperties(java.util.Map, boolean)
 	 */
 	@Override
-	public void setProperties( Map< String, String > properties, boolean temporary ) throws ValidationException {
+	public void setProperties( Map< String, String > properties, boolean temporary ) throws NoSuchFlowException,
+	                                                                                        ValidationException {
 
 		try {
 
 			flowadm.setProperties( name, properties, temporary );
 			props = flowadm.getProperties( name );
+
+		} catch ( NoSuchFlowException e ) {
+
+			logger.error( name + " is not present in the system.", e );
+			throw e;
 
 		} catch ( ValidationException e ) {
 
@@ -151,12 +157,18 @@ public class Flow implements FlowMBean {
 	 * @see  FlowMBean#resetProperties(java.util.List, boolean)
 	 */
 	@Override
-	public void resetProperties( List< String > properties, boolean temporary ) throws ValidationException {
+	public void resetProperties( List< String > properties, boolean temporary ) throws NoSuchFlowException,
+	                                                                                   ValidationException {
 
 		try {
 
 			flowadm.resetProperties( name, properties, temporary );
 			props = flowadm.getProperties( name );
+
+		} catch ( NoSuchFlowException e ) {
+
+			logger.error( name + " is not present in the system.", e );
+			throw e;
 
 		} catch ( ValidationException e ) {
 
