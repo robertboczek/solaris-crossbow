@@ -124,6 +124,15 @@ public class FlowMBeanPublisher implements Publisher {
 
 
 	/**
+	 * @see  Publisher#getPublished()
+	 */
+	@Override
+	public List< Object > getPublished() {
+		return published;
+	}
+
+
+	/**
 	 * Creates ObjectName for given FlowMBean object.
 	 *
 	 * @param  flowMBean  FlowMBean object

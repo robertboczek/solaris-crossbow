@@ -1,6 +1,7 @@
 package agh.msc.xbowbase.publisher;
 
 import agh.msc.xbowbase.publisher.exception.NotPublishedException;
+import java.util.List;
 
 
 /**
@@ -25,5 +26,12 @@ public interface Publisher {
 	 * @throws  NotPublishedException  if the object hasn't been registered with the publisher
 	 */
 	public void unpublish( Object object ) throws NotPublishedException;
+
+	/**
+	 * Returns list of published objects.
+	 *
+	 * @return  list of published objects
+	 */
+	public List< Object > getPublished();
 
 }

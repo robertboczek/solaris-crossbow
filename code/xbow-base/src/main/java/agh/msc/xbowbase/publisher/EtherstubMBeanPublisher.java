@@ -114,6 +114,11 @@ public class EtherstubMBeanPublisher implements Publisher{
         }
     }
 
+		@Override
+		public List< Object > getPublished() {
+			throw new UnsupportedOperationException("Not supported yet.");
+		}
+
     /**
      * Creates etherstub's object name
      * @param etherstubMBean Ethertstub MBean object whose object name is requested

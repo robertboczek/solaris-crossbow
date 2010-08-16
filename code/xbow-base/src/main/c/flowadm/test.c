@@ -1,6 +1,8 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "flowadm_wrapper.h"
+#include "memory.h"
 
 
 int main( int agrc, char** argv )
@@ -46,11 +48,16 @@ int main( int agrc, char** argv )
 
 		arg.name = "fllow";
 		arg.link = "e1000g0";
-		arg.attrs = "local_ip=4.3.2.1";
-		arg.props = "priority=MEDIUM";
-		arg.temporary = 0;
 
-		create( &arg );
+		arg.attrs = malloc_key_value_pairs( 1 );
+		arg.attrs->key_value_pairs_len = 1;
+		strcpy( arg.attrs->key_value_pairs[ 0 ]->key, "local_ip" );
+		strcpy( arg.attrs->key_value_pairs[ 0 ]->value, "6.6.6.6" );
+
+		arg.attrs = malloc_key_value_pairs( 0 );
+		arg.attrs->key_value_pairs_len = 0;
+
+		create( &arg, 0 );
 	}
 
 	{

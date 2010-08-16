@@ -19,7 +19,7 @@ LIBFNAME=lib$(BASENAME).so
 
 all: $(LIBFNAME) test
 
-$(LIBFNAME): flowadm_wrapper.o functor.o defs.o memory.o
+$(LIBFNAME): flowadm_wrapper.o functor.o defs.o memory.o aux.o
 	$(CC) $(CFLAGS) -fPIC -shared -o $(LIBFNAME) $^ $(LIBS)
 
 test: test.c $(LIBFNAME)

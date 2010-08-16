@@ -66,14 +66,15 @@ public class App {
 		/*     FLOW CREATION TEST     */
 
 		Map< String, String > newAttrs = new HashMap< String, String >();
-		newAttrs.put( "local_ip", "1.1.1.3" );
+		newAttrs.put( "transport", "tcp" );
+		newAttrs.put( "local_port", "1234" );
 
 		Map< String, String > newProps = new HashMap< String, String >();
 		newProps.put( "priority", "MEDIUM" );
 
 		Flow newFlow = new Flow();
 		newFlow.setName( "wyjatkowy" );
-		newFlow.setLink( "e1000g0" );
+		newFlow.setLink( "e1000g1" );
 		newFlow.setAttrs( newAttrs );
 		newFlow.setProps( newProps );
 		newFlow.setTemporary( false );
@@ -87,6 +88,7 @@ public class App {
 		} catch ( XbowException e ) {
 
 			System.out.println( "Caught XBowException while creating " + newFlow.getName() + "." );
+			e.printStackTrace();
 
 		}
 

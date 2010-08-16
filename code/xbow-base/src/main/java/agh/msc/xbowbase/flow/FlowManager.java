@@ -5,8 +5,10 @@ import agh.msc.xbowbase.exception.XbowException;
 import agh.msc.xbowbase.flow.util.FlowToFlowInfoTranslator;
 import agh.msc.xbowbase.lib.Flowadm;
 import agh.msc.xbowbase.publisher.exception.NotPublishedException;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import javax.management.Notification;
 import javax.management.NotificationListener;
 import org.apache.log4j.Logger;
@@ -50,18 +52,45 @@ public class FlowManager implements FlowManagerMBean, NotificationListener {
 
 		if ( publisher != null ) {
 
-			List< FlowInfo > flowsInfo = flowadm.getFlowsInfo();
+			synchronized ( publisher ) {
 
-			logger.debug( flowsInfo.size() + " flow(s) discovered." );
+				List< FlowInfo > flowsInfo = flowadm.getFlowsInfo();
 
-			for ( FlowInfo flowInfo : flowsInfo ) {
+				logger.debug( flowsInfo.size() + " flow(s) discovered." );
 
-				// Create new Flow object, initialize and register it.
+				for ( FlowInfo flowInfo : flowsInfo ) {
 
-				Flow flow = FlowToFlowInfoTranslator.toFlow( flowInfo );
-				flow.setFlowadm( flowadm );
+					// Create new Flow object, initialize and register it.
 
-				publisher.publish( flow );
+					Flow flow = FlowToFlowInfoTranslator.toFlow( flowInfo );
+					flow.setFlowadm( flowadm );
+
+					publisher.publish( flow );
+
+				}
+
+				// Unpublish flows user deleted manually.
+
+				Set< String > published = new HashSet< String >();
+				for ( Object flow : publisher.getPublished() ) {
+					published.add( ( ( Flow ) flow ).getName() );
+				}
+
+				Set< String > discovered = new HashSet< String >();
+				for ( Object flowInfo : flowsInfo ) {
+					discovered.add( ( ( FlowInfo ) flowInfo ).getName() );
+				}
+
+				published.removeAll( discovered );
+				for ( Object flowName : published ) {
+
+					try {
+						publisher.unpublish( ( String ) flowName );
+					} catch ( NotPublishedException e ) {
+						logger.fatal( "Error while removing stale flows.", e );
+					}
+
+				}
 
 			}
 
@@ -85,7 +114,10 @@ public class FlowManager implements FlowManagerMBean, NotificationListener {
 
 		if ( publisher != null ) {
 
-			publisher.publish( flow );
+			synchronized ( publisher ) {
+				publisher.publish( flow );
+			}
+
 			logger.info( flow.getName() + " flow published." );
 
 		}
@@ -112,7 +144,10 @@ public class FlowManager implements FlowManagerMBean, NotificationListener {
 
 			try {
 
-				publisher.unpublish( flowName );
+				synchronized ( publisher ) {
+					publisher.unpublish( flowName );
+				}
+
 				logger.info( flowName + " flow unpublished." );
 
 			} catch ( NotPublishedException e ) {

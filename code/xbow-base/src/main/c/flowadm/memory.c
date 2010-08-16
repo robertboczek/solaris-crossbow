@@ -13,7 +13,8 @@ key_value_pairs_t* malloc_key_value_pairs( size_t len )
 
 	for ( int i = 0; i < len; ++i )
 	{
-		key_value_pairs->key_value_pairs[ i ] = malloc_key_value_pair();
+		// TODO-DAWID: v no hardcoded!
+		key_value_pairs->key_value_pairs[ i ] = malloc_key_value_pair( 100, 100 );
 	}
 	key_value_pairs->key_value_pairs[ len ] = NULL;
 
@@ -35,12 +36,12 @@ void free_key_value_pairs( key_value_pairs_t* key_value_pairs )
 }
 
 
-key_value_pair_t* malloc_key_value_pair( void )
+key_value_pair_t* malloc_key_value_pair( size_t key_len, size_t value_len )
 {
 	key_value_pair_t* key_value_pair = malloc( sizeof( *key_value_pair ) );
 
-	key_value_pair->key = malloc( 100 );  // TODO-DAWID
-	key_value_pair->value = malloc( 1000 );  // TODO-DAWID: change
+	key_value_pair->key = malloc( key_len );
+	key_value_pair->value = malloc( value_len );
 
 	return key_value_pair;
 }
@@ -89,8 +90,8 @@ flow_info_t* malloc_flow_info( void )
 
 	flow_info->name = malloc( MAXFLOWNAMELEN );
 	flow_info->link = malloc( MAXLINKNAMELEN );
-	flow_info->attrs = malloc( 100 );  // TODO-DAWID: refactor
-	flow_info->props = "";  // TODO-DAWID: change
+	flow_info->attrs = malloc_key_value_pairs( 10 );  // TODO-DAWID: don't hardcode it
+	flow_info->props = malloc_key_value_pairs( 10 );
 
 	return flow_info;
 }
@@ -100,8 +101,8 @@ void free_flow_info( flow_info_t* flow_info )
 {
 	free( flow_info->name );
 	free( flow_info->link );
-	free( flow_info->attrs );
-	// TODO-DAWID: free props
+	free_key_value_pairs( flow_info->attrs );
+	free_key_value_pairs( flow_info->props );
 
 	free( flow_info );
 }

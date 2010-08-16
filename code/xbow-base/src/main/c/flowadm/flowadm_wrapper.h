@@ -1,8 +1,6 @@
 #ifndef FLOWADM_WRAPPER_H
 #define FLOWADM_WRAPPER_H
 
-#include <libdlflow.h>
-
 #include "types.h"
 
 
@@ -19,12 +17,13 @@ int init();
  * \brief  Creates new flow.
  *
  * \param  flow_info  flow descriptor
+ * \param  temporary  determines whether the flow is temporary
  *
  * \return  XBOW_STATUS_OK              on success
  * \return  XBOW_STATUS_PROP_PARSE_ERR  properties validation failed
  * \return  XBOW_STATUS_UNKNOWN_ERR     other error
  */
-int create( flow_info_t* flow_info );
+int create( flow_info_t* flow_info, int temporary );
 
 
 /**

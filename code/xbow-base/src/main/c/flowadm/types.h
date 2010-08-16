@@ -29,9 +29,8 @@ typedef struct
 {
 	char* name;
 	char* link;
-	char* attrs;
-	char* props;
-	int temporary;
+	key_value_pairs_t* attrs;
+	key_value_pairs_t* props;
 }
 flow_info_t;
 

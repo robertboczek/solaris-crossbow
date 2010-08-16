@@ -4,6 +4,7 @@ import agh.msc.xbowbase.exception.NoSuchFlowException;
 import agh.msc.xbowbase.exception.ValidationException;
 import agh.msc.xbowbase.exception.XbowException;
 import agh.msc.xbowbase.flow.FlowInfo;
+import agh.msc.xbowbase.jna.util.MapToKeyValuePairsTranslator;
 import agh.msc.xbowbase.lib.Flowadm;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
@@ -125,20 +126,11 @@ public class JNAFlowadm implements Flowadm {
 
 		// TODO-DAWID: rc z helpera (obsluga sytuacji, gdy flow nie istnieje)
 
-		Map< String, String > properties = new HashMap< String, String >();
-
 		// Query the library.
 
 		IFlowadm.KeyValuePairsStruct kvps = handle.get_properties( flowName );
 
-		// Put the properties into map.
-
-		for ( Pointer p : kvps.keyValuePairs.getPointerArray( 0, kvps.keyValuePairsLen ) ) {
-
-			IFlowadm.KeyValuePairStruct kvp = new IFlowadm.KeyValuePairStruct( p );
-			properties.put( kvp.key, kvp.value );
-
-		}
+		Map< String, String > properties = MapToKeyValuePairsTranslator.toMap( kvps );
 
 		// Free the memory.
 
@@ -184,7 +176,7 @@ public class JNAFlowadm implements Flowadm {
 	@Override
 	public void create( FlowInfo flowInfo ) throws XbowException {
 
-		int rc = handle.create( new IFlowadm.FlowInfoStruct( flowInfo ) );
+		int rc = handle.create( new IFlowadm.FlowInfoStruct( flowInfo ), flowInfo.isTemporary() );
 
 		logger.debug( "create returned with rc == " + rc + " ." );
 
@@ -226,19 +218,13 @@ public class JNAFlowadm implements Flowadm {
 
 			IFlowadm.FlowInfoStruct struct = new IFlowadm.FlowInfoStruct( p );
 
-			Map< String, String > attrs = new HashMap< String, String >();
-
-			for ( String attr : struct.attrs.split( "," ) ) {
-				attrs.put( attr.split( "=" )[ 0 ], attr.split( "=" )[ 1 ] );
-			}
-
 			// Append to the resulting list.
 
 			res.add( new FlowInfo(
 				struct.name,
 				struct.link,
-				attrs,
-				new HashMap< String, String >(),
+				MapToKeyValuePairsTranslator.toMap( struct.attrs ),
+				MapToKeyValuePairsTranslator.toMap( struct.props ),
 				struct.temporary
 			) );
 
@@ -266,11 +252,40 @@ public class JNAFlowadm implements Flowadm {
 		 */
 
 		public class KeyValuePairsStruct extends Structure {
-			public Pointer keyValuePairs;
+
+			public static class ByReference extends KeyValuePairsStruct implements Structure.ByReference {}
+
+			public KeyValuePairsStruct() {}
+
+			public KeyValuePairsStruct( Pointer p ) {
+				super( p );
+				read();
+			}
+
+			public KeyValuePairStructPtr.ByReference keyValuePairs;
 			public int keyValuePairsLen;
 		}
 
+		public class KeyValuePairStructPtr extends Structure {
+
+			public static class ByReference extends KeyValuePairStructPtr implements Structure.ByReference {}
+
+			public KeyValuePairStruct.ByReference kvp[];
+
+		}
+
 		public class KeyValuePairStruct extends Structure {
+
+			public static class ByReference extends KeyValuePairStruct implements Structure.ByReference {
+
+				public ByReference() {}
+
+				public ByReference( Pointer p ) {
+					super( p );
+					read();
+				}
+
+			}
 
 			public KeyValuePairStruct() {}
 
@@ -300,27 +315,13 @@ public class JNAFlowadm implements Flowadm {
 			public FlowInfoStruct( FlowInfo flowInfo ) {
 				this.name = flowInfo.getName();
 				this.link = flowInfo.getLink();
-				this.attrs = flatten( flowInfo.getAttributes() );
-				this.props = flatten( flowInfo.getProperties() );
+				this.attrs = MapToKeyValuePairsTranslator.toKeyValuePairs( flowInfo.getAttributes() );
+				this.props = MapToKeyValuePairsTranslator.toKeyValuePairs( flowInfo.getProperties() );
 				this.temporary = flowInfo.isTemporary();
 			}
 
-			String flatten( Map< String, String > attrs ) {
-
-				StringBuffer stringBuffer = new StringBuffer();
-				final String separator = ",";
-
-				for ( Map.Entry< String, String > entry : attrs.entrySet() ) {
-					stringBuffer.append( entry.getKey() + "=" + entry.getValue() + separator );
-				}
-
-				stringBuffer.setLength( stringBuffer.length() - separator.length() );
-
-				return stringBuffer.toString();
-
-			}
-
-			public String name, link, attrs, props;
+			public String name, link;
+			public KeyValuePairsStruct.ByReference attrs, props;
 			public boolean temporary;
 		}
 
@@ -330,7 +331,7 @@ public class JNAFlowadm implements Flowadm {
 
 		public void init();
 		public FlowInfosStruct get_flows_info( String links[] );
-		public int create( FlowInfoStruct flowInfo );
+		public int create( FlowInfoStruct flowInfo, boolean temporary );
 		public int remove_flow( String flow, boolean temporary );
 
 		public int set_property( String flow, String key, String values[], int values_len, boolean temporary );

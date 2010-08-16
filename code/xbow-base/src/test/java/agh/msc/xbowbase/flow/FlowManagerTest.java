@@ -1,6 +1,9 @@
 package agh.msc.xbowbase.flow;
 
+import agh.msc.xbowbase.flow.util.FlowToFlowInfoTranslator;
 import agh.msc.xbowbase.lib.Flowadm;
+import agh.msc.xbowbase.publisher.Publisher;
+import agh.msc.xbowbase.publisher.exception.NotPublishedException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -38,9 +41,11 @@ public class FlowManagerTest {
 	public void setUp() {
 
 		helper = mock( Flowadm.class );
+		publisher = mock( Publisher.class );
 
 		flowManager = new FlowManager();
 		flowManager.setFlowadm( helper );
+		flowManager.setPublisher( publisher );
 
 	}
 
@@ -73,8 +78,50 @@ public class FlowManagerTest {
 	}
 
 
-	private FlowManager flowManager;
+	@Test
+	public void testUnpublishStaleFlows() throws NotPublishedException {
 
+		List< FlowInfo > flowInfos = new LinkedList< FlowInfo >( Arrays.asList(
+			new FlowInfo( "jas", "e1000g0", null, null, true ),
+			new FlowInfo( "malgosia", "e1000g0", null, null, true )
+		) );
+
+		List< FlowInfo > newFlowInfos = new LinkedList< FlowInfo >( flowInfos.subList( 0, 1 ) );
+
+		List< Flow > flows = new LinkedList< Flow >();
+
+		for ( FlowInfo flowInfo : flowInfos ) {
+			flows.add( FlowToFlowInfoTranslator.toFlow( flowInfo ) );
+		}
+
+		// Stub.
+
+		when( helper.getFlowsInfo() )
+			.thenReturn( flowInfos )
+			.thenReturn( newFlowInfos );
+
+		when( publisher.getPublished() )
+			.thenReturn( new LinkedList< Object >( flows ) );
+
+		// 1. FlowManager discovers 2 flows.
+
+		flowManager.discover();
+
+		// 2. Now, user removes one flow manually.
+		// 3. FlowManager performs one more discovery and unpublishes deleted flow.
+
+		flowManager.discover();
+
+		verify( publisher, times( 2 ) ).publish( flows.get( 0 ) );
+		verify( publisher, times( 1 ) ).publish( flows.get( 1 ) );
+
+		verify( publisher ).unpublish( flowInfos.get( 1 ).getName() );
+
+	}
+
+
+	private FlowManager flowManager;
 	private Flowadm helper;
+	private Publisher publisher;
 
 }
