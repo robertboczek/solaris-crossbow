@@ -1,8 +1,8 @@
 package agh.msc.xbowbase;
 
-import agh.msc.xbowbase.etherstub.enums.EtherstubParameters;
-import agh.msc.xbowbase.etherstub.enums.EtherstubProperties;
-import agh.msc.xbowbase.etherstub.enums.EtherstubStatistics;
+import agh.msc.xbowbase.enums.LinkParameters;
+import agh.msc.xbowbase.enums.LinkProperties;
+import agh.msc.xbowbase.enums.LinkStatistics;
 import agh.msc.xbowbase.jna.JNAEtherstubadm;
 import agh.msc.xbowbase.lib.Etherstubadm;
 
@@ -32,20 +32,20 @@ public class EtherstubTestApp {
 
         //reading parameter property
         String parameter = null;
-        parameter = etherstubadm.getEtherstubParameter("etherstub1", EtherstubParameters.MTU);
+        parameter = etherstubadm.getEtherstubParameter("etherstub1", LinkParameters.MTU);
         System.out.println("Read MTU property value : " + parameter);
 
         //reading statistic property
         String stat = null;
-        stat = etherstubadm.getEtherstubStatistic("etherstub1", EtherstubStatistics.IPACKETS);
+        stat = etherstubadm.getEtherstubStatistic("etherstub1", LinkStatistics.IPACKETS);
         System.out.println("Read IPACKETS statistic value is: " + stat);
 
         //reading properties property
         String property = null;
-        property = etherstubadm.getEtherstubProperty("etherstub1", EtherstubProperties.PRIORITY);
+        property = etherstubadm.getEtherstubProperty("etherstub1", LinkProperties.PRIORITY);
         System.out.println("Read PRIORITY property value is: " + property);
 
         //setting properties property
-        etherstubadm.setEtherstubProperty("etherstub1", EtherstubProperties.PRIORITY, "HIGH");
+        etherstubadm.setEtherstubProperty("etherstub1", LinkProperties.PRIORITY, "HIGH");
     }
 }

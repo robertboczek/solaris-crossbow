@@ -1,10 +1,16 @@
 package agh.msc.xbowbase.link;
 
+import agh.msc.xbowbase.exception.LinkException;
 import agh.msc.xbowbase.lib.NicHelper;
+import agh.msc.xbowbase.enums.LinkParameters;
+import agh.msc.xbowbase.enums.LinkProperties;
+import agh.msc.xbowbase.enums.LinkStatistics;
+import java.util.HashMap;
 import java.util.Map;
+import org.apache.log4j.Logger;
 
 
-/**
+    /**
  * The class implements NIC MBean functionality.
  *
  * @author cieplik
@@ -29,7 +35,7 @@ public class Nic implements NicMBean {
 	 * @see  NicMBean#getProperties()
 	 */
 	@Override
-	public Map< String, String > getProperties() {
+	public Map< LinkProperties, String > getProperties() throws LinkException {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
@@ -38,7 +44,7 @@ public class Nic implements NicMBean {
 	 * @see  NicMBean#setProperties( java.util.Map )
 	 */
 	@Override
-	public void setProperties( Map< String, String > properties ) {
+	public void setProperty( LinkProperties property, String value ) throws LinkException {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
@@ -47,16 +53,13 @@ public class Nic implements NicMBean {
 	 * @see  NicMBean#getParameters()
 	 */
 	@Override
-	public Map< String, String > getParameters() {
+	public Map< LinkParameters, String > getParameters() throws LinkException {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 
-	/**
-	 * @see  NicMBean#setParameters( java.util.Map )
-	 */
 	@Override
-	public void setParameters( Map< String, String > parameters ) {
+	public Map<LinkStatistics, String> getStatistics() throws LinkException {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
@@ -170,7 +173,16 @@ public class Nic implements NicMBean {
 
 
 	String name;
+	private Map< LinkStatistics, String > statisticsMap = new HashMap< LinkStatistics, String >();
+	private Map< LinkProperties, String > propertiesMap = new HashMap< LinkProperties, String >();
+	private Map< LinkParameters, String > parametersMap = new HashMap< LinkParameters, String >();
+	private String ipAddress;
+	private String ipMask;
+	private boolean plumbed;
+	private boolean up;
 
 	NicHelper nicHelper;
+
+	private static final Logger logger = Logger.getLogger( Nic.class );
 
 }

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Set;
 import javax.management.Notification;
 import javax.management.NotificationListener;
-
+import org.apache.log4j.Logger;
 
 /**
  * The class implements NicManagerMBean functionality.
@@ -18,12 +18,17 @@ import javax.management.NotificationListener;
  */
 public class NicManager implements NicManagerMBean, NotificationListener {
 
+    /** Logger */
+    private static final Logger logger = Logger.getLogger(Nic.class);
+
+
 	/**
 	 * @see  NicManagerMBean#getNicsList()
 	 */
 	@Override
 	public List< String > getNicsList() {
-		throw new UnsupportedOperationException( "Not supported yet." );
+            //@todo use jna library to get list of nic names
+            throw new UnsupportedOperationException( "Not supported yet." );
 	}
 
 

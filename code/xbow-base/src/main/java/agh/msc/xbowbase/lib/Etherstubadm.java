@@ -1,9 +1,9 @@
 package agh.msc.xbowbase.lib;
 
 import com.sun.jna.Library;
-import agh.msc.xbowbase.etherstub.enums.EtherstubParameters;
-import agh.msc.xbowbase.etherstub.enums.EtherstubProperties;
-import agh.msc.xbowbase.etherstub.enums.EtherstubStatistics;
+import agh.msc.xbowbase.enums.LinkParameters;
+import agh.msc.xbowbase.enums.LinkProperties;
+import agh.msc.xbowbase.enums.LinkStatistics;
 import agh.msc.xbowbase.exception.EtherstubException;
 
 /**
@@ -43,7 +43,7 @@ public interface Etherstubadm extends Library {
      * @return Value of requested parameter
      * @throws EtherstubException Exception thrown when error while reading value occur
      */
-    public String getEtherstubParameter(String name, EtherstubParameters parameter) throws EtherstubException;
+    public String getEtherstubParameter(String name, LinkParameters parameter) throws EtherstubException;
 
     /**
      * Returns value of requested parameter
@@ -52,7 +52,7 @@ public interface Etherstubadm extends Library {
      * @return Value of requested statistic
      * @throws EtherstubException Exception thrown when error while reading value occur
      */
-    public String getEtherstubStatistic(String name, EtherstubStatistics property) throws EtherstubException;
+    public String getEtherstubStatistic(String name, LinkStatistics property) throws EtherstubException;
 
     /**
      * Sets new value to property 'property' to the etherstub whose name is 'name'
@@ -61,7 +61,7 @@ public interface Etherstubadm extends Library {
      * @param value Value to be set
      * @throws EtherstubException
      */
-    public void setEtherstubProperty(String name, EtherstubProperties property, String value) throws EtherstubException;
+    public void setEtherstubProperty(String name, LinkProperties property, String value) throws EtherstubException;
 
     /**
      * Returns value of requested property
@@ -70,5 +70,5 @@ public interface Etherstubadm extends Library {
      * @return Value of requested property
      * @throws EtherstubException Exception thrown when error while reading value occur
      */
-    public String getEtherstubProperty(String name, EtherstubProperties property) throws EtherstubException;
+    public String getEtherstubProperty(String name, LinkProperties property) throws EtherstubException;
 }

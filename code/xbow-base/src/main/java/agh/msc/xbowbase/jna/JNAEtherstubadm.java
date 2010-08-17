@@ -1,8 +1,8 @@
 package agh.msc.xbowbase.jna;
 
-import agh.msc.xbowbase.etherstub.enums.EtherstubParameters;
-import agh.msc.xbowbase.etherstub.enums.EtherstubProperties;
-import agh.msc.xbowbase.etherstub.enums.EtherstubStatistics;
+import agh.msc.xbowbase.enums.LinkParameters;
+import agh.msc.xbowbase.enums.LinkProperties;
+import agh.msc.xbowbase.enums.LinkStatistics;
 import agh.msc.xbowbase.exception.EtherstubException;
 import agh.msc.xbowbase.lib.Etherstubadm;
 import com.sun.jna.Library;
@@ -94,11 +94,11 @@ public class JNAEtherstubadm implements Etherstubadm {
      * @see Etherstubadm#getEtherstubParameter(java.lang.String, agh.msc.xbowbase.etherstub.enums.EtherstubParameters)
     **/
     @Override
-    public String getEtherstubParameter(String name, EtherstubParameters parameter) throws EtherstubException {
+    public String getEtherstubParameter(String name, LinkParameters parameter) throws EtherstubException {
 
         logger.info("Trying to read etherstub's : " + name + ", parameter : " + parameter);
 
-        Pointer p = handle.get_etherstub_parameter(name, parameter.ordinal());
+        Pointer p = handle.get_etherstub_parameter(name, parameter.toString());
         return getStringFromPointer(p);
     }
 
@@ -106,11 +106,11 @@ public class JNAEtherstubadm implements Etherstubadm {
      * @see Etherstubadm#getEtherstubStatistic(java.lang.String, agh.msc.xbowbase.etherstub.enums.EtherstubStatistics)
      */
     @Override
-    public String getEtherstubStatistic(String name, EtherstubStatistics statistic) throws EtherstubException {
+    public String getEtherstubStatistic(String name, LinkStatistics statistic) throws EtherstubException {
 
         logger.info("Trying to read etherstub's : " + name + ", statistic : " + statistic);
 
-        Pointer p = handle.get_etherstub_statistic(name, statistic.ordinal());
+        Pointer p = handle.get_etherstub_statistic(name, statistic.toString());
         return getStringFromPointer(p);
     }
 
@@ -118,11 +118,11 @@ public class JNAEtherstubadm implements Etherstubadm {
      * @see Etherstubadm#getEtherstubProperty(java.lang.String, agh.msc.xbowbase.etherstub.enums.EtherstubProperties)
      */
     @Override
-    public void setEtherstubProperty(String name, EtherstubProperties property, String value) throws EtherstubException {
+    public void setEtherstubProperty(String name, LinkProperties property, String value) throws EtherstubException {
 
         logger.info("Trying to set etherstub's : " + name + ", property : " + property + " value : " + value);
 
-        int returnValue = handle.set_etherstub_property( name, property.ordinal(), value);
+        int returnValue = handle.set_etherstub_property( name, property.toString(), value);
 
 
         String errorMessage;
@@ -145,11 +145,11 @@ public class JNAEtherstubadm implements Etherstubadm {
      * @see Etherstubadm#getEtherstubProperty(java.lang.String, agh.msc.xbowbase.etherstub.enums.EtherstubProperties)
      */
     @Override
-    public String getEtherstubProperty(String name, EtherstubProperties property) throws EtherstubException {
+    public String getEtherstubProperty(String name, LinkProperties property) throws EtherstubException {
 
         logger.info("Trying to read etherstub's : " + name + ", property : " + property);
 
-        Pointer p = handle.get_etherstub_property( name, property.ordinal());
+        Pointer p = handle.get_etherstub_property( name, property.toString());
         return getStringFromPointer(p);
     }
 
@@ -187,13 +187,13 @@ public class JNAEtherstubadm implements Etherstubadm {
 
         public Pointer get_etherstub_names();
 
-        public Pointer get_etherstub_parameter(String name, int parameter);
+        public Pointer get_etherstub_parameter(String name, String parameter);
 
-        public Pointer get_etherstub_statistic(String name, int parameter);
+        public Pointer get_etherstub_statistic(String name, String statistic);
 
-        public Pointer get_etherstub_property( String name, int property);
+        public Pointer get_etherstub_property( String name, String property);
 
-        public int set_etherstub_property( String name, int property, String value );
+        public int set_etherstub_property( String name, String property, String value );
 
         public void free_char_array( Pointer pointer );
 

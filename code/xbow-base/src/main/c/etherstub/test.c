@@ -35,18 +35,7 @@ int main( int agrc, char** argv )
 	else if(strcmp(argv[1], "get") == RESULT_OK)
 	{
 
-		etherstub_parameter_type_t type;
-		if(strcmp(argv[3], "BRIDGE") == 0){
-			type = BRIDGE;
-		}else if(strcmp(argv[3], "MTU") == 0){
-			type = MTU;
-		}else if(strcmp(argv[3], "STATE") == 0){
-			type = STATE;
-		}else if(strcmp(argv[3], "OVER") == 0){
-			type = OVER;
-		}
-
-		char *value = get_etherstub_parameter(argv[2], type);
+		char *value = get_etherstub_parameter(argv[2], argv[3]);
 		printf("%s \n", value);
 
 		free(value);
@@ -54,43 +43,17 @@ int main( int agrc, char** argv )
 	else if(strcmp(argv[1], "statistic") == RESULT_OK)
 	{
 
-		etherstub_statistic_type_t type;
-		if(strcmp(argv[3], "IPACKETS") == 0){
-			type = IPACKETS;
-		}else if(strcmp(argv[3], "RBYTES") == 0){
-			type = RBYTES;
-		}else if(strcmp(argv[3], "IERRORS") == 0){
-			type = IERRORS;
-		}else if(strcmp(argv[3], "OPACKETS") == 0){
-			type = OPACKETS;
-		}else if(strcmp(argv[3], "OBYTES") == 0){
-			type = OBYTES;
-		}else if(strcmp(argv[3], "OERRORS") == 0){
-			type = OERRORS;
-		}
-
-		char *value = get_etherstub_statistic(argv[2], type);
+		char *value = get_etherstub_statistic(argv[2], argv[3]);
 		printf("%s \n", value);
 		free(value);
 	}
 	else if(strcmp(argv[1], "setproperty") == RESULT_OK)
 	{
 
-		etherstub_property_type_t type;
-		if(strcmp(argv[3], "MAXBW") == 0){
-			type = MAXBW;
-		}else if(strcmp(argv[3], "CPUS") == 0){
-			type = CPUS;
-		}else if(strcmp(argv[3], "LEARN_LIMIT") == 0){
-			type = LEARN_LIMIT;
-		}else if(strcmp(argv[3], "PRIORITY") == 0){
-			type = PRIORITY;
-		}
-
 		char *value = (char*)malloc(sizeof(char)*20);
 		strcpy(value, argv[4]);
 
-		if(set_etherstub_property(argv[2], type, value) == RESULT_OK)
+		if(set_etherstub_property(argv[2], argv[3], value) == RESULT_OK)
 		{
 			printf("%s \n", value);
 		}
@@ -100,18 +63,7 @@ int main( int agrc, char** argv )
 	else if(strcmp(argv[1], "getproperty") == RESULT_OK)
 	{
 
-		etherstub_property_type_t type;
-		if(strcmp(argv[3], "MAXBW") == 0){
-			type = MAXBW;
-		}else if(strcmp(argv[3], "CPUS") == 0){
-			type = CPUS;
-		}else if(strcmp(argv[3], "LEARN_LIMIT") == 0){
-			type = LEARN_LIMIT;
-		}else if(strcmp(argv[3], "PRIORITY") == 0){
-			type = PRIORITY;
-		}
-
-		char *value = get_etherstub_property(argv[2], type);
+		char *value = get_etherstub_property(argv[2], argv[3]);
 		printf("Property value is: %s \n", value);
 		free(value);
 	}
