@@ -3,7 +3,7 @@ package agh.msc.xbowbase.flow;
 import agh.msc.xbowbase.exception.NoSuchFlowException;
 import agh.msc.xbowbase.exception.ValidationException;
 import agh.msc.xbowbase.exception.XbowException;
-import agh.msc.xbowbase.lib.Flowadm;
+import agh.msc.xbowbase.lib.FlowHelper;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,7 +38,7 @@ public class FlowTest {
 	@Before
 	public void setUp() {
 
-		helper = mock( Flowadm.class );
+		helper = mock( FlowHelper.class );
 
 		flow = new Flow();
 		flow.setFlowadm( helper );
@@ -157,6 +157,6 @@ public class FlowTest {
 
 	private Flow flow;
 
-	private Flowadm helper;
+	private FlowHelper helper;
 
 }

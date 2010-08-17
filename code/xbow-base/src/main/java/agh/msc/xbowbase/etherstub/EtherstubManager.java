@@ -1,7 +1,7 @@
 package agh.msc.xbowbase.etherstub;
 
 import agh.msc.xbowbase.exception.EtherstubException;
-import agh.msc.xbowbase.lib.Etherstubadm;
+import agh.msc.xbowbase.lib.EtherstubHelper;
 import agh.msc.xbowbase.publisher.Publisher;
 import agh.msc.xbowbase.publisher.exception.NotPublishedException;
 import java.util.logging.Level;
@@ -24,7 +24,7 @@ public class EtherstubManager implements EtherstubManagerMBean, NotificationList
 
     /** Logger */
     private static final Logger logger = Logger.getLogger(Etherstub.class);
-    private Etherstubadm etherstubadm;
+    private EtherstubHelper etherstubadm;
     private final Set<EtherstubMBean> etherstubsSet;
     private Publisher publisher;
 
@@ -115,10 +115,10 @@ public class EtherstubManager implements EtherstubManagerMBean, NotificationList
     }
 
     /**
-     * Sets the implementation of Etherstubadm
+     * Sets the implementation of EtherstubHelper
      * @param etherstubadm Conrete implementation of Ehterstubadm
      */
-    public void setEtherstubadm(Etherstubadm etherstubadm) {
+    public void setEtherstubadm(EtherstubHelper etherstubadm) {
         this.etherstubadm = etherstubadm;
     }
 

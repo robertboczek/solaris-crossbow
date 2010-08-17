@@ -1,7 +1,7 @@
 package agh.msc.xbowbase.jna.util;
 
-import agh.msc.xbowbase.jna.JNAFlowadm;
-import agh.msc.xbowbase.jna.mapping.IFlowadm;
+import agh.msc.xbowbase.jna.JNAFlowHelper;
+import agh.msc.xbowbase.jna.mapping.FlowHandle;
 import com.sun.jna.Pointer;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +22,7 @@ public class MapToKeyValuePairsTranslator {
 	 *
 	 * @return  Map< String, String > instance
 	 */
-	public static Map< String, String > toMap( IFlowadm.KeyValuePairsStruct kvps ) {
+	public static Map< String, String > toMap( FlowHandle.KeyValuePairsStruct kvps ) {
 
 		Map< String, String > map = new HashMap< String, String >();
 
@@ -30,7 +30,7 @@ public class MapToKeyValuePairsTranslator {
 
 			for ( int i = 0; i < kvps.keyValuePairsLen; ++i ) {
 
-				IFlowadm.KeyValuePairStruct.ByReference k = new IFlowadm.KeyValuePairStruct.ByReference( kvps.keyValuePairs.getPointer().getPointer( Pointer.SIZE * i ) );
+				FlowHandle.KeyValuePairStruct.ByReference k = new FlowHandle.KeyValuePairStruct.ByReference( kvps.keyValuePairs.getPointer().getPointer( Pointer.SIZE * i ) );
 				k.read();
 
 				map.put( k.key, k.value );
@@ -51,12 +51,12 @@ public class MapToKeyValuePairsTranslator {
 	 *
 	 * @return  KeyValuePairsStruct instance
 	 */
-	public static IFlowadm.KeyValuePairsStruct.ByReference toKeyValuePairs( Map< String, String > map ) {
+	public static FlowHandle.KeyValuePairsStruct.ByReference toKeyValuePairs( Map< String, String > map ) {
 
-		IFlowadm.KeyValuePairsStruct.ByReference kvps = new IFlowadm.KeyValuePairsStruct.ByReference();
+		FlowHandle.KeyValuePairsStruct.ByReference kvps = new FlowHandle.KeyValuePairsStruct.ByReference();
 
-		kvps.keyValuePairs = new IFlowadm.KeyValuePairStructPtr.ByReference();
-		kvps.keyValuePairs.kvp = new IFlowadm.KeyValuePairStruct.ByReference[ map.size() ];
+		kvps.keyValuePairs = new FlowHandle.KeyValuePairStructPtr.ByReference();
+		kvps.keyValuePairs.kvp = new FlowHandle.KeyValuePairStruct.ByReference[ map.size() ];
 
 		kvps.keyValuePairsLen = map.size();
 
@@ -64,7 +64,7 @@ public class MapToKeyValuePairsTranslator {
 
 		for ( Entry< String, String > entry : map.entrySet() ) {
 
-			kvps.keyValuePairs.kvp[ i ] = new IFlowadm.KeyValuePairStruct.ByReference();
+			kvps.keyValuePairs.kvp[ i ] = new FlowHandle.KeyValuePairStruct.ByReference();
 
 			kvps.keyValuePairs.kvp[ i ].key = entry.getKey();
 			kvps.keyValuePairs.kvp[ i ].value = entry.getValue();

@@ -15,14 +15,14 @@ public interface LinkHandle extends Library {
 	 * Types
 	 */
 
-	public class LinkInfosStruct extends Structure {
-		public Pointer linkInfos;
-		public int linkInfosLen;
+	public class NicInfosStruct extends Structure {
+		public Pointer nicInfos;
+		public int nicInfosLen;
 	}
 
-	public class LinkInfoStruct extends Structure {
+	public class NicInfoStruct extends Structure {
 
-		public LinkInfoStruct( Pointer p ) {
+		public NicInfoStruct( Pointer p ) {
 			super( p );
 			read();
 		}
@@ -36,6 +36,9 @@ public interface LinkHandle extends Library {
 	 */
 
 	public void init();
-	public LinkInfosStruct get_nic_infos();
+	public NicInfoStruct get_nic_info( String name );
+	public NicInfosStruct get_nic_infos();
+
+	public void free_nic_infos( NicInfosStruct linkInfosStruct );
 
 }

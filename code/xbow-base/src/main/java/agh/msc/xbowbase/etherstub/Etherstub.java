@@ -4,7 +4,7 @@ import agh.msc.xbowbase.enums.LinkParameters;
 import agh.msc.xbowbase.enums.LinkProperties;
 import agh.msc.xbowbase.enums.LinkStatistics;
 import agh.msc.xbowbase.exception.EtherstubException;
-import agh.msc.xbowbase.lib.Etherstubadm;
+import agh.msc.xbowbase.lib.EtherstubHelper;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.log4j.Logger;
@@ -23,7 +23,7 @@ public class Etherstub implements EtherstubMBean {
     private Map<LinkParameters, String> parameters;
     private Map<LinkProperties, String> properties; //some properties contain a few values like names of cpus
     private Map<LinkStatistics, String> statistis;
-    private Etherstubadm etherstubadm = null;
+    private EtherstubHelper etherstubadm = null;
 
     /**
      * Constructor of Etherstub Class, it's the only way to set up name and temporary values
@@ -100,10 +100,10 @@ public class Etherstub implements EtherstubMBean {
     }
 
     /**
-     * Sets the implementation of Etherstubadm
+     * Sets the implementation of EtherstubHelper
      * @param etherstubadm Conrete implementation of Ehterstubadm
      */
-    public void setEtherstubadm(Etherstubadm etherstubadm) {
+    public void setEtherstubadm(EtherstubHelper etherstubadm) {
         this.etherstubadm = etherstubadm;
     }
 

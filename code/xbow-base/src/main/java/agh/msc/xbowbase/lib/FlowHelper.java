@@ -15,7 +15,7 @@ import java.util.Map;
  *
  * @author cieplik
  */
-public interface Flowadm {
+public interface FlowHelper {
 
 	/**
 	 * Retrieves FlowInfo objects for all flows in the system (created over all links).

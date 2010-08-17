@@ -2,7 +2,7 @@ package agh.msc.xbowbase.jna;
 
 import agh.msc.xbowbase.enums.LinkProperties;
 import agh.msc.xbowbase.exception.EtherstubException;
-import agh.msc.xbowbase.lib.Etherstubadm;
+import agh.msc.xbowbase.lib.EtherstubHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,19 +10,19 @@ import org.junit.Test;
 import static org.mockito.Mockito.*;
 
 /**
- * JUnit test for @see JNAEtherstubadm
+ * JUnit test for @see JNAEtherstubHelper
  * @author robert boczek
  */
 public class JNAEtherstubadmTest {
 
-    private Etherstubadm etherstubadm;
-    private JNAEtherstubadm.IEtherstubadmin handle;
+    private EtherstubHelper etherstubadm;
+    private JNAEtherstubHelper.IEtherstubadmin handle;
 
     @Before
     public void setUp() {
 
-            handle = mock( JNAEtherstubadm.IEtherstubadmin.class );
-            etherstubadm = new JNAEtherstubadm(handle);
+            handle = mock( JNAEtherstubHelper.IEtherstubadmin.class );
+            etherstubadm = new JNAEtherstubHelper(handle);
     }
 
     @After

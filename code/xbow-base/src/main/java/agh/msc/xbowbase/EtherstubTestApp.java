@@ -3,8 +3,8 @@ package agh.msc.xbowbase;
 import agh.msc.xbowbase.enums.LinkParameters;
 import agh.msc.xbowbase.enums.LinkProperties;
 import agh.msc.xbowbase.enums.LinkStatistics;
-import agh.msc.xbowbase.jna.JNAEtherstubadm;
-import agh.msc.xbowbase.lib.Etherstubadm;
+import agh.msc.xbowbase.jna.JNAEtherstubHelper;
+import agh.msc.xbowbase.lib.EtherstubHelper;
 
 /**
  *
@@ -14,7 +14,7 @@ public class EtherstubTestApp {
 
     public static void main(String []args) throws Exception{
 
-        Etherstubadm etherstubadm = new JNAEtherstubadm();
+        EtherstubHelper etherstubadm = new JNAEtherstubHelper();
 
         //test creating etherstub
         etherstubadm.createEtherstub("etherstub23", false);

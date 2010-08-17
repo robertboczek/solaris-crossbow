@@ -3,7 +3,7 @@ package agh.msc.xbowbase.flow;
 import agh.msc.xbowbase.etherstub.Etherstub;
 import agh.msc.xbowbase.etherstub.EtherstubManager;
 import agh.msc.xbowbase.exception.EtherstubException;
-import agh.msc.xbowbase.lib.Etherstubadm;
+import agh.msc.xbowbase.lib.EtherstubHelper;
 import agh.msc.xbowbase.publisher.Publisher;
 import org.junit.After;
 import org.junit.Before;
@@ -18,14 +18,14 @@ import static org.junit.Assert.*;
  */
 public class EtherstubManagerTest {
 
-    private Etherstubadm etherstubadm;
+    private EtherstubHelper etherstubadm;
     private EtherstubManager etherstubManager;
     private Publisher publisher;
 
     @Before
     public void setUp() {
 
-            etherstubadm = mock(Etherstubadm.class);
+            etherstubadm = mock(EtherstubHelper.class);
             publisher = mock(Publisher.class);
             etherstubManager = new EtherstubManager();
             etherstubManager.setEtherstubadm(etherstubadm);

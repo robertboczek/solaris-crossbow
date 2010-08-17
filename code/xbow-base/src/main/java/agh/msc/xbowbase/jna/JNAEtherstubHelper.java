@@ -4,7 +4,7 @@ import agh.msc.xbowbase.enums.LinkParameters;
 import agh.msc.xbowbase.enums.LinkProperties;
 import agh.msc.xbowbase.enums.LinkStatistics;
 import agh.msc.xbowbase.exception.EtherstubException;
-import agh.msc.xbowbase.lib.Etherstubadm;
+import agh.msc.xbowbase.lib.EtherstubHelper;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
@@ -15,28 +15,28 @@ import org.apache.log4j.Logger;
  * Etherstub helper implementation based on Java Native Access.
  * @author robeert boczek
  */
-public class JNAEtherstubadm implements Etherstubadm {
+public class JNAEtherstubHelper implements EtherstubHelper {
 
     /** Logger */
-    private static final Logger logger = Logger.getLogger(JNAEtherstubadm.class);
+    private static final Logger logger = Logger.getLogger(JNAEtherstubHelper.class);
 
     private final String LIBNAME = "etherstub_wrapper";
     private IEtherstubadmin handle;
 
     /**
-     * Construtor of JNAEtherstubadm - load etherstubadm native library 
+     * Construtor of JNAEtherstubHelper - load etherstubadm native library
      */
-    public JNAEtherstubadm() {
+    public JNAEtherstubHelper() {
         handle = (IEtherstubadmin) Native.loadLibrary(LIBNAME, IEtherstubadmin.class);
         handle.init();
     }
 
-    public JNAEtherstubadm(IEtherstubadmin handle){
+    public JNAEtherstubHelper(IEtherstubadmin handle){
         this.handle = handle;
     }
 
     /**
-     * @see Etherstubadm#deleteEtherstub(java.lang.String, boolean) 
+     * @see EtherstubHelper#deleteEtherstub(java.lang.String, boolean)
      */
     @Override
     public void deleteEtherstub(String name, boolean temporary) throws EtherstubException {
@@ -53,7 +53,7 @@ public class JNAEtherstubadm implements Etherstubadm {
     }
 
     /**
-     * @see Etherstubadm#createEtherstub(java.lang.String, boolean)
+     * @see EtherstubHelper#createEtherstub(java.lang.String, boolean)
     **/
     @Override
     public void createEtherstub(String name, boolean temporary) throws EtherstubException {
@@ -71,7 +71,7 @@ public class JNAEtherstubadm implements Etherstubadm {
     }
 
     /**
-     * @see Etherstubadm#getEtherstubNames()
+     * @see EtherstubHelper#getEtherstubNames()
     **/
     @Override
     public String[] getEtherstubNames() throws EtherstubException {
@@ -91,7 +91,7 @@ public class JNAEtherstubadm implements Etherstubadm {
     }
 
     /**
-     * @see Etherstubadm#getEtherstubParameter(java.lang.String, agh.msc.xbowbase.etherstub.enums.EtherstubParameters)
+     * @see EtherstubHelper#getEtherstubParameter(java.lang.String, agh.msc.xbowbase.etherstub.enums.EtherstubParameters)
     **/
     @Override
     public String getEtherstubParameter(String name, LinkParameters parameter) throws EtherstubException {
@@ -103,7 +103,7 @@ public class JNAEtherstubadm implements Etherstubadm {
     }
 
     /**
-     * @see Etherstubadm#getEtherstubStatistic(java.lang.String, agh.msc.xbowbase.etherstub.enums.EtherstubStatistics)
+     * @see EtherstubHelper#getEtherstubStatistic(java.lang.String, agh.msc.xbowbase.etherstub.enums.EtherstubStatistics)
      */
     @Override
     public String getEtherstubStatistic(String name, LinkStatistics statistic) throws EtherstubException {
@@ -115,7 +115,7 @@ public class JNAEtherstubadm implements Etherstubadm {
     }
 
     /**
-     * @see Etherstubadm#getEtherstubProperty(java.lang.String, agh.msc.xbowbase.etherstub.enums.EtherstubProperties)
+     * @see EtherstubHelper#getEtherstubProperty(java.lang.String, agh.msc.xbowbase.etherstub.enums.EtherstubProperties)
      */
     @Override
     public void setEtherstubProperty(String name, LinkProperties property, String value) throws EtherstubException {
@@ -142,7 +142,7 @@ public class JNAEtherstubadm implements Etherstubadm {
     }
 
     /**
-     * @see Etherstubadm#getEtherstubProperty(java.lang.String, agh.msc.xbowbase.etherstub.enums.EtherstubProperties)
+     * @see EtherstubHelper#getEtherstubProperty(java.lang.String, agh.msc.xbowbase.etherstub.enums.EtherstubProperties)
      */
     @Override
     public String getEtherstubProperty(String name, LinkProperties property) throws EtherstubException {

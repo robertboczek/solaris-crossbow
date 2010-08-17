@@ -1,6 +1,6 @@
 package agh.msc.xbowbase.jna.util;
 
-import agh.msc.xbowbase.jna.mapping.IFlowadm;
+import agh.msc.xbowbase.jna.mapping.FlowHandle;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.Test;
@@ -17,16 +17,16 @@ public class MapToKeyValuePairsTranslatorTest {
 	// @Test
 	public void testToMap() {
 
-		IFlowadm.KeyValuePairsStruct kvps = new IFlowadm.KeyValuePairsStruct();
+		FlowHandle.KeyValuePairsStruct kvps = new FlowHandle.KeyValuePairsStruct();
 
 		kvps.keyValuePairsLen = 2;
 
-		kvps.keyValuePairs = new IFlowadm.KeyValuePairStructPtr.ByReference();
-		kvps.keyValuePairs.kvp = new IFlowadm.KeyValuePairStruct.ByReference[ 2 ];
-		kvps.keyValuePairs.kvp[ 0 ] = new IFlowadm.KeyValuePairStruct.ByReference();
+		kvps.keyValuePairs = new FlowHandle.KeyValuePairStructPtr.ByReference();
+		kvps.keyValuePairs.kvp = new FlowHandle.KeyValuePairStruct.ByReference[ 2 ];
+		kvps.keyValuePairs.kvp[ 0 ] = new FlowHandle.KeyValuePairStruct.ByReference();
 		kvps.keyValuePairs.kvp[ 0 ].key = "k1";
 		kvps.keyValuePairs.kvp[ 0 ].value = "v1";
-		kvps.keyValuePairs.kvp[ 1 ] = new IFlowadm.KeyValuePairStruct.ByReference();
+		kvps.keyValuePairs.kvp[ 1 ] = new FlowHandle.KeyValuePairStruct.ByReference();
 		kvps.keyValuePairs.kvp[ 1 ].key = "k2";
 		kvps.keyValuePairs.kvp[ 1 ].value = "v2";
 
@@ -52,7 +52,7 @@ public class MapToKeyValuePairsTranslatorTest {
 		kvMap.put( "k1", "v1" );
 		kvMap.put( "k2", "v2" );
 
-		IFlowadm.KeyValuePairsStruct kvps = MapToKeyValuePairsTranslator.toKeyValuePairs( kvMap );
+		FlowHandle.KeyValuePairsStruct kvps = MapToKeyValuePairsTranslator.toKeyValuePairs( kvMap );
 
 		assertEquals( kvMap.size(), kvps.keyValuePairsLen );
 

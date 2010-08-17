@@ -10,7 +10,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 
-    /**
+/**
  * The class implements NIC MBean functionality.
  *
  * @author cieplik
