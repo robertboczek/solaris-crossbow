@@ -2,6 +2,7 @@ package agh.msc.xbowbase.jna;
 
 import agh.msc.xbowbase.exception.NoSuchFlowException;
 import agh.msc.xbowbase.exception.XbowException;
+import agh.msc.xbowbase.jna.mapping.IFlowadm;
 import agh.msc.xbowbase.lib.Flowadm;
 import com.sun.jna.Pointer;
 import org.junit.After;
@@ -30,7 +31,7 @@ public class JNAFlowadmTest {
 	@Before
 	public void setUp() {
 
-		handle = mock( JNAFlowadm.IFlowadm.class );
+		handle = mock( IFlowadm.class );
 		helper = new JNAFlowadm( handle );
 
 	}
@@ -55,7 +56,7 @@ public class JNAFlowadmTest {
 	@Test
 	public void testGetInfoForAllFlows() {
 
-		JNAFlowadm.IFlowadm.FlowInfosStruct fis = new JNAFlowadm.IFlowadm.FlowInfosStruct();
+		IFlowadm.FlowInfosStruct fis = new IFlowadm.FlowInfosStruct();
 
 		fis.flowInfos = new Pointer( 0 );
 		fis.flowInfosLen = 0;
@@ -70,7 +71,7 @@ public class JNAFlowadmTest {
 	}
 
 
-	JNAFlowadm.IFlowadm handle;
+	IFlowadm handle;
 	Flowadm helper;
 
 }

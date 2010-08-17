@@ -116,7 +116,7 @@ static void collect_flow_attrs( char* link_name,
 
 flow_infos_t* get_flows_info( char* link_name[] )
 {
-	char links[ 10 ][ MAXLINKNAMELEN ];
+	char links[ 10 ][ MAXLINKNAMELEN ];  // TODO-DAWID: no hardcoded nums!
 	int links_len;
 
 	if ( NULL == link_name )

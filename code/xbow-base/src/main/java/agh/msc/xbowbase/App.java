@@ -6,7 +6,11 @@ import agh.msc.xbowbase.flow.FlowAccounting;
 import agh.msc.xbowbase.publisher.FlowMBeanPublisher;
 import agh.msc.xbowbase.flow.FlowManager;
 import agh.msc.xbowbase.jna.JNAFlowadm;
+import agh.msc.xbowbase.jna.JNANic;
 import agh.msc.xbowbase.lib.Flowadm;
+import agh.msc.xbowbase.lib.NicHelper;
+import agh.msc.xbowbase.link.NicManager;
+import agh.msc.xbowbase.publisher.NicMBeanPublisher;
 import java.lang.management.ManagementFactory;
 import java.util.Date;
 import java.util.HashMap;
@@ -31,12 +35,17 @@ public class App {
 		// Initialize flowadm wrapper.
 
 		Flowadm flowadm = new JNAFlowadm();
+		NicHelper nicHelper = new JNANic();
 
 		// Create FlowManager.
 
 		FlowManager flowManager = new FlowManager();
 		flowManager.setFlowadm( flowadm );
 		flowManager.setPublisher( new FlowMBeanPublisher( mbs ) );
+
+		NicManager nicManager = new NicManager();
+		nicManager.setNicHelper( nicHelper );
+		nicManager.setPublisher( new NicMBeanPublisher( mbs ) );
 
 		// Create FlowAccounting.
 
@@ -47,6 +56,7 @@ public class App {
 		Timer timer = new Timer();
 		timer.addNotification( "discovery", "discover", null, new Date(), 5000 );
 		timer.addNotificationListener( flowManager, null, null );
+		timer.addNotificationListener( nicManager, null, null );
 		timer.start();
 
 		// Register MBeans.
@@ -55,12 +65,7 @@ public class App {
 		mbs.registerMBean( flowAccounting, new ObjectName( "agh.msc.xbowbase:type=FlowAccounting" ) );
 		mbs.registerMBean( timer, new ObjectName( "agh.msc.xbowbase:type=Timer" ) );
 
-
-		/*     FLOW DISCOVERY TEST     */
-
-		for ( String flow : flowManager.getFlows() ) {
-			System.out.println( flow );
-		}
+		mbs.registerMBean( nicManager, new ObjectName( "agh.msc.xbowbase:type=NicManager" ) );
 
 
 		/*     FLOW CREATION TEST     */

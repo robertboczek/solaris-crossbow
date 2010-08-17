@@ -1,5 +1,6 @@
 package agh.msc.xbowbase.link;
 
+import agh.msc.xbowbase.lib.NicHelper;
 import java.util.Map;
 
 
@@ -15,7 +16,12 @@ public class Nic implements NicMBean {
 	 */
 	@Override
 	public String getName() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		return name;
+	}
+
+
+	public void setName( String name ) {
+		this.name = name;
 	}
 
 
@@ -125,5 +131,46 @@ public class Nic implements NicMBean {
 	public void setUp( boolean up ) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
+
+
+	public void setNicHelper( NicHelper nicHelper ) {
+		this.nicHelper = nicHelper;
+	}
+
+
+	@Override
+	public boolean equals( Object o ) {
+
+		if ( o == this ) {
+
+			return true;
+
+		} else if ( o instanceof Nic ) {
+
+			return name.equals( ( ( Nic ) o ).getName() );
+
+		} else {
+
+			return false;
+
+		}
+
+	}
+
+
+	@Override
+	public int hashCode() {
+
+		int hash = 7;
+		hash = 83 * hash + ( this.name != null ? this.name.hashCode() : 0 );
+
+		return hash;
+
+	}
+
+
+	String name;
+
+	NicHelper nicHelper;
 
 }
