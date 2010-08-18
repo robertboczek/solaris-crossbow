@@ -147,8 +147,6 @@ public class JNAFlowHelper implements FlowHelper {
 		throws NoSuchFlowException,
 		       ValidationException {
 
-		// TODO-DAWID: NoSuchFlowException
-
 		// Reset properties sequentially.
 
 		for ( String property : properties ) {
@@ -159,8 +157,14 @@ public class JNAFlowHelper implements FlowHelper {
 
 			// Check the rc and map it to exception, if necessary.
 
-			if ( XbowStatus.XBOW_STATUS_PROP_PARSE_ERR.ordinal() == rc ) {
+			if ( XbowStatus.XBOW_STATUS_NOTFOUND.ordinal() == rc ) {
+
+				throw new NoSuchFlowException( flowName );
+
+			} else if ( XbowStatus.XBOW_STATUS_PROP_PARSE_ERR.ordinal() == rc ) {
+
 				throw new ValidationException( property );
+
 			}
 
 		}

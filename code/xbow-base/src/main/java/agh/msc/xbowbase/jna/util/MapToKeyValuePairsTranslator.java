@@ -1,7 +1,6 @@
 package agh.msc.xbowbase.jna.util;
 
 import agh.msc.xbowbase.jna.mapping.FlowHandle;
-import com.sun.jna.Pointer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
