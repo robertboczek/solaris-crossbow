@@ -128,7 +128,7 @@ public class JNAFlowHelper implements FlowHelper {
 
 		FlowHandle.KeyValuePairsStruct kvps = handle.get_properties( flowName );
 
-		Map< String, String > properties = MapToKeyValuePairsTranslator.toMap( kvps );
+		Map< String, String > properties = MapToKeyValuePairsTranslator.toMap( kvps.fill() );
 
 		// Free the memory.
 
@@ -221,8 +221,8 @@ public class JNAFlowHelper implements FlowHelper {
 			res.add( new FlowInfo(
 				struct.name,
 				struct.link,
-				MapToKeyValuePairsTranslator.toMap( struct.attrs ),
-				MapToKeyValuePairsTranslator.toMap( struct.props ),
+				MapToKeyValuePairsTranslator.toMap( struct.attrs.fill() ),
+				MapToKeyValuePairsTranslator.toMap( struct.props.fill() ),
 				struct.temporary
 			) );
 

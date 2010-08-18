@@ -29,6 +29,24 @@ public interface FlowHandle extends Library {
 			read();
 		}
 
+		public KeyValuePairsStruct fill() {
+
+			KeyValuePairStruct.ByReference tmp[] = new KeyValuePairStruct.ByReference[ keyValuePairsLen ];
+			Pointer kvpsPointer = keyValuePairs.getPointer();
+
+			for ( int i = 0; i < keyValuePairsLen; ++i ) {
+
+				tmp[ i ] = new KeyValuePairStruct.ByReference( kvpsPointer.getPointer( Pointer.SIZE * i ) );
+				tmp[ i ].read();
+
+			}
+
+			keyValuePairs.kvp = tmp;
+
+			return this;
+
+		}
+
 		public KeyValuePairStructPtr.ByReference keyValuePairs;
 		public int keyValuePairsLen;
 	}

@@ -17,8 +17,5 @@ enum
 };
 
 
-int map_status( int dladm_status );
-
-
 #endif
 

@@ -25,17 +25,8 @@ public class MapToKeyValuePairsTranslator {
 
 		Map< String, String > map = new HashMap< String, String >();
 
-		if ( kvps.keyValuePairsLen > 0 ) {
-
-			for ( int i = 0; i < kvps.keyValuePairsLen; ++i ) {
-
-				FlowHandle.KeyValuePairStruct.ByReference k = new FlowHandle.KeyValuePairStruct.ByReference( kvps.keyValuePairs.getPointer().getPointer( Pointer.SIZE * i ) );
-				k.read();
-
-				map.put( k.key, k.value );
-
-			}
-
+		for ( FlowHandle.KeyValuePairStruct kvp : kvps.keyValuePairs.kvp ) {
+			map.put( kvp.key, kvp.value );
 		}
 
 		return map;

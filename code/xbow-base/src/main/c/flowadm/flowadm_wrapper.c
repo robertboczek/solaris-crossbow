@@ -11,6 +11,7 @@
 #include "defs.h"
 #include "flowadm_wrapper.h"
 #include "functor.h"
+#include "mappings.h"
 #include "memory.h"
 #include "types.h"
 
@@ -20,7 +21,8 @@ dladm_handle_t handle = 0;
 
 int init()
 {
-	// TODO-DAWID: initialize mappings here!
+	init_mapping();
+
 	return map_status( dladm_open( &handle ) );
 }
 
