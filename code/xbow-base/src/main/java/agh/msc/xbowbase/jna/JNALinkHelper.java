@@ -61,7 +61,8 @@ public class JNALinkHelper implements NicHelper {
 			// Append to the resulting list.
 
 			res.add( new NicInfo(
-				struct.name
+				struct.name,
+				struct.up
 			) );
 
 		}
@@ -71,6 +72,21 @@ public class JNALinkHelper implements NicHelper {
 		handle.free_nic_infos( nicInfosStruct );
 
 		return res;
+
+	}
+
+
+	/**
+	 * @see  NicHelper#isUp( java.lang.String )
+	 */
+	@Override
+	public boolean isUp( String name ) {
+
+		LinkHandle.NicInfoStruct nicInfoStruct = handle.get_nic_info( name );
+		boolean up = nicInfoStruct.up;
+		handle.free_nic_info( nicInfoStruct );
+
+		return up;
 
 	}
 

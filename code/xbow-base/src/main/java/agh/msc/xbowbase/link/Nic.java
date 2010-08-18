@@ -123,7 +123,7 @@ public class Nic implements NicMBean {
 	 */
 	@Override
 	public boolean isUp() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		return nicHelper.isUp( name );
 	}
 
 
@@ -169,6 +169,12 @@ public class Nic implements NicMBean {
 
 		return hash;
 
+	}
+
+
+	@Override
+	public String toString() {
+		return name;
 	}
 
 

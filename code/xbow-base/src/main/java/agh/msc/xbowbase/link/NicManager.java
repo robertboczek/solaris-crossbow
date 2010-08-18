@@ -5,6 +5,7 @@ import agh.msc.xbowbase.link.util.NicToNicInfoTranslator;
 import agh.msc.xbowbase.publisher.Publisher;
 import agh.msc.xbowbase.publisher.exception.NotPublishedException;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import javax.management.Notification;
@@ -24,8 +25,15 @@ public class NicManager implements NicManagerMBean, NotificationListener {
 	 */
 	@Override
 	public List< String > getNicsList() {
-		//@todo use jna library to get list of nic names
-		throw new UnsupportedOperationException( "Not supported yet." );
+
+		List< String > names = new LinkedList< String >();
+
+		for ( NicInfo nicInfo : nicHelper.getNicsInfo() ) {
+			names.add( nicInfo.getName() );
+		}
+
+		return names;
+
 	}
 
 
@@ -72,7 +80,7 @@ public class NicManager implements NicManagerMBean, NotificationListener {
 					try {
 						publisher.unpublish( ( String ) nicName );
 					} catch ( NotPublishedException e ) {
-						logger.fatal( "Error while removing stale nics.", e );
+						logger.fatal( "Error while removing stale NICs.", e );
 					}
 
 				}
@@ -91,7 +99,11 @@ public class NicManager implements NicManagerMBean, NotificationListener {
 	 */
 	@Override
 	public void handleNotification( Notification ntfctn, Object o ) {
+
+		logger.debug( "Received notification " + ntfctn );
+
 		discover();
+
 	}
 
 
@@ -108,6 +120,6 @@ public class NicManager implements NicManagerMBean, NotificationListener {
 	Publisher publisher;
 	NicHelper nicHelper;
 
-	private static final Logger logger = Logger.getLogger( Nic.class );
+	private static final Logger logger = Logger.getLogger( NicManager.class );
 
 }

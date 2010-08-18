@@ -23,12 +23,7 @@ public class EtherstubManager implements EtherstubManagerMBean, NotificationList
 
     /** Logger */
     private static final Logger logger = Logger.getLogger(Etherstub.class);
-<<<<<<< HEAD:code/xbow-base/src/main/java/agh/msc/xbowbase/etherstub/EtherstubManager.java
-    private Etherstubadm etherstubadm;
-=======
     private EtherstubHelper etherstubadm;
-    private final Set<EtherstubMBean> etherstubsSet;
->>>>>>> 4411ec9a642969aa1d43c17223c9fd82b80eda62:code/xbow-base/src/main/java/agh/msc/xbowbase/etherstub/EtherstubManager.java
     private Publisher publisher;
 
     /**

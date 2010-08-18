@@ -20,4 +20,13 @@ public interface NicHelper {
 	 */
 	public List< NicInfo > getNicsInfo();
 
+	/**
+	 * Returns true iff the NIC is up.
+	 *
+	 * @param  name  NIC name
+	 *
+	 * @return  true  iff the link is up
+	 */
+	public boolean isUp( String name );
+
 }

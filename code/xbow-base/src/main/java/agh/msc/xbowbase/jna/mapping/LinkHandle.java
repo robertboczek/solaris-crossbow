@@ -22,12 +22,15 @@ public interface LinkHandle extends Library {
 
 	public class NicInfoStruct extends Structure {
 
+		public NicInfoStruct() {}
+
 		public NicInfoStruct( Pointer p ) {
 			super( p );
 			read();
 		}
 
 		public String name;
+		public boolean up;
 	}
 
 
@@ -39,6 +42,7 @@ public interface LinkHandle extends Library {
 	public NicInfoStruct get_nic_info( String name );
 	public NicInfosStruct get_nic_infos();
 
+	public void free_nic_info( NicInfoStruct nicInfoStruct );
 	public void free_nic_infos( NicInfosStruct linkInfosStruct );
 
 }

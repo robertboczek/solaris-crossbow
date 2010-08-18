@@ -13,8 +13,7 @@ import static org.junit.Assert.*;
  */
 public class MapToKeyValuePairsTranslatorTest {
 
-	// TODO-DAWID: napisac porzadnie
-	// @Test
+	@Test
 	public void testToMap() {
 
 		FlowHandle.KeyValuePairsStruct kvps = new FlowHandle.KeyValuePairsStruct();
