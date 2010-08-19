@@ -2,6 +2,7 @@ package agh.msc.xbowbase.jna;
 
 /**
  * Possible values returned by the JNAEtherstub.IEtherstubadmin
+ *
  * @author robert boczek
  */
 public enum EtherstubReturn {

@@ -120,6 +120,7 @@ public class VNicMBeanPublisher implements Publisher {
 
     /**
      * Creates vnic's object name
+     * 
      * @param VNicMBean VNic MBean object whose object name is requested
      * @return VNic's object name
      * @throws MalformedObjectNameException
@@ -127,7 +128,6 @@ public class VNicMBeanPublisher implements Publisher {
     private ObjectName getObjectName(VNicMBean vNicMBean) throws MalformedObjectNameException {
 
         return new ObjectName(String.format(
-                "agh.msc.xbowbase:type=VNic,name=%s",
-                vNicMBean.getName()));
+                "agh.msc.xbowbase:type=VNic,name=%s", vNicMBean.getName()));
     }
 }

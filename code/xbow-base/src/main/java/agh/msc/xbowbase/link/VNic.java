@@ -4,6 +4,7 @@ import agh.msc.xbowbase.enums.LinkParameters;
 import agh.msc.xbowbase.enums.LinkProperties;
 import agh.msc.xbowbase.enums.LinkStatistics;
 import agh.msc.xbowbase.exception.LinkException;
+import agh.msc.xbowbase.lib.NicHelper;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.log4j.Logger;
@@ -27,7 +28,9 @@ public class VNic implements VNicMBean{
     private String ipMask;
     private boolean plumbed;
     private boolean up;
-    private boolean ehterstubParent;
+    private boolean linkParent;
+
+    private NicHelper linkHelper;
 
 
     /**
@@ -63,9 +66,14 @@ public class VNic implements VNicMBean{
      */
     @Override
     public Map<LinkProperties, String> getProperties() throws LinkException {
+
         logger.info("Getting properties map for vnic: " + this.name);
-        //@todo use jna to get vnic's properties
-        throw new UnsupportedOperationException("Not supported yet.");
+
+        for (LinkProperties property : LinkProperties.values()) {
+            this.propertiesMap.put(property, linkHelper.getLinkProperty(name, property));
+        }
+        return this.propertiesMap;
+
     }
 
     /**
@@ -73,9 +81,12 @@ public class VNic implements VNicMBean{
      */
     @Override
     public void setProperty(LinkProperties property, String value) throws LinkException {
+
         logger.info("Setting new property value to property " + property
                 + " to vnic: " + this.name + " with value: " + value);
-        //@todo use jna to set vnic's property
+
+        linkHelper.setLinkProperty(this.name, property, value);
+        //@todo check return value
         this.propertiesMap.put(property, value);
     }
 
@@ -84,8 +95,12 @@ public class VNic implements VNicMBean{
      */
     @Override
     public Map<LinkParameters, String> getParameters() throws LinkException {
+
         logger.info("Getting parameters map for vnic: " + this.name);
-        //@todo use jna to get vnic's parameters
+
+        for (LinkParameters parameter : LinkParameters.values()) {
+            this.parametersMap.put(parameter, linkHelper.getLinkParameter(name, parameter));
+        }
         return this.parametersMap;
     }
 
@@ -94,8 +109,12 @@ public class VNic implements VNicMBean{
      */
     @Override
     public Map<LinkStatistics, String> getStatistics() throws LinkException {
+
         logger.info("Getting statistics map for vnic: " + this.name);
-        //@todo use jna to get vnic's statistics
+
+        for (LinkStatistics statistic : LinkStatistics.values()) {
+            this.statisticsMap.put(statistic, linkHelper.getLinkStatistic(name, statistic));
+        }
         return this.statisticsMap;
     }
 
@@ -185,7 +204,7 @@ public class VNic implements VNicMBean{
     @Override
     public boolean isEtherstubParent() throws LinkException {
         //@todo use jna to get info whether etherstub is parent of this vnic
-        return ehterstubParent;
+        return linkParent;
     }
 
     /**
@@ -216,6 +235,11 @@ public class VNic implements VNicMBean{
         } else {
             return false;
         }
+    }
+
+    public void setLinkHelper(NicHelper linkHelper){
+        
+        this.linkHelper = linkHelper;
     }
 
 }

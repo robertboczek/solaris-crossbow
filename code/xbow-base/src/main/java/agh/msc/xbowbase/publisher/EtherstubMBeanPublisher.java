@@ -18,7 +18,7 @@ public class EtherstubMBeanPublisher implements Publisher {
 
     private static final Logger logger = Logger.getLogger(EtherstubMBeanPublisher.class);
     private final MBeanServer mbeanServer;
-    private final List<EtherstubMBean> published;
+    private final List<Object> published;
 
     /**
      * Constructor of EtherstubMBeanPublisher. Sets mbeanServer property and creates empty published list
@@ -28,7 +28,7 @@ public class EtherstubMBeanPublisher implements Publisher {
 
         this.mbeanServer = mBeanServer;
 
-        this.published = new LinkedList<EtherstubMBean>();
+        this.published = new LinkedList<Object>();
     }
 
     /**
@@ -116,7 +116,7 @@ public class EtherstubMBeanPublisher implements Publisher {
 
     @Override
     public List<Object> getPublished() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return this.published;
     }
 
     /**

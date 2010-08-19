@@ -20,9 +20,9 @@ public class Etherstub implements EtherstubMBean {
 
     private String name;
     private boolean temporary;
-    private Map<LinkParameters, String> parameters;
-    private Map<LinkProperties, String> properties; //some properties contain a few values like names of cpus
-    private Map<LinkStatistics, String> statistis;
+    private Map<LinkParameters, String> parametersMap;
+    private Map<LinkProperties, String> propertiesMap; //some properties contain a few values like names of cpus
+    private Map<LinkStatistics, String> statisticsMap;
     private EtherstubHelper etherstubadm = null;
 
     /**
@@ -33,9 +33,9 @@ public class Etherstub implements EtherstubMBean {
     public Etherstub(String name, boolean temporary) {
         this.name = name;
         this.temporary = temporary;
-        this.parameters = new HashMap<LinkParameters, String>();
-        this.properties = new HashMap<LinkProperties, String>();
-        this.statistis = new HashMap<LinkStatistics, String>();
+        this.parametersMap = new HashMap<LinkParameters, String>();
+        this.propertiesMap = new HashMap<LinkProperties, String>();
+        this.statisticsMap = new HashMap<LinkStatistics, String>();
     }
 
     /**
@@ -60,9 +60,9 @@ public class Etherstub implements EtherstubMBean {
     @Override
     public Map<LinkProperties, String> getProperties() throws EtherstubException {
         for (LinkProperties property : LinkProperties.values()) {
-            this.properties.put(property, etherstubadm.getEtherstubProperty(name, property));
+            this.propertiesMap.put(property, etherstubadm.getEtherstubProperty(name, property));
         }
-        return this.properties;
+        return this.propertiesMap;
     }
 
     /**
@@ -70,10 +70,11 @@ public class Etherstub implements EtherstubMBean {
      */
     @Override
     public Map<LinkParameters, String> getParameters() throws EtherstubException {
+
         for (LinkParameters parameter : LinkParameters.values()) {
-            this.parameters.put(parameter, etherstubadm.getEtherstubParameter(name, parameter));
+            this.parametersMap.put(parameter, etherstubadm.getEtherstubParameter(name, parameter));
         }
-        return this.parameters;
+        return this.parametersMap;
     }
 
     /**
@@ -81,10 +82,11 @@ public class Etherstub implements EtherstubMBean {
      */
     @Override
     public Map<LinkStatistics, String> getStatistics() throws EtherstubException {
+
         for (LinkStatistics statistic : LinkStatistics.values()) {
-            this.statistis.put(statistic, etherstubadm.getEtherstubStatistic(name, statistic));
+            this.statisticsMap.put(statistic, etherstubadm.getEtherstubStatistic(name, statistic));
         }
-        return this.statistis;
+        return this.statisticsMap;
     }
 
     /**
@@ -95,8 +97,10 @@ public class Etherstub implements EtherstubMBean {
 
         logger.info("Setting new property value to property " + etherstubProperty
                 + " to etherstub: " + this.name + " with value: " + value);
+        
         etherstubadm.setEtherstubProperty(this.name, etherstubProperty, value);
-        this.properties.put(etherstubProperty, value);
+        //@todo check return value
+        this.propertiesMap.put(etherstubProperty, value);
     }
 
     /**
