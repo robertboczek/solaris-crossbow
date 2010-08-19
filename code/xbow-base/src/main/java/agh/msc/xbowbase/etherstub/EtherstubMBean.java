@@ -32,6 +32,7 @@ public interface EtherstubMBean {
      */
     public Map<LinkProperties, String> getProperties() throws EtherstubException;
 
+
     /**
      * Returns map of all existing parameters assigned to this etherstub
      * @return Map of parameters or empty map when no parameters were assigned to this etherstub
@@ -53,4 +54,15 @@ public interface EtherstubMBean {
      * @throws XbowException Exeption thrown in case of error
      */
     public void setProperty(LinkProperties etherstubProperty, String value) throws EtherstubException;
+
+
+		/*
+		 * JConsole only
+		 */
+
+    public Map< String, String > getPropertiesJC() throws EtherstubException;
+
+    // public Map< String, String > getParametersJC() throws EtherstubException;
+
+		// public void setPropertyJC( String property, String value ) throws EtherstubException;
 }

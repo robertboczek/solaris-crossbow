@@ -125,4 +125,26 @@ public class Etherstub implements EtherstubMBean {
     public int hashCode() {
         return this.name.hashCode();
     }
+
+
+		/*
+		 * JConsole only
+		 */
+
+	@Override
+    public Map< String, String > getPropertiesJC() throws EtherstubException {
+
+			Map< String, String > result = new HashMap< String, String >();
+
+			for ( Map.Entry< LinkProperties, String > entry : getProperties().entrySet() ) {
+				result.put( entry.getKey().name(),  entry.getValue() );
+			}
+
+			return result;
+
+		}
+
+    // public Map< String, String > getParametersJC() throws EtherstubException;
+
+		// public void setPropertyJC( String property, String value ) throws EtherstubException;
 }

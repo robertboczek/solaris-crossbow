@@ -1,3 +1,4 @@
+#include <kstat.h>
 
 #include "etherstub_wrapper.h"
 #define MAXVNIC		256

@@ -16,7 +16,7 @@ BASENAME=etherstub_wrapper
 LIBFNAME=lib$(BASENAME).so
 
 %.o: %.c
-	$(CC) $(CFLAGS) -fPIC -c $<
+	$(CC) $(CFLAGS) -I$(INCDIR) -fPIC -c $<
 
 all: $(LIBFNAME) test
 
@@ -24,7 +24,7 @@ $(LIBFNAME): etherstub_wrapper.o memory.o
 	$(CC) $(CFLAGS) -fPIC -shared -o $(LIBFNAME) $^ $(LIBS)
 
 test: test.c $(LIBFNAME)
-	$(CC) $(CFLAGS) $(LDFLAGS) -L$(LIBDIR) -o test test.c $(LIBS) -l$(BASENAME)
+	$(CC) $(CFLAGS) $(LDFLAGS) -I$(INCDIR) -L$(LIBDIR) -o test test.c $(LIBS) -l$(BASENAME)
 
 clean:
 	rm *.o *.so
