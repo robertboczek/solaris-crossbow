@@ -10,20 +10,20 @@ CC=gcc
 CFLAGS=-std=c99 -Wall -pedantic \
        -g
 LDFLAGS=-Wl,-R.
-LIBS=-ldladm
+LIBS=-ldladm -lsocket
 BASENAME=link_wrapper
 LIBFNAME=lib$(BASENAME).so
 
 %.o: %.c
 	$(CC) $(CFLAGS) -I$(INCDIR) -fPIC -c $<
 
-all: $(LIBFNAME)
+all: $(LIBFNAME) test
 
 $(LIBFNAME): link.o memory.o functor.o
 	$(CC) $(CFLAGS) -fPIC -shared -o $(LIBFNAME) $^ $(LIBS)
 
 test: test.c $(LIBFNAME)
-	$(CC) $(CFLAGS) $(LDFLAGS) -I$(INCDIR) -L$(LIBDIR) -o test test.c $(LIBS) -l$(BASENAME)
+	$(CC) $(CFLAGS) $(LDFLAGS) -L$(LIBDIR) -o test test.c $(LIBS) -l$(BASENAME)
 
 clean:
 	rm *.o *.so

@@ -42,5 +42,82 @@ nic_info_t* get_nic_info( char* name );
  */
 nic_infos_t* get_nic_infos( void );
 
+
+/**
+ * \brief  Removes a vnic
+ *
+ * \param  name	  	vnic name
+ * \param  temporary  	determines whether the change will be temporary or persistent ( 0 - persistent, any other value - temporary )
+ *
+ * \return  link_return_type_t See types.h to see more details
+*/
+link_return_type_t delete_vnic( char* name, int temporary );
+
+
+/**
+ * \brief  Creates an vnic.
+ *
+ * \param  name	        vnic name
+ * \param  temporary  	determines whether the change will be temporary or persistent ( 0 - persistent, any other value - temporary )
+ * \param  parent	parent link name
+ *
+ * \return  link_return_type_t See types.h to see more details
+*/
+link_return_type_t create_vnic( char* name, int temporary, char *parent );
+
+
+/**
+ * \brief  Returns array of existing link names.
+ * \param  link_type determines type of link ( 0 - vnic's, 1 - nic's )
+ *
+ * \return  will contain all link names or NULL if there is no links existing, 
+ * 		caller is responsible for freeing the memory
+*/
+char** get_link_names( int link_type );
+
+
+/**
+ * \brief Returns requested link parameter
+ * \param  name		link name
+ * \param  property  	type of requested parameter
+ *
+ * \return  will contain value of requested parameter
+ * 		caller is responsible for freeing the memory
+*/
+char* get_link_parameter( char *name, char* parameter);
+
+
+/**
+ * \brief Returns requested link statistics
+ * \param  name		link name
+ * \param  property  	type of requested statistic
+ *
+ * \return  will contain value of requested statistic
+ * 		caller is responsible for freeing the memory
+*/
+char* get_link_statistic( char *name, char* property);
+
+
+/**
+ * \brief Sets requested link property
+ * \param  name		link name
+ * \param  property  	type of property to be set
+ * \param  value	requested value of the property
+ *
+ * \return  link_return_type_t See types.h to see more details
+*/
+link_return_type_t set_link_property( char *name, char* property, char *value );
+
+
+/**
+ * \brief Returns requested link property
+ * \param  name		link name
+ * \param  property  	type of property to be read
+ *
+ * \return  will contain values of requested property
+ * 		caller is responsible for freeing the memory
+*/
+char* get_link_property( char *name, char* property);
+
 #endif
 

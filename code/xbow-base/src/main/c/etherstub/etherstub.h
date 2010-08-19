@@ -1,21 +1,6 @@
 #ifndef ETHERSTUB_WRAPPER_H
 #define ETHERSTUB_WRAPPER_H
 
-#include <libdladm.h>
-#include <libdllink.h>
-#include <libdlvnic.h>
-#include <libdlstat.h>
-#include <string.h>
-#include <stropts.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <sys/ethernet.h>
-#include <sys/param.h>
-#include <sys/mac.h>
-
-#include <ofmt.h>
-#include <netinet/vrrp.h>
 #include "types.h"
 
 /**
