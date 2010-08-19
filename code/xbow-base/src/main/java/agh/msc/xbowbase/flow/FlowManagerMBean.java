@@ -47,4 +47,11 @@ public interface FlowManagerMBean {
 	 */
 	public void remove( String flowName, boolean temporary ) throws XbowException;
 
+
+	/*
+	 * jconsole only
+	 */
+
+	public void createJC( String flowName, String link, String attributes ) throws XbowException;
+
 }

@@ -144,7 +144,21 @@ public class Etherstub implements EtherstubMBean {
 
 		}
 
-    // public Map< String, String > getParametersJC() throws EtherstubException;
 
-		// public void setPropertyJC( String property, String value ) throws EtherstubException;
+	@Override
+    public Map< String, String > getParametersJC() throws EtherstubException {
+
+			Map< String, String > res = new HashMap< String, String >();
+			Map< LinkParameters, String > map = getParameters();
+
+			for ( Map.Entry< LinkParameters, String > entry : map.entrySet() ) {
+				res.put( entry.getKey().toString(), entry.getValue() );
+			}
+
+			return res;
+
+		}
+
+	@Override
+		public void setPropertyJC( String property, String value ) throws EtherstubException {}
 }

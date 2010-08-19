@@ -5,9 +5,11 @@ import agh.msc.xbowbase.exception.XbowException;
 import agh.msc.xbowbase.flow.util.FlowToFlowInfoTranslator;
 import agh.msc.xbowbase.lib.FlowHelper;
 import agh.msc.xbowbase.publisher.exception.NotPublishedException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.management.Notification;
 import javax.management.NotificationListener;
@@ -189,6 +191,29 @@ public class FlowManager implements FlowManagerMBean, NotificationListener {
 	 */
 	public void setPublisher( Publisher publisher ) {
 		this.publisher = publisher;
+	}
+
+
+	/*
+	 * jconsole only
+	 */
+
+	@Override
+	public void createJC( String flowName, String link, String attributes ) throws XbowException {
+
+		Map< String, String > attrs = new HashMap< String, String >();
+
+		for ( String entry : attributes.split( "," ) ) {
+			attrs.put( entry.split( "=" )[ 0 ], entry.split( "=" )[ 1 ] );
+		}
+
+		Map< String, String > props = new HashMap< String, String >();
+		props.put( "priority", "medium" );
+
+		create( FlowToFlowInfoTranslator.toFlow( new FlowInfo(
+			flowName, link, attrs, props, false
+		) ) );
+
 	}
 
 

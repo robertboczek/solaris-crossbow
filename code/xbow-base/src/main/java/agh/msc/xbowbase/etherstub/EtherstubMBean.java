@@ -62,7 +62,7 @@ public interface EtherstubMBean {
 
     public Map< String, String > getPropertiesJC() throws EtherstubException;
 
-    // public Map< String, String > getParametersJC() throws EtherstubException;
+    public Map< String, String > getParametersJC() throws EtherstubException;
 
-		// public void setPropertyJC( String property, String value ) throws EtherstubException;
+		public void setPropertyJC( String property, String value ) throws EtherstubException;
 }
