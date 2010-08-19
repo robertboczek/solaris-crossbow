@@ -1,20 +1,22 @@
 package agh.msc.xbowbase;
 
-import agh.msc.xbowbase.exception.XbowException;
-import agh.msc.xbowbase.flow.Flow;
+import agh.msc.xbowbase.etherstub.EtherstubManager;
 import agh.msc.xbowbase.flow.FlowAccounting;
 import agh.msc.xbowbase.publisher.FlowMBeanPublisher;
 import agh.msc.xbowbase.flow.FlowManager;
+import agh.msc.xbowbase.jna.JNAEtherstubHelper;
 import agh.msc.xbowbase.jna.JNAFlowHelper;
 import agh.msc.xbowbase.jna.JNALinkHelper;
+import agh.msc.xbowbase.lib.EtherstubHelper;
 import agh.msc.xbowbase.lib.FlowHelper;
 import agh.msc.xbowbase.lib.NicHelper;
 import agh.msc.xbowbase.link.NicManager;
+import agh.msc.xbowbase.link.VNicManager;
+import agh.msc.xbowbase.publisher.EtherstubMBeanPublisher;
 import agh.msc.xbowbase.publisher.NicMBeanPublisher;
+import agh.msc.xbowbase.publisher.VNicMBeanPublisher;
 import java.lang.management.ManagementFactory;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.timer.Timer;
@@ -36,6 +38,7 @@ public class App {
 
 		FlowHelper flowadm = new JNAFlowHelper();
 		NicHelper nicHelper = new JNALinkHelper();
+		EtherstubHelper etherstubHelper = new JNAEtherstubHelper();
 
 		// Create FlowManager.
 
@@ -47,6 +50,14 @@ public class App {
 		nicManager.setNicHelper( nicHelper );
 		nicManager.setPublisher( new NicMBeanPublisher( mbs ) );
 
+		VNicManager vNicManager = new VNicManager();
+		vNicManager.setLinkHelper( nicHelper );
+		vNicManager.setPublisher( new VNicMBeanPublisher( mbs ) );
+
+		EtherstubManager etherstubManager = new EtherstubManager();
+		etherstubManager.setEtherstubadm( etherstubHelper );
+		etherstubManager.setPublisher( new EtherstubMBeanPublisher( mbs ) );
+
 		// Create FlowAccounting.
 
 		FlowAccounting flowAccounting = new FlowAccounting();
@@ -57,19 +68,27 @@ public class App {
 		timer.addNotification( "discovery", "discover", null, new Date(), 5000 );
 		timer.addNotificationListener( flowManager, null, null );
 		timer.addNotificationListener( nicManager, null, null );
+		timer.addNotificationListener( vNicManager, null, null );
+		timer.addNotificationListener( etherstubManager, null, null );
 		timer.start();
 
 		// Register MBeans.
 
 		mbs.registerMBean( flowManager, new ObjectName( "agh.msc.xbowbase:type=FlowManager" ) );
 		mbs.registerMBean( flowAccounting, new ObjectName( "agh.msc.xbowbase:type=FlowAccounting" ) );
-		mbs.registerMBean( timer, new ObjectName( "agh.msc.xbowbase:type=Timer" ) );
 
 		mbs.registerMBean( nicManager, new ObjectName( "agh.msc.xbowbase:type=NicManager" ) );
+
+		mbs.registerMBean( vNicManager, new ObjectName( "agh.msc.xbowbase:type=VNicManager" ) );
+
+		mbs.registerMBean( etherstubManager, new ObjectName( "agh.msc.xbowbase:type=EtherstubManager" ) );
+
+		mbs.registerMBean( timer, new ObjectName( "agh.msc.xbowbase:type=Timer" ) );
 
 
 		/*     FLOW CREATION TEST     */
 
+		/*
 		Map< String, String > newAttrs = new HashMap< String, String >();
 		newAttrs.put( "transport", "tcp" );
 		newAttrs.put( "local_port", "1234" );
@@ -96,6 +115,7 @@ public class App {
 			e.printStackTrace();
 
 		}
+		 */
 
 		System.out.println("Waiting forever...");
 		Thread.sleep(Long.MAX_VALUE);
