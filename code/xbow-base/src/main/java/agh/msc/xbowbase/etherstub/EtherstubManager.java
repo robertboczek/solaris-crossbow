@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 
 /**
  * Implementation of EtherstubManagerMBean
+ * 
  * @see EtherstubManagerMBean
  * @author robert boczek
  */
@@ -31,6 +32,7 @@ public class EtherstubManager implements EtherstubManagerMBean, NotificationList
      */
     @Override
     public void create(EtherstubMBean etherstubMBean) throws EtherstubException {
+
         try {
             this.etherstubadm.createEtherstub(etherstubMBean.getName(), etherstubMBean.isTemporary());
             registerNewEtherstubMBean(etherstubMBean);
@@ -46,6 +48,7 @@ public class EtherstubManager implements EtherstubManagerMBean, NotificationList
      */
     @Override
     public void delete(String name, boolean temporary) throws EtherstubException {
+
         try {
             EtherstubMBean etherstubMBean = new Etherstub(name, temporary);
             this.etherstubadm.deleteEtherstub(name, temporary);
@@ -62,6 +65,7 @@ public class EtherstubManager implements EtherstubManagerMBean, NotificationList
      */
     @Override
     public List<String> getEtherstubsNames() throws EtherstubException {
+
         String[] etherstubNames = this.etherstubadm.getEtherstubNames();
         if (etherstubNames == null) {
             return new LinkedList<String>();
@@ -118,6 +122,7 @@ public class EtherstubManager implements EtherstubManagerMBean, NotificationList
      */
     @Override
     public void handleNotification(Notification ntfctn, Object o) {
+        
         logger.debug("EtherstubManager received notification... running discovery method");
         try {
             discover();

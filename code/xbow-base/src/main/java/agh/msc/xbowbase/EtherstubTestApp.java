@@ -4,7 +4,9 @@ import agh.msc.xbowbase.enums.LinkParameters;
 import agh.msc.xbowbase.enums.LinkProperties;
 import agh.msc.xbowbase.enums.LinkStatistics;
 import agh.msc.xbowbase.jna.JNAEtherstubHelper;
+import agh.msc.xbowbase.jna.JNALinkHelper;
 import agh.msc.xbowbase.lib.EtherstubHelper;
+import agh.msc.xbowbase.lib.NicHelper;
 
 /**
  *
@@ -47,5 +49,18 @@ public class EtherstubTestApp {
 
         //setting properties property
         etherstubadm.setEtherstubProperty("etherstub1", LinkProperties.PRIORITY, "HIGH");
+
+        NicHelper helper = new JNALinkHelper();
+
+        
+        helper.createVNic("vnic17", true, "e1000g0");
+
+        
+        names = helper.getLinkNames(true);
+        if(names != null){
+            for(String name : names){
+                System.out.println("VNic name: " + name);
+            }
+        }
     }
 }

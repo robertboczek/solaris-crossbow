@@ -116,7 +116,7 @@ public class EtherstubMBeanPublisher implements Publisher {
 
     @Override
     public List<Object> getPublished() {
-			return published;
+        return this.published;
     }
 
     /**

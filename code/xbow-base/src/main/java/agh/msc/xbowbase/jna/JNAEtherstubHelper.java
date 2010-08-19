@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 
 /**
  * Etherstub helper implementation based on Java Native Access.
+ * 
  * @author robeert boczek
  */
 public class JNAEtherstubHelper implements EtherstubHelper {
@@ -65,7 +66,7 @@ public class JNAEtherstubHelper implements EtherstubHelper {
         int rc = handle.create_etherstub(name, persitent_type);
 
         if (rc != EtherstubReturn.RESULT_OK.ordinal()) {
-            throw new EtherstubException("Etherstub deletion failed.");
+            throw new EtherstubException("Etherstub creation failed.");
         }
         logger.info("Etherstub : " + name + " sucessfully created");
     }
@@ -155,6 +156,7 @@ public class JNAEtherstubHelper implements EtherstubHelper {
 
     /**
      * Coverts type of persistence to 'c' like value
+     *
      * @param temporary Type of requested persistence
      * @return Flag specifies requested persistence type accustomed to 'c' library
      */
@@ -164,6 +166,7 @@ public class JNAEtherstubHelper implements EtherstubHelper {
 
     /**
      * Method return string on which Pointer p points and frees the memory allocated by the library
+     *
      * @param p Pointer from the JNA library
      * @return String on which pointer points
      */

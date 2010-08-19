@@ -1,6 +1,7 @@
 package agh.msc.xbowbase.link;
 
 import agh.msc.xbowbase.exception.LinkException;
+import agh.msc.xbowbase.lib.NicHelper;
 import agh.msc.xbowbase.publisher.Publisher;
 import agh.msc.xbowbase.publisher.exception.NotPublishedException;
 import java.util.Arrays;
@@ -23,6 +24,7 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
     /** Logger */
     private static final Logger logger = Logger.getLogger(Nic.class);
     private Publisher publisher;
+    private NicHelper linkHelper;
 
     /**
      * Executes discover() in response to notification.
@@ -31,7 +33,9 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
      */
     @Override
     public void handleNotification(Notification notification, Object handback) {
+
         logger.debug("VNicManager received notification... running discovery method");
+
         try {
             discover();
         } catch (LinkException ex) {
@@ -44,11 +48,18 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
      */
     @Override
     public void create(VNicMBean vNicMBean) throws LinkException {
+
         logger.debug("VNicManager creating new vnic with name: " + vNicMBean.getName() + ", temporary: " + vNicMBean.isTemporary() + ", under: " + vNicMBean.getParent());
 
-        //@todo use jna library to create vnic
-        registerNewVNicMBean(vNicMBean);
-        discover();
+        try {
+            this.linkHelper.createVNic(vNicMBean.getName(), vNicMBean.isTemporary(), vNicMBean.getParent());
+            registerNewVNicMBean(vNicMBean);
+            discover();
+        } catch (LinkException e) {
+            logger.error("VNic " + vNicMBean + " couldn't be created", e);
+            throw e;
+        }
+        
     }
 
     /**
@@ -56,13 +67,19 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
      */
     @Override
     public void delete(String name, boolean temporary) throws LinkException {
+
         logger.debug("VNicManager removing vnic with name: " + name + ", temporary: " + temporary);
 
-        //@todo use jna library to delete exisitng vnic
-        VNicMBean vNicMBean = new VNic(name, temporary);
+        try {
+            VNicMBean vnicMBean = new VNic(name, temporary);
+            this.linkHelper.deleteVNic(name, temporary);
+            removeNoMoreExistingVNicMBeans(Arrays.asList(new VNicMBean[]{ vnicMBean }));
+            discover();
 
-        removeNoMoreExistingVNicMBeans(Arrays.asList(new VNicMBean[]{vNicMBean}));
-        discover();
+        } catch (LinkException e) {
+            logger.error("Link " + name + " couldn't be deleted", e);
+            throw e;
+        }
     }
 
     /**
@@ -70,8 +87,14 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
      */
     @Override
     public List<String> getVNicsNames() throws LinkException {
-        //@todo use jna library to get list of names of existing vnic's
-        throw new UnsupportedOperationException("Not supported yet.");
+
+        String[] linkNames = this.linkHelper.getLinkNames(true);
+        
+        if (linkNames == null) {
+            return new LinkedList<String>();
+        } else {
+            return Arrays.asList(this.linkHelper.getLinkNames(true));
+        }
     }
 
     /**
@@ -160,5 +183,10 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
             }
         }
         return set;
+    }
+
+    public void setLinkHelper(NicHelper linkHelper){
+
+        this.linkHelper = linkHelper;
     }
 }

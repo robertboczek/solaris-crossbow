@@ -79,6 +79,7 @@ public interface FlowMBean {
 	 */
 	public boolean isTemporary();
 
+
 	/*
 	 * jconsole only
 	 */

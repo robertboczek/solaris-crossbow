@@ -9,12 +9,14 @@ import agh.msc.xbowbase.exception.EtherstubException;
 /**
  * Etherstub helper interface
  * Used to manage etherstub's
+ * 
  * @author robert boczek
  */
 public interface EtherstubHelper extends Library {
 
     /**
-     *  Removes etherstub with specified name
+     * Removes etherstub with specified name
+     *
      * @param name Name of etherstub
      * @param temporary Flag specifies whether etherstub should be removed temporary or persistently
      * @throws EtherstubException Exception thrown when error while reading names occur
@@ -22,7 +24,8 @@ public interface EtherstubHelper extends Library {
     public void deleteEtherstub(String name, boolean temporary) throws EtherstubException;
 
     /**
-     *  Creates etherstub with specified name
+     * Creates etherstub with specified name
+     *
      * @param name Name of etherstub
      * @param temporary Flag specifies whether etherstub should be created temporary or persistent
      * @throws EtherstubException Exception thrown when error while reading names occur
@@ -31,6 +34,7 @@ public interface EtherstubHelper extends Library {
 
     /**
      * Return list of existing etherstubs
+     *
      * @return Array of names of existing etherstubs (empty array when there's no etherstub's existing)
      * @throws EtherstubException Exception thrown when error while reading names occur
      */
@@ -38,6 +42,7 @@ public interface EtherstubHelper extends Library {
 
     /**
      * Returns value of requested parameter
+     *
      * @param name Name of etherstub
      * @param parameter Type of requested property
      * @return Value of requested parameter
@@ -47,6 +52,7 @@ public interface EtherstubHelper extends Library {
 
     /**
      * Returns value of requested parameter
+     *
      * @param name Name of etherstub
      * @param property Type of requested property
      * @return Value of requested statistic
@@ -56,6 +62,7 @@ public interface EtherstubHelper extends Library {
 
     /**
      * Sets new value to property 'property' to the etherstub whose name is 'name'
+     *
      * @param name Name of etherstub
      * @param property Type of property to be set
      * @param value Value to be set
@@ -65,6 +72,7 @@ public interface EtherstubHelper extends Library {
 
     /**
      * Returns value of requested property
+     *
      * @param name Name of etherstub
      * @param property Type of requested property
      * @return Value of requested property

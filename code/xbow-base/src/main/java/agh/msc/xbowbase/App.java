@@ -11,8 +11,10 @@ import agh.msc.xbowbase.lib.EtherstubHelper;
 import agh.msc.xbowbase.lib.FlowHelper;
 import agh.msc.xbowbase.lib.NicHelper;
 import agh.msc.xbowbase.link.NicManager;
+import agh.msc.xbowbase.link.VNicManager;
 import agh.msc.xbowbase.publisher.EtherstubMBeanPublisher;
 import agh.msc.xbowbase.publisher.NicMBeanPublisher;
+import agh.msc.xbowbase.publisher.VNicMBeanPublisher;
 import java.lang.management.ManagementFactory;
 import java.util.Date;
 import javax.management.MBeanServer;
@@ -48,6 +50,10 @@ public class App {
 		nicManager.setNicHelper( nicHelper );
 		nicManager.setPublisher( new NicMBeanPublisher( mbs ) );
 
+		VNicManager vNicManager = new VNicManager();
+		vNicManager.setLinkHelper( nicHelper );
+		vNicManager.setPublisher( new VNicMBeanPublisher( mbs ) );
+
 		EtherstubManager etherstubManager = new EtherstubManager();
 		etherstubManager.setEtherstubadm( etherstubHelper );
 		etherstubManager.setPublisher( new EtherstubMBeanPublisher( mbs ) );
@@ -62,6 +68,7 @@ public class App {
 		timer.addNotification( "discovery", "discover", null, new Date(), 5000 );
 		timer.addNotificationListener( flowManager, null, null );
 		timer.addNotificationListener( nicManager, null, null );
+		timer.addNotificationListener( vNicManager, null, null );
 		timer.addNotificationListener( etherstubManager, null, null );
 		timer.start();
 
@@ -71,6 +78,8 @@ public class App {
 		mbs.registerMBean( flowAccounting, new ObjectName( "agh.msc.xbowbase:type=FlowAccounting" ) );
 
 		mbs.registerMBean( nicManager, new ObjectName( "agh.msc.xbowbase:type=NicManager" ) );
+
+		mbs.registerMBean( vNicManager, new ObjectName( "agh.msc.xbowbase:type=VNicManager" ) );
 
 		mbs.registerMBean( etherstubManager, new ObjectName( "agh.msc.xbowbase:type=EtherstubManager" ) );
 
