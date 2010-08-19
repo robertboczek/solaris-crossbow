@@ -104,8 +104,7 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
     public void discover() throws LinkException {
         logger.info("VNicManager.discover()... searching for new vnic's and ones that don't exist any more");
 
-        //@todo use jna library to get list of exisitng vnic's names
-        Set<VNicMBean> currentMBeans = convertToSet(null);
+        Set<VNicMBean> currentMBeans = convertToSet(linkHelper.getLinkNames(true));
 
         if(publisher != null){
             Set<Object> vnicSet = new HashSet<Object>(publisher.getPublished());
@@ -145,8 +144,8 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
     private void registerNewVNicMBean(VNicMBean vNicMBean) {
 
         if (publisher != null) {
-            logger.info("Registering new VNicMBean to MBeanServer: " + vNicMBean);
 
+            logger.info("Registering new VNicMBean to MBeanServer: " + vNicMBean);
             publisher.publish(vNicMBean);
         }
     }
