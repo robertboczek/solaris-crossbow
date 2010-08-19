@@ -86,6 +86,8 @@ public abstract class MBeanPublisher implements Publisher {
 				try {
 
 					mBeanServer.unregisterMBean( createObjectName( o ) );
+					published.remove( o );
+
 					logger.info( "Object " + o + " successfully unregistered." );
 
 					break;
