@@ -79,4 +79,14 @@ public interface FlowMBean {
 	 */
 	public boolean isTemporary();
 
+	/*
+	 * jconsole only
+	 */
+
+	public void setPropertyJC( String name, String value, boolean temporary ) throws NoSuchFlowException,
+	                                                                                 ValidationException;
+
+	public void resetPropertyJC( String name, boolean temporary ) throws NoSuchFlowException,
+	                                                                     ValidationException;
+
 }

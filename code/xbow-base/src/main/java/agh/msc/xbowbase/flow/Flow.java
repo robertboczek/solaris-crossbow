@@ -3,6 +3,7 @@ package agh.msc.xbowbase.flow;
 import agh.msc.xbowbase.exception.NoSuchFlowException;
 import agh.msc.xbowbase.exception.ValidationException;
 import agh.msc.xbowbase.lib.FlowHelper;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -247,6 +248,28 @@ public class Flow implements FlowMBean {
 	 */
 	public void setFlowadm( FlowHelper flowadm ) {
 		this.flowadm = flowadm;
+	}
+
+
+	/*
+	 * jconsole only
+	 */
+
+	public void setPropertyJC( String name, String value, boolean temporary ) throws NoSuchFlowException,
+	                                                                                 ValidationException {
+
+		Map< String, String > map = new HashMap< String, String >();
+		map.put( name, value );
+
+		setProperties( map, temporary );
+
+	}
+
+	public void resetPropertyJC( String name, boolean temporary ) throws NoSuchFlowException,
+	                                                                     ValidationException {
+
+		resetProperties( Arrays.asList( name ), temporary );
+
 	}
 
 
