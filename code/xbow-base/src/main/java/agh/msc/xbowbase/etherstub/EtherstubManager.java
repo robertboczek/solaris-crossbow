@@ -184,4 +184,14 @@ public class EtherstubManager implements EtherstubManagerMBean, NotificationList
     public void setPublisher(Publisher publisher) {
         this.publisher = publisher;
     }
+
+
+		/*
+		 * jconsole only
+		 */
+
+		@Override
+		public void createJC( String name, boolean temporary ) throws EtherstubException {
+			create( new Etherstub( name, temporary ) );
+		}
 }

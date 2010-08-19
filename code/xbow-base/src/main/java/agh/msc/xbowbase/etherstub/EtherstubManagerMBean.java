@@ -41,5 +41,12 @@ public interface EtherstubManagerMBean {
      * @throws EtherstubException Exception thrown in case of error
      */
     void discover() throws EtherstubException;
+
+
+		/*
+		 * jconsole only
+		 */
+
+		public void createJC( String name, boolean temporary ) throws EtherstubException;
  
 }

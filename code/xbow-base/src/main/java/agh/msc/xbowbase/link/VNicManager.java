@@ -188,4 +188,13 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
 
         this.linkHelper = linkHelper;
     }
+
+
+		/*
+		 * jconsole only
+		 */
+		@Override
+    public void createJC( String name, boolean temporary, String parent ) throws LinkException {
+			create( new VNic( name, temporary, parent ) );
+		}
 }

@@ -164,5 +164,8 @@ public class Etherstub implements EtherstubMBean {
 		}
 
 	@Override
-		public void setPropertyJC( String property, String value ) throws EtherstubException {}
+	public void setPropertyJC( String property, String value ) throws EtherstubException {
+		setProperty( LinkProperties.fromString( property ), value );
+	}
+
 }

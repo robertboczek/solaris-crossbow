@@ -178,6 +178,29 @@ public class Nic implements NicMBean {
 	}
 
 
+	/*
+	 * jconsole only
+	 */
+
+	/*
+	@Override
+	public Map< String, String > getPropertiesJC() throws LinkException {
+		return new HashMap< String, String >();
+	}
+
+
+	@Override
+	public void setPropertyJC( String property, String value ) throws LinkException {
+	}
+
+
+	@Override
+	public Map< String, String > getParametersJC() throws LinkException {
+		return new HashMap< String, String >();
+	}
+	 */
+
+
 	String name;
 	private Map< LinkStatistics, String > statisticsMap = new HashMap< LinkStatistics, String >();
 	private Map< LinkProperties, String > propertiesMap = new HashMap< LinkProperties, String >();
