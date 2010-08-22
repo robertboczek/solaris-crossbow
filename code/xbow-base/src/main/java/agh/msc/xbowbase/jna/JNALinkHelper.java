@@ -3,6 +3,7 @@ package agh.msc.xbowbase.jna;
 import agh.msc.xbowbase.enums.LinkParameters;
 import agh.msc.xbowbase.enums.LinkProperties;
 import agh.msc.xbowbase.enums.LinkStatistics;
+import agh.msc.xbowbase.exception.InvalidLinkNameException;
 import agh.msc.xbowbase.exception.LinkException;
 import agh.msc.xbowbase.jna.mapping.LinkHandle;
 import agh.msc.xbowbase.lib.NicHelper;
@@ -14,6 +15,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 /**
+ * @brief
  * Link helper implementation based on Java Native Access.
  *
  * @author cieplik
@@ -99,7 +101,13 @@ public class JNALinkHelper implements NicHelper {
         logger.info("Trying to remove vnic : " + name + ", temporary: " + temporary);
         int rc = handle.delete_vnic(name, persitent_type);
 
-        if (rc != LinkReturn.RESULT_OK.ordinal()) {
+        if(rc == LinkReturn.INVALID_LINK_NAME.ordinal()){
+            throw new InvalidLinkNameException("VNic name: " + name + " was incorrect");
+        }
+        else if(rc == LinkReturn.TOO_LONG_LINK_NAME.ordinal()){
+            throw new InvalidLinkNameException("VNic name: " + name + " was too long");
+        }
+        else if (rc != LinkReturn.RESULT_OK.ordinal()) {
             throw new LinkException("VNic deletion failed.");
         }
     }
@@ -114,9 +122,22 @@ public class JNALinkHelper implements NicHelper {
         logger.info("Trying to create vnic : " + name + ", temporary: " + temporary);
         int rc = handle.create_vnic(name, persitent_type, parent);
 
-        if (rc != LinkReturn.RESULT_OK.ordinal()) {
+        if (rc == LinkReturn.TOO_LONG_PARENT_LINK_NAME.ordinal()) {
+            throw new InvalidLinkNameException("VNic parent link name too long");
+        }
+        else if (rc == LinkReturn.INVALID_PARENT_LINK_NAME.ordinal()) {
+            throw new InvalidLinkNameException("VNic parent link was incorrect");
+        }
+        else if (rc == LinkReturn.TOO_LONG_LINK_NAME.ordinal()) {
+            throw new InvalidLinkNameException("VNic name was too long");
+        }
+        else if (rc == LinkReturn.INVALID_LINK_NAME.ordinal()) {
+            throw new InvalidLinkNameException("VNic name was incorrect");
+        }
+        else if (rc != LinkReturn.RESULT_OK.ordinal()) {
             throw new LinkException("VNic creation failed.");
         }
+        
         logger.info("VNic : " + name + " sucessfully created");
     }
 

@@ -36,48 +36,48 @@ public class App {
 
 		// Initialize flowadm wrapper.
 
-		FlowHelper flowadm = new JNAFlowHelper();
+		//FlowHelper flowadm = new JNAFlowHelper();
 		NicHelper nicHelper = new JNALinkHelper();
 		EtherstubHelper etherstubHelper = new JNAEtherstubHelper();
 
 		// Create FlowManager.
 
-		FlowManager flowManager = new FlowManager();
-		flowManager.setFlowadm( flowadm );
-		flowManager.setPublisher( new FlowMBeanPublisher( mbs ) );
+		//FlowManager flowManager = new FlowManager();
+		//flowManager.setFlowadm( flowadm );
+		//flowManager.setPublisher( new FlowMBeanPublisher( mbs ) );
 
-		NicManager nicManager = new NicManager();
-		nicManager.setNicHelper( nicHelper );
-		nicManager.setPublisher( new NicMBeanPublisher( mbs ) );
+		//NicManager nicManager = new NicManager();
+		//nicManager.setNicHelper( nicHelper );
+		//nicManager.setPublisher( new NicMBeanPublisher( mbs ) );
 
 		VNicManager vNicManager = new VNicManager();
 		vNicManager.setLinkHelper( nicHelper );
 		vNicManager.setPublisher( new VNicMBeanPublisher( mbs ) );
 
 		EtherstubManager etherstubManager = new EtherstubManager();
-		etherstubManager.setEtherstubadm( etherstubHelper );
+		etherstubManager.setEtherstHelper( etherstubHelper );
 		etherstubManager.setPublisher( new EtherstubMBeanPublisher( mbs ) );
 
 		// Create FlowAccounting.
 
-		FlowAccounting flowAccounting = new FlowAccounting();
+		//FlowAccounting flowAccounting = new FlowAccounting();
 
 		// Create Timer.
 
 		Timer timer = new Timer();
 		timer.addNotification( "discovery", "discover", null, new Date(), 5000 );
-		timer.addNotificationListener( flowManager, null, null );
-		timer.addNotificationListener( nicManager, null, null );
+		//timer.addNotificationListener( flowManager, null, null );
+		//timer.addNotificationListener( nicManager, null, null );
 		timer.addNotificationListener( vNicManager, null, null );
 		timer.addNotificationListener( etherstubManager, null, null );
 		timer.start();
 
 		// Register MBeans.
 
-		mbs.registerMBean( flowManager, new ObjectName( "agh.msc.xbowbase:type=FlowManager" ) );
-		mbs.registerMBean( flowAccounting, new ObjectName( "agh.msc.xbowbase:type=FlowAccounting" ) );
+		//mbs.registerMBean( flowManager, new ObjectName( "agh.msc.xbowbase:type=FlowManager" ) );
+		//mbs.registerMBean( flowAccounting, new ObjectName( "agh.msc.xbowbase:type=FlowAccounting" ) );
 
-		mbs.registerMBean( nicManager, new ObjectName( "agh.msc.xbowbase:type=NicManager" ) );
+		//mbs.registerMBean( nicManager, new ObjectName( "agh.msc.xbowbase:type=NicManager" ) );
 
 		mbs.registerMBean( vNicManager, new ObjectName( "agh.msc.xbowbase:type=VNicManager" ) );
 

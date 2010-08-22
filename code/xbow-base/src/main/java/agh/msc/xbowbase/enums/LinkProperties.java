@@ -1,7 +1,9 @@
 package agh.msc.xbowbase.enums;
 
 /**
+ * @brief Link properties
  * Possible link properties to read or set
+ *
  * @author robert boczek
  */
 public enum LinkProperties {

@@ -35,6 +35,7 @@ public class VNic implements VNicMBean{
 
     /**
      * Constructor of VNic class
+     *
      * @param name Name of vnic
      * @param temporary Specifies whether this vnic will exist between reboots
      * @param parent Name of link under whom this vnic works
@@ -235,6 +236,11 @@ public class VNic implements VNicMBean{
         } else {
             return false;
         }
+    }
+
+    @Override
+    public String toString(){
+        return this.name;
     }
 
     public void setLinkHelper(NicHelper linkHelper){

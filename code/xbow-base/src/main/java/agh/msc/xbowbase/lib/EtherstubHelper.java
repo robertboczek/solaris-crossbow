@@ -7,8 +7,7 @@ import agh.msc.xbowbase.enums.LinkStatistics;
 import agh.msc.xbowbase.exception.EtherstubException;
 
 /**
- * Etherstub helper interface
- * Used to manage etherstub's
+ * Etherstub helper interface used to manage etherstub's
  * 
  * @author robert boczek
  */
