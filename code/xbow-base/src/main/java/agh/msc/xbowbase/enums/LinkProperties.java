@@ -3,7 +3,9 @@ package agh.msc.xbowbase.enums;
 import java.util.HashMap;
 
 /**
+ * @brief Link properties
  * Possible link properties to read or set
+ *
  * @author robert boczek
  */
 public enum LinkProperties {

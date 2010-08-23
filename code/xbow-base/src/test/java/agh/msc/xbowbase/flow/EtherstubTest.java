@@ -28,7 +28,7 @@ public class EtherstubTest {
 
         etherstubadm = mock(JNAEtherstubHelper.class);
         etherstub = new Etherstub("etherstub1", false);
-        etherstub.setEtherstubadm(etherstubadm);
+        etherstub.setEtherstubHelper(etherstubadm);
     }
 
     @After

@@ -1,6 +1,7 @@
 package agh.msc.xbowbase.etherstub;
 
 import agh.msc.xbowbase.exception.EtherstubException;
+import agh.msc.xbowbase.exception.InvalidEtherstubNameException;
 import agh.msc.xbowbase.lib.EtherstubHelper;
 import agh.msc.xbowbase.publisher.Publisher;
 import agh.msc.xbowbase.publisher.exception.NotPublishedException;
@@ -15,6 +16,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 /**
+ * @brief Implements EtherstubManagerMBean interface
  * Implementation of EtherstubManagerMBean
  * 
  * @see EtherstubManagerMBean
@@ -24,7 +26,7 @@ public class EtherstubManager implements EtherstubManagerMBean, NotificationList
 
     /** Logger */
     private static final Logger logger = Logger.getLogger(Etherstub.class);
-    private EtherstubHelper etherstubadm;
+    private EtherstubHelper etherstubHelper;
     private Publisher publisher;
 
     /**
@@ -34,12 +36,19 @@ public class EtherstubManager implements EtherstubManagerMBean, NotificationList
     public void create(EtherstubMBean etherstubMBean) throws EtherstubException {
 
         try {
-            this.etherstubadm.createEtherstub(etherstubMBean.getName(), etherstubMBean.isTemporary());
+            this.etherstubHelper
+                    .createEtherstub(etherstubMBean.getName(), etherstubMBean.isTemporary());
             registerNewEtherstubMBean(etherstubMBean);
             discover();
+
+        } catch (InvalidEtherstubNameException ex) {
+            logger.error("Etherstub's name: " + etherstubMBean + " was incorrect", ex);
+            throw ex;
+
         } catch (EtherstubException e) {
             logger.error("Etherstub " + etherstubMBean + " couldn't be created", e);
             throw e;
+            
         }
     }
 
@@ -51,7 +60,7 @@ public class EtherstubManager implements EtherstubManagerMBean, NotificationList
 
         try {
             EtherstubMBean etherstubMBean = new Etherstub(name, temporary);
-            this.etherstubadm.deleteEtherstub(name, temporary);
+            this.etherstubHelper.deleteEtherstub(name, temporary);
             removeNoMoreExistingEtherstubMBeans(Arrays.asList(new EtherstubMBean[]{etherstubMBean}));
             discover();
         } catch (EtherstubException e) {
@@ -66,12 +75,7 @@ public class EtherstubManager implements EtherstubManagerMBean, NotificationList
     @Override
     public List<String> getEtherstubsNames() throws EtherstubException {
 
-        String[] etherstubNames = this.etherstubadm.getEtherstubNames();
-        if (etherstubNames == null) {
-            return new LinkedList<String>();
-        } else {
-            return Arrays.asList(this.etherstubadm.getEtherstubNames());
-        }
+        return Arrays.asList(this.etherstubHelper.getEtherstubNames());
     }
 
     /**
@@ -83,7 +87,7 @@ public class EtherstubManager implements EtherstubManagerMBean, NotificationList
 
         
         if(publisher != null){
-            Set<EtherstubMBean> currentMBeans = convertToSet(this.etherstubadm.getEtherstubNames());
+            Set<EtherstubMBean> currentMBeans = convertToSet(this.etherstubHelper.getEtherstubNames());
             Set<Object> etherstubsSet = new HashSet<Object>(publisher.getPublished());
 
             //check for new Etherstubs
@@ -108,11 +112,13 @@ public class EtherstubManager implements EtherstubManagerMBean, NotificationList
     }
 
     /**
+     * @brief Injects EtherstubHelper instance
      * Sets the implementation of EtherstubHelper
-     * @param etherstubadm Conrete implementation of Ehterstubadm
+     *
+     * @param etherstubHelper Conrete implementation of Ehterstubadm
      */
-    public void setEtherstubadm(EtherstubHelper etherstubadm) {
-        this.etherstubadm = etherstubadm;
+    public void setEtherstHelper(EtherstubHelper etherstubHelper) {
+        this.etherstubHelper = etherstubHelper;
     }
 
     /**
@@ -132,8 +138,10 @@ public class EtherstubManager implements EtherstubManagerMBean, NotificationList
     }
 
     /**
+     * @brief Converts array of Etherstub's names to set of EthertsubMBean objects
      * Converts array of names to set of EtherstubMBean objets (we assume that
      * created etherstubs are persitent not temporary )
+     *
      * @param etherstubNames Array of existing etherstub names
      * @return Set of EtherstubMBean objects
      */
@@ -148,8 +156,10 @@ public class EtherstubManager implements EtherstubManagerMBean, NotificationList
     }
 
     /**
+     * @brief Registers new EtherstubMBean in the MBeanServer
      * Method adds new etherstub's to the currentMBeans set (possibly created by the admin) and registers them in
      * the jmx registry
+     *
      * @param etherstubMBean New etherstub to be registered
      */
     private void registerNewEtherstubMBean(EtherstubMBean etherstubMBean) {
@@ -161,7 +171,9 @@ public class EtherstubManager implements EtherstubManagerMBean, NotificationList
     }
 
     /**
+     * @brief Unregisters EtherstubMBean from the MBeanServer
      * Unregisters EtherstubMBean's from the jmx and removes from the currentMBeans set
+     *
      * @param etherstubMBeansToRemove List of unexisting EtherstubMBean's (possibly removed by the admin)
      */
     private void removeNoMoreExistingEtherstubMBeans(List<EtherstubMBean> etherstubMBeansToRemove) {
@@ -178,7 +190,9 @@ public class EtherstubManager implements EtherstubManagerMBean, NotificationList
     }
 
     /**
+     * @brief Injects Publisher class instance
      * Injects the publisher object, used to publish new etherstubs and removes unexisting ones
+     *
      * @param publisher Instance of Publisher to be used by EtherstubManagerMBean
      */
     public void setPublisher(Publisher publisher) {

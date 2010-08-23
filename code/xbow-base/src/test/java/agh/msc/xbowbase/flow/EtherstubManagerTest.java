@@ -28,7 +28,7 @@ public class EtherstubManagerTest {
             etherstubadm = mock(EtherstubHelper.class);
             publisher = mock(Publisher.class);
             etherstubManager = new EtherstubManager();
-            etherstubManager.setEtherstubadm(etherstubadm);
+            etherstubManager.setEtherstHelper(etherstubadm);
             etherstubManager.setPublisher(publisher);
     }
 

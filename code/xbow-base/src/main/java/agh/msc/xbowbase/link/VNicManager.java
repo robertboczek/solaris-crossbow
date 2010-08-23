@@ -1,5 +1,6 @@
 package agh.msc.xbowbase.link;
 
+import agh.msc.xbowbase.exception.InvalidLinkNameException;
 import agh.msc.xbowbase.exception.LinkException;
 import agh.msc.xbowbase.lib.NicHelper;
 import agh.msc.xbowbase.publisher.Publisher;
@@ -55,6 +56,10 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
             this.linkHelper.createVNic(vNicMBean.getName(), vNicMBean.isTemporary(), vNicMBean.getParent());
             registerNewVNicMBean(vNicMBean);
             discover();
+
+        } catch (InvalidLinkNameException ex){
+            logger.error("VNic " + vNicMBean + " couldn't be created", ex);
+            throw ex;
         } catch (LinkException e) {
             logger.error("VNic " + vNicMBean + " couldn't be created", e);
             throw e;
@@ -76,8 +81,11 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
             removeNoMoreExistingVNicMBeans(Arrays.asList(new VNicMBean[]{ vnicMBean }));
             discover();
 
+        } catch (InvalidLinkNameException ex){
+            logger.error("VNic " + name + " couldn't be created", ex);
+            throw ex;
         } catch (LinkException e) {
-            logger.error("Link " + name + " couldn't be deleted", e);
+            logger.error("VNic " + name + " couldn't be deleted", e);
             throw e;
         }
     }
@@ -88,13 +96,7 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
     @Override
     public List<String> getVNicsNames() throws LinkException {
 
-        String[] linkNames = this.linkHelper.getLinkNames(true);
-        
-        if (linkNames == null) {
-            return new LinkedList<String>();
-        } else {
-            return Arrays.asList(this.linkHelper.getLinkNames(true));
-        }
+        return Arrays.asList(this.linkHelper.getLinkNames(true));
     }
 
     /**

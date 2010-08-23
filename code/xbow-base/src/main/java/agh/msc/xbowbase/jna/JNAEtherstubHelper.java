@@ -4,14 +4,16 @@ import agh.msc.xbowbase.enums.LinkParameters;
 import agh.msc.xbowbase.enums.LinkProperties;
 import agh.msc.xbowbase.enums.LinkStatistics;
 import agh.msc.xbowbase.exception.EtherstubException;
+import agh.msc.xbowbase.exception.InvalidEtherstubNameException;
+import agh.msc.xbowbase.jna.mapping.EtherstubHandle;
 import agh.msc.xbowbase.lib.EtherstubHelper;
-import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 
 import org.apache.log4j.Logger;
 
 /**
+ * @brief Helper class implementation based on JNA
  * Etherstub helper implementation based on Java Native Access.
  * 
  * @author robeert boczek
@@ -22,17 +24,18 @@ public class JNAEtherstubHelper implements EtherstubHelper {
     private static final Logger logger = Logger.getLogger(JNAEtherstubHelper.class);
 
     private final String LIBNAME = "etherstub_wrapper";
-    private IEtherstubadmin handle;
+    private EtherstubHandle handle;
 
     /**
+     * @brief
      * Construtor of JNAEtherstubHelper - load etherstubadm native library
      */
     public JNAEtherstubHelper() {
-        handle = (IEtherstubadmin) Native.loadLibrary(LIBNAME, IEtherstubadmin.class);
+        handle = (EtherstubHandle) Native.loadLibrary(LIBNAME, EtherstubHandle.class);
         handle.init();
     }
 
-    public JNAEtherstubHelper(IEtherstubadmin handle){
+    public JNAEtherstubHelper(EtherstubHandle handle){
         this.handle = handle;
     }
 
@@ -48,7 +51,12 @@ public class JNAEtherstubHelper implements EtherstubHelper {
 
         int rc = handle.delete_etherstub(name, persitent_type);
 
-        if (rc != EtherstubReturn.RESULT_OK.ordinal()) {
+        if (rc == EtherstubReturn.INVALID_ETHERSTUB_NAME.ordinal()) {
+
+            throw new InvalidEtherstubNameException("Etherstub couldn't be removed as the name was incorrect");
+
+        }else if(rc != EtherstubReturn.RESULT_OK.ordinal()){
+            
             throw new EtherstubException("Etherstub deletion failed.");
         }
     }
@@ -65,7 +73,13 @@ public class JNAEtherstubHelper implements EtherstubHelper {
 
         int rc = handle.create_etherstub(name, persitent_type);
 
-        if (rc != EtherstubReturn.RESULT_OK.ordinal()) {
+        if(rc == EtherstubReturn.TOO_LONG_ETHERSTUB_NAME.ordinal()){
+            throw new  InvalidEtherstubNameException("Etherstub couldn't be created as the name was too long");
+        }
+        else if(rc == EtherstubReturn.INVALID_ETHERSTUB_NAME.ordinal()){
+            throw new  InvalidEtherstubNameException("Etherstub couldn't be created as the name was incorrect");
+        }
+        else if (rc != EtherstubReturn.RESULT_OK.ordinal()) {
             throw new EtherstubException("Etherstub creation failed.");
         }
         logger.info("Etherstub : " + name + " sucessfully created");
@@ -155,6 +169,7 @@ public class JNAEtherstubHelper implements EtherstubHelper {
     }
 
     /**
+     * @brief Converts Java boolean to 'c' like proper integer value
      * Coverts type of persistence to 'c' like value
      *
      * @param temporary Type of requested persistence
@@ -165,6 +180,7 @@ public class JNAEtherstubHelper implements EtherstubHelper {
     }
 
     /**
+     * @brief Gets String value from Pointer(JNA) variable
      * Method return string on which Pointer p points and frees the memory allocated by the library
      *
      * @param p Pointer from the JNA library
@@ -175,31 +191,5 @@ public class JNAEtherstubHelper implements EtherstubHelper {
         handle.free_char_string(p);
 
         return value;
-    }
-
-    /**
-     * C <-> Java mappings.
-     */
-    public interface IEtherstubadmin extends Library {
-
-        public int init();
-
-        public int delete_etherstub(String name, int temporary);
-
-        public int create_etherstub(String name, int temporary);
-
-        public Pointer get_etherstub_names();
-
-        public Pointer get_etherstub_parameter(String name, String parameter);
-
-        public Pointer get_etherstub_statistic(String name, String statistic);
-
-        public Pointer get_etherstub_property( String name, String property);
-
-        public int set_etherstub_property( String name, String property, String value );
-
-        public void free_char_array( Pointer pointer );
-
-        public void free_char_string( Pointer pointer );
     }
 }

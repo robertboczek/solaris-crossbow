@@ -1,6 +1,7 @@
 package agh.msc.xbowbase.jna;
 
 /**
+ * @brief Values returned by the libetherstub_wrapper.so
  * Possible values returned by the JNAEtherstub.IEtherstubadmin
  *
  * @author robert boczek

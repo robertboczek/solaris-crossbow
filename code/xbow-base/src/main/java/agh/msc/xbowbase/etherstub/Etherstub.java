@@ -10,7 +10,9 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 /**
+ * @brief EtherstubMBean implementation
  * Implementation of EtherstubMBean interface
+ *
  * @author robert boczek
  */
 public class Etherstub implements EtherstubMBean {
@@ -23,10 +25,12 @@ public class Etherstub implements EtherstubMBean {
     private Map<LinkParameters, String> parametersMap;
     private Map<LinkProperties, String> propertiesMap; //some properties contain a few values like names of cpus
     private Map<LinkStatistics, String> statisticsMap;
-    private EtherstubHelper etherstubadm = null;
+    private EtherstubHelper etherstubHelper = null;
 
     /**
+     * @brief Constructor of Etherstub object
      * Constructor of Etherstub Class, it's the only way to set up name and temporary values
+     * 
      * @param name Etherstub name
      * @param temporary Flag specifies whether Etherstub is temporary or persistent between reboots
      */
@@ -60,7 +64,7 @@ public class Etherstub implements EtherstubMBean {
     @Override
     public Map<LinkProperties, String> getProperties() throws EtherstubException {
         for (LinkProperties property : LinkProperties.values()) {
-            this.propertiesMap.put(property, etherstubadm.getEtherstubProperty(name, property));
+            this.propertiesMap.put(property, etherstubHelper.getEtherstubProperty(name, property));
         }
         return this.propertiesMap;
     }
@@ -72,7 +76,7 @@ public class Etherstub implements EtherstubMBean {
     public Map<LinkParameters, String> getParameters() throws EtherstubException {
 
         for (LinkParameters parameter : LinkParameters.values()) {
-            this.parametersMap.put(parameter, etherstubadm.getEtherstubParameter(name, parameter));
+            this.parametersMap.put(parameter, etherstubHelper.getEtherstubParameter(name, parameter));
         }
         return this.parametersMap;
     }
@@ -84,7 +88,7 @@ public class Etherstub implements EtherstubMBean {
     public Map<LinkStatistics, String> getStatistics() throws EtherstubException {
 
         for (LinkStatistics statistic : LinkStatistics.values()) {
-            this.statisticsMap.put(statistic, etherstubadm.getEtherstubStatistic(name, statistic));
+            this.statisticsMap.put(statistic, etherstubHelper.getEtherstubStatistic(name, statistic));
         }
         return this.statisticsMap;
     }
@@ -98,21 +102,26 @@ public class Etherstub implements EtherstubMBean {
         logger.info("Setting new property value to property " + etherstubProperty
                 + " to etherstub: " + this.name + " with value: " + value);
         
-        etherstubadm.setEtherstubProperty(this.name, etherstubProperty, value);
+        etherstubHelper.setEtherstubProperty(this.name, etherstubProperty, value);
         //@todo check return value
         this.propertiesMap.put(etherstubProperty, value);
     }
 
     /**
+     * @brief Injects EthertubHelper
      * Sets the implementation of EtherstubHelper
-     * @param etherstubadm Conrete implementation of Ehterstubadm
+     *
+     * @param etherstubHelper Concrete implementation of Ehterstubadm
      */
-    public void setEtherstubadm(EtherstubHelper etherstubadm) {
-        this.etherstubadm = etherstubadm;
+    public void setEtherstubHelper(EtherstubHelper etherstubHelper) {
+        this.etherstubHelper = etherstubHelper;
     }
 
     /**
+     * @brief Compares EtherstubMBean objects by their name attribute
      * Etherstub's are equal when their attributes name's are equal
+     *
+     * @param object Object to be compared with this one
      */
     @Override
     public boolean equals(Object object) {
@@ -123,11 +132,21 @@ public class Etherstub implements EtherstubMBean {
     }
 
     /**
+     * @brief Etherstub's hashCode
      * Etherstub's hashCode is eqaul to their attributes name's hashCode value
      */
     @Override
     public int hashCode() {
         return this.name.hashCode();
+    }
+
+    /**
+     * @brief Etherstub toString returns Etherstub's name attribute
+     * @return Returns name attribute
+     */
+    @Override
+    public String toString() {
+        return this.name;
     }
 
 
