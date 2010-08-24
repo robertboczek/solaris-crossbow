@@ -52,7 +52,7 @@ public class EtherstubManagerTest {
     @Test
     public void testRemovingEtherstub() throws EtherstubException{
 
-        when(etherstubadm.getEtherstubNames()).thenReturn(null);
+        when(etherstubadm.getEtherstubNames()).thenReturn(new String[]{});
 
         etherstubManager.create(new Etherstub("etherstub", true));
 
