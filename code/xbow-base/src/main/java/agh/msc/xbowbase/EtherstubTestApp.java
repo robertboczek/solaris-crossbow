@@ -5,8 +5,9 @@ import agh.msc.xbowbase.enums.LinkProperties;
 import agh.msc.xbowbase.enums.LinkStatistics;
 import agh.msc.xbowbase.jna.JNAEtherstubHelper;
 import agh.msc.xbowbase.jna.JNALinkHelper;
+import agh.msc.xbowbase.jna.JNAVNicHelper;
 import agh.msc.xbowbase.lib.EtherstubHelper;
-import agh.msc.xbowbase.lib.NicHelper;
+import agh.msc.xbowbase.lib.VNicHelper;
 
 /**
  *
@@ -48,9 +49,9 @@ public class EtherstubTestApp {
         System.out.println("Read PRIORITY property value is: " + property);
 
         //setting properties property
-        etherstubadm.setEtherstubProperty("etherstub1", LinkProperties.PRIORITY, "HIGH");
+        etherstubadm.setEtherstubProperty("etherstub1", LinkProperties.PRIORITY, "medium");
 
-        NicHelper helper = new JNALinkHelper();
+        VNicHelper helper = new JNAVNicHelper();
 
         
         helper.createVNic("vnic17", true, "e1000g0");
@@ -62,5 +63,11 @@ public class EtherstubTestApp {
                 System.out.println("VNic name: " + name);
             }
         }
+
+
+        String inpackets = helper.getLinkStatistic("e1000g0", LinkStatistics.IPACKETS);
+        System.out.println("Input packets received by e1000g0 is: " + inpackets);
+        
+
     }
 }
