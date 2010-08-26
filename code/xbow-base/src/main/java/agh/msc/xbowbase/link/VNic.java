@@ -50,10 +50,6 @@ public class VNic implements VNicMBean{
         statisticsMap = new HashMap<LinkStatistics, String>();
     }
 
-    public VNic(String name, boolean temporary){
-        this(name, temporary, null);
-    }
-
     /**
      * @see VNicMBean#getName()
      */

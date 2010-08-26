@@ -52,7 +52,7 @@ public class JNALinkHelper implements LinkHelper {
 
             String []array = pointer.getStringArray(0);
             handle.free_char_array(pointer);
-            return array;
+            return (array == null) ? new String[]{} : array;
         }else{
             return new String[]{};
         }

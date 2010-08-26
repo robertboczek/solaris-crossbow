@@ -19,6 +19,22 @@ public class JNAVNicHelper extends JNALinkHelper implements VNicHelper{
     private static final Logger logger = Logger.getLogger(JNAVNicHelper.class);
 
     /**
+     * Constructor of JNAVNicHelper object injecting LinkHandle object instance
+     *
+     * @param linkHandle Reference to LinkHandle object
+     */
+    public JNAVNicHelper(LinkHandle linkHandle){
+        super(linkHandle);
+    }
+
+    /**
+     * Default constructor
+     */
+    public JNAVNicHelper(){
+        
+    }
+
+    /**
      * @see  NicHelper#deleteVNic(java.lang.String, boolean)
      */
     @Override
@@ -32,7 +48,7 @@ public class JNAVNicHelper extends JNALinkHelper implements VNicHelper{
             throw new InvalidLinkNameException("VNic name: " + name + " was incorrect");
         }
         else if(rc == LinkReturn.TOO_LONG_LINK_NAME.ordinal()){
-            throw new InvalidLinkNameException("VNic name: " + name + " was too long");
+            throw new TooLongLinkNameException("VNic name: " + name + " was too long");
         }
         else if (rc != LinkReturn.RESULT_OK.ordinal()) {
             throw new LinkException("VNic deletion failed.");

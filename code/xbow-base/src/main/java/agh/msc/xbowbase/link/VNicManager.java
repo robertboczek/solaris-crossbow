@@ -2,8 +2,6 @@ package agh.msc.xbowbase.link;
 
 import agh.msc.xbowbase.exception.InvalidLinkNameException;
 import agh.msc.xbowbase.exception.LinkException;
-import agh.msc.xbowbase.lib.LinkHelper;
-import agh.msc.xbowbase.lib.NicHelper;
 import agh.msc.xbowbase.lib.VNicHelper;
 import agh.msc.xbowbase.publisher.Publisher;
 import agh.msc.xbowbase.publisher.exception.NotPublishedException;
@@ -78,7 +76,7 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
         logger.debug("VNicManager removing vnic with name: " + name + ", temporary: " + temporary);
 
         try {
-            VNicMBean vnicMBean = new VNic(name, temporary);
+            VNicMBean vnicMBean = new VNic(name, temporary, null);
             this.vnicHelper.deleteVNic(name, temporary);
             removeNoMoreExistingVNicMBeans(Arrays.asList(new VNicMBean[]{ vnicMBean }));
             discover();
@@ -135,6 +133,7 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
 
     /**
      * Sets publisher instance
+     *
      * @param publisher Instance of publisher to be used for publishing MBeans
      */
     public void setPublisher(Publisher publisher) {
@@ -143,6 +142,7 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
 
     /**
      * Registers  new VNicMBean to MBeanServer
+     *
      * @param vNicMBean New VNicMBean to be registered to MBeanServer
      */
     private void registerNewVNicMBean(VNicMBean vNicMBean) {
@@ -156,6 +156,7 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
 
     /**
      * Removes VNicMBeans that don't exist in the system from the MBeanServer
+     *
      * @param vNicMBeansList List of VNicMBean to unregister
      */
     private void removeNoMoreExistingVNicMBeans(List<VNicMBean> vNicMBeansList) {
@@ -175,6 +176,7 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
     /**
      * Converts array of names to set of VNicMBean objets (we assume that
      * created VNic's are persitent not temporary and parent is null )
+     *
      * @param vNicNames Array of existing VNicMBean names
      * @return Set of EtherstubMBean objects
      */
@@ -182,7 +184,7 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
         Set<VNicMBean> set = new HashSet<VNicMBean>();
         if (vNicNames != null) {
             for (String vnicMBeanName : vNicNames) {
-                set.add(new VNic(vnicMBeanName, false));
+                set.add(new VNic(vnicMBeanName, false, null));
             }
         }
         return set;
