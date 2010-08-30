@@ -35,16 +35,16 @@ public class VNicMBeanPublisher extends MBeanPublisher {
      * @return VNic's object name
      * @throws MalformedObjectNameException
 
-    */
+     */
     @Override
     protected ObjectName createObjectName(Object object) throws MalformedObjectNameException {
         return new ObjectName(String.format(
-                "agh.msc.xbowbase:type=VNic,name=%s", ((VNicMBean)object).getName()));
+                "agh.msc.xbowbase:type=VNic,name=%s", ((VNicMBean) object).getName()));
     }
 
     /**
-    * @see MBeanPublisher#identifies(java.lang.Object, java.lang.Object)
-    */
+     * @see MBeanPublisher#identifies(java.lang.Object, java.lang.Object)
+     */
     @Override
     protected boolean identifies(Object id, Object o) {
         return id.equals(o);

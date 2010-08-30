@@ -2,31 +2,38 @@ package agh.msc.xbowbase.etherstub;
 
 import agh.msc.xbowbase.exception.EtherstubException;
 import agh.msc.xbowbase.lib.EtherstubHelper;
+import agh.msc.xbowbase.publisher.EtherstubMBeanPublisher;
 import agh.msc.xbowbase.publisher.Publisher;
+import agh.msc.xbowbase.publisher.exception.NotPublishedException;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import org.junit.After;
 import org.junit.Before;
 
 import org.junit.Test;
+import org.mockito.InOrder;
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
 /**
  * Tests  for EtherstubManager class
+ *
  * @author robert boczek
  */
 public class EtherstubManagerTest {
 
-    private EtherstubHelper etherstubadm;
+    private EtherstubHelper etherstubHelper;
     private EtherstubManager etherstubManager;
     private Publisher publisher;
 
     @Before
     public void setUp() {
 
-            etherstubadm = mock(EtherstubHelper.class);
+            etherstubHelper = mock(EtherstubHelper.class);
             publisher = mock(Publisher.class);
             etherstubManager = new EtherstubManager();
-            etherstubManager.setEtherstHelper(etherstubadm);
+            etherstubManager.setEtherstHelper(etherstubHelper);
             etherstubManager.setPublisher(publisher);
     }
 
@@ -38,7 +45,7 @@ public class EtherstubManagerTest {
     @Test
     public void testCreatingNewEtherstub() throws EtherstubException{
 
-        when(etherstubadm.getEtherstubNames()).thenReturn(new String[]{"etherstub"});      
+        when(etherstubHelper.getEtherstubNames()).thenReturn(new String[]{"etherstub"});
 
         etherstubManager.create(new Etherstub("etherstub", true));
 
@@ -48,15 +55,117 @@ public class EtherstubManagerTest {
     }
 
     @Test
-    public void testRemovingEtherstub() throws EtherstubException{
+    public void testPublishingEtherstubAfterCreation() throws EtherstubException{
 
-        when(etherstubadm.getEtherstubNames()).thenReturn(new String[]{});
+        when(etherstubHelper.getEtherstubNames()).thenReturn(new String[]{});
+
+        Publisher spyPublisher = spy(new EtherstubMBeanPublisher(null){
+
+            @Override
+            public void publish( Object object ){
+
+            }
+
+            @Override
+            public void unpublish( Object object ) throws NotPublishedException{
+
+            }
+
+            @Override
+            public List< Object > getPublished(){
+
+                return new LinkedList<Object>();
+            }
+
+        });
+
+        etherstubManager.setPublisher(spyPublisher);
 
         etherstubManager.create(new Etherstub("etherstub", true));
 
-        etherstubManager.delete("etherstub1", true);
+        InOrder inorder = inOrder(spyPublisher);
+        inorder.verify(spyPublisher).publish(new Etherstub("etherstub", false));
 
-        assertEquals(0, etherstubManager.getEtherstubsNames().size());
+    }
+
+    @Test
+    public void testUnpublishingEtherstubAfterDeletion() throws Exception{
+
+        when(etherstubHelper.getEtherstubNames()).thenReturn(new String[]{"ether1"});
+
+        Publisher spyPublisher = spy(new EtherstubMBeanPublisher(null){
+
+            @Override
+            public void publish( Object object ){
+
+            }
+
+            @Override
+            public void unpublish( Object object ) throws NotPublishedException{
+
+            }
+
+            @Override
+            public List< Object > getPublished(){
+
+                return new LinkedList<Object>();
+            }
+
+        });
+
+        etherstubManager.setPublisher(spyPublisher);
+
+        etherstubManager.delete("ether1", false);
+
+        InOrder inorder = inOrder(spyPublisher);
+        inorder.verify(spyPublisher).unpublish(new Etherstub("ether1", false));
+
+    }
+
+
+
+    @Test
+    public void getEtherstubNames() throws EtherstubException{
+
+        when(etherstubHelper.getEtherstubNames()).thenReturn(new String[]{"etherstub1", "ethertstub22"});
+
+        assertEquals(2, etherstubManager.getEtherstubsNames().size());
+        
+    }
+
+    @Test
+    public void testDiscoveryFunction() throws Exception{
+
+        when(etherstubHelper.getEtherstubNames()).thenReturn(new String[]{"ether1", "ether3"});
+
+        Publisher spyPublisher = spy(new EtherstubMBeanPublisher(null){
+
+            @Override
+            public void publish( Object object ){
+
+            }
+
+            @Override
+            public void unpublish( Object object ) throws NotPublishedException{
+
+            }
+
+            @Override
+            public List< Object > getPublished(){
+
+                return Arrays.asList(new Object[]{new Etherstub("ether5", false),
+                    new Etherstub("ether3", false)});
+            }
+
+        });
+        
+        etherstubManager.setPublisher(spyPublisher);
+
+        etherstubManager.discover();
+
+        InOrder inorder = inOrder(spyPublisher);
+        inorder.verify(spyPublisher).publish(new Etherstub("ether1", false));
+        inorder.verify(spyPublisher).unpublish(new Etherstub("ether5", false));
 
     }
 
