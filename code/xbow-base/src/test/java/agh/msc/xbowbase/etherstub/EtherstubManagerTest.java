@@ -1,6 +1,12 @@
 package agh.msc.xbowbase.etherstub;
 
+import agh.msc.xbowbase.enums.LinkParameters;
+import agh.msc.xbowbase.enums.LinkProperties;
+import agh.msc.xbowbase.enums.LinkStatistics;
 import agh.msc.xbowbase.exception.EtherstubException;
+import agh.msc.xbowbase.exception.InvalidEtherstubNameException;
+import agh.msc.xbowbase.exception.TooLongEtherstubNameException;
+import agh.msc.xbowbase.jna.JNAEtherstubHelper;
 import agh.msc.xbowbase.lib.EtherstubHelper;
 import agh.msc.xbowbase.publisher.EtherstubMBeanPublisher;
 import agh.msc.xbowbase.publisher.Publisher;
@@ -42,6 +48,45 @@ public class EtherstubManagerTest {
 
     }
 
+    class InnerEtherstubHelper implements EtherstubHelper{
+
+        @Override
+        public void deleteEtherstub(String name, boolean temporary) throws EtherstubException {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public void createEtherstub(String name, boolean temporary) throws EtherstubException {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public String[] getEtherstubNames() throws EtherstubException {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public String getEtherstubParameter(String name, LinkParameters parameter) throws EtherstubException {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public String getEtherstubStatistic(String name, LinkStatistics property) throws EtherstubException {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public void setEtherstubProperty(String name, LinkProperties property, String value) throws EtherstubException {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public String getEtherstubProperty(String name, LinkProperties property) throws EtherstubException {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+    }
+
     @Test
     public void testCreatingNewEtherstub() throws EtherstubException{
 
@@ -52,6 +97,57 @@ public class EtherstubManagerTest {
         assertEquals(1, etherstubManager.getEtherstubsNames().size());
 
         assertEquals("etherstub", etherstubManager.getEtherstubsNames().get(0));
+    }
+
+    @Test(expected=TooLongEtherstubNameException.class)
+    public void testCreatingNewEtherstubWithTooLongName() throws EtherstubException{
+
+        etherstubHelper = new InnerEtherstubHelper(){
+
+            @Override
+            public void createEtherstub(String name, boolean temporary) throws EtherstubException{
+                throw new TooLongEtherstubNameException("");
+            }
+
+        };
+
+        etherstubManager.setEtherstHelper(etherstubHelper);
+        etherstubManager.create(new Etherstub("etherstubetherstubetherstubetherstubetherstubetherstubetherstubetherstub", true));
+
+    }
+
+    @Test(expected=InvalidEtherstubNameException.class)
+    public void testCreatingNewEtherstubWithWithInvalidName() throws EtherstubException{
+
+        etherstubHelper = new InnerEtherstubHelper(){
+
+            @Override
+            public void createEtherstub(String name, boolean temporary) throws EtherstubException{
+                throw new InvalidEtherstubNameException("");
+            }
+
+        };
+
+        etherstubManager.setEtherstHelper(etherstubHelper);
+        etherstubManager.create(new Etherstub("invalidName", true));
+
+    }
+
+    @Test(expected=EtherstubException.class)
+    public void testCreatingNewEtherstubWhenOperationFailes() throws EtherstubException{
+
+        etherstubHelper = new InnerEtherstubHelper(){
+
+            @Override
+            public void createEtherstub(String name, boolean temporary) throws EtherstubException{
+                throw new EtherstubException("");
+            }
+
+        };
+
+        etherstubManager.setEtherstHelper(etherstubHelper);
+        etherstubManager.create(new Etherstub("invalidName", true));
+
     }
 
     @Test
@@ -85,6 +181,57 @@ public class EtherstubManagerTest {
 
         InOrder inorder = inOrder(spyPublisher);
         inorder.verify(spyPublisher).publish(new Etherstub("etherstub", false));
+
+    }
+
+    @Test(expected=EtherstubException.class)
+    public void testRemovingEtherstubWhenEtherstubNameIsTooLong() throws EtherstubException{
+
+        etherstubHelper = new InnerEtherstubHelper(){
+
+            @Override
+            public void deleteEtherstub(String name, boolean temporary) throws EtherstubException{
+                throw new TooLongEtherstubNameException("");
+            }
+
+        };
+
+        etherstubManager.setEtherstHelper(etherstubHelper);
+        etherstubManager.delete("etherstub128etherstub128etherstub128etherstub128etherstub128etherstub128etherstub128etherstub128", true);
+
+    }
+
+    @Test(expected=InvalidEtherstubNameException.class)
+    public void testRemovingEtherstubWhenEtherstubNameIsInvalid() throws EtherstubException{
+
+        etherstubHelper = new InnerEtherstubHelper(){
+
+            @Override
+            public void deleteEtherstub(String name, boolean temporary) throws EtherstubException{
+                throw new InvalidEtherstubNameException("");
+            }
+
+        };
+
+        etherstubManager.setEtherstHelper(etherstubHelper);
+        etherstubManager.delete("invalidEtherstubName", true);
+
+    }
+
+    @Test(expected=EtherstubException.class)
+    public void testRemovingEtherstubWhenOperationFailes() throws EtherstubException{
+
+        etherstubHelper = new InnerEtherstubHelper(){
+
+            @Override
+            public void deleteEtherstub(String name, boolean temporary) throws EtherstubException{
+                throw new EtherstubException("");
+            }
+
+        };
+
+        etherstubManager.setEtherstHelper(etherstubHelper);
+        etherstubManager.delete("etherstub128", true);
 
     }
 
