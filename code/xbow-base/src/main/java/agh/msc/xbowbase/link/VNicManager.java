@@ -57,14 +57,14 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
             registerNewVNicMBean(vNicMBean);
             discover();
 
-        } catch (InvalidLinkNameException ex){
+        } catch (InvalidLinkNameException ex) {
             logger.error("VNic " + vNicMBean + " couldn't be created", ex);
             throw ex;
         } catch (LinkException e) {
             logger.error("VNic " + vNicMBean + " couldn't be created", e);
             throw e;
         }
-        
+
     }
 
     /**
@@ -78,10 +78,10 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
         try {
             VNicMBean vnicMBean = new VNic(name, temporary, null);
             this.vnicHelper.deleteVNic(name, temporary);
-            removeNoMoreExistingVNicMBeans(Arrays.asList(new VNicMBean[]{ vnicMBean }));
+            removeNoMoreExistingVNicMBeans(Arrays.asList(new VNicMBean[]{vnicMBean}));
             discover();
 
-        } catch (InvalidLinkNameException ex){
+        } catch (InvalidLinkNameException ex) {
             logger.error("VNic " + name + " couldn't be created", ex);
             throw ex;
         } catch (LinkException e) {
@@ -108,27 +108,27 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
 
         Set<VNicMBean> currentMBeans = convertToSet(vnicHelper.getLinkNames(true));
 
-        if(publisher != null){
+        if (publisher != null) {
             Set<Object> vnicSet = new HashSet<Object>(publisher.getPublished());
 
             //check for new Etherstubs
             for (VNicMBean vNicMBean : currentMBeans) {
                 if (vnicSet.contains(vNicMBean) == false) {
-                //create and register new VnicMBean
-                registerNewVNicMBean(vNicMBean);
+                    //create and register new VnicMBean
+                    registerNewVNicMBean(vNicMBean);
+                }
             }
-        }
 
-        List<VNicMBean> vNicMBeansToRemove = new LinkedList<VNicMBean>();
-        //remove etherstubs that don't exist anymore
-        for (Object object : vnicSet) {
-            if (object instanceof VNicMBean && currentMBeans.contains((VNicMBean)object) == false) {
-                //save this etherstub as one to be removed
-                vNicMBeansToRemove.add(((VNicMBean)object));
+            List<VNicMBean> vNicMBeansToRemove = new LinkedList<VNicMBean>();
+            //remove etherstubs that don't exist anymore
+            for (Object object : vnicSet) {
+                if (object instanceof VNicMBean && currentMBeans.contains((VNicMBean) object) == false) {
+                    //save this etherstub as one to be removed
+                    vNicMBeansToRemove.add(((VNicMBean) object));
+                }
             }
+            removeNoMoreExistingVNicMBeans(vNicMBeansToRemove);
         }
-        removeNoMoreExistingVNicMBeans(vNicMBeansToRemove);
-        }       
     }
 
     /**
@@ -149,7 +149,7 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
 
         if (publisher != null) {
 
-            logger.info("Registering new VNicMBean to MBeanServer: " + vNicMBean);
+            logger.debug("Registering new VNicMBean to MBeanServer: " + vNicMBean);
             publisher.publish(vNicMBean);
         }
     }
@@ -164,7 +164,7 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
         for (VNicMBean vNicMBean : vNicMBeansList) {
             try {
                 if (publisher != null) {
-                    logger.info("Unregistering VNicMBean from the MBeanServer: " + vNicMBean);
+                    logger.debug("Unregistering VNicMBean from the MBeanServer: " + vNicMBean);
                     this.publisher.unpublish(vNicMBean);
                 }
             } catch (NotPublishedException ex) {
@@ -190,7 +190,7 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
         return set;
     }
 
-    public void setVNicHelper(VNicHelper linkHelper){
+    public void setVNicHelper(VNicHelper linkHelper) {
 
         this.vnicHelper = linkHelper;
     }

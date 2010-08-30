@@ -13,8 +13,10 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
+
 /**
  * Tests for Etherstub class
+ * 
  * @author robert boczek
  */
 public class EtherstubTest {
@@ -32,11 +34,10 @@ public class EtherstubTest {
 
     @After
     public void tearDown() {
-
     }
 
     @Test
-    public void testReadingParameters() throws EtherstubException{
+    public void testReadingParameters() throws EtherstubException {
 
         when(etherstubadm.getEtherstubParameter(etherstub.getName(), LinkParameters.BRIDGE)).thenReturn(null);
         when(etherstubadm.getEtherstubParameter(etherstub.getName(), LinkParameters.MTU)).thenReturn("1200");
@@ -50,11 +51,11 @@ public class EtherstubTest {
         assertEquals("1200", map.get(LinkParameters.MTU));
 
         assertEquals(null, map.get(LinkParameters.STATE));
-        
+
     }
 
     @Test
-    public void testReadingProperties() throws EtherstubException{
+    public void testReadingProperties() throws EtherstubException {
 
         when(etherstubadm.getEtherstubProperty(etherstub.getName(), LinkProperties.LEARN_LIMIT)).thenReturn("1010");
         when(etherstubadm.getEtherstubProperty(etherstub.getName(), LinkProperties.PRIORITY)).thenReturn("low");
@@ -72,7 +73,7 @@ public class EtherstubTest {
     }
 
     @Test
-    public void testReadingStatistics() throws EtherstubException{
+    public void testReadingStatistics() throws EtherstubException {
 
         when(etherstubadm.getEtherstubStatistic(etherstub.getName(), LinkStatistics.IERRORS)).thenReturn("2");
         when(etherstubadm.getEtherstubStatistic(etherstub.getName(), LinkStatistics.IPACKETS)).thenReturn("12");
@@ -92,7 +93,7 @@ public class EtherstubTest {
     }
 
     @Test
-    public void testSettingNewLearnLimitValueProperty() throws EtherstubException{
+    public void testSettingNewLearnLimitValueProperty() throws EtherstubException {
 
         when(etherstubadm.getEtherstubProperty(etherstub.getName(), LinkProperties.LEARN_LIMIT)).thenReturn("1010");
         when(etherstubadm.getEtherstubProperty(etherstub.getName(), LinkProperties.PRIORITY)).thenReturn("low");
@@ -117,7 +118,6 @@ public class EtherstubTest {
         assertEquals(map.size(), 4);
 
         assertEquals("120", map.get(LinkProperties.LEARN_LIMIT));
-   
-    }
 
+    }
 }

@@ -2,6 +2,7 @@ package agh.msc.xbowbase.etherstub;
 
 import agh.msc.xbowbase.exception.EtherstubException;
 import agh.msc.xbowbase.exception.InvalidEtherstubNameException;
+import agh.msc.xbowbase.exception.TooLongEtherstubNameException;
 import agh.msc.xbowbase.lib.EtherstubHelper;
 import agh.msc.xbowbase.publisher.Publisher;
 import agh.msc.xbowbase.publisher.exception.NotPublishedException;
@@ -40,6 +41,10 @@ public class EtherstubManager implements EtherstubManagerMBean, NotificationList
                     .createEtherstub(etherstubMBean.getName(), etherstubMBean.isTemporary());
             registerNewEtherstubMBean(etherstubMBean);
             discover();
+
+        } catch (TooLongEtherstubNameException e2) {
+            logger.error("Etherstub's name: " + etherstubMBean + " was too long", e2);
+            throw e2;
 
         } catch (InvalidEtherstubNameException ex) {
             logger.error("Etherstub's name: " + etherstubMBean + " was incorrect", ex);

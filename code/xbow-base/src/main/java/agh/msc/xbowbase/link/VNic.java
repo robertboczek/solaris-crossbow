@@ -4,7 +4,7 @@ import agh.msc.xbowbase.enums.LinkParameters;
 import agh.msc.xbowbase.enums.LinkProperties;
 import agh.msc.xbowbase.enums.LinkStatistics;
 import agh.msc.xbowbase.exception.LinkException;
-import agh.msc.xbowbase.lib.NicHelper;
+import agh.msc.xbowbase.lib.VNicHelper;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.log4j.Logger;
@@ -14,10 +14,9 @@ import org.apache.log4j.Logger;
  * 
  * @author robert boczek
  */
-public class VNic implements VNicMBean{
+public class VNic implements VNicMBean {
 
     private static final Logger logger = Logger.getLogger(VNic.class);
-
     private final String name;
     private final String parent;
     private final Map<LinkProperties, String> propertiesMap;
@@ -29,9 +28,7 @@ public class VNic implements VNicMBean{
     private boolean plumbed;
     private boolean up;
     private boolean linkParent;
-
-    private NicHelper linkHelper;
-
+    private VNicHelper vNicHelper;
 
     /**
      * Constructor of VNic class
@@ -40,7 +37,7 @@ public class VNic implements VNicMBean{
      * @param temporary Specifies whether this vnic will exist between reboots
      * @param parent Name of link under whom this vnic works
      */
-    public VNic(String name, boolean temporary, String parent){
+    public VNic(String name, boolean temporary, String parent) {
         this.name = name;
         this.temporary = temporary;
         this.parent = parent;
@@ -67,7 +64,7 @@ public class VNic implements VNicMBean{
         logger.info("Getting properties map from vnic: " + this.name);
 
         for (LinkProperties property : LinkProperties.values()) {
-            this.propertiesMap.put(property, linkHelper.getLinkProperty(name, property));
+            this.propertiesMap.put(property, vNicHelper.getLinkProperty(name, property));
         }
         return this.propertiesMap;
 
@@ -79,10 +76,9 @@ public class VNic implements VNicMBean{
     @Override
     public void setProperty(LinkProperties property, String value) throws LinkException {
 
-        logger.info("Setting new property value to property " + property
-                + " to vnic: " + this.name + " with value: " + value);
+        logger.info("Setting new property value to property " + property + " to vnic: " + this.name + " with value: " + value);
 
-        linkHelper.setLinkProperty(this.name, property, value);
+        vNicHelper.setLinkProperty(this.name, property, value);
         //@todo check return value
         this.propertiesMap.put(property, value);
     }
@@ -96,7 +92,7 @@ public class VNic implements VNicMBean{
         logger.info("Getting parameters map from vnic: " + this.name);
 
         for (LinkParameters parameter : LinkParameters.values()) {
-            this.parametersMap.put(parameter, linkHelper.getLinkParameter(name, parameter));
+            this.parametersMap.put(parameter, vNicHelper.getLinkParameter(name, parameter));
         }
         return this.parametersMap;
     }
@@ -110,7 +106,7 @@ public class VNic implements VNicMBean{
         logger.info("Getting statistics map from vnic: " + this.name);
 
         for (LinkStatistics statistic : LinkStatistics.values()) {
-            this.statisticsMap.put(statistic, linkHelper.getLinkStatistic(name, statistic));
+            this.statisticsMap.put(statistic, vNicHelper.getLinkStatistic(name, statistic));
         }
         return this.statisticsMap;
     }
@@ -235,13 +231,12 @@ public class VNic implements VNicMBean{
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return this.name;
     }
 
-    public void setLinkHelper(NicHelper linkHelper){
-        
-        this.linkHelper = linkHelper;
-    }
+    public void setVNicHelper(VNicHelper vNicHelper) {
 
+        this.vNicHelper = vNicHelper;
+    }
 }
