@@ -1,5 +1,6 @@
 package agh.msc.xbowbase.lib;
 
+import agh.msc.xbowbase.exception.IncompatibleFlowException;
 import agh.msc.xbowbase.exception.NoSuchFlowException;
 import agh.msc.xbowbase.exception.ValidationException;
 import agh.msc.xbowbase.exception.XbowException;
@@ -39,9 +40,12 @@ public interface FlowHelper {
 	 *
 	 * @param  flowInfo  flow descriptor
 	 *
-	 * @throws  XbowException  creation failed
+	 * @throws  IncompatibleFlowException  creation failed because of incompatibilities
+	 *                                     with another existing flow
+	 * @throws  XbowException              creation failed
 	 */
-	public void create( FlowInfo flowInfo ) throws XbowException;
+	public void create( FlowInfo flowInfo ) throws IncompatibleFlowException,
+	                                               XbowException;
 
 
 	/**

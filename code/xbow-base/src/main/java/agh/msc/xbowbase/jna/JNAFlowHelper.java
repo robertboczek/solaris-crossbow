@@ -1,5 +1,6 @@
 package agh.msc.xbowbase.jna;
 
+import agh.msc.xbowbase.exception.IncompatibleFlowException;
 import agh.msc.xbowbase.exception.NoSuchFlowException;
 import agh.msc.xbowbase.exception.ValidationException;
 import agh.msc.xbowbase.exception.XbowException;
@@ -110,13 +111,9 @@ public class JNAFlowHelper implements FlowHelper {
 			if ( rc != XbowStatus.XBOW_STATUS_OK.ordinal() ) {
 
 				if ( rc == XbowStatus.XBOW_STATUS_PROP_PARSE_ERR.ordinal() ) {
-
 					throw new ValidationException( entry.getKey() + "=" + values );
-
 				} else {
-
 					throw new XbowException( String.valueOf( rc ) );
-
 				}
 
 			}
@@ -186,14 +183,21 @@ public class JNAFlowHelper implements FlowHelper {
 	 * @see  FlowHelper#create(agh.msc.xbowbase.flow.FlowInfo)
 	 */
 	@Override
-	public void create( FlowInfo flowInfo ) throws XbowException {
+	public void create( FlowInfo flowInfo ) throws IncompatibleFlowException,
+	                                               XbowException {
 
 		int rc = handle.create( new FlowHandle.FlowInfoStruct( flowInfo ), flowInfo.isTemporary() );
 
 		logger.debug( "create returned with rc == " + rc + " ." );
 
 		if ( rc != XbowStatus.XBOW_STATUS_OK.ordinal() ) {
-			throw new XbowException( "Creation failed." );
+
+			if ( rc == XbowStatus.XBOW_STATUS_FLOW_INCOMPATIBLE.ordinal() ) {
+					throw new IncompatibleFlowException( flowInfo.getName() );
+			} else {
+				throw new XbowException( "Creation failed." );
+			}
+
 		}
 
 	}

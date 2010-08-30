@@ -210,9 +210,12 @@ public class FlowManager implements FlowManagerMBean, NotificationListener {
 		Map< String, String > props = new HashMap< String, String >();
 		props.put( "priority", "medium" );
 
-		create( FlowToFlowInfoTranslator.toFlow( new FlowInfo(
+		Flow flow = FlowToFlowInfoTranslator.toFlow( new FlowInfo(
 			flowName, link, attrs, props, false
-		) ) );
+		) );
+		flow.setFlowadm( flowadm );
+
+		create( flow );
 
 	}
 

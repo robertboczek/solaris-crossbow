@@ -1,5 +1,6 @@
 package agh.msc.xbowbase.flow;
 
+import agh.msc.xbowbase.exception.XbowException;
 import agh.msc.xbowbase.flow.util.FlowToFlowInfoTranslator;
 import agh.msc.xbowbase.lib.FlowHelper;
 import agh.msc.xbowbase.publisher.Publisher;

@@ -232,9 +232,12 @@ flow_infos_t* get_flows_info( char* link_name[] )
 
 			if ( FLOW_ULP_PORT_LOCAL & flow_attrs[ i ].fa_flow_desc.fd_mask )
 			{
+				// Check, not to lose information while converting fd_local_port.
+				STATIC_CHECK( sizeof( in_port_t ) <= sizeof( unsigned int ) );
+
 				strcpy( ( *key_value_pair_it )->key, "local_port" );
 				sprintf( ( *key_value_pair_it )->value, "%d",
-				         flow_attrs[ i ].fa_flow_desc.fd_local_port );
+				         ( unsigned int ) ntohs( flow_attrs[ i ].fa_flow_desc.fd_local_port ) );
 
 				++key_value_pair_it;
 			}
@@ -243,9 +246,12 @@ flow_infos_t* get_flows_info( char* link_name[] )
 
 			if ( FLOW_ULP_PORT_REMOTE & flow_attrs[ i ].fa_flow_desc.fd_mask )
 			{
+				// Check, not to lose information while converting fd_remote_port.
+				STATIC_CHECK( sizeof( in_port_t ) <= sizeof( unsigned int ) );
+
 				strcpy( ( *key_value_pair_it )->key, "remote_port" );
 				sprintf( ( *key_value_pair_it )->value, "%d",
-				         flow_attrs[ i ].fa_flow_desc.fd_remote_port );
+				         ( unsigned int ) ntohs( flow_attrs[ i ].fa_flow_desc.fd_remote_port ) );
 
 				++key_value_pair_it;
 			}
@@ -295,6 +301,8 @@ int set_property( char* flow,
 	}
 	else
 	{
+		// Just reset. novalues set to 1.
+
 		rc = dladm_parse_flow_props( key, &proplist, 1 );
 	}
 

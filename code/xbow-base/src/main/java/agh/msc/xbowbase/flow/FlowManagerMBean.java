@@ -1,5 +1,6 @@
 package agh.msc.xbowbase.flow;
 
+import agh.msc.xbowbase.exception.IncompatibleFlowException;
 import agh.msc.xbowbase.exception.XbowException;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public interface FlowManagerMBean {
 	 *
 	 * @param  flow  initialized object representing a flow
 	 *
-	 * @throws  XbowException  creation failed
+	 * @throws  XbowException              creation failed
 	 */
 	public void create( FlowMBean flow ) throws XbowException;
 
