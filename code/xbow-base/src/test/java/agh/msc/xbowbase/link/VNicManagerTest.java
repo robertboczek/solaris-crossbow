@@ -1,6 +1,11 @@
 package agh.msc.xbowbase.link;
 
+import agh.msc.xbowbase.enums.LinkParameters;
+import agh.msc.xbowbase.enums.LinkProperties;
+import agh.msc.xbowbase.enums.LinkStatistics;
+import agh.msc.xbowbase.exception.InvalidLinkNameException;
 import agh.msc.xbowbase.exception.LinkException;
+import agh.msc.xbowbase.exception.TooLongLinkNameException;
 import agh.msc.xbowbase.lib.VNicHelper;
 import agh.msc.xbowbase.publisher.Publisher;
 import agh.msc.xbowbase.publisher.VNicMBeanPublisher;
@@ -39,6 +44,45 @@ public class VNicManagerTest {
 
     @After
     public void tearDown() {
+    }
+
+    class InnerVNicHelper implements VNicHelper{
+
+        @Override
+        public void deleteVNic(String name, boolean temporary) throws LinkException {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public void createVNic(String name, boolean temporary, String parent) throws LinkException {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public String[] getLinkNames(boolean isVNic) throws LinkException {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public String getLinkParameter(String name, LinkParameters parameter) throws LinkException {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public String getLinkStatistic(String name, LinkStatistics property) throws LinkException {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public void setLinkProperty(String name, LinkProperties property, String value) throws LinkException {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
+        @Override
+        public String getLinkProperty(String name, LinkProperties property) throws LinkException {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+        
     }
 
     @Test
@@ -85,6 +129,57 @@ public class VNicManagerTest {
 
     }
 
+    @Test(expected=TooLongLinkNameException.class)
+    public void testCreatingNewEtherstubWithTooLongName() throws LinkException{
+
+        vnicHelper = new InnerVNicHelper(){
+
+            @Override
+            public void createVNic(String name, boolean temporary, String parent) throws LinkException{
+                throw new TooLongLinkNameException("");
+            }
+
+        };
+
+        vnicManager.setVNicHelper(vnicHelper);
+        vnicManager.create(new VNic("vnicvnicvnicvnicvnicvnicvnicvnic", true, "e1000g0"));
+
+    }
+
+    @Test(expected=InvalidLinkNameException.class)
+    public void testCreatingNewEtherstubWithWithInvalidName() throws LinkException{
+
+        vnicHelper = new InnerVNicHelper(){
+
+            @Override
+            public void createVNic(String name, boolean temporary, String parent) throws LinkException{
+                throw new TooLongLinkNameException("");
+            }
+
+        };
+
+        vnicManager.setVNicHelper(vnicHelper);
+        vnicManager.create(new VNic("vnicvnicvnicvnicvnicvnicvnicvnic", true, "e1000g0"));
+
+    }
+
+    @Test(expected=LinkException.class)
+    public void testCreatingNewEtherstubWhenOperationFailes() throws LinkException{
+
+        vnicHelper = new InnerVNicHelper(){
+
+            @Override
+            public void createVNic(String name, boolean temporary, String parent) throws LinkException{
+                throw new TooLongLinkNameException("");
+            }
+
+        };
+
+        vnicManager.setVNicHelper(vnicHelper);
+        vnicManager.create(new VNic("vnicvnicvnicvnicvnicvnicvnicvnic", true, "e1000g0"));
+        
+    }
+
     @Test
     public void testUnpublishingVNicAfterDeletion() throws Exception {
 
@@ -113,6 +208,23 @@ public class VNicManagerTest {
 
         InOrder inorder = inOrder(spyPublisher);
         inorder.verify(spyPublisher).unpublish(new VNic("vnic1", true, "e1000g0"));
+
+    }
+
+    @Test(expected=TooLongLinkNameException.class)
+    public void testRemovingVNicWithTooLongName() throws LinkException{
+
+        vnicHelper = new InnerVNicHelper(){
+
+            @Override
+            public void deleteVNic(String name, boolean temporary) throws LinkException{
+                throw new TooLongLinkNameException("");
+            }
+
+        };
+
+        vnicManager.setVNicHelper(vnicHelper);
+        vnicManager.delete("vnicvnicvnicvnicvnicvnicvnicvnicvnicvnicvnicvnic", false);
 
     }
 
