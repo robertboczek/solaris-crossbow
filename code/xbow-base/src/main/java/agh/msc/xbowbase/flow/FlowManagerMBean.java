@@ -52,6 +52,6 @@ public interface FlowManagerMBean {
 	 * jconsole only
 	 */
 
-	public void createJC( String flowName, String link, String attributes ) throws XbowException;
+	public void _create( String flowName, String link, String attributes ) throws XbowException;
 
 }

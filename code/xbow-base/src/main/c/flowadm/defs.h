@@ -4,6 +4,12 @@
 
 #define MAXFLOWPROPERTIESLEN 4
 
+#define MAXFLOWINFOATTRS 10
+#define MAXFLOWINFOPROPS  5
+
+#define MAXKEYSIZE 256
+#define MAXVALSIZE 256
+
 #define LEN( array )  ( sizeof( array ) / sizeof( array[ 0 ] ) )
 
 

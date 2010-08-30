@@ -4,3 +4,4 @@ code/xbow-base/target/
 *.dia~
 *.swp
 tags
+.lvimrc

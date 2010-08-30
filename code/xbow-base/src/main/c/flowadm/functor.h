@@ -71,5 +71,18 @@ int get_props( void* arg, const char* propname );
 int collect_link_names( dladm_handle_t handle,
                         datalink_id_t link_id, void* arg );
 
+
+/**
+ * \brief  dladm_walk_datalink_id functor that counts links
+ *
+ * For each link, increases contents of ( ( int* ) counter ) by 1.
+ *
+ * \param  counter  address of int counter
+ *
+ * \return  DLADM_WALK_CONTINUE  always
+ */
+int count_links( dladm_handle_t handle,
+                 datalink_id_t link_id, void* counter );
+
 #endif
 

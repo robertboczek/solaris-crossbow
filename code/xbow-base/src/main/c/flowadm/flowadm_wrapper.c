@@ -31,14 +31,13 @@ int create( flow_info_t* flow_info, int temporary )
 {
 	int rc = DLADM_STATUS_OK;
 
-	dladm_arg_list_t* proplist = NULL;  // TODO-DAWID: what about freeing it?
+	dladm_arg_list_t* proplist = NULL;
 	dladm_arg_list_t* attrlist = NULL;
 
 	// Parse attributes.
 	
 	char* flat_attrs = flatten_key_value_pairs( flow_info->attrs );
 	rc = dladm_parse_flow_attrs( flat_attrs, &attrlist, B_FALSE );
-	printf( "AAA-%s-AAA\n", flat_attrs );
 	free( flat_attrs );
 
 	if ( DLADM_STATUS_OK == rc )
@@ -67,6 +66,9 @@ int create( flow_info_t* flow_info, int temporary )
 			}
 		}
 	}
+
+	dladm_free_props( proplist );
+	dladm_free_props( attrlist );
 
 	return map_status( rc );
 }
@@ -118,30 +120,40 @@ static void collect_flow_attrs( char* link_name,
 
 flow_infos_t* get_flows_info( char* link_name[] )
 {
-	char links[ 10 ][ MAXLINKNAMELEN ];  // TODO-DAWID: no hardcoded nums!
-	int links_len;
+	char* links;
+	int links_len = 0;
 
 	if ( NULL == link_name )
 	{
-		char* links_it = links[ 0 ];
+		dladm_walk_datalink_id( &count_links, handle, &links_len,
+		                        DATALINK_CLASS_ALL, DATALINK_ANY_MEDIATYPE,
+		                        DLADM_OPT_ACTIVE | DLADM_OPT_PERSIST );
+
+		char* links_it = links = malloc( links_len * MAXLINKNAMELEN );
 
 		dladm_walk_datalink_id( &collect_link_names, handle, &links_it,
 		                        DATALINK_CLASS_ALL, DATALINK_ANY_MEDIATYPE,
 		                        DLADM_OPT_ACTIVE | DLADM_OPT_PERSIST );
-
-		links_len = ( links_it - links[ 0 ] ) / sizeof( *links );
 	}
 	else
 	{
 		int i = 0;
 		while ( link_name[ i ] != NULL )
 		{
-			strcpy( links[ i ], link_name[ i ] );
-
 			++i;
 		}
 
 		links_len = i;
+
+		links = malloc( links_len * MAXLINKNAMELEN );
+
+		i = 0;
+		while ( link_name[ i ] != NULL )
+		{
+			strcpy( links + i * MAXLINKNAMELEN, link_name[ i ] );
+
+			++i;
+		}
 	}
 
 	// TODO-DAWID: policzyc flowy, pozniej zaalokowac
@@ -154,14 +166,15 @@ flow_infos_t* get_flows_info( char* link_name[] )
 		dladm_flow_attr_t* flow_attrs;
 		int i, flow_attrs_len;
 
-		collect_flow_attrs( links[ j ], &flow_attrs, &flow_attrs_len );
+		collect_flow_attrs( links + j * MAXLINKNAMELEN,
+		                    &flow_attrs, &flow_attrs_len );
 
 		for ( i = 0; i < flow_attrs_len; ++i )
 		{
 			flow_info_t* flow_info = flow_infos->flow_infos[ flow_info_it ];
 
 			strcpy( flow_info->name, flow_attrs[ i ].fa_flowname );
-			strcpy( flow_info->link, links[ j ] );
+			strcpy( flow_info->link, links + j * MAXLINKNAMELEN );
 
 			// Attributes processing
 			
@@ -215,10 +228,33 @@ flow_infos_t* get_flows_info( char* link_name[] )
 				++key_value_pair_it;
 			}
 
-			// TODO-DAWID: ports!
+			// Local port
+
+			if ( FLOW_ULP_PORT_LOCAL & flow_attrs[ i ].fa_flow_desc.fd_mask )
+			{
+				strcpy( ( *key_value_pair_it )->key, "local_port" );
+				sprintf( ( *key_value_pair_it )->value, "%d",
+				         flow_attrs[ i ].fa_flow_desc.fd_local_port );
+
+				++key_value_pair_it;
+			}
+
+			// Remote port
+
+			if ( FLOW_ULP_PORT_REMOTE & flow_attrs[ i ].fa_flow_desc.fd_mask )
+			{
+				strcpy( ( *key_value_pair_it )->key, "remote_port" );
+				sprintf( ( *key_value_pair_it )->value, "%d",
+				         flow_attrs[ i ].fa_flow_desc.fd_remote_port );
+
+				++key_value_pair_it;
+			}
 
 			flow_info->attrs->key_value_pairs_len = key_value_pair_it
 			                                        - flow_info->attrs->key_value_pairs;
+
+			// Remember that you can write at most MAXFLOWINFOATTRS
+			// (defined in defs.h) key-value pairs for a given flow_info_t!
 
 			// Properties processing
 
@@ -232,6 +268,10 @@ flow_infos_t* get_flows_info( char* link_name[] )
 	}
 
 	flow_infos->flow_infos_len = flow_info_it;
+
+	// Clean up.
+	
+	free( links );
 
 	return flow_infos;
 }

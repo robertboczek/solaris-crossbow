@@ -8,10 +8,6 @@
 #include "types.h"
 
 
-
-// TODO-DAWID: replace with proper include
-#define MAX_PROP_LINE  256
-
 extern dladm_handle_t handle;
 
 
@@ -45,15 +41,15 @@ int get_attrs( dladm_handle_t handle, dladm_flow_attr_t* flow_attr,
 
 int get_props( void* arg, const char* propname )
 {
-	char* values[ 10 ];  // TODO-DAWID: no hardcoded numbers!
-	uint_t values_len = 10;
+	char* values[ DLADM_MAX_PROP_VALCNT ];
+	uint_t values_len = DLADM_MAX_PROP_VALCNT;
 
 	char* flow = ( ( get_props_arg_t* ) arg )->flow;
 	key_value_pair_t** it = ( ( get_props_arg_t* ) arg )->key_value_pair_it;
 
 	for ( int i = 0; i < LEN( values ); ++i )
 	{
-		values[ i ] = malloc( MAX_PROP_LINE );
+		values[ i ] = malloc( DLADM_STRSIZE );
 	}
 
 	dladm_get_flowprop( handle, flow, DLADM_PROP_VAL_CURRENT,
@@ -92,6 +88,14 @@ int collect_link_names( dladm_handle_t handle,
 
 	*it += MAXLINKNAMELEN;
 
+	return DLADM_WALK_CONTINUE;
+}
+
+
+int count_links( dladm_handle_t handle,
+                 datalink_id_t link_id, void* counter )
+{
+	*( ( int* ) counter ) += 1;
 	return DLADM_WALK_CONTINUE;
 }
 

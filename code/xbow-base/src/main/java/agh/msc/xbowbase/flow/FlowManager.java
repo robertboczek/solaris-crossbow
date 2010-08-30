@@ -199,7 +199,7 @@ public class FlowManager implements FlowManagerMBean, NotificationListener {
 	 */
 
 	@Override
-	public void createJC( String flowName, String link, String attributes ) throws XbowException {
+	public void _create( String flowName, String link, String attributes ) throws XbowException {
 
 		Map< String, String > attrs = new HashMap< String, String >();
 

@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 
+#include "defs.h"
 #include "memory.h"
 
 
@@ -13,8 +14,10 @@ key_value_pairs_t* malloc_key_value_pairs( size_t len )
 
 	for ( int i = 0; i < len; ++i )
 	{
-		// TODO-DAWID: v no hardcoded!
-		key_value_pairs->key_value_pairs[ i ] = malloc_key_value_pair( 100, 100 );
+		key_value_pairs->key_value_pairs[ i ] = malloc_key_value_pair(
+			MAXKEYSIZE,
+			MAXVALSIZE
+		);
 	}
 	key_value_pairs->key_value_pairs[ len ] = NULL;
 
@@ -90,8 +93,8 @@ flow_info_t* malloc_flow_info( void )
 
 	flow_info->name = malloc( MAXFLOWNAMELEN );
 	flow_info->link = malloc( MAXLINKNAMELEN );
-	flow_info->attrs = malloc_key_value_pairs( 10 );  // TODO-DAWID: don't hardcode it
-	flow_info->props = malloc_key_value_pairs( 10 );
+	flow_info->attrs = malloc_key_value_pairs( MAXFLOWINFOATTRS );
+	flow_info->props = malloc_key_value_pairs( MAXFLOWINFOPROPS );
 
 	return flow_info;
 }
