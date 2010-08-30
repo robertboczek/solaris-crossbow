@@ -255,8 +255,8 @@ public class Flow implements FlowMBean {
 	 * jconsole only
 	 */
 
-	public void setPropertyJC( String name, String value, boolean temporary ) throws NoSuchFlowException,
-	                                                                                 ValidationException {
+	public void _setProperty( String name, String value, boolean temporary ) throws NoSuchFlowException,
+	                                                                                ValidationException {
 
 		Map< String, String > map = new HashMap< String, String >();
 		map.put( name, value );
@@ -265,8 +265,8 @@ public class Flow implements FlowMBean {
 
 	}
 
-	public void resetPropertyJC( String name, boolean temporary ) throws NoSuchFlowException,
-	                                                                     ValidationException {
+	public void _resetProperty( String name, boolean temporary ) throws NoSuchFlowException,
+	                                                                    ValidationException {
 
 		resetProperties( Arrays.asList( name ), temporary );
 

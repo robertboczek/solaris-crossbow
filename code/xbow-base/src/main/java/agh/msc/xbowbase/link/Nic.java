@@ -105,6 +105,7 @@ public class Nic implements NicMBean {
      */
     @Override
     public String getIpMask() {
+			// TODO-DAWID
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -113,6 +114,7 @@ public class Nic implements NicMBean {
      */
     @Override
     public void setIpMask(String ipMask) {
+			// TODO-DAWID
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -121,6 +123,7 @@ public class Nic implements NicMBean {
      */
     @Override
     public boolean isPlumbed() {
+			// TODO-DAWID
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -129,6 +132,7 @@ public class Nic implements NicMBean {
      */
     @Override
     public void setPlumbed(boolean plumbed) {
+			// TODO-DAWID
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

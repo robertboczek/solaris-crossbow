@@ -84,10 +84,10 @@ public interface FlowMBean {
 	 * jconsole only
 	 */
 
-	public void setPropertyJC( String name, String value, boolean temporary ) throws NoSuchFlowException,
-	                                                                                 ValidationException;
+	public void _setProperty( String name, String value, boolean temporary ) throws NoSuchFlowException,
+                                                                                 ValidationException;
 
-	public void resetPropertyJC( String name, boolean temporary ) throws NoSuchFlowException,
-	                                                                     ValidationException;
+	public void _resetProperty( String name, boolean temporary ) throws NoSuchFlowException,
+	                                                                    ValidationException;
 
 }

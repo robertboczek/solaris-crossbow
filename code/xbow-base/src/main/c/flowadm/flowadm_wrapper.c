@@ -249,15 +249,13 @@ int set_property( char* flow,
 	if ( values != NULL )
 	{
 		char* propline = malloc( strlen( key ) + strlen( "=" ) + strlen( *values ) + 1 );
-		
 		sprintf( propline, "%s=%s", key, *values );
-		rc = dladm_parse_flow_props( propline, &proplist, 1 );
-
+		rc = dladm_parse_flow_props( propline, &proplist, 0 );
 		free( propline );
 	}
 	else
 	{
-		rc = dladm_parse_flow_props( key, &proplist, 0 );
+		rc = dladm_parse_flow_props( key, &proplist, 1 );
 	}
 
 	if ( DLADM_STATUS_OK == rc )
