@@ -5,6 +5,7 @@ import agh.msc.xbowbase.enums.LinkProperties;
 import agh.msc.xbowbase.enums.LinkStatistics;
 import agh.msc.xbowbase.exception.EtherstubException;
 import agh.msc.xbowbase.exception.InvalidEtherstubNameException;
+import agh.msc.xbowbase.exception.TooLongEtherstubNameException;
 import agh.msc.xbowbase.jna.mapping.EtherstubHandle;
 import agh.msc.xbowbase.lib.EtherstubHelper;
 import com.sun.jna.Native;
@@ -74,15 +75,21 @@ public class JNAEtherstubHelper implements EtherstubHelper {
         int rc = handle.create_etherstub(name, persitent_type);
 
         if(rc == EtherstubReturn.TOO_LONG_ETHERSTUB_NAME.ordinal()){
-            throw new  InvalidEtherstubNameException("Etherstub couldn't be created as the name was too long");
+
+            throw new  TooLongEtherstubNameException("Etherstub couldn't be created as the name was too long");
+
         }
         else if(rc == EtherstubReturn.INVALID_ETHERSTUB_NAME.ordinal()){
+
             throw new  InvalidEtherstubNameException("Etherstub couldn't be created as the name was incorrect");
+
         }
         else if (rc != EtherstubReturn.RESULT_OK.ordinal()) {
+
             throw new EtherstubException("Etherstub creation failed.");
+
         }
-        logger.info("Etherstub : " + name + " sucessfully created");
+        logger.debug("Etherstub : " + name + " sucessfully created");
     }
 
     /**
@@ -91,7 +98,7 @@ public class JNAEtherstubHelper implements EtherstubHelper {
     @Override
     public String[] getEtherstubNames() throws EtherstubException {
 
-        logger.info("Trying to read names of exisitng etherstubs");
+        logger.debug("Trying to read names of exisitng etherstubs");
 
         Pointer pointer = handle.get_etherstub_names();
 
@@ -99,7 +106,7 @@ public class JNAEtherstubHelper implements EtherstubHelper {
             
             String []array = pointer.getStringArray(0);
             handle.free_char_array(pointer);
-            return array;
+            return (array != null)? array : new String[]{};
         }else{
             return new String[]{};
         }
@@ -111,7 +118,7 @@ public class JNAEtherstubHelper implements EtherstubHelper {
     @Override
     public String getEtherstubParameter(String name, LinkParameters parameter) throws EtherstubException {
 
-        logger.info("Trying to read etherstub's : " + name + ", parameter : " + parameter);
+        logger.debug("Trying to read etherstub's : " + name + ", parameter : " + parameter);
 
         Pointer p = handle.get_etherstub_parameter(name, parameter.toString());
         return getStringFromPointer(p);
@@ -123,7 +130,7 @@ public class JNAEtherstubHelper implements EtherstubHelper {
     @Override
     public String getEtherstubStatistic(String name, LinkStatistics statistic) throws EtherstubException {
 
-        logger.info("Trying to read etherstub's : " + name + ", statistic : " + statistic);
+        logger.debug("Trying to read etherstub's : " + name + ", statistic : " + statistic);
 
         Pointer p = handle.get_etherstub_statistic(name, statistic.toString());
         return getStringFromPointer(p);
@@ -135,25 +142,30 @@ public class JNAEtherstubHelper implements EtherstubHelper {
     @Override
     public void setEtherstubProperty(String name, LinkProperties property, String value) throws EtherstubException {
 
-        logger.info("Trying to set etherstub's : " + name + ", property : " + property + " value : " + value);
+        logger.debug("Trying to set etherstub's : " + name + ", property : " + property + " value : " + value);
 
         int returnValue = handle.set_etherstub_property( name, property.toString(), value);
 
 
-        String errorMessage;
-        if (returnValue == EtherstubReturn.RESULT_OK.ordinal()) {
-            errorMessage = null;
-        } else if (returnValue == EtherstubReturn.INVALID_ETHERSTUB_NAME.ordinal()) {
-            errorMessage = "Invalid etherstub name " + property;
+        if(returnValue == EtherstubReturn.RESULT_OK.ordinal()){
+
+            return;
+
+        }
+        else if (returnValue == EtherstubReturn.INVALID_ETHERSTUB_NAME.ordinal()) {
+
+            throw new InvalidEtherstubNameException("Invalid etherstub name: " + name);
+
         } else if (returnValue == EtherstubReturn.ETHERSTUB_PROPERTY_FAILURE.ordinal()) {
-            errorMessage = "Unable to set property " + property;
+
+            throw new EtherstubException("Unable to set property " + property);
+
         } else {
-            errorMessage = "Unknown error while setting property " + property;
+
+            throw new EtherstubException("Unknown error while setting property " + property);
+
         }
 
-        if(errorMessage != null){
-            throw new EtherstubException(errorMessage);
-        }
     }
 
     /**
@@ -162,7 +174,7 @@ public class JNAEtherstubHelper implements EtherstubHelper {
     @Override
     public String getEtherstubProperty(String name, LinkProperties property) throws EtherstubException {
 
-        logger.info("Trying to read etherstub's : " + name + ", property : " + property);
+        logger.debug("Trying to read etherstub's : " + name + ", property : " + property);
 
         Pointer p = handle.get_etherstub_property( name, property.toString());
         return getStringFromPointer(p);

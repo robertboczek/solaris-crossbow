@@ -50,10 +50,6 @@ public class VNic implements VNicMBean{
         statisticsMap = new HashMap<LinkStatistics, String>();
     }
 
-    public VNic(String name, boolean temporary){
-        this(name, temporary, null);
-    }
-
     /**
      * @see VNicMBean#getName()
      */
@@ -68,7 +64,7 @@ public class VNic implements VNicMBean{
     @Override
     public Map<LinkProperties, String> getProperties() throws LinkException {
 
-        logger.info("Getting properties map for vnic: " + this.name);
+        logger.info("Getting properties map from vnic: " + this.name);
 
         for (LinkProperties property : LinkProperties.values()) {
             this.propertiesMap.put(property, linkHelper.getLinkProperty(name, property));
@@ -97,7 +93,7 @@ public class VNic implements VNicMBean{
     @Override
     public Map<LinkParameters, String> getParameters() throws LinkException {
 
-        logger.info("Getting parameters map for vnic: " + this.name);
+        logger.info("Getting parameters map from vnic: " + this.name);
 
         for (LinkParameters parameter : LinkParameters.values()) {
             this.parametersMap.put(parameter, linkHelper.getLinkParameter(name, parameter));
@@ -111,7 +107,7 @@ public class VNic implements VNicMBean{
     @Override
     public Map<LinkStatistics, String> getStatistics() throws LinkException {
 
-        logger.info("Getting statistics map for vnic: " + this.name);
+        logger.info("Getting statistics map from vnic: " + this.name);
 
         for (LinkStatistics statistic : LinkStatistics.values()) {
             this.statisticsMap.put(statistic, linkHelper.getLinkStatistic(name, statistic));

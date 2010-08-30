@@ -2,7 +2,7 @@ package agh.msc.xbowbase.link;
 
 import agh.msc.xbowbase.exception.InvalidLinkNameException;
 import agh.msc.xbowbase.exception.LinkException;
-import agh.msc.xbowbase.lib.NicHelper;
+import agh.msc.xbowbase.lib.VNicHelper;
 import agh.msc.xbowbase.publisher.Publisher;
 import agh.msc.xbowbase.publisher.exception.NotPublishedException;
 import java.util.Arrays;
@@ -25,7 +25,7 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
     /** Logger */
     private static final Logger logger = Logger.getLogger(Nic.class);
     private Publisher publisher;
-    private NicHelper linkHelper;
+    private VNicHelper vnicHelper;
 
     /**
      * Executes discover() in response to notification.
@@ -53,7 +53,7 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
         logger.debug("VNicManager creating new vnic with name: " + vNicMBean.getName() + ", temporary: " + vNicMBean.isTemporary() + ", under: " + vNicMBean.getParent());
 
         try {
-            this.linkHelper.createVNic(vNicMBean.getName(), vNicMBean.isTemporary(), vNicMBean.getParent());
+            this.vnicHelper.createVNic(vNicMBean.getName(), vNicMBean.isTemporary(), vNicMBean.getParent());
             registerNewVNicMBean(vNicMBean);
             discover();
 
@@ -76,8 +76,8 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
         logger.debug("VNicManager removing vnic with name: " + name + ", temporary: " + temporary);
 
         try {
-            VNicMBean vnicMBean = new VNic(name, temporary);
-            this.linkHelper.deleteVNic(name, temporary);
+            VNicMBean vnicMBean = new VNic(name, temporary, null);
+            this.vnicHelper.deleteVNic(name, temporary);
             removeNoMoreExistingVNicMBeans(Arrays.asList(new VNicMBean[]{ vnicMBean }));
             discover();
 
@@ -96,7 +96,7 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
     @Override
     public List<String> getVNicsNames() throws LinkException {
 
-        return Arrays.asList(this.linkHelper.getLinkNames(true));
+        return Arrays.asList(this.vnicHelper.getLinkNames(true));
     }
 
     /**
@@ -106,7 +106,7 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
     public void discover() throws LinkException {
         logger.info("VNicManager.discover()... searching for new vnic's and ones that don't exist any more");
 
-        Set<VNicMBean> currentMBeans = convertToSet(linkHelper.getLinkNames(true));
+        Set<VNicMBean> currentMBeans = convertToSet(vnicHelper.getLinkNames(true));
 
         if(publisher != null){
             Set<Object> vnicSet = new HashSet<Object>(publisher.getPublished());
@@ -133,6 +133,7 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
 
     /**
      * Sets publisher instance
+     *
      * @param publisher Instance of publisher to be used for publishing MBeans
      */
     public void setPublisher(Publisher publisher) {
@@ -141,6 +142,7 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
 
     /**
      * Registers  new VNicMBean to MBeanServer
+     *
      * @param vNicMBean New VNicMBean to be registered to MBeanServer
      */
     private void registerNewVNicMBean(VNicMBean vNicMBean) {
@@ -154,6 +156,7 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
 
     /**
      * Removes VNicMBeans that don't exist in the system from the MBeanServer
+     *
      * @param vNicMBeansList List of VNicMBean to unregister
      */
     private void removeNoMoreExistingVNicMBeans(List<VNicMBean> vNicMBeansList) {
@@ -173,6 +176,7 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
     /**
      * Converts array of names to set of VNicMBean objets (we assume that
      * created VNic's are persitent not temporary and parent is null )
+     *
      * @param vNicNames Array of existing VNicMBean names
      * @return Set of EtherstubMBean objects
      */
@@ -180,15 +184,15 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
         Set<VNicMBean> set = new HashSet<VNicMBean>();
         if (vNicNames != null) {
             for (String vnicMBeanName : vNicNames) {
-                set.add(new VNic(vnicMBeanName, false));
+                set.add(new VNic(vnicMBeanName, false, null));
             }
         }
         return set;
     }
 
-    public void setLinkHelper(NicHelper linkHelper){
+    public void setVNicHelper(VNicHelper linkHelper){
 
-        this.linkHelper = linkHelper;
+        this.vnicHelper = linkHelper;
     }
 
 

@@ -7,9 +7,12 @@ import agh.msc.xbowbase.flow.FlowManager;
 import agh.msc.xbowbase.jna.JNAEtherstubHelper;
 import agh.msc.xbowbase.jna.JNAFlowHelper;
 import agh.msc.xbowbase.jna.JNALinkHelper;
+import agh.msc.xbowbase.jna.JNANicHelper;
+import agh.msc.xbowbase.jna.JNAVNicHelper;
 import agh.msc.xbowbase.lib.EtherstubHelper;
 import agh.msc.xbowbase.lib.FlowHelper;
 import agh.msc.xbowbase.lib.NicHelper;
+import agh.msc.xbowbase.lib.VNicHelper;
 import agh.msc.xbowbase.link.NicManager;
 import agh.msc.xbowbase.link.VNicManager;
 import agh.msc.xbowbase.publisher.EtherstubMBeanPublisher;
@@ -37,7 +40,8 @@ public class App {
 		// Initialize flowadm wrapper.
 
 		//FlowHelper flowadm = new JNAFlowHelper();
-		NicHelper nicHelper = new JNALinkHelper();
+		NicHelper nicHelper = new JNANicHelper();
+                VNicHelper vnicHelper = new JNAVNicHelper();
 		EtherstubHelper etherstubHelper = new JNAEtherstubHelper();
 
 		// Create FlowManager.
@@ -51,7 +55,7 @@ public class App {
 		//nicManager.setPublisher( new NicMBeanPublisher( mbs ) );
 
 		VNicManager vNicManager = new VNicManager();
-		vNicManager.setLinkHelper( nicHelper );
+		vNicManager.setVNicHelper( vnicHelper );
 		vNicManager.setPublisher( new VNicMBeanPublisher( mbs ) );
 
 		EtherstubManager etherstubManager = new EtherstubManager();

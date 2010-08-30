@@ -80,8 +80,9 @@ public interface FlowHelper {
 	 * @throws  ValidationException  error while validating attributes
 	 */
 	void setProperties( String flowName, Map< String, String > properties, boolean temporary )
-		throws ValidationException,
-		       NoSuchFlowException;
+		throws NoSuchFlowException,
+		       ValidationException,
+		       XbowException;
 
 
 	/**

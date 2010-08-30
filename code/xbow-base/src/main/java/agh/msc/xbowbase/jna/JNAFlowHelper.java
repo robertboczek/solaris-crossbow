@@ -91,7 +91,9 @@ public class JNAFlowHelper implements FlowHelper {
 	 * @see  FlowHelper#setProperties(java.lang.String, java.util.Map, boolean)
 	 */
 	@Override
-	public void setProperties( String flowName, Map< String, String > properties, boolean temporary ) throws ValidationException {
+	public void setProperties( String flowName, Map< String, String > properties, boolean temporary )
+		throws ValidationException,
+		       XbowException {
 
 		// Call set_property sequentially, each time setting single property.
 
@@ -105,9 +107,17 @@ public class JNAFlowHelper implements FlowHelper {
 
 			// Check the rc and map it to exception, if necessary.
 
-			if ( rc == XbowStatus.XBOW_STATUS_PROP_PARSE_ERR.ordinal() ) {
+			if ( rc != XbowStatus.XBOW_STATUS_OK.ordinal() ) {
 
-				throw new ValidationException( entry.getKey() + "=" + values );
+				if ( rc == XbowStatus.XBOW_STATUS_PROP_PARSE_ERR.ordinal() ) {
+
+					throw new ValidationException( entry.getKey() + "=" + values );
+
+				} else {
+
+					throw new XbowException( String.valueOf( rc ) );
+
+				}
 
 			}
 

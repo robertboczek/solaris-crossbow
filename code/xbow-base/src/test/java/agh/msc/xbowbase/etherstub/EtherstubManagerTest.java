@@ -1,7 +1,5 @@
-package agh.msc.xbowbase.flow;
+package agh.msc.xbowbase.etherstub;
 
-import agh.msc.xbowbase.etherstub.Etherstub;
-import agh.msc.xbowbase.etherstub.EtherstubManager;
 import agh.msc.xbowbase.exception.EtherstubException;
 import agh.msc.xbowbase.lib.EtherstubHelper;
 import agh.msc.xbowbase.publisher.Publisher;
@@ -13,7 +11,7 @@ import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
 /**
- *
+ * Tests  for EtherstubManager class
  * @author robert boczek
  */
 public class EtherstubManagerTest {
@@ -52,7 +50,7 @@ public class EtherstubManagerTest {
     @Test
     public void testRemovingEtherstub() throws EtherstubException{
 
-        when(etherstubadm.getEtherstubNames()).thenReturn(null);
+        when(etherstubadm.getEtherstubNames()).thenReturn(new String[]{});
 
         etherstubManager.create(new Etherstub("etherstub", true));
 

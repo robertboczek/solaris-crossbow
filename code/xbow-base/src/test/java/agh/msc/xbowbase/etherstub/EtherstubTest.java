@@ -1,6 +1,5 @@
-package agh.msc.xbowbase.flow;
+package agh.msc.xbowbase.etherstub;
 
-import agh.msc.xbowbase.etherstub.Etherstub;
 import agh.msc.xbowbase.enums.LinkParameters;
 import agh.msc.xbowbase.enums.LinkProperties;
 import agh.msc.xbowbase.enums.LinkStatistics;
@@ -15,7 +14,7 @@ import org.junit.Test;
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 /**
- *
+ * Tests for Etherstub class
  * @author robert boczek
  */
 public class EtherstubTest {
