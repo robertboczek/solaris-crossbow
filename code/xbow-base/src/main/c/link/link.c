@@ -13,6 +13,7 @@
 #include "link.h"
 #include "memory.h"
 #include "types.h"
+#include "defs.h"
 
 #include <netinet/vrrp.h>
 
@@ -358,4 +359,94 @@ char* get_link_property( char *name, char* property )
 	}
 
 	return value;
+}
+
+void in_getaddr(char *s, struct sockaddr *saddr, int *plenp)
+{
+	struct sockaddr_in *sin = (struct sockaddr_in *)saddr;
+	struct hostent *hp;
+	struct netent *np;
+	char str[BUFSIZ];
+	int error_num;
+
+	(void) strncpy(str, s, sizeof (str));
+
+	(void) memset(sin, 0, sizeof (*sin));
+
+
+	hp = getipnodebyname(str, AF_INET, 0, &error_num);
+	if (hp) {
+		sin->sin_family = hp->h_addrtype;
+		(void) memcpy(&sin->sin_addr, hp->h_addr, hp->h_length);
+		freehostent(hp);
+		return;
+	}
+	np = getnetbyname(str);
+	if (np) {
+		sin->sin_family = np->n_addrtype;
+		sin->sin_addr = inet_makeaddr(np->n_net, INADDR_ANY);
+		return;
+	}
+	
+	exit(1);
+}
+
+int set_ip_address(char *link, char *address)
+{
+
+	int s;
+	struct lifreq lifr;
+	struct	sockaddr_storage laddr;
+	int prefixlen = 0;
+
+	(void) strncpy(lifr.lifr_name, link, strlen(link)+1);
+
+	in_getaddr(address, (struct sockaddr *)&laddr, &prefixlen);
+
+	s = socket(AF_INET, SOCK_DGRAM, 0);
+
+	if (s == -1){
+		//couldn't create a socket
+		return XBOW_STATUS_OPERATION_FAILURE;
+	}
+
+	lifr.lifr_addr = laddr;
+	lifr.lifr_addr.ss_family = AF_INET;
+	if (ioctl(s, SIOCSLIFADDR, (caddr_t)&lifr) < 0) {
+		//couldn't set the ip address
+		return XBOW_STATUS_OPERATION_FAILURE;		
+	}
+
+	return XBOW_STATUS_OK;
+}
+
+char* get_ip_address(char *link)
+{
+
+	int s;
+	struct lifreq lifr;
+	struct sockaddr_in	*sin;
+
+	(void) strncpy(lifr.lifr_name, link, strlen(link)+1);
+
+	s = socket(AF_INET, SOCK_DGRAM, 0);
+
+	if (s == -1){
+		//couldn't create socket
+		return NULL;
+	}
+
+	if (ioctl(s, SIOCGLIFADDR, (caddr_t)&lifr) < 0) {
+		//couldn't read ip address value
+		return NULL;
+		
+	}	
+
+	sin = (struct sockaddr_in *)&lifr.lifr_addr;
+
+	if(sin != NULL){
+		return inet_ntoa(sin->sin_addr);
+	}else{
+		return NULL;
+	}
 }

@@ -21,6 +21,18 @@ int main( int agrc, char** argv )
 		int result = create_vnic( argv[2], 0, argv[3] );
 		printf( "Created link %s under link %s functon result: %d \n", argv[2], argv[3], result );
 	}
+	else if(strcmp(argv[1], "setip") == XBOW_STATUS_OK)
+	{
+		//set ip
+		int result = set_ip_address( argv[2], argv[3] );
+		printf( "changed ip of link %s for: %s functon result: %d \n", argv[2], argv[3], result );
+	}
+	else if(strcmp(argv[1], "getip") == XBOW_STATUS_OK)
+	{
+		//get ip
+		char *ip = get_ip_address( argv[2] );
+		printf( "checked ip of link %s functon result: %s \n", argv[2], ip );
+	}
 	else if(strcmp(argv[1], "list") == XBOW_STATUS_OK)
 	{
 		
