@@ -44,13 +44,13 @@ public class JNAVNicHelper extends JNALinkHelper implements VNicHelper{
         logger.info("Trying to remove vnic : " + name + ", temporary: " + temporary);
         int rc = handle.delete_vnic(name, persitent_type);
 
-        if(rc == LinkReturn.INVALID_LINK_NAME.ordinal()){
+        if(rc == XbowStatus.XBOW_STATUS_INVALID_NAME.ordinal()){
             throw new InvalidLinkNameException("VNic name: " + name + " was incorrect");
         }
-        else if(rc == LinkReturn.TOO_LONG_LINK_NAME.ordinal()){
+        else if(rc == XbowStatus.XBOW_STATUS_TOO_LONG_NAME.ordinal()){
             throw new TooLongLinkNameException("VNic name: " + name + " was too long");
         }
-        else if (rc != LinkReturn.RESULT_OK.ordinal()) {
+        else if (rc != XbowStatus.XBOW_STATUS_OK.ordinal()) {
             throw new LinkException("VNic deletion failed.");
         }
     }
@@ -65,27 +65,27 @@ public class JNAVNicHelper extends JNALinkHelper implements VNicHelper{
         logger.info("Trying to create vnic : " + name + ", temporary: " + temporary);
         int rc = handle.create_vnic(name, persitent_type, parent);
 
-        if (rc == LinkReturn.TOO_LONG_PARENT_LINK_NAME.ordinal()) {
+        if (rc == XbowStatus.XBOW_STATUS_TOO_LONG_PARENT_NAME.ordinal()) {
 
             throw new TooLongLinkNameException("VNic parent link name too long");
 
         }
-        else if (rc == LinkReturn.INVALID_PARENT_LINK_NAME.ordinal()) {
+        else if (rc == XbowStatus.XBOW_STATUS_INVALID_PARENT_NAME.ordinal()) {
 
             throw new InvalidLinkNameException("VNic parent link was incorrect");
 
         }
-        else if (rc == LinkReturn.TOO_LONG_LINK_NAME.ordinal()) {
+        else if (rc == XbowStatus.XBOW_STATUS_TOO_LONG_NAME.ordinal()) {
 
             throw new TooLongLinkNameException("VNic name was too long");
 
         }
-        else if (rc == LinkReturn.INVALID_LINK_NAME.ordinal()) {
+        else if (rc == XbowStatus.XBOW_STATUS_INVALID_NAME.ordinal()) {
 
             throw new InvalidLinkNameException("VNic name was incorrect");
 
         }
-        else if (rc != LinkReturn.RESULT_OK.ordinal()) {
+        else if (rc != XbowStatus.XBOW_STATUS_OK.ordinal()) {
 
             throw new LinkException("VNic creation failed.");
 
@@ -96,6 +96,7 @@ public class JNAVNicHelper extends JNALinkHelper implements VNicHelper{
 
     /**
      * Coverts type of persistence to 'c' like value
+     * 
      * @param temporary Type of requested persistence
      * @return Flag specifies requested persistence type accustomed to 'c' library
      */

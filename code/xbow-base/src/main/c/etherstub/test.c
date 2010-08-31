@@ -7,19 +7,19 @@ int main( int agrc, char** argv )
 {
 	init();
 
-	if(strcmp(argv[1], "delete") == RESULT_OK)
+	if(strcmp(argv[1], "delete") == XBOW_STATUS_OK)
 	{
 		//delete persistently
 		int result = delete_etherstub( argv[2], 0 );
 		printf( "Delete etherstub functon result: %d \n", result );
 	}
-	else if(strcmp(argv[1], "create") == RESULT_OK)
+	else if(strcmp(argv[1], "create") == XBOW_STATUS_OK)
 	{
 		//create persistently
 		int result = create_etherstub( argv[2], 0 );
 		printf( "Created etherstub %s functon result: %d \n", argv[1], result );
 	}
-	else if(strcmp(argv[1], "list") == RESULT_OK)
+	else if(strcmp(argv[1], "list") == XBOW_STATUS_OK)
 	{
 		
 		char **names;
@@ -32,7 +32,7 @@ int main( int agrc, char** argv )
 			}	
 		}
 	}
-	else if(strcmp(argv[1], "get") == RESULT_OK)
+	else if(strcmp(argv[1], "get") == XBOW_STATUS_OK)
 	{
 
 		char *value = get_etherstub_parameter(argv[2], argv[3]);
@@ -40,27 +40,27 @@ int main( int agrc, char** argv )
 
 		free(value);
 	}
-	else if(strcmp(argv[1], "statistic") == RESULT_OK)
+	else if(strcmp(argv[1], "statistic") == XBOW_STATUS_OK)
 	{
 
 		char *value = get_etherstub_statistic(argv[2], argv[3]);
 		printf("%s \n", value);
 		free(value);
 	}
-	else if(strcmp(argv[1], "setproperty") == RESULT_OK)
+	else if(strcmp(argv[1], "setproperty") == XBOW_STATUS_OK)
 	{
 
 		char *value = (char*)malloc(sizeof(char)*20);
 		strcpy(value, argv[4]);
 
-		if(set_etherstub_property(argv[2], argv[3], value) == RESULT_OK)
+		if(set_etherstub_property(argv[2], argv[3], value) == XBOW_STATUS_OK)
 		{
 			printf("%s \n", value);
 		}
 		
 		free(value);
 	}
-	else if(strcmp(argv[1], "getproperty") == RESULT_OK)
+	else if(strcmp(argv[1], "getproperty") == XBOW_STATUS_OK)
 	{
 
 		char *value = get_etherstub_property(argv[2], argv[3]);

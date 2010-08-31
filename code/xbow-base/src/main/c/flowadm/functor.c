@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "defs.h"
+#include "../common/defs.h"
 #include "functor.h"
 #include "types.h"
 

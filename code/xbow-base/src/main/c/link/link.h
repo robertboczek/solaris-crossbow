@@ -2,6 +2,7 @@
 #define LINK_WRAPPER_H
 
 #include "types.h"
+#include "../common/defs.h"
 
 
 /**
@@ -49,9 +50,11 @@ nic_infos_t* get_nic_infos( void );
  * \param  name	  	vnic name
  * \param  temporary  	determines whether the change will be temporary or persistent ( 0 - persistent, any other value - temporary )
  *
- * \return  link_return_type_t See types.h to see more details
+ * \return  XBOW_STATUS_OK on success
+ * \return  XBOW_STATUS_INVALID_NAME when etherstub name was incorrect
+ * \return  XBOW_STATUS_OPERATION_FAILURE when operation failed
 */
-link_return_type_t delete_vnic( char* name, int temporary );
+int delete_vnic( char* name, int temporary );
 
 
 /**
@@ -61,9 +64,15 @@ link_return_type_t delete_vnic( char* name, int temporary );
  * \param  temporary  	determines whether the change will be temporary or persistent ( 0 - persistent, any other value - temporary )
  * \param  parent	parent link name
  *
- * \return  link_return_type_t See types.h to see more details
+ * \return  XBOW_STATUS_OK on success
+ * \return  XBOW_STATUS_INVALID_NAME when etherstub name was incorrect
+ * \return  XBOW_STATUS_INVALID_NAME when etherstub parent name was incorrect
+ * \return  XBOW_STATUS_TOO_LONG_NAME when etherstub name was too long
+ * \return  XBOW_STATUS_TOO_LONG_PARENT_NAME when etherstub parent name was too long
+ * \return  XBOW_STATUS_OPERATION_FAILURE when operation failed
+ *
 */
-link_return_type_t create_vnic( char* name, int temporary, char *parent );
+int create_vnic( char* name, int temporary, char *parent );
 
 
 /**
@@ -104,9 +113,12 @@ char* get_link_statistic( char *name, char* property);
  * \param  property  	type of property to be set
  * \param  value	requested value of the property
  *
- * \return  link_return_type_t See types.h to see more details
+ * \return  XBOW_STATUS_OK on success
+ * \return  XBOW_STATUS_INVALID_NAME when etherstub name was incorrect
+ * \return  XBOW_STATUS_OPERATION_FAILURE when operation failed
+ *
 */
-link_return_type_t set_link_property( char *name, char* property, char *value );
+int set_link_property( char *name, char* property, char *value );
 
 
 /**

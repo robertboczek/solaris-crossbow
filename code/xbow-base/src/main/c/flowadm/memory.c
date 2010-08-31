@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include "defs.h"
+#include "../common/defs.h"
 #include "memory.h"
 
 

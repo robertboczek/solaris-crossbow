@@ -52,11 +52,11 @@ public class JNAEtherstubHelper implements EtherstubHelper {
 
         int rc = handle.delete_etherstub(name, persitent_type);
 
-        if (rc == EtherstubReturn.INVALID_ETHERSTUB_NAME.ordinal()) {
+        if (rc == XbowStatus.XBOW_STATUS_INVALID_NAME.ordinal()) {
 
             throw new InvalidEtherstubNameException("Etherstub couldn't be removed as the name was incorrect");
 
-        }else if(rc != EtherstubReturn.RESULT_OK.ordinal()){
+        }else if(rc != XbowStatus.XBOW_STATUS_OK.ordinal()){
             
             throw new EtherstubException("Etherstub deletion failed.");
         }
@@ -74,17 +74,17 @@ public class JNAEtherstubHelper implements EtherstubHelper {
 
         int rc = handle.create_etherstub(name, persitent_type);
 
-        if(rc == EtherstubReturn.TOO_LONG_ETHERSTUB_NAME.ordinal()){
+        if(rc == XbowStatus.XBOW_STATUS_TOO_LONG_NAME.ordinal()){
 
             throw new  TooLongEtherstubNameException("Etherstub couldn't be created as the name was too long");
 
         }
-        else if(rc == EtherstubReturn.INVALID_ETHERSTUB_NAME.ordinal()){
+        else if(rc == XbowStatus.XBOW_STATUS_INVALID_NAME.ordinal()){
 
             throw new  InvalidEtherstubNameException("Etherstub couldn't be created as the name was incorrect");
 
         }
-        else if (rc != EtherstubReturn.RESULT_OK.ordinal()) {
+        else if (rc != XbowStatus.XBOW_STATUS_OK.ordinal()) {
 
             throw new EtherstubException("Etherstub creation failed.");
 
@@ -147,16 +147,16 @@ public class JNAEtherstubHelper implements EtherstubHelper {
         int returnValue = handle.set_etherstub_property( name, property.toString(), value);
 
 
-        if(returnValue == EtherstubReturn.RESULT_OK.ordinal()){
+        if(returnValue == XbowStatus.XBOW_STATUS_OK.ordinal()){
 
             return;
 
         }
-        else if (returnValue == EtherstubReturn.INVALID_ETHERSTUB_NAME.ordinal()) {
+        else if (returnValue == XbowStatus.XBOW_STATUS_INVALID_NAME.ordinal()) {
 
             throw new InvalidEtherstubNameException("Invalid etherstub name: " + name);
 
-        } else if (returnValue == EtherstubReturn.ETHERSTUB_PROPERTY_FAILURE.ordinal()) {
+        } else if (returnValue == XbowStatus.XBOW_STATUS_OPERATION_FAILURE.ordinal()) {
 
             throw new EtherstubException("Unable to set property " + property);
 

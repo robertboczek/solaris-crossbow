@@ -2,6 +2,7 @@
 #define ETHERSTUB_WRAPPER_H
 
 #include "types.h"
+#include "../common/defs.h"
 
 /**
  * \brief  Inits the etherstub library
@@ -14,9 +15,11 @@ int init();
  * \param  name	  	etherstub name
  * \param  temporary  	determines whether the change will be temporary or persistent ( 0 - persistent, any other value - temporary )
  *
- * \return  etherstub_return_type_t See types.h to see more details
+ * \return  XBOW_STATUS_OK on success
+ * \return  XBOW_STATUS_INVALID_NAME when etherstub name was incorrect
+ * \return  XBOW_STATUS_OPERATION_FAILURE when operation failed
 */
-etherstub_return_type_t delete_etherstub( char* name, int temporary );
+int delete_etherstub( char* name, int temporary );
 
 /**
  * \brief  Creates an etherstub.
@@ -24,9 +27,12 @@ etherstub_return_type_t delete_etherstub( char* name, int temporary );
  * \param  name	        etherstub name
  * \param  temporary  	determines whether the change will be temporary or persistent ( 0 - persistent, any other value - temporary )
  *
- * \return  etherstub_return_type_t See types.h to see more details
+ * \return  XBOW_STATUS_OK on success
+ * \return  XBOW_STATUS_TOO_LONG_NAME when etherstub name was too long
+ * \return  XBOW_STATUS_INVALID_NAME when etherstub name was incorrect
+ * \return  XBOW_STATUS_OPERATION_FAILURE when operation failed
 */
-etherstub_return_type_t create_etherstub( char* name, int temporary );
+int create_etherstub( char* name, int temporary );
 
 /**
  * \brief  Returns list of existing etherstubs.
@@ -62,9 +68,12 @@ char* get_etherstub_statistic( char *name, char* property);
  * \param  property  	type of property to be set
  * \param  value	requested value of the property
  *
- * \return  etherstub_return_type_t See types.h to see more details
+ * \return  XBOW_STATUS_OK on success
+ * \return  XBOW_STATUS_TOO_LONG_NAME when etherstub name was too long
+ * \return  XBOW_STATUS_INVALID_NAME when etherstub name was incorrect
+ * \return  XBOW_STATUS_OPERATION_FAILURE when operation failed
 */
-etherstub_return_type_t set_etherstub_property( char *name, char* property, char *value );
+int set_etherstub_property( char *name, char* property, char *value );
 /**
  * \brief Returns requested etherstub property
  * \param  name		etherstub name

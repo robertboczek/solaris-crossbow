@@ -17,6 +17,9 @@ LIBFNAME=lib$(BASENAME).so
 %.o: %.c
 	$(CC) $(CFLAGS) -I$(INCDIR) -fPIC -c $<
 
+mappings.o: ../common/mappings.c
+	$(CC) $(CFLAGS) -I$(INCDIR) -fPIC -c ../common/mappings.c ../common/mappings.h
+
 all: $(LIBFNAME) test
 
 $(LIBFNAME): flowadm_wrapper.o functor.o memory.o aux.o mappings.o

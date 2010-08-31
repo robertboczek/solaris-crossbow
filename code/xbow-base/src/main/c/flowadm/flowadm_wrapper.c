@@ -11,7 +11,7 @@
 #include "defs.h"
 #include "flowadm_wrapper.h"
 #include "functor.h"
-#include "mappings.h"
+#include "../common/mappings.h"
 #include "memory.h"
 #include "types.h"
 

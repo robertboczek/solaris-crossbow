@@ -41,7 +41,7 @@ public class JNAVNicHelperTest {
     @Test(expected=InvalidLinkNameException.class)
     public void testCreatingVNicWithWrongName() throws LinkException{
 
-        when(handle.create_vnic(anyString(), anyInt(), anyString())).thenReturn(LinkReturn.INVALID_LINK_NAME.ordinal());
+        when(handle.create_vnic(anyString(), anyInt(), anyString())).thenReturn(XbowStatus.XBOW_STATUS_INVALID_NAME.ordinal());
 
         vnicHelper.createVNic("erewfdsfdsf", true, "parent1");
     }
@@ -49,7 +49,7 @@ public class JNAVNicHelperTest {
     @Test(expected=TooLongLinkNameException.class)
     public void testCreatingVNicWithTooLongName() throws LinkException{
 
-        when(handle.create_vnic(anyString(), anyInt(), anyString())).thenReturn(LinkReturn.TOO_LONG_LINK_NAME.ordinal());
+        when(handle.create_vnic(anyString(), anyInt(), anyString())).thenReturn(XbowStatus.XBOW_STATUS_TOO_LONG_NAME.ordinal());
 
         vnicHelper.createVNic("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", true, "parent1");
     }
@@ -57,7 +57,7 @@ public class JNAVNicHelperTest {
     @Test(expected=LinkException.class)
     public void testCreatingVNicWithTheSameNameAsExisitngOne() throws LinkException{
 
-        when(handle.create_vnic(anyString(), anyInt(), anyString())).thenReturn(LinkReturn.OPERATION_FAILURE.ordinal());
+        when(handle.create_vnic(anyString(), anyInt(), anyString())).thenReturn(XbowStatus.XBOW_STATUS_OPERATION_FAILURE.ordinal());
 
         vnicHelper.createVNic("vnic1", true, "parent1");
     }
@@ -65,7 +65,7 @@ public class JNAVNicHelperTest {
     @Test
     public void testCreatingCorrectVNic() throws LinkException{
 
-        when(handle.create_vnic(anyString(), anyInt(), anyString())).thenReturn(LinkReturn.RESULT_OK.ordinal());
+        when(handle.create_vnic(anyString(), anyInt(), anyString())).thenReturn(XbowStatus.XBOW_STATUS_OK.ordinal());
 
         vnicHelper.createVNic("vnic1", true, "parent1");
     }
@@ -73,7 +73,7 @@ public class JNAVNicHelperTest {
     @Test(expected=InvalidLinkNameException.class)
     public void testCreatingVNicWithWrongParentLinkName() throws LinkException{
 
-        when(handle.create_vnic(anyString(), anyInt(), anyString())).thenReturn(LinkReturn.INVALID_LINK_NAME.ordinal());
+        when(handle.create_vnic(anyString(), anyInt(), anyString())).thenReturn(XbowStatus.XBOW_STATUS_INVALID_PARENT_NAME.ordinal());
 
         vnicHelper.createVNic("vnic1", true, "dfdsfdksjf");
     }
@@ -81,7 +81,7 @@ public class JNAVNicHelperTest {
     @Test(expected=TooLongLinkNameException.class)
     public void testCreatingVNicWithTooLongParentLinkName() throws LinkException{
 
-        when(handle.create_vnic(anyString(), anyInt(), anyString())).thenReturn(LinkReturn.TOO_LONG_PARENT_LINK_NAME.ordinal());
+        when(handle.create_vnic(anyString(), anyInt(), anyString())).thenReturn(XbowStatus.XBOW_STATUS_TOO_LONG_PARENT_NAME.ordinal());
 
         vnicHelper.createVNic("vnic1", true, "parent1parent1parent1parent1parent1parent1parent1parent1");
     }
@@ -89,7 +89,7 @@ public class JNAVNicHelperTest {
     @Test
     public void testCorrectRemovalOfVNic() throws LinkException{
 
-        when(handle.delete_vnic(anyString(), anyInt())).thenReturn(LinkReturn.RESULT_OK.ordinal());
+        when(handle.delete_vnic(anyString(), anyInt())).thenReturn(XbowStatus.XBOW_STATUS_OK.ordinal());
 
         vnicHelper.deleteVNic("vnic1", true);
     }
@@ -97,7 +97,7 @@ public class JNAVNicHelperTest {
     @Test(expected=InvalidLinkNameException.class)
     public void testRemovingVNicWithWrongName() throws LinkException{
 
-        when(handle.delete_vnic(anyString(), anyInt())).thenReturn(LinkReturn.INVALID_LINK_NAME.ordinal());
+        when(handle.delete_vnic(anyString(), anyInt())).thenReturn(XbowStatus.XBOW_STATUS_INVALID_NAME.ordinal());
 
         vnicHelper.deleteVNic("vnic1", true);
     }
@@ -105,7 +105,7 @@ public class JNAVNicHelperTest {
     @Test(expected=TooLongLinkNameException.class)
     public void testRemovingVNicWithTooLongName() throws LinkException{
 
-        when(handle.delete_vnic(anyString(), anyInt())).thenReturn(LinkReturn.TOO_LONG_LINK_NAME.ordinal());
+        when(handle.delete_vnic(anyString(), anyInt())).thenReturn(XbowStatus.XBOW_STATUS_TOO_LONG_NAME.ordinal());
 
         vnicHelper.deleteVNic("vnic1", true);
     }
@@ -113,7 +113,7 @@ public class JNAVNicHelperTest {
     @Test(expected=LinkException.class)
     public void testRemovingVNicWhenOperationFailed() throws LinkException{
 
-        when(handle.delete_vnic(anyString(), anyInt())).thenReturn(LinkReturn.OPERATION_FAILURE.ordinal());
+        when(handle.delete_vnic(anyString(), anyInt())).thenReturn(XbowStatus.XBOW_STATUS_OPERATION_FAILURE.ordinal());
 
         vnicHelper.deleteVNic("vnic1", true);
     }
@@ -122,7 +122,7 @@ public class JNAVNicHelperTest {
     public void testTryingToSetPropertyToUnexistingEtherstubVNic() throws LinkException{
 
         when(handle.set_link_property(anyString(), anyString(), anyString()))
-                .thenReturn(EtherstubReturn.INVALID_ETHERSTUB_NAME.ordinal());
+                .thenReturn(XbowStatus.XBOW_STATUS_INVALID_NAME.ordinal());
 
         vnicHelper.setLinkProperty("efdsfdsjkfdsjlk", LinkProperties.PRIORITY, "high");
     }
@@ -131,7 +131,7 @@ public class JNAVNicHelperTest {
     public void testTryingToSetInvalidPropertyValue() throws LinkException{
 
         when(handle.set_link_property(anyString(), anyString(), anyString()))
-                .thenReturn(LinkReturn.OPERATION_FAILURE.ordinal());
+                .thenReturn(XbowStatus.XBOW_STATUS_OPERATION_FAILURE.ordinal());
 
         vnicHelper.setLinkProperty("vnic1", LinkProperties.PRIORITY, "veryhigh");
     }
@@ -141,7 +141,7 @@ public class JNAVNicHelperTest {
     public void testSucessfulTryingToSetPropertyToVNic() throws LinkException{
 
         when(handle.set_link_property(anyString(), anyString(), anyString()))
-                .thenReturn(LinkReturn.RESULT_OK.ordinal());
+                .thenReturn(XbowStatus.XBOW_STATUS_OK.ordinal());
 
         vnicHelper.setLinkProperty("etherstub1", LinkProperties.PRIORITY, "high");
     }

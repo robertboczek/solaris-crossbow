@@ -17,9 +17,12 @@ LIBFNAME=lib$(BASENAME).so
 %.o: %.c
 	$(CC) $(CFLAGS) -I$(INCDIR) -fPIC -c $<
 
+mappings.o: ../common/mappings.c
+	$(CC) $(CFLAGS) -I$(INCDIR) -fPIC -c ../common/mappings.c ../common/mappings.h
+
 all: $(LIBFNAME) test
 
-$(LIBFNAME): link.o memory.o functor.o
+$(LIBFNAME): link.o memory.o functor.o mappings.o
 	$(CC) $(CFLAGS) -fPIC -shared -o $(LIBFNAME) $^ $(LIBS)
 
 test: test.c $(LIBFNAME)

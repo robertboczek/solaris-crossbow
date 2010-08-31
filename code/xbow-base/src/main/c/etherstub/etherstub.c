@@ -28,7 +28,7 @@ int init()
 	return dladm_open( &handle );
 }
 
-etherstub_return_type_t delete_etherstub( char* name, int temporary )
+int delete_etherstub( char* name, int temporary )
 {
 
 	datalink_id_t linkid;
@@ -45,17 +45,17 @@ etherstub_return_type_t delete_etherstub( char* name, int temporary )
 	    NULL);
 
 	if (status != DLADM_STATUS_OK)
-		return INVALID_ETHERSTUB_NAME; 
+		return XBOW_STATUS_INVALID_NAME; 
 
 	status = dladm_vnic_delete(handle, linkid, flags);
 
 	if (status != DLADM_STATUS_OK)
-		return DELETE_FAILURE;
+		return XBOW_STATUS_OPERATION_FAILURE;
 
-	return RESULT_OK;
+	return XBOW_STATUS_OK;
 }
 
-etherstub_return_type_t create_etherstub( char* name, int temporary )
+int create_etherstub( char* name, int temporary )
 {
 	uint32_t flags;
 	dladm_status_t status;
@@ -72,10 +72,10 @@ etherstub_return_type_t create_etherstub( char* name, int temporary )
 	}
 
 	if (strlcpy(etherstub_name, name, MAXLINKNAMELEN) >= MAXLINKNAMELEN)
-		return TOO_LONG_ETHERSTUB_NAME;
+		return  XBOW_STATUS_TOO_LONG_NAME;
 
 	if (!dladm_valid_linkname(etherstub_name))
-		return INVALID_ETHERSTUB_NAME;
+		return XBOW_STATUS_INVALID_NAME;
 	
 
 	status = dladm_vnic_create(handle, etherstub_name, DATALINK_INVALID_LINKID,
@@ -83,8 +83,8 @@ etherstub_return_type_t create_etherstub( char* name, int temporary )
 	    VRRP_VRID_NONE, AF_UNSPEC, NULL, NULL, flags);
 
 	if (status != DLADM_STATUS_OK)
-		return CREATE_FAILURE;
-	return RESULT_OK;
+		return XBOW_STATUS_OPERATION_FAILURE;
+	return XBOW_STATUS_OK;
 }
 
 int get_name(const char *name, void *prop){
@@ -108,7 +108,9 @@ char** get_etherstub_names()
 	//walks through all etherstub's and invokes get_name function
 	if( dladm_walk(get_name, handle, &etherstub_names,
 	    DATALINK_CLASS_ETHERSTUB, DATALINK_ANY_MEDIATYPE, flags) != DLADM_STATUS_OK){
-		return LIST_ETHERSTUB_NAMES_ERROR;
+
+		free(etherstub_names.array);
+		return NULL;
 	}
 
 	//the element after the last one must be null
@@ -186,7 +188,7 @@ char* get_etherstub_statistic( char *name, char* property){
 	return tmp;
 }
 
-etherstub_return_type_t set_etherstub_property( char *name, char* property, char *value)
+int set_etherstub_property( char *name, char* property, char *value)
 {
 
 	dladm_status_t status;
@@ -198,16 +200,16 @@ etherstub_return_type_t set_etherstub_property( char *name, char* property, char
 	    NULL);
 
 	if (status != DLADM_STATUS_OK)
-		return INVALID_ETHERSTUB_NAME;
+		return XBOW_STATUS_INVALID_NAME;
 
 	
 	status = dladm_set_linkprop(handle, linkid,
 			    property, &value, maxpropertycnt, flags);
 
 	if (status != DLADM_STATUS_OK)
-		return ETHERSTUB_PROPERTY_FAILURE;
+		return XBOW_STATUS_OPERATION_FAILURE;
 
-	return RESULT_OK;
+	return XBOW_STATUS_OK;
 }
 
 char* get_etherstub_property( char *name, char* property )

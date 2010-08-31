@@ -96,15 +96,15 @@ public class JNALinkHelper implements LinkHelper {
         int returnValue = handle.set_link_property( name, property.toString(), value);
 
 
-        if(returnValue == LinkReturn.RESULT_OK.ordinal()){
+        if(returnValue == XbowStatus.XBOW_STATUS_OK.ordinal()){
             
             return;
 
-        } else if (returnValue == LinkReturn.INVALID_LINK_NAME.ordinal()) {
+        } else if (returnValue == XbowStatus.XBOW_STATUS_INVALID_NAME.ordinal()) {
 
             throw new InvalidLinkNameException("Invalid link name: " + name);
 
-        }  else if (returnValue == LinkReturn.OPERATION_FAILURE.ordinal()) {
+        }  else if (returnValue == XbowStatus.XBOW_STATUS_OPERATION_FAILURE.ordinal()) {
 
             throw new LinkException("Unable to set property " + property);
 

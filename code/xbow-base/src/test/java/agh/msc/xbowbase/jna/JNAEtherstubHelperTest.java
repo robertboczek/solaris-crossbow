@@ -41,7 +41,7 @@ public class JNAEtherstubHelperTest {
     @Test(expected=InvalidEtherstubNameException.class)
     public void testCreatedEtherstubWithWrongName() throws EtherstubException{
 
-        when(handle.create_etherstub(anyString(), anyInt())).thenReturn(EtherstubReturn.INVALID_ETHERSTUB_NAME.ordinal());
+        when(handle.create_etherstub(anyString(), anyInt())).thenReturn(XbowStatus.XBOW_STATUS_INVALID_NAME.ordinal());
 
         etherstubHelper.createEtherstub("fdsf", true);
     }
@@ -49,7 +49,7 @@ public class JNAEtherstubHelperTest {
     @Test(expected=TooLongEtherstubNameException.class)
     public void testCreatedEtherstubWithTooLongName() throws EtherstubException{
 
-        when(handle.create_etherstub(anyString(), anyInt())).thenReturn(EtherstubReturn.TOO_LONG_ETHERSTUB_NAME.ordinal());
+        when(handle.create_etherstub(anyString(), anyInt())).thenReturn(XbowStatus.XBOW_STATUS_TOO_LONG_NAME.ordinal());
 
         etherstubHelper.createEtherstub("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", true);
     }
@@ -57,7 +57,7 @@ public class JNAEtherstubHelperTest {
     @Test(expected=EtherstubException.class)
     public void testCreatedEtherstubWithTheSameNameAsExisitngOne() throws EtherstubException{
 
-        when(handle.create_etherstub(anyString(), anyInt())).thenReturn(EtherstubReturn.CREATE_FAILURE.ordinal());
+        when(handle.create_etherstub(anyString(), anyInt())).thenReturn(XbowStatus.XBOW_STATUS_OPERATION_FAILURE.ordinal());
 
         etherstubHelper.createEtherstub("etherstub1", true);
     }
@@ -65,7 +65,7 @@ public class JNAEtherstubHelperTest {
     @Test
     public void testCreatingCorrectEtherstub() throws EtherstubException{
 
-        when(handle.create_etherstub(anyString(), anyInt())).thenReturn(EtherstubReturn.RESULT_OK.ordinal());
+        when(handle.create_etherstub(anyString(), anyInt())).thenReturn(XbowStatus.XBOW_STATUS_OK.ordinal());
 
         etherstubHelper.createEtherstub("etherstub", true);
     }
@@ -73,7 +73,7 @@ public class JNAEtherstubHelperTest {
     @Test(expected=InvalidEtherstubNameException.class)
     public void testDeleteUnexisitngEtherstub() throws EtherstubException{
 
-        when(handle.delete_etherstub(anyString(), anyInt())).thenReturn(EtherstubReturn.INVALID_ETHERSTUB_NAME.ordinal());
+        when(handle.delete_etherstub(anyString(), anyInt())).thenReturn(XbowStatus.XBOW_STATUS_INVALID_NAME.ordinal());
 
         etherstubHelper.deleteEtherstub("etherstub123", true);
     }
@@ -81,7 +81,7 @@ public class JNAEtherstubHelperTest {
     @Test
     public void testCorrectRemovalOfExisitngEtherstub() throws EtherstubException{
 
-        when(handle.delete_etherstub(anyString(), anyInt())).thenReturn(EtherstubReturn.RESULT_OK.ordinal());
+        when(handle.delete_etherstub(anyString(), anyInt())).thenReturn(XbowStatus.XBOW_STATUS_OK.ordinal());
 
         etherstubHelper.deleteEtherstub("etherstub3", true);
     }
@@ -90,7 +90,7 @@ public class JNAEtherstubHelperTest {
     public void testTryingToSetPropertyToUnexistingEtherstub() throws EtherstubException{
 
         when(handle.set_etherstub_property(anyString(), anyString(), anyString()))
-                .thenReturn(EtherstubReturn.INVALID_ETHERSTUB_NAME.ordinal());
+                .thenReturn(XbowStatus.XBOW_STATUS_INVALID_NAME.ordinal());
 
         etherstubHelper.setEtherstubProperty("efdsfdsjkfdsjlk", LinkProperties.PRIORITY, "high");
     }
@@ -99,7 +99,7 @@ public class JNAEtherstubHelperTest {
     public void testTryingToSetInvalidPropertyValue() throws EtherstubException{
 
         when(handle.set_etherstub_property(anyString(), anyString(), anyString()))
-                .thenReturn(EtherstubReturn.ETHERSTUB_PROPERTY_FAILURE.ordinal());
+                .thenReturn(XbowStatus.XBOW_STATUS_OPERATION_FAILURE.ordinal());
 
         etherstubHelper.setEtherstubProperty("etherstub1", LinkProperties.PRIORITY, "veryhigh");
     }
@@ -109,7 +109,7 @@ public class JNAEtherstubHelperTest {
     public void testSucessfulTryingToSetPropertyToEtherstub() throws EtherstubException{
 
         when(handle.set_etherstub_property(anyString(), anyString(), anyString()))
-                .thenReturn(EtherstubReturn.RESULT_OK.ordinal());
+                .thenReturn(XbowStatus.XBOW_STATUS_OK.ordinal());
 
         etherstubHelper.setEtherstubProperty("etherstub1", LinkProperties.PRIORITY, "high");
     }

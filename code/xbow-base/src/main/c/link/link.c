@@ -124,7 +124,7 @@ nic_infos_t* get_nic_infos( void )
 	return nic_infos;
 }
 
-link_return_type_t delete_vnic( char* name, int temporary )
+int delete_vnic( char* name, int temporary )
 {
 
 	datalink_id_t vnic_linkid;
@@ -141,18 +141,18 @@ link_return_type_t delete_vnic( char* name, int temporary )
 	    NULL);
 
 	if (status != DLADM_STATUS_OK)
-		return INVALID_LINK_NAME; 
+		return XBOW_STATUS_INVALID_NAME; 
 
 	status = dladm_vnic_delete(handle, vnic_linkid, flags);
 
 	if (status != DLADM_STATUS_OK)
-		return OPERATION_FAILURE;
+		return XBOW_STATUS_OPERATION_FAILURE;
 
-	return RESULT_OK;
+	return XBOW_STATUS_OK;
 }
 
 
-link_return_type_t create_vnic( char* name, int temporary, char *parent )
+int create_vnic( char* name, int temporary, char *parent )
 {
 	uint32_t flags;
 	dladm_status_t status;
@@ -172,17 +172,17 @@ link_return_type_t create_vnic( char* name, int temporary, char *parent )
 	}
 
 	if (strlcpy(parent_link_name, parent, MAXLINKNAMELEN) >= MAXLINKNAMELEN)
-		return TOO_LONG_PARENT_LINK_NAME;
+		return XBOW_STATUS_TOO_LONG_PARENT_NAME;
 
 	if (dladm_name2info(handle, parent, &parent_linkid, NULL, NULL, NULL) !=
 	    DLADM_STATUS_OK)
-		return INVALID_PARENT_LINK_NAME;
+		return XBOW_STATUS_INVALID_PARENT_NAME;
 
 	if (strlcpy(vnic_name, name, MAXLINKNAMELEN) >= MAXLINKNAMELEN)
-		return TOO_LONG_LINK_NAME;
+		return XBOW_STATUS_TOO_LONG_NAME;
 
 	if (!dladm_valid_linkname(vnic_name))
-		return INVALID_LINK_NAME;
+		return XBOW_STATUS_INVALID_NAME;
 	
 
 	status = dladm_vnic_create(handle, vnic_name, parent_linkid,
@@ -190,9 +190,9 @@ link_return_type_t create_vnic( char* name, int temporary, char *parent )
 	    VRRP_VRID_NONE, AF_UNSPEC, &vnic_linkid, NULL, flags);
 
 	if (status != DLADM_STATUS_OK)
-		return OPERATION_FAILURE;
+		return XBOW_STATUS_OPERATION_FAILURE;
 
-	return RESULT_OK;
+	return XBOW_STATUS_OK;
 }
 
 
@@ -309,7 +309,7 @@ char* get_link_statistic( char *name, char* property){
 }
 
 
-link_return_type_t set_link_property( char *name, char* property, char *value)
+int set_link_property( char *name, char* property, char *value)
 {
 
 	dladm_status_t status;
@@ -321,16 +321,16 @@ link_return_type_t set_link_property( char *name, char* property, char *value)
 	    NULL);
 
 	if (status != DLADM_STATUS_OK)
-		return INVALID_LINK_NAME;
+		return XBOW_STATUS_INVALID_NAME;
 
 	
 	status = dladm_set_linkprop(handle, linkid,
 			    property, &value, maxpropertycnt, flags);
 
 	if (status != DLADM_STATUS_OK)
-		return OPERATION_FAILURE;
+		return XBOW_STATUS_OPERATION_FAILURE;
 
-	return RESULT_OK;
+	return XBOW_STATUS_OK;
 }
 
 char* get_link_property( char *name, char* property )
