@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../common/mappings.h"
+
 #include "functor.h"
 #include "link.h"
 #include "memory.h"
@@ -22,9 +24,9 @@ dladm_handle_t handle = 0;
 
 int init()
 {
-	// TODO-DAWID: initialize mappings here!
-	// return map_status( dladm_open( &handle ) );
-	return dladm_open( &handle );
+	init_mapping();
+
+	return map_status( dladm_open( &handle ) );
 }
 
 
