@@ -156,8 +156,19 @@ flow_infos_t* get_flows_info( char* link_name[] )
 		}
 	}
 
-	// TODO-DAWID: policzyc flowy, pozniej zaalokowac
-	flow_infos_t* flow_infos = malloc_flow_infos( 100 );
+	// Count flows.
+	
+	int flows_len = 0;
+	for ( int j = 0; j < links_len; ++j )
+	{
+		datalink_id_t link_id;
+		dladm_name2info( handle, links + j * MAXLINKNAMELEN, &link_id,
+		                 NULL, NULL, NULL );
+
+		dladm_walk_flow( &count, handle, link_id, &flows_len, 0 );
+	}
+
+	flow_infos_t* flow_infos = malloc_flow_infos( flows_len );
 
 	int flow_info_it = 0;
 

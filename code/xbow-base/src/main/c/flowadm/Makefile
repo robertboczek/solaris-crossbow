@@ -17,8 +17,8 @@ LIBFNAME=lib$(BASENAME).so
 %.o: %.c
 	$(CC) $(CFLAGS) -I$(INCDIR) -fPIC -c $<
 
-mappings.o: ../common/mappings.c
-	$(CC) $(CFLAGS) -I$(INCDIR) -fPIC -c ../common/mappings.c ../common/mappings.h
+mappings.o: ../common/mappings.c ../common/mappings.h
+	$(CC) $(CFLAGS) -I$(INCDIR) -fPIC -c ../common/mappings.c
 
 all: $(LIBFNAME) test
 
