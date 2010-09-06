@@ -14,17 +14,15 @@ import org.apache.log4j.Logger;
  * 
  * @author robert boczek
  */
-public class VNic implements VNicMBean {
+public class VNic extends Link implements VNicMBean {
 
     private static final Logger logger = Logger.getLogger(VNic.class);
-    private final String name;
     private final String parent;
     private final Map<LinkProperties, String> propertiesMap;
     private final Map<LinkParameters, String> parametersMap;
     private final Map<LinkStatistics, String> statisticsMap;
     private final boolean temporary;
     private String ipAddress;
-    private String ipMask;
     private boolean plumbed;
     private boolean up;
     private boolean linkParent;
@@ -47,13 +45,6 @@ public class VNic implements VNicMBean {
         statisticsMap = new HashMap<LinkStatistics, String>();
     }
 
-    /**
-     * @see VNicMBean#getName()
-     */
-    @Override
-    public String getName() {
-        return this.name;
-    }
 
     /**
      * @see VNicMBean#getProperties() 
@@ -129,25 +120,6 @@ public class VNic implements VNicMBean {
         this.ipAddress = ipAddress;
     }
 
-    /**
-     * @see VNicMBean#getIpMask()
-     */
-    @Override
-    public String getIpMask() throws LinkException {
-			return vNicHelper.getNetmask( name );
-    }
-
-    /**
-     * @see VNicMBean#setIpMask(java.lang.String)
-     */
-    @Override
-    public void setIpMask(String ipMask) throws LinkException {
-
-			vNicHelper.setNetmask( name, ipMask );
-
-        //@todo use jna to set vnic's ip mask
-        this.ipMask = ipMask;
-    }
 
     /**
      * @see VNicMBean#isPlumbed()
@@ -241,7 +213,7 @@ public class VNic implements VNicMBean {
     }
 
     public void setVNicHelper(VNicHelper vNicHelper) {
-
         this.vNicHelper = vNicHelper;
+				super.linkHelper = vNicHelper;
     }
 }

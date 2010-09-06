@@ -14,19 +14,7 @@ import org.apache.log4j.Logger;
  *
  * @author cieplik
  */
-public class Nic implements NicMBean {
-
-    /**
-     * @see  NicMBean#getName()
-     */
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+public class Nic extends Link implements NicMBean {
 
     /**
      * @see NicMBean#getProperties()
@@ -100,23 +88,6 @@ public class Nic implements NicMBean {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    /**
-     * @see  NicMBean#getIpMask()
-     */
-    @Override
-    public String getIpMask() {
-			// TODO-DAWID
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /**
-     * @see  NicMBean#setIpMask( java.lang.String )
-     */
-    @Override
-    public void setIpMask(String ipMask) {
-			// TODO-DAWID
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
 
     /**
      * @see  NicMBean#isPlumbed()
@@ -155,6 +126,7 @@ public class Nic implements NicMBean {
 
     public void setNicHelper(NicHelper nicHelper) {
         this.nicHelper = nicHelper;
+				super.linkHelper = nicHelper;
     }
 
     @Override
@@ -190,12 +162,11 @@ public class Nic implements NicMBean {
     public String toString() {
         return name;
     }
-    String name;
+
     private Map<LinkStatistics, String> statisticsMap = new HashMap<LinkStatistics, String>();
     private Map<LinkProperties, String> propertiesMap = new HashMap<LinkProperties, String>();
     private Map<LinkParameters, String> parametersMap = new HashMap<LinkParameters, String>();
     private String ipAddress;
-    private String ipMask;
     private boolean plumbed;
     private boolean up;
     NicHelper nicHelper;
