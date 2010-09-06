@@ -2,6 +2,9 @@
 #include <string.h>
 #include <stdio.h>
 
+#include <common/defs.h>
+
+#include "ip.h"
 #include "link.h"
 
 

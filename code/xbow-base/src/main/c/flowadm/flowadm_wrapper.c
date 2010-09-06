@@ -7,11 +7,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <common/mappings.h>
+
 #include "aux.h"
 #include "defs.h"
 #include "flowadm_wrapper.h"
 #include "functor.h"
-#include "../common/mappings.h"
 #include "memory.h"
 #include "types.h"
 

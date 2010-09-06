@@ -3,8 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <common/defs.h>
+
 #include "defs.h"
-#include "../common/defs.h"
 #include "functor.h"
 #include "types.h"
 

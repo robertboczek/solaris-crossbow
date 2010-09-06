@@ -8,11 +8,14 @@ include Makefile.defs
 
 CC=gcc
 CFLAGS=-std=c99 -Wall -pedantic \
+       -D__EXTENSIONS__ \
        -g
 LDFLAGS=-Wl,-R.
 LIBS=-ldladm -lsocket
 BASENAME=etherstub_wrapper
 LIBFNAME=lib$(BASENAME).so
+
+INCDIR += -I..
 
 %.o: %.c
 	$(CC) $(CFLAGS) -I$(INCDIR) -fPIC -c $<

@@ -2,7 +2,7 @@
 #define ETHERSTUB_WRAPPER_H
 
 #include "types.h"
-#include "../common/defs.h"
+#include <common/defs.h>
 
 /**
  * \brief  Inits the etherstub library

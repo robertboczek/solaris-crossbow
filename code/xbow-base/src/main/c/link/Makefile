@@ -16,6 +16,8 @@ LIBS=-ldladm -lsocket -ldlpi
 BASENAME=link_wrapper
 LIBFNAME=lib$(BASENAME).so
 
+INCDIR += -I..
+
 %.o: %.c
 	$(CC) $(CFLAGS) -I$(INCDIR) -fPIC -c $<
 
@@ -24,11 +26,11 @@ mappings.o: ../common/mappings.c
 
 all: $(LIBFNAME) test
 
-$(LIBFNAME): link.o memory.o functor.o mappings.o ifconfig.o
+$(LIBFNAME): link.o memory.o functor.o mappings.o ifconfig.o ip.o
 	$(CC) $(CFLAGS) -fPIC -shared -o $(LIBFNAME) $^ $(LIBS)
 
 test: test.c $(LIBFNAME)
-	$(CC) $(CFLAGS) $(LDFLAGS) -L$(LIBDIR) -o test test.c $(LIBS) -l$(BASENAME)
+	$(CC) $(CFLAGS) $(LDFLAGS) -L$(LIBDIR) -I$(INCDIR) -o test test.c $(LIBS) -l$(BASENAME)
 
 clean:
 	rm *.o *.so

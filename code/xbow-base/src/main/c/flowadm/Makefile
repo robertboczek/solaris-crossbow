@@ -14,6 +14,8 @@ LIBS=-ldladm
 BASENAME=flowadm_wrapper
 LIBFNAME=lib$(BASENAME).so
 
+INCDIR += -I..
+
 %.o: %.c
 	$(CC) $(CFLAGS) -I$(INCDIR) -fPIC -c $<
 

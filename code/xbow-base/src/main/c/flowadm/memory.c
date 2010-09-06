@@ -2,8 +2,9 @@
 
 #include <stdlib.h>
 
+#include <common/defs.h>
+
 #include "defs.h"
-#include "../common/defs.h"
 #include "memory.h"
 
 
