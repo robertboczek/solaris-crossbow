@@ -63,11 +63,27 @@ public interface LinkHelper {
      */
     public String getLinkProperty(String name, LinkProperties property) throws LinkException;
 
+    public void plumb(String name);
 
-		public void plumb( String name );
+    public void setNetmask(String name, String mask);
 
-		public void setNetmask( String name, String mask );
+    public String getNetmask(String name);
 
-		public String getNetmask( String name );
+    /**
+     * Returns ip address assigned to this link
+     *
+     * @param link Name of the link
+     * @return Ip address or null if no address is assigned to this link
+     * @throws LinkException Exception thrown when errors while getting ip address for this link occur
+     */
+    public String getIpAddress(String link) throws LinkException;
 
+    /**
+     * Sets new ip address to link
+     *
+     * @param link Name of the link
+     * @param ipAddress New ipv4 address( for example: '192.168.0.123' )
+     * @throws LinkException Exception thrown when error with setting ip address occur
+     */
+    public void setIpAddress(String link, String ipAddress) throws LinkException;
 }

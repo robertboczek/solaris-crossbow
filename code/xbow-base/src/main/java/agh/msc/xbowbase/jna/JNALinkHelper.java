@@ -173,4 +173,24 @@ public class JNALinkHelper implements LinkHelper {
     static final String LIB_NAME = "link_wrapper";
     protected LinkHandle handle = null;
     private static final Logger logger = Logger.getLogger(JNALinkHelper.class);
+
+    /**
+     * @see LinkHelper#getIpAddress(java.lang.String)
+     */
+    @Override
+    public String getIpAddress(String link) throws LinkException {
+        return handle.get_ip_address(link);
+    }
+
+    /**
+     * @see LinkHelper#setIpAddress(java.lang.String, java.lang.String)
+     */
+    @Override
+    public void setIpAddress(String link, String ipAddress) throws LinkException {
+
+        int returnValue = handle.set_ip_address(link, ipAddress);
+
+        //@todo obsluga bledow
+
+    }
 }

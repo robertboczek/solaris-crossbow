@@ -120,4 +120,6 @@ public class VNicTest {
         assertEquals("120", map.get(LinkProperties.LEARN_LIMIT));
 
     }
+
+    //@todo write tests testing setting/getting ip
 }

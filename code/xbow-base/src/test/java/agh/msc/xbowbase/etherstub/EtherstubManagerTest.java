@@ -1,12 +1,8 @@
 package agh.msc.xbowbase.etherstub;
 
-import agh.msc.xbowbase.enums.LinkParameters;
-import agh.msc.xbowbase.enums.LinkProperties;
-import agh.msc.xbowbase.enums.LinkStatistics;
 import agh.msc.xbowbase.exception.EtherstubException;
 import agh.msc.xbowbase.exception.InvalidEtherstubNameException;
 import agh.msc.xbowbase.exception.TooLongEtherstubNameException;
-import agh.msc.xbowbase.jna.JNAEtherstubHelper;
 import agh.msc.xbowbase.lib.EtherstubHelper;
 import agh.msc.xbowbase.publisher.EtherstubMBeanPublisher;
 import agh.msc.xbowbase.publisher.Publisher;
@@ -48,45 +44,6 @@ public class EtherstubManagerTest {
 
     }
 
-    class InnerEtherstubHelper implements EtherstubHelper{
-
-        @Override
-        public void deleteEtherstub(String name, boolean temporary) throws EtherstubException {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public void createEtherstub(String name, boolean temporary) throws EtherstubException {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public String[] getEtherstubNames() throws EtherstubException {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public String getEtherstubParameter(String name, LinkParameters parameter) throws EtherstubException {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public String getEtherstubStatistic(String name, LinkStatistics property) throws EtherstubException {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public void setEtherstubProperty(String name, LinkProperties property, String value) throws EtherstubException {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-        @Override
-        public String getEtherstubProperty(String name, LinkProperties property) throws EtherstubException {
-            throw new UnsupportedOperationException("Not supported yet.");
-        }
-
-    }
-
     @Test
     public void testCreatingNewEtherstub() throws EtherstubException{
 
@@ -102,15 +59,10 @@ public class EtherstubManagerTest {
     @Test(expected=TooLongEtherstubNameException.class)
     public void testCreatingNewEtherstubWithTooLongName() throws EtherstubException{
 
-        etherstubHelper = new InnerEtherstubHelper(){
+        doThrow(new TooLongEtherstubNameException("")).when(etherstubHelper)
+                .createEtherstub(anyString(), anyBoolean());
 
-            @Override
-            public void createEtherstub(String name, boolean temporary) throws EtherstubException{
-                throw new TooLongEtherstubNameException("");
-            }
-
-        };
-
+        
         etherstubManager.setEtherstHelper(etherstubHelper);
         etherstubManager.create(new Etherstub("etherstubetherstubetherstubetherstubetherstubetherstubetherstubetherstub", true));
 
@@ -119,14 +71,8 @@ public class EtherstubManagerTest {
     @Test(expected=InvalidEtherstubNameException.class)
     public void testCreatingNewEtherstubWithWithInvalidName() throws EtherstubException{
 
-        etherstubHelper = new InnerEtherstubHelper(){
-
-            @Override
-            public void createEtherstub(String name, boolean temporary) throws EtherstubException{
-                throw new InvalidEtherstubNameException("");
-            }
-
-        };
+        doThrow(new InvalidEtherstubNameException("")).when(etherstubHelper)
+                .createEtherstub(anyString(), anyBoolean());
 
         etherstubManager.setEtherstHelper(etherstubHelper);
         etherstubManager.create(new Etherstub("invalidName", true));
@@ -136,14 +82,8 @@ public class EtherstubManagerTest {
     @Test(expected=EtherstubException.class)
     public void testCreatingNewEtherstubWhenOperationFailes() throws EtherstubException{
 
-        etherstubHelper = new InnerEtherstubHelper(){
-
-            @Override
-            public void createEtherstub(String name, boolean temporary) throws EtherstubException{
-                throw new EtherstubException("");
-            }
-
-        };
+        doThrow(new EtherstubException("")).when(etherstubHelper)
+                .createEtherstub(anyString(), anyBoolean());
 
         etherstubManager.setEtherstHelper(etherstubHelper);
         etherstubManager.create(new Etherstub("invalidName", true));
@@ -184,17 +124,11 @@ public class EtherstubManagerTest {
 
     }
 
-    @Test(expected=EtherstubException.class)
+    @Test(expected=TooLongEtherstubNameException.class)
     public void testRemovingEtherstubWhenEtherstubNameIsTooLong() throws EtherstubException{
 
-        etherstubHelper = new InnerEtherstubHelper(){
-
-            @Override
-            public void deleteEtherstub(String name, boolean temporary) throws EtherstubException{
-                throw new TooLongEtherstubNameException("");
-            }
-
-        };
+        doThrow(new TooLongEtherstubNameException("")).when(etherstubHelper).
+                deleteEtherstub(anyString(), anyBoolean());
 
         etherstubManager.setEtherstHelper(etherstubHelper);
         etherstubManager.delete("etherstub128etherstub128etherstub128etherstub128etherstub128etherstub128etherstub128etherstub128", true);
@@ -204,14 +138,8 @@ public class EtherstubManagerTest {
     @Test(expected=InvalidEtherstubNameException.class)
     public void testRemovingEtherstubWhenEtherstubNameIsInvalid() throws EtherstubException{
 
-        etherstubHelper = new InnerEtherstubHelper(){
-
-            @Override
-            public void deleteEtherstub(String name, boolean temporary) throws EtherstubException{
-                throw new InvalidEtherstubNameException("");
-            }
-
-        };
+        doThrow(new InvalidEtherstubNameException("")).when(etherstubHelper).
+                deleteEtherstub(anyString(), anyBoolean());
 
         etherstubManager.setEtherstHelper(etherstubHelper);
         etherstubManager.delete("invalidEtherstubName", true);
@@ -221,14 +149,7 @@ public class EtherstubManagerTest {
     @Test(expected=EtherstubException.class)
     public void testRemovingEtherstubWhenOperationFailes() throws EtherstubException{
 
-        etherstubHelper = new InnerEtherstubHelper(){
-
-            @Override
-            public void deleteEtherstub(String name, boolean temporary) throws EtherstubException{
-                throw new EtherstubException("");
-            }
-
-        };
+        doThrow(new EtherstubException("")).when(etherstubHelper).deleteEtherstub(anyString(), anyBoolean());
 
         etherstubManager.setEtherstHelper(etherstubHelper);
         etherstubManager.delete("etherstub128", true);
