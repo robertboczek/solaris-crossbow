@@ -484,3 +484,59 @@ char* get_link_property( char *name, char* property )
 	return value;
 }
 
+
+int set_ip_address(char *link, char *address)
+{
+	int s;
+	struct lifreq lifr = { 0 };
+
+	strncpy( lifr.lifr_name, link, sizeof( lifr.lifr_name ) - 1 );
+	inet_aton( address, &( ( struct sockaddr_in* ) &lifr.lifr_addr )->sin_addr );
+	lifr.lifr_addr.ss_family = AF_INET;
+
+	s = socket(AF_INET, SOCK_DGRAM, 0);
+
+	if (s == -1){
+		//couldn't create a socket
+		return XBOW_STATUS_OPERATION_FAILURE;
+	}
+
+	if (ioctl(s, SIOCSLIFADDR, (caddr_t)&lifr) < 0) {
+		//couldn't set the ip address
+		return XBOW_STATUS_OPERATION_FAILURE;		
+	}
+
+	return XBOW_STATUS_OK;
+}
+
+char* get_ip_address(char *link)
+{
+
+	int s;
+	struct lifreq lifr;
+	struct sockaddr_in	*sin;
+
+	(void) strncpy(lifr.lifr_name, link, strlen(link)+1);
+
+	s = socket(AF_INET, SOCK_DGRAM, 0);
+
+	if (s == -1){
+		//couldn't create socket
+		return NULL;
+	}
+
+	if (ioctl(s, SIOCGLIFADDR, (caddr_t)&lifr) < 0) {
+		//couldn't read ip address value
+		return NULL;
+		
+	}	
+
+	sin = (struct sockaddr_in *)&lifr.lifr_addr;
+
+	if(sin != NULL){
+		return inet_ntoa(sin->sin_addr);
+	}else{
+		return NULL;
+	}
+}
+

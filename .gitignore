@@ -1,5 +1,6 @@
 code/xbow-base/nbactions.xml
 code/xbow-base/src/main/c/flowadm/tags
+code/xbow-base/src/main/c/link/Makefile.defs
 code/xbow-base/target/
 *.dia~
 *.swp

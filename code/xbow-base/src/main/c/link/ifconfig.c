@@ -105,7 +105,9 @@ int ifconfig_plumb( char* link )
 
 	ip_fd = dlpi_fd(dh_ip);
 	if (ioctl(ip_fd, I_PUSH, IP_MOD_NAME) == -1)
-		Perror2_exit("I_PUSH", IP_MOD_NAME);
+	{ // TODO-DAWID: error }
+	}
+		// Perror2_exit("I_PUSH", IP_MOD_NAME);
 
 	/*
 	 * Prepare to set IFF_IPV4/IFF_IPV6 flags as part of SIOCSLIFNAME.
@@ -114,7 +116,8 @@ int ifconfig_plumb( char* link )
 	 */
 	lifr.lifr_name[0] = '\0';
 	if (ioctl(ip_fd, SIOCGLIFFLAGS, (char *)&lifr) == -1)
-		Perror0_exit("ifplumb: SIOCGLIFFLAGS");
+	{ // TODO-DAWID: error }
+	}
 
 		flags = lifr.lifr_flags | IFF_IPV4;
 		flags &= ~IFF_IPV6;
@@ -131,7 +134,10 @@ int ifconfig_plumb( char* link )
 		 * check it.
 		 */
 		if (!ifparse_ifspec(ifname, &ifsp) || ifsp.ifsp_lunvalid)
-			Perror2_exit("invalid IP interface name", ifname);
+		{
+			// TODO-DAWID: error
+		}
+			// Perror2_exit("invalid IP interface name", ifname);
 
 		/*
 		 * Before we call SIOCSLIFNAME, ensure that the IPMP group
@@ -160,7 +166,10 @@ int ifconfig_plumb( char* link )
 
 	if (retval == -1) {
 		if (errno != EEXIST)
-			Perror0_exit("SIOCSLIFNAME for ip");
+		{
+			// TODO-DAWID: error
+		}
+
 		/*
 		 * This difference between the way we behave for EEXIST
 		 * and that with other errors exists to preserve legacy
@@ -170,13 +179,14 @@ int ifconfig_plumb( char* link )
 		 * To preserve this behaviour, Perror0() and return are
 		 * called for EEXIST.
 		 */
-		Perror0("SIOCSLIFNAME for ip");
+		// Perror0("SIOCSLIFNAME for ip");
 		return (-1);
 	}
 
 	/* Get the full set of existing flags for this stream */
 	if (ioctl(ip_fd, SIOCGLIFFLAGS, (char *)&lifr) == -1)
-		Perror0_exit("ifplumb: SIOCGLIFFLAGS");
+	{}
+		// Perror0_exit("ifplumb: SIOCGLIFFLAGS");
 
 	/*
 	 * Open "/dev/udp" for use as a multiplexor to PLINK the
@@ -200,7 +210,8 @@ int ifconfig_plumb( char* link )
 		 * without tearing down the stream.
 		 */
 		if ((ip_muxid = ioctl(mux_fd, I_PLINK, ip_fd)) == -1)
-			Perror0_exit("I_PLINK for ip");
+		{}
+			// Perror0_exit("I_PLINK for ip");
 		(void) close(mux_fd);
 		return (lifr.lifr_ppa);
 	}
@@ -212,11 +223,13 @@ int ifconfig_plumb( char* link )
 
 	retval = dlpi_open(link, &dh_arp, dlpi_flags);
 	if (retval != DLPI_SUCCESS)
-		Perrdlpi_exit("cannot open link", link, retval);
+	{ // TODO-DAWID: error }
+	}
 
 	arp_fd = dlpi_fd(dh_arp);
 	if (ioctl(arp_fd, I_PUSH, ARP_MOD_NAME) == -1)
-		Perror2_exit("I_PUSH", ARP_MOD_NAME);
+	{}
+		// Perror2_exit("I_PUSH", ARP_MOD_NAME);
 
 	/*
 	 * Tell ARP the name and unit number for this interface.
@@ -224,8 +237,11 @@ int ifconfig_plumb( char* link )
 	 */
 	if (strioctl(arp_fd, SIOCSLIFNAME, &lifr, sizeof (lifr)) == -1) {
 		if (errno != EEXIST)
-			Perror0_exit("SIOCSLIFNAME for arp");
-		Perror0("SIOCSLIFNAME for arp");
+		{
+			// TODO-DAWID: error
+		}
+			// Perror0_exit("SIOCSLIFNAME for arp");
+		// Perror0("SIOCSLIFNAME for arp");
 		goto out;
 	}
 
@@ -234,10 +250,12 @@ int ifconfig_plumb( char* link )
 	 * without tearing down the stream.
 	 */
 	if ((ip_muxid = ioctl(mux_fd, I_PLINK, ip_fd)) == -1)
-		Perror0_exit("I_PLINK for ip");
+		{}
+		// Perror0_exit("I_PLINK for ip");
 	if ((arp_muxid = ioctl(mux_fd, I_PLINK, arp_fd)) == -1) {
 		(void) ioctl(mux_fd, I_PUNLINK, ip_muxid);
-		Perror0_exit("I_PLINK for arp");
+		{}
+		// Perror0_exit("I_PLINK for arp");
 	}
 
 out:

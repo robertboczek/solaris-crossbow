@@ -43,6 +43,28 @@ nic_info_t* get_nic_info( char* name );
  */
 nic_infos_t* get_nic_infos( void );
 
+/**
+ * \brief  Sets new ip address to link
+ *
+ * \param  link	  	link name
+ * \param  address  	new address in a string format ( for example: '192.168.0.13' )
+ *
+ * \return  XBOW_STATUS_OK on success
+ * \return  XBOW_STATUS_OPERATION_FAILURE when operation failed
+*/
+
+int set_ip_address(char *link, char *address);
+
+/**
+ * \brief  Returns ip address as a string
+ *
+ * \param  link	  	link name
+ *
+ * \return  pointer to char array  containing ip address
+ * \return  NULL	when problems with reading occured 
+*/
+char* get_ip_address(char *link);
+
 
 /**
  * \brief  Removes a vnic
