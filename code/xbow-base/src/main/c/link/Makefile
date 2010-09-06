@@ -7,8 +7,8 @@ include Makefile.defs
 
 
 CC=gcc
-CFLAGS=-std=c99 -Wall -pedantic \
-       -Wno-missing-braces \
+CFLAGS=-std=c99 -pedantic \
+       -Wall -Wno-missing-braces -Wno-unknown-pragmas \
        -D__EXTENSIONS__
 
 LDFLAGS=-Wl,-R.

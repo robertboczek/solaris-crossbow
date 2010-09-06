@@ -7,8 +7,6 @@
 #define MAXFLOWINFOATTRS 10
 #define MAXFLOWINFOPROPS  5
 
-#define STATIC_CHECK( expr ) switch ( 0 ) { case 0: case expr:; }
-
 
 #endif
 

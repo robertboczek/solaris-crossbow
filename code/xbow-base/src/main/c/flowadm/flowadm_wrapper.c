@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <common/defs.h>
 #include <common/mappings.h>
 
 #include "aux.h"
