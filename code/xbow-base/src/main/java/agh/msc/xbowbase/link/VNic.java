@@ -18,11 +18,7 @@ public class VNic extends Link implements VNicMBean {
 
     private static final Logger logger = Logger.getLogger(VNic.class);
     private final String parent;
-    private final Map<LinkProperties, String> propertiesMap;
-    private final Map<LinkParameters, String> parametersMap;
-    private final Map<LinkStatistics, String> statisticsMap;
     private final boolean temporary;
-    private String ipAddress;
     private boolean plumbed;
     private boolean up;
     private boolean linkParent;
@@ -60,66 +56,6 @@ public class VNic extends Link implements VNicMBean {
         return this.propertiesMap;
 
     }
-
-    /**
-     * @see VNicMBean#setProperty(agh.msc.xbowbase.enums.LinkProperties, java.lang.String)
-     */
-    @Override
-    public void setProperty(LinkProperties property, String value) throws LinkException {
-
-        logger.info("Setting new property value to property " + property + " to vnic: " + this.name + " with value: " + value);
-
-        vNicHelper.setLinkProperty(this.name, property, value);
-        //@todo check return value
-        this.propertiesMap.put(property, value);
-    }
-
-    /**
-     * @see VNicMBean#getParameters() 
-     */
-    @Override
-    public Map<LinkParameters, String> getParameters() throws LinkException {
-
-        logger.info("Getting parameters map from vnic: " + this.name);
-
-        for (LinkParameters parameter : LinkParameters.values()) {
-            this.parametersMap.put(parameter, vNicHelper.getLinkParameter(name, parameter));
-        }
-        return this.parametersMap;
-    }
-
-    /**
-     * @see VNicMBean#getStatistics()
-     */
-    @Override
-    public Map<LinkStatistics, String> getStatistics() throws LinkException {
-
-        logger.info("Getting statistics map from vnic: " + this.name);
-
-        for (LinkStatistics statistic : LinkStatistics.values()) {
-            this.statisticsMap.put(statistic, vNicHelper.getLinkStatistic(name, statistic));
-        }
-        return this.statisticsMap;
-    }
-
-    /**
-     * @see VNicMBean#getIpAddress()
-     */
-    @Override
-    public String getIpAddress() throws LinkException {
-        //@todo use jna to get vnic's ip address
-        return this.ipAddress;
-    }
-
-    /**
-     * @see VNicMBean#setIpAddress(java.lang.String)
-     */
-    @Override
-    public void setIpAddress(String ipAddress) throws LinkException {
-        //@todo use jna to set vnic's ip address
-        this.ipAddress = ipAddress;
-    }
-
 
     /**
      * @see VNicMBean#isPlumbed()

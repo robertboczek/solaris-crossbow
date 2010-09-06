@@ -188,9 +188,23 @@ public class JNALinkHelper implements LinkHelper {
     @Override
     public void setIpAddress(String link, String ipAddress) throws LinkException {
 
+        logger.debug("Trying to set ip address: " + ipAddress + " to link: " + link);
+
         int returnValue = handle.set_ip_address(link, ipAddress);
 
-        //@todo obsluga bledow
+        if(returnValue == XbowStatus.XBOW_STATUS_OK.ordinal()){
+
+            return;
+        
+        }else if(returnValue == XbowStatus.XBOW_STATUS_OPERATION_FAILURE.ordinal()){
+
+            throw new LinkException("Couldn't set ip address - operation failed");
+
+        }else{
+
+            throw new LinkException("Unknown error occured while setting ip address");
+
+        }
 
     }
 }
