@@ -132,8 +132,9 @@ public class Nic implements NicMBean {
      */
     @Override
     public void setPlumbed(boolean plumbed) {
+			nicHelper.plumb( name );
 			// TODO-DAWID
-        throw new UnsupportedOperationException("Not supported yet.");
+        // throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**

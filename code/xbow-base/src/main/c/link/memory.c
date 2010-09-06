@@ -25,11 +25,13 @@ void free_nic_info( nic_info_t* nic_info )
 
 nic_infos_t* malloc_nic_infos( size_t len )
 {
+	int i = 0;
+
 	nic_infos_t* nic_infos = malloc( sizeof( *nic_infos ) );
 
 	nic_infos->nic_infos = malloc( ( len + 1 ) * sizeof( *( nic_infos->nic_infos ) ) );
 
-	for ( int i = 0; i < len; ++i )
+	for ( i = 0; i < len; ++i )
 	{
 		nic_infos->nic_infos[ i ] = malloc_nic_info();
 	}
@@ -41,7 +43,8 @@ nic_infos_t* malloc_nic_infos( size_t len )
 
 void free_nic_infos( nic_infos_t* nic_infos )
 {
-	for ( nic_info_t** it = nic_infos->nic_infos; *it != NULL; ++it )
+	nic_info_t** it;
+	for ( it = nic_infos->nic_infos; *it != NULL; ++it )
 	{
 		free_nic_info( *it );
 	}

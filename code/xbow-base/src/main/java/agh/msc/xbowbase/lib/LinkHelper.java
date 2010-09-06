@@ -63,4 +63,11 @@ public interface LinkHelper {
      */
     public String getLinkProperty(String name, LinkProperties property) throws LinkException;
 
+
+		public void plumb( String name );
+
+		public void setNetmask( String name, String mask );
+
+		public String getNetmask( String name );
+
 }

@@ -8,9 +8,11 @@ include Makefile.defs
 
 CC=gcc
 CFLAGS=-std=c99 -Wall -pedantic \
-       -g
+       -Wno-missing-braces \
+       -D__EXTENSIONS__
+
 LDFLAGS=-Wl,-R.
-LIBS=-ldladm -lsocket
+LIBS=-ldladm -lsocket -ldlpi
 BASENAME=link_wrapper
 LIBFNAME=lib$(BASENAME).so
 
@@ -22,7 +24,7 @@ mappings.o: ../common/mappings.c
 
 all: $(LIBFNAME) test
 
-$(LIBFNAME): link.o memory.o functor.o mappings.o
+$(LIBFNAME): link.o memory.o functor.o mappings.o ifconfig.o
 	$(CC) $(CFLAGS) -fPIC -shared -o $(LIBFNAME) $^ $(LIBS)
 
 test: test.c $(LIBFNAME)

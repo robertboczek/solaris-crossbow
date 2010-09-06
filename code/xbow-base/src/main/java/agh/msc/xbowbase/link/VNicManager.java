@@ -115,6 +115,7 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
             for (VNicMBean vNicMBean : currentMBeans) {
                 if (vnicSet.contains(vNicMBean) == false) {
                     //create and register new VnicMBean
+									( ( VNic ) vNicMBean ).setVNicHelper( vnicHelper );
                     registerNewVNicMBean(vNicMBean);
                 }
             }

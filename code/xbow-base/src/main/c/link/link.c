@@ -1,11 +1,19 @@
+// TODO: do wydzielenia do osobnego pliku/plikow czesc zwiazana z ip
+
+#include <arpa/inet.h>
 #include <kstat.h>
 #include <libdllink.h>
-#include <libdllink.h>
-#include <libdlvnic.h>
 #include <libdlstat.h>
+#include <libdlvnic.h>
+#include <net/if.h>
+#include <netinet/vrrp.h>
+#include <stropts.h>
+#include <sys/socket.h>
+#include <sys/sockio.h>
+#include <unistd.h>
 
-#include <stdlib.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "../common/mappings.h"
 
@@ -13,8 +21,6 @@
 #include "link.h"
 #include "memory.h"
 #include "types.h"
-
-#include <netinet/vrrp.h>
 
 #define MAXVNIC		256
 #define MAXLENGTH	100
@@ -126,9 +132,130 @@ nic_infos_t* get_nic_infos( void )
 	return nic_infos;
 }
 
+
+int set_netmask( char* link, char* mask )
+{
+	struct sockaddr_in netmask = { 0 };
+	int rc = XBOW_STATUS_OK;
+
+	if ( ! inet_aton( mask, &( netmask.sin_addr ) ) )
+	{
+		rc = XBOW_STATUS_INVALID_VALUE;
+	}
+	else
+	{
+		struct lifreq lifr = { 0 };
+		int s;
+
+		// Fill lifr's link name and netmask.
+
+		strncpy( lifr.lifr_name, link, sizeof( lifr.lifr_name ) );
+
+		netmask.sin_family = AF_INET;
+		memcpy( &lifr.lifr_addr, &netmask, sizeof( netmask ) );
+
+		// Try to open socket.
+
+		if ( -1 == (( s = socket( AF_INET, SOCK_DGRAM, 0 )) ) )
+		{
+			rc = XBOW_STATUS_UNKNOWN_ERR;
+		}
+		else
+		{
+			// Try to set netmask.
+
+			if ( ioctl( s, SIOCSLIFNETMASK, &lifr ) < 0 )
+			{
+				rc = XBOW_STATUS_IOCTL_ERR;
+			}
+			
+			close( s );
+		}
+	}
+
+	return rc;
+}
+
+
+char* get_netmask( char* link )
+{
+	int s;
+	size_t netmask_len = INET6_ADDRSTRLEN;
+	char* netmask = malloc( netmask_len );
+
+	memset( netmask, '\0', netmask_len );
+
+	// Try to create socket.
+
+	if ( -1 == (( s = socket( AF_INET, SOCK_DGRAM, 0 ) )) )
+	{
+		// TODO-DAWID: error handling
+	}
+	else
+	{
+		struct lifreq lifr = { 0 };
+		strncpy( lifr.lifr_name, link, sizeof( lifr.lifr_name ) );
+
+		// Retrieve netmask.
+
+		if ( ioctl( s, SIOCGLIFNETMASK, &lifr ) < 0 )
+		{
+			// TODO-DAWID: error handling
+		}
+		else
+		{
+			struct in_addr* addr = &( ( ( struct sockaddr_in* ) &lifr.lifr_addr )->sin_addr );
+
+			// Convert netmask to string.
+
+			if ( NULL == inet_ntop( AF_INET, addr, netmask, netmask_len ) )
+			{
+				// TODO-DAWID: error handling
+				
+				*netmask = '\0';
+			}
+		}
+
+		close( s );
+	}
+
+	return netmask;
+}
+
+
+int plumb( char* link )
+{
+	ifconfig_plumb( link );
+}
+
+
+int is_plumbed( char* link )
+{
+	int s;
+	int plumbed = 0;
+
+	// Try to create socket.
+
+	if ( -1 == (( s = socket( AF_INET, SOCK_DGRAM, 0 ) )) )
+	{
+		// TODO-DAWID: error handling
+	}
+	else
+	{
+		struct lifreq lifr = { 0 };
+		strncpy( lifr.lifr_name, link, sizeof( lifr.lifr_name ) );
+
+		plumbed = ( ioctl( s, SIOCGLIFNETMASK, &lifr ) >= 0 );
+
+		close( s );
+	}
+
+	return plumbed;
+}
+
+
 int delete_vnic( char* name, int temporary )
 {
-
 	datalink_id_t vnic_linkid;
 	dladm_status_t status;
 
@@ -145,7 +272,7 @@ int delete_vnic( char* name, int temporary )
 	if (status != DLADM_STATUS_OK)
 		return XBOW_STATUS_INVALID_NAME; 
 
-	status = dladm_vnic_delete(handle, vnic_linkid, flags);
+	// status = dladm_vnic_delete(handle, vnic_linkid, flags);
 
 	if (status != DLADM_STATUS_OK)
 		return XBOW_STATUS_OPERATION_FAILURE;
@@ -186,7 +313,6 @@ int create_vnic( char* name, int temporary, char *parent )
 	if (!dladm_valid_linkname(vnic_name))
 		return XBOW_STATUS_INVALID_NAME;
 	
-
 	status = dladm_vnic_create(handle, vnic_name, parent_linkid,
 	    VNIC_MAC_ADDR_TYPE_AUTO, mac_addr, maclen, NULL, 0, 0,
 	    VRRP_VRID_NONE, AF_UNSPEC, &vnic_linkid, NULL, flags);
@@ -243,7 +369,6 @@ char** get_link_names( int link_type )
 
 char* get_link_parameter( char *name, char* parameter)
 {
-
 	dladm_status_t status;
 	datalink_id_t linkid;
 	uint_t		maxpropertycnt = 1;
@@ -267,7 +392,6 @@ char* get_link_parameter( char *name, char* parameter)
 }
 
 char* get_link_statistic( char *name, char* property){
-
 	dladm_status_t status;
 	datalink_id_t linkid;
 	kstat_ctl_t	*kcp;
@@ -359,3 +483,4 @@ char* get_link_property( char *name, char* property )
 
 	return value;
 }
+

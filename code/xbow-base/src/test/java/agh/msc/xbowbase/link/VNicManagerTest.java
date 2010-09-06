@@ -82,6 +82,21 @@ public class VNicManagerTest {
         public String getLinkProperty(String name, LinkProperties property) throws LinkException {
             throw new UnsupportedOperationException("Not supported yet.");
         }
+
+		@Override
+		public void plumb(String name) {
+			throw new UnsupportedOperationException("Not supported yet.");
+		}
+
+		@Override
+		public void setNetmask(String name, String mask) {
+			throw new UnsupportedOperationException("Not supported yet.");
+		}
+
+		@Override
+		public String getNetmask(String name) {
+			throw new UnsupportedOperationException("Not supported yet.");
+		}
         
     }
 

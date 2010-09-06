@@ -134,8 +134,7 @@ public class VNic implements VNicMBean {
      */
     @Override
     public String getIpMask() throws LinkException {
-        //@todo use jna to get vnic's ip mask
-        return this.ipMask;
+			return vNicHelper.getNetmask( name );
     }
 
     /**
@@ -143,6 +142,9 @@ public class VNic implements VNicMBean {
      */
     @Override
     public void setIpMask(String ipMask) throws LinkException {
+
+			vNicHelper.setNetmask( name, ipMask );
+
         //@todo use jna to set vnic's ip mask
         this.ipMask = ipMask;
     }
@@ -161,6 +163,9 @@ public class VNic implements VNicMBean {
      */
     @Override
     public void setPlumbed(boolean plumbed) throws LinkException {
+
+			vNicHelper.plumb( name );
+
         //@todo use jna to set vnic's plumbed state
         this.plumbed = plumbed;
     }

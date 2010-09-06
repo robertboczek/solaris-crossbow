@@ -129,6 +129,33 @@ public class JNALinkHelper implements LinkHelper {
 
     }
 
+
+		@Override
+		public void plumb( String link ) {
+
+			logger.debug( "plumb: entry" );
+			handle.plumb( link );
+
+		}
+
+
+		@Override
+		public void setNetmask( String name, String mask ) {
+		
+			logger.debug( "setNetmask: entry" );
+			handle.set_netmask( name, mask );
+		
+		}
+
+
+		@Override
+		public String getNetmask( String name ) {
+
+			return handle.get_netmask( name );
+
+		}
+
+
     /**
      * Method return string on which Pointer p points and frees the memory allocated by the library
      *
