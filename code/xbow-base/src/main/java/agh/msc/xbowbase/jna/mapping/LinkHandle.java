@@ -46,8 +46,8 @@ public interface LinkHandle extends Library {
 	public int set_netmask( String link, String mask );
 	public String get_netmask( String link );
 
-        public String get_ip_address(String link);
-        public int set_ip_address(String link, String address);
+	public String get_ip_address(String link);
+	public int set_ip_address(String link, String address);
 
 	public int delete_vnic(String name, int temporary);
 	public int create_vnic(String name, int temporary, String parent);
@@ -57,10 +57,9 @@ public interface LinkHandle extends Library {
 	public Pointer get_link_property( String name, String property);
 	public int set_link_property( String name, String property, String value );
 
+	public void free( String s );
 	public void free_char_array( Pointer pointer );
 	public void free_char_string( Pointer pointer );
-
-
 	public void free_nic_info( NicInfoStruct nicInfoStruct );
 	public void free_nic_infos( NicInfosStruct linkInfosStruct );
 

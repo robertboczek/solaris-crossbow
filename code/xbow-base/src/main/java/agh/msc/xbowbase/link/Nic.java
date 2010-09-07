@@ -16,47 +16,6 @@ import org.apache.log4j.Logger;
  */
 public class Nic extends Link implements NicMBean {
 
-    /**
-     * @see NicMBean#getProperties()
-     */
-    @Override
-    public Map<LinkProperties, String> getProperties() throws LinkException {
-
-        logger.info("Getting properties map from nic: " + this.name);
-
-        for (LinkProperties property : LinkProperties.values()) {
-            this.propertiesMap.put(property, nicHelper.getLinkProperty(name, property));
-        }
-        return this.propertiesMap;
-
-    }
-
-    /**
-     * @see NicMBean#setProperty(agh.msc.xbowbase.enums.LinkProperties, java.lang.String)
-     */
-    @Override
-    public void setProperty(LinkProperties property, String value) throws LinkException {
-
-        logger.info("Setting new property value to property " + property + " to nic: " + this.name + " with value: " + value);
-
-        nicHelper.setLinkProperty(this.name, property, value);
-        //@todo check return value
-        this.propertiesMap.put(property, value);
-    }
-
-    /**
-     * @see NicMBean#getParameters()
-     */
-    @Override
-    public Map<LinkParameters, String> getParameters() throws LinkException {
-
-        logger.info("Getting parameters map from nic: " + this.name);
-
-        for (LinkParameters parameter : LinkParameters.values()) {
-            this.parametersMap.put(parameter, nicHelper.getLinkParameter(name, parameter));
-        }
-        return this.parametersMap;
-    }
 
     /**
      * @see NicMBean#getStatistics()
@@ -72,41 +31,6 @@ public class Nic extends Link implements NicMBean {
         return this.statisticsMap;
     }
 
-    /**
-     * @see  NicMBean#getIpAddress()
-     */
-    @Override
-    public String getIpAddress() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /**
-     * @see  NicMBean#setIpAddress( java.lang.String )
-     */
-    @Override
-    public void setIpAddress(String ipAddress) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-
-    /**
-     * @see  NicMBean#isPlumbed()
-     */
-    @Override
-    public boolean isPlumbed() {
-			// TODO-DAWID
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /**
-     * @see  NicMBean#setPlumbed( boolean )
-     */
-    @Override
-    public void setPlumbed(boolean plumbed) {
-			nicHelper.plumb( name );
-			// TODO-DAWID
-        // throw new UnsupportedOperationException("Not supported yet.");
-    }
 
     /**
      * @see  NicMBean#isUp()
@@ -166,7 +90,6 @@ public class Nic extends Link implements NicMBean {
     private Map<LinkStatistics, String> statisticsMap = new HashMap<LinkStatistics, String>();
     private Map<LinkProperties, String> propertiesMap = new HashMap<LinkProperties, String>();
     private Map<LinkParameters, String> parametersMap = new HashMap<LinkParameters, String>();
-    private String ipAddress;
     private boolean plumbed;
     private boolean up;
     NicHelper nicHelper;

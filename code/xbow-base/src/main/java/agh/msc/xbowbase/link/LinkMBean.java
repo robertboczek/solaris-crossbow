@@ -4,6 +4,7 @@ import agh.msc.xbowbase.enums.LinkParameters;
 import agh.msc.xbowbase.enums.LinkProperties;
 import agh.msc.xbowbase.enums.LinkStatistics;
 import agh.msc.xbowbase.exception.LinkException;
+import agh.msc.xbowbase.exception.ValidationException;
 import java.util.Map;
 
 
@@ -78,7 +79,7 @@ public interface LinkMBean {
 	 *
 	 * @param  ipMask  IP mask
 	 */
-	public void setIpMask(String ipMask) throws LinkException;
+	public void setIpMask(String ipMask) throws ValidationException, LinkException;
 
 	/**
 	 * @brief  Plumbed getter method.

@@ -5,6 +5,8 @@ import agh.msc.xbowbase.enums.LinkProperties;
 import agh.msc.xbowbase.enums.LinkStatistics;
 import agh.msc.xbowbase.exception.InvalidLinkNameException;
 import agh.msc.xbowbase.exception.LinkException;
+import agh.msc.xbowbase.exception.ValidationException;
+import agh.msc.xbowbase.exception.XbowException;
 import agh.msc.xbowbase.jna.mapping.LinkHandle;
 import agh.msc.xbowbase.lib.LinkHelper;
 import com.sun.jna.Native;
@@ -139,19 +141,39 @@ public class JNALinkHelper implements LinkHelper {
 		}
 
 
+		/**
+		 * @see  LinkHelper#setNetmask(java.lang.String, java.lang.String)
+		 */
 		@Override
-		public void setNetmask( String name, String mask ) {
-		
-			logger.debug( "setNetmask: entry" );
-			handle.set_netmask( name, mask );
+		public void setNetmask( String name, String mask ) throws ValidationException,
+		                                                          LinkException {
+
+			logger.info( "Setting " + name + " mask to " + mask );
+
+			int rc = handle.set_netmask( name, mask );
+
+			if ( XbowStatus.XBOW_STATUS_OK.ordinal() != rc ) {
+
+				if ( XbowStatus.XBOW_STATUS_INVALID_VALUE.ordinal() == rc ) {
+					throw new ValidationException( mask );
+				} else {
+					throw new LinkException( "set_netmask returned with rc == " + String.valueOf( rc ) );
+				}
+
+			}
 		
 		}
 
 
 		@Override
-		public String getNetmask( String name ) {
+		public String getNetmask( String link ) {
 
-			return handle.get_netmask( name );
+			String netmask = handle.get_netmask( link );
+			String res = new String( netmask );
+
+			handle.free( netmask );
+
+			return res;
 
 		}
 
