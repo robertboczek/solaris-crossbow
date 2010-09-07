@@ -4,6 +4,7 @@ import agh.msc.xbowbase.enums.LinkParameters;
 import agh.msc.xbowbase.enums.LinkProperties;
 import agh.msc.xbowbase.enums.LinkStatistics;
 import agh.msc.xbowbase.exception.LinkException;
+import agh.msc.xbowbase.exception.ValidationException;
 
 /**
  * Link helper interface.
@@ -63,11 +64,35 @@ public interface LinkHelper {
      */
     public String getLinkProperty(String name, LinkProperties property) throws LinkException;
 
-    public void plumb(String name);
+    /**
+     * @brief  Performs plumbing needed for IP to use link.
+     *
+     * @param  link  link name
+     *
+     * // TODO-DAWID: exceptions
+     */
+    public void plumb(String link);
 
-    public void setNetmask(String name, String mask);
+    /**
+     * @brief  For given interface, sets its netmask.
+     *
+     * @param  name  the name of the link
+     * @param  mask  netmask (string form - e.g. 255.255.255.0) to be set
+     *
+     * @throws  ValidationException  the mask has invalid format
+     * @throws  LinkException        internal exception
+     */
+    public void setNetmask(String name, String mask) throws ValidationException,
+            LinkException;
 
-    public String getNetmask(String name);
+    /**
+     * @brief  Retrieves netmask for link.
+     *
+     * @param  link  link name
+     *
+     * @return  string representation of netmask set for link
+     */
+    public String getNetmask(String link);
 
     /**
      * Returns ip address assigned to this link

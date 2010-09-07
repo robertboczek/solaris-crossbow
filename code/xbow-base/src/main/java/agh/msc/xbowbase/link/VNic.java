@@ -1,12 +1,7 @@
 package agh.msc.xbowbase.link;
 
-import agh.msc.xbowbase.enums.LinkParameters;
-import agh.msc.xbowbase.enums.LinkProperties;
-import agh.msc.xbowbase.enums.LinkStatistics;
 import agh.msc.xbowbase.exception.LinkException;
 import agh.msc.xbowbase.lib.VNicHelper;
-import java.util.HashMap;
-import java.util.Map;
 import org.apache.log4j.Logger;
 
 /**
@@ -32,29 +27,9 @@ public class VNic extends Link implements VNicMBean {
      * @param parent Name of link under whom this vnic works
      */
     public VNic(String name, boolean temporary, String parent) {
-        this.name = name;
+        super(name);
         this.temporary = temporary;
         this.parent = parent;
-
-        propertiesMap = new HashMap<LinkProperties, String>();
-        parametersMap = new HashMap<LinkParameters, String>();
-        statisticsMap = new HashMap<LinkStatistics, String>();
-    }
-
-
-    /**
-     * @see VNicMBean#getProperties() 
-     */
-    @Override
-    public Map<LinkProperties, String> getProperties() throws LinkException {
-
-        logger.info("Getting properties map from vnic: " + this.name);
-
-        for (LinkProperties property : LinkProperties.values()) {
-            this.propertiesMap.put(property, vNicHelper.getLinkProperty(name, property));
-        }
-        return this.propertiesMap;
-
     }
 
     /**
@@ -72,7 +47,7 @@ public class VNic extends Link implements VNicMBean {
     @Override
     public void setPlumbed(boolean plumbed) throws LinkException {
 
-			vNicHelper.plumb( name );
+        vNicHelper.plumb(name);
 
         //@todo use jna to set vnic's plumbed state
         this.plumbed = plumbed;
@@ -150,6 +125,6 @@ public class VNic extends Link implements VNicMBean {
 
     public void setVNicHelper(VNicHelper vNicHelper) {
         this.vNicHelper = vNicHelper;
-				super.linkHelper = vNicHelper;
+        super.linkHelper = vNicHelper;
     }
 }

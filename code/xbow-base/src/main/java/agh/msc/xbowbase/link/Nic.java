@@ -1,9 +1,6 @@
 package agh.msc.xbowbase.link;
 
-import agh.msc.xbowbase.exception.LinkException;
 import agh.msc.xbowbase.lib.NicHelper;
-import agh.msc.xbowbase.enums.LinkProperties;
-import java.util.Map;
 import org.apache.log4j.Logger;
 
 /**
@@ -14,20 +11,14 @@ import org.apache.log4j.Logger;
 public class Nic extends Link implements NicMBean {
 
     /**
-     * @see NicMBean#getProperties()
+     * Constructor of Nic object
+     *
+     * @param name Nic name value
      */
-    @Override
-    public Map<LinkProperties, String> getProperties() throws LinkException {
-
-        logger.info("Getting properties map from nic: " + this.name);
-
-        for (LinkProperties property : LinkProperties.values()) {
-            this.propertiesMap.put(property, nicHelper.getLinkProperty(name, property));
-        }
-        return this.propertiesMap;
-
+    public Nic(String name){
+        super(name);
     }
-
+    
     /**
      * @see  NicMBean#isPlumbed()
      */
@@ -65,7 +56,7 @@ public class Nic extends Link implements NicMBean {
 
     public void setNicHelper(NicHelper nicHelper) {
         this.nicHelper = nicHelper;
-				super.linkHelper = nicHelper;
+	super.linkHelper = nicHelper;
     }
 
     @Override
