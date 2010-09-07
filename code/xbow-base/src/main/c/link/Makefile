@@ -3,6 +3,8 @@
 # INCDIR  passed to $(CC) with -I option
 # LIBDIR  passed to linker with -L option
 
+include Makefile.defs
+
 
 CC=gcc
 CFLAGS=-std=c99 -pedantic \
