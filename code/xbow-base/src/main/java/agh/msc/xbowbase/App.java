@@ -1,12 +1,10 @@
 package agh.msc.xbowbase;
 
 import agh.msc.xbowbase.etherstub.EtherstubManager;
-import agh.msc.xbowbase.flow.FlowAccounting;
 import agh.msc.xbowbase.publisher.FlowMBeanPublisher;
 import agh.msc.xbowbase.flow.FlowManager;
 import agh.msc.xbowbase.jna.JNAEtherstubHelper;
 import agh.msc.xbowbase.jna.JNAFlowHelper;
-import agh.msc.xbowbase.jna.JNALinkHelper;
 import agh.msc.xbowbase.jna.JNANicHelper;
 import agh.msc.xbowbase.jna.JNAVNicHelper;
 import agh.msc.xbowbase.lib.EtherstubHelper;
@@ -15,6 +13,8 @@ import agh.msc.xbowbase.lib.NicHelper;
 import agh.msc.xbowbase.lib.VNicHelper;
 import agh.msc.xbowbase.link.NicManager;
 import agh.msc.xbowbase.link.VNicManager;
+import agh.msc.xbowbase.link.validators.LinkValidator;
+import agh.msc.xbowbase.link.validators.RegexLinkValidator;
 import agh.msc.xbowbase.publisher.EtherstubMBeanPublisher;
 import agh.msc.xbowbase.publisher.NicMBeanPublisher;
 import agh.msc.xbowbase.publisher.VNicMBeanPublisher;
@@ -37,11 +37,14 @@ public class App {
 
 		MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
 
+                // Validators
+                LinkValidator linkValidator = new RegexLinkValidator();
+
 		// Initialize flowadm wrapper.
 
 		FlowHelper flowadm = new JNAFlowHelper();
-		NicHelper nicHelper = new JNANicHelper();
-                VNicHelper vnicHelper = new JNAVNicHelper();
+		NicHelper nicHelper = new JNANicHelper(linkValidator);
+                VNicHelper vnicHelper = new JNAVNicHelper(linkValidator);
 		EtherstubHelper etherstubHelper = new JNAEtherstubHelper();
 
 		// Create FlowManager.

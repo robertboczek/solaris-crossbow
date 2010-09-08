@@ -6,9 +6,9 @@ import agh.msc.xbowbase.enums.LinkStatistics;
 import agh.msc.xbowbase.exception.InvalidLinkNameException;
 import agh.msc.xbowbase.exception.LinkException;
 import agh.msc.xbowbase.exception.ValidationException;
-import agh.msc.xbowbase.exception.XbowException;
 import agh.msc.xbowbase.jna.mapping.LinkHandle;
 import agh.msc.xbowbase.lib.LinkHelper;
+import agh.msc.xbowbase.link.validators.LinkValidator;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import org.apache.log4j.Logger;
@@ -21,6 +21,8 @@ import org.apache.log4j.Logger;
  */
 public class JNALinkHelper implements LinkHelper {
 
+    private LinkValidator linkValidator;
+
     /**
      * Creates the helper object and initializes underlying handler.
      */
@@ -32,13 +34,37 @@ public class JNALinkHelper implements LinkHelper {
     }
 
     /**
-     * Creates the helper object using user-provided JNA handle.
+     * Creates the helper object and initializes underlying handler.
+     *
+     * @param linkValidator LinkValidator implementation
+     */
+    public JNALinkHelper(LinkValidator linkValidator) {
+
+        this();
+        this.linkValidator = linkValidator;
+
+    }
+
+    /**
+     * Creates the helper object using user-provided JNA handle and user-provided validator
+     *
+     * @param  handle  JNA handle
+     * @param linkValidator LinkValidator implementation
+     */
+    public JNALinkHelper(LinkHandle handle, LinkValidator linkValidator) {
+        this(handle);
+        this.linkValidator = linkValidator;
+    }
+
+    /**
+     * Creates the helper object using user-provided JNA handle and user-provided validator
      *
      * @param  handle  JNA handle
      */
     public JNALinkHelper(LinkHandle handle) {
         this.handle = handle;
     }
+
 
     /**
      * @see  NicHelper#getLinkNames(boolean)
@@ -208,9 +234,16 @@ public class JNALinkHelper implements LinkHelper {
      * @see LinkHelper#setIpAddress(java.lang.String, java.lang.String)
      */
     @Override
-    public void setIpAddress(String link, String ipAddress) throws LinkException {
+    public void setIpAddress(String link, String ipAddress) throws LinkException, ValidationException {
 
         logger.debug("Trying to set ip address: " + ipAddress + " to link: " + link);
+
+        if(linkValidator != null &&
+                linkValidator.isIpAddressValid(ipAddress) == false){
+
+            throw new ValidationException("Provided ipAddress: " + ipAddress + " is incorrect. Couldn't change ip address to: " + link);
+
+        }
 
         int returnValue = handle.set_ip_address(link, ipAddress);
 
@@ -228,5 +261,16 @@ public class JNALinkHelper implements LinkHelper {
 
         }
 
+    }
+
+    /**
+     * Setter of linkValidator variable
+     *
+     * @param linkValidator LinkValidator implementation instance
+     */
+    public void setLinkValidator(LinkValidator linkValidator){
+
+        this.linkValidator = linkValidator;
+        
     }
 }

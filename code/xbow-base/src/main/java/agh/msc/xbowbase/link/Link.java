@@ -81,7 +81,9 @@ public abstract class Link implements LinkMBean {
             linkHelper.setIpAddress(this.name, ipAddress);
 
         } catch (LinkException e) {
-            logger.error("Couldn't set new ip address: " + ipAddress + " to vnic: " + this.name);
+            logger.error("Couldn't set new ip address: " + ipAddress + " to vnic: " + this.name, e);
+        } catch (ValidationException e2) {
+            logger.error("Couldn't set new ip address: " + ipAddress + " to vnic: " + this.name + ". Ip format is incorrect", e2);
         }
     }
 

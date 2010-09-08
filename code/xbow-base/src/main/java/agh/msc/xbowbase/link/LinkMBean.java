@@ -65,7 +65,7 @@ public interface LinkMBean {
 	 *
 	 * @param  ipAddress  IP address
 	 */
-	public void setIpAddress(String ipAddress) throws LinkException;
+	public void setIpAddress(String ipAddress) throws LinkException, ValidationException;
 
 	/**
 	 * @brief  IP mask getter method.

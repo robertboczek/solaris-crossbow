@@ -3,6 +3,7 @@ package agh.msc.xbowbase.jna;
 import agh.msc.xbowbase.jna.mapping.LinkHandle;
 import agh.msc.xbowbase.lib.NicHelper;
 import agh.msc.xbowbase.link.NicInfo;
+import agh.msc.xbowbase.link.validators.LinkValidator;
 import com.sun.jna.Pointer;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,6 +18,32 @@ import org.apache.log4j.Logger;
 public class JNANicHelper extends JNALinkHelper implements NicHelper {
 
     private static final Logger logger = Logger.getLogger(JNANicHelper.class);
+
+    /**
+     * Constructor of JNANicHelper object injecting LinkHandle object instance
+     *
+     * @param linkHandle Reference to LinkHandle object
+     */
+    public JNANicHelper(LinkHandle linkHandle){
+        super(linkHandle);
+    }
+
+    /**
+     * Constructor of JNANicHelper object injecting LinkValidator object instance
+     *
+     * @param linkHandle Reference to LinkHandle object
+     */
+    public JNANicHelper(LinkValidator linkValidator){
+        super(linkValidator);
+    }
+
+
+    /**
+     * Default constructor
+     */
+    public JNANicHelper(){
+
+    }
 
     /**
      * @see  NicHelper#getNicsInfo( java.util.List )

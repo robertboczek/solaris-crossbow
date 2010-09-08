@@ -6,6 +6,7 @@ import agh.msc.xbowbase.exception.TooLongLinkNameException;
 import agh.msc.xbowbase.jna.mapping.LinkHandle;
 import agh.msc.xbowbase.lib.NicHelper;
 import agh.msc.xbowbase.lib.VNicHelper;
+import agh.msc.xbowbase.link.validators.LinkValidator;
 import org.apache.log4j.Logger;
 
 /**
@@ -26,12 +27,22 @@ public class JNAVNicHelper extends JNALinkHelper implements VNicHelper{
     public JNAVNicHelper(LinkHandle linkHandle){
         super(linkHandle);
     }
+    
+    /**
+     * Constructor of JNAVNicHelper object injecting LinkValidator object instance
+     *
+     * @param linkHandle Reference to LinkHandle object
+     */
+    public JNAVNicHelper(LinkValidator linkValidator){
+        super(linkValidator);
+    }
+    
 
     /**
      * Default constructor
      */
     public JNAVNicHelper(){
-        
+
     }
 
     /**

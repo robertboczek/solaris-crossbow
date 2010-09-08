@@ -110,5 +110,5 @@ public interface LinkHelper {
      * @param ipAddress New ipv4 address( for example: '192.168.0.123' )
      * @throws LinkException Exception thrown when error with setting ip address occur
      */
-    public void setIpAddress(String link, String ipAddress) throws LinkException;
+    public void setIpAddress(String link, String ipAddress) throws LinkException, ValidationException;
 }
