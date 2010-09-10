@@ -1,0 +1,33 @@
+<project>
+
+	<parent>
+		<groupId>xbow</groupId>
+		<artifactId>xbow</artifactId>
+		<version>1.0.0</version>
+	</parent>
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>xbow-native</groupId>
+	<artifactId>xbow-native</artifactId>
+	<version>1.0.0</version>
+	<name>xbow-native</name>
+	<packaging>pom</packaging>
+
+	<modules>
+		<module>xbow-native-system-headers</module>
+		<module>xbow-native-common</module>
+		<module>xbow-native-lib</module>
+	</modules>
+
+	<dependencies>
+		<dependency>
+			<groupId>xbow-native</groupId>
+			<artifactId>system-headers</artifactId>
+			<version>1.0.0</version>
+			<type>inczip</type>
+		</dependency>
+	</dependencies>
+
+</project>
+

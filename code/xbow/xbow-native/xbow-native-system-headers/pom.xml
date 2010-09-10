@@ -1,0 +1,40 @@
+<project>
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>xbow-native</groupId>
+	<artifactId>system-headers</artifactId>
+	<version>1.0.0</version>
+	<name>system-headers</name>
+	<packaging>a</packaging>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>native-maven-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+
+					<sources>
+						<source>
+							<directory>src/main/c</directory>
+							<includes>
+								<include>**/*.c</include>
+							</includes>
+							<deployable>true</deployable>
+						</source>
+					</sources>
+
+					<linkerProvider>ar</linkerProvider>
+					<linkerStartOptions>
+						<linkerStartOption>rc</linkerStartOption>
+					</linkerStartOptions>
+
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
+

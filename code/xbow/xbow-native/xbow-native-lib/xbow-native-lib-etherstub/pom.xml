@@ -1,0 +1,48 @@
+<project>
+
+	<parent>
+		<groupId>xbow-native</groupId>
+		<artifactId>xbow-native-lib</artifactId>
+		<version>1.0.0</version>
+	</parent>
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>xbow-native</groupId>
+	<artifactId>etherstub</artifactId>
+	<version>1.0.0</version>
+	<name>libetherstub.so</name>
+	<packaging>so</packaging>
+
+	<build>   
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>native-maven-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<sources>
+						<source>
+							<directory>src/main/c</directory>
+							<includes>
+								<include>**/*.c</include>
+							</includes>
+						</source>
+					</sources>
+
+					<compilerProvider>generic-classic</compilerProvider>
+					<compilerStartOptions>
+						<compilerStartOption>${commonCompilerOptions}</compilerStartOption>
+					</compilerStartOptions>
+
+					<linkerStartOptions>
+						<linkerStartOption>${commonLinkerOptions}</linkerStartOption>
+						<linkerStartOption>-lkstat</linkerStartOption>
+					</linkerStartOptions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
+

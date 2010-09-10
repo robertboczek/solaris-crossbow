@@ -1,0 +1,47 @@
+<project>
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>xbow-native</groupId>
+	<artifactId>xbow-native-lib</artifactId>
+	<version>1.0.0</version>
+	<name>xbow-native-lib</name>
+	<packaging>pom</packaging>
+
+	<modules>
+		<module>xbow-native-lib-etherstub</module>
+		<module>xbow-native-lib-flow</module>
+		<module>xbow-native-lib-link</module>
+	</modules>
+
+	<dependencies>
+		<dependency>
+			<groupId>xbow-native</groupId>
+			<artifactId>libcommon</artifactId>
+			<version>1.0.0</version>
+			<type>inczip</type>
+		</dependency>
+		<dependency>
+			<groupId>xbow-native</groupId>
+			<artifactId>libcommon</artifactId>
+			<version>1.0.0</version>
+			<type>a</type>
+		</dependency>
+	</dependencies>
+
+	<properties>
+
+		<commonCompilerOptions>
+			-std=c99
+			-D__EXTENSIONS__
+			-fPIC
+			-Wall -pedantic
+			-g 
+		</commonCompilerOptions>
+
+		<commonLinkerOptions>-ldladm</commonLinkerOptions>
+
+	</properties>
+
+</project>
+

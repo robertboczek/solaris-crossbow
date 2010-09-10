@@ -1,0 +1,17 @@
+<project>
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>xbow</groupId>
+	<artifactId>xbow</artifactId>
+	<version>1.0.0</version>
+	<name>xbow</name>
+	<packaging>pom</packaging>
+
+	<modules>
+		<module>xbow-native</module>
+		<module>xbow-mbean</module>
+	</modules>
+
+</project>
+
