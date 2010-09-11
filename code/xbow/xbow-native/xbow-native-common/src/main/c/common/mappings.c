@@ -59,7 +59,7 @@ int map_status( int dladm_status )
 {
 	int xbow_status = XBOW_STATUS_UNKNOWN_ERR;
 
-	if ( dladm_status <= max_dladm_status )
+	if ( ( 0 <= dladm_status ) && ( dladm_status <= max_dladm_status ) )
 	{
 		// The mapping can be read from internal_mappings array. Get it.
 

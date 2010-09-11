@@ -1,4 +1,14 @@
 BUILDING
 
-Cmockery (http://code.google.com/p/cmockery/) has to be installed (headers & lib) in order to build the native part.
+* Cmockery
+
+  Cmockery (http://code.google.com/p/cmockery/) has to be installed
+  (headers & lib) in order to build the native part.
+
+	Remember to add Cmockery lib path to LD_LIBRARY_PATH.
+
+
+* Maven
+
+	Invoke mvn inside xbow dir to build the source.
 

@@ -25,6 +25,11 @@
 					</libraries>
 					<linker>
 						<name>gcc</name>
+						<sysLibs>
+							<sysLib>
+								<name>cmockery</name>
+							</sysLib>
+						</sysLibs>
 					</linker>
 					<c>
 						<name>gcc</name>
@@ -35,14 +40,12 @@
 							<option>-fPIC</option>
 						</options>
 					</c>
-					<!--
 					<tests>
 						<test>
 							<name>test</name>
 							<link>static</link>
 						</test>
 					</tests>
-					-->
 				</configuration>
 			</plugin>
 
