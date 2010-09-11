@@ -5,6 +5,7 @@ import agh.msc.xbowbase.exception.ValidationException;
 import agh.msc.xbowbase.exception.XbowException;
 import agh.msc.xbowbase.jna.mapping.LinkHandle;
 import agh.msc.xbowbase.lib.LinkHelper;
+import agh.msc.xbowbase.link.validators.LinkValidator;
 import org.junit.After;
 import org.junit.Before;
 
@@ -23,11 +24,13 @@ public class JNALinkHelperTest {
 
     private LinkHelper linkHelper;
     private LinkHandle handle;
+    private LinkValidator linkValidator;
 
     @Before
     public void setUp() {
 
             handle = mock( LinkHandle.class );
+            linkValidator = mock( LinkValidator.class );
             linkHelper = new JNALinkHelper(handle);
     }
 
@@ -56,7 +59,7 @@ public class JNALinkHelperTest {
     }
 
     @Test
-    public void testSuccessfulSettingIpAddress() throws LinkException{
+    public void testSuccessfulSettingIpAddress() throws LinkException, ValidationException{
 
         String linkName = "e1000g0";
         String address = "192.168.0.10";
@@ -71,7 +74,7 @@ public class JNALinkHelperTest {
     }
 
     @Test(expected=LinkException.class)
-    public void testSettingIpAddressWhenOperationFails() throws LinkException{
+    public void testSettingIpAddressWhenOperationFails() throws LinkException, ValidationException{
 
         String linkName = "e1000g0";
         String address = "192.168.0.10";
@@ -81,6 +84,34 @@ public class JNALinkHelperTest {
         when(handle.set_ip_address(anyString(), anyString())).thenReturn(XbowStatus.XBOW_STATUS_OPERATION_FAILURE.ordinal());
 
         assertEquals(address, linkHelper.getIpAddress(linkName));
+        linkHelper.setIpAddress(linkName, address);
+    }
+
+    @Test(expected=ValidationException.class)
+    public void testSettingIpAddressWithWrongFormat() throws LinkException, ValidationException{
+
+        String linkName = "e1000g0";
+        String address = "02.266.0.10";
+
+        linkHelper = new JNALinkHelper(handle, linkValidator);
+        when(linkValidator.isIpAddressValid(anyString())).thenReturn(Boolean.FALSE);
+
+        linkHelper.setIpAddress(linkName, address);
+    }
+
+    @Test
+    public void testSettingIpAddressWithCorrectFormat() throws LinkException, ValidationException{
+
+        String linkName = "e1000g0";
+        String address = "102.243.0.10";
+
+        linkHelper = new JNALinkHelper(handle, linkValidator);
+        when(linkValidator.isIpAddressValid(anyString())).thenReturn(Boolean.TRUE);
+
+        when(handle.get_ip_address(anyString())).thenReturn(address);
+
+        when(handle.set_ip_address(anyString(), anyString())).thenReturn(XbowStatus.XBOW_STATUS_OK.ordinal());
+
         linkHelper.setIpAddress(linkName, address);
     }
 
