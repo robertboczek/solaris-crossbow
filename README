@@ -1,0 +1,4 @@
+BUILDING
+
+Cmockery (http://code.google.com/p/cmockery/) has to be installed (headers & lib) in order to build the native part.
+

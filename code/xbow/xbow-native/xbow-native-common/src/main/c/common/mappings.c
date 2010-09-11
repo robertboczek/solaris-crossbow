@@ -2,8 +2,8 @@
 
 #include <stdlib.h>
 
-#include "defs.h"
-#include "mappings.h"
+#include <common/defs.h>
+#include <common/mappings.h>
 
 
 static int mappings[][ 2 ] = {

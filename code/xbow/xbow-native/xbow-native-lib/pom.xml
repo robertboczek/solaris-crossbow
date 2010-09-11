@@ -17,15 +17,15 @@
 	<dependencies>
 		<dependency>
 			<groupId>xbow-native</groupId>
-			<artifactId>libcommon</artifactId>
+			<artifactId>system-headers</artifactId>
 			<version>1.0.0</version>
-			<type>inczip</type>
+			<type>nar</type>
 		</dependency>
 		<dependency>
 			<groupId>xbow-native</groupId>
-			<artifactId>libcommon</artifactId>
+			<artifactId>common</artifactId>
 			<version>1.0.0</version>
-			<type>a</type>
+			<type>nar</type>
 		</dependency>
 	</dependencies>
 
@@ -33,13 +33,14 @@
 
 		<commonCompilerOptions>
 			-std=c99
-			-D__EXTENSIONS__
 			-fPIC
 			-Wall -pedantic
 			-g 
 		</commonCompilerOptions>
 
-		<commonLinkerOptions>-ldladm</commonLinkerOptions>
+		<commonDefines>__EXTENSIONS__</commonDefines>
+
+		<commonLinkerOptions></commonLinkerOptions>
 
 	</properties>
 

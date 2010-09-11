@@ -25,7 +25,7 @@
 			<groupId>xbow-native</groupId>
 			<artifactId>system-headers</artifactId>
 			<version>1.0.0</version>
-			<type>inczip</type>
+			<type>nar</type>
 		</dependency>
 	</dependencies>
 
