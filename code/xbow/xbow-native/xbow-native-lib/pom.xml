@@ -40,7 +40,7 @@
 
 		<commonDefines>__EXTENSIONS__</commonDefines>
 
-		<commonLinkerOptions></commonLinkerOptions>
+		<commonLinkerOptions>-ldladm</commonLinkerOptions>
 
 	</properties>
 
