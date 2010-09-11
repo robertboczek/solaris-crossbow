@@ -24,6 +24,7 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
 
     /** Logger */
     private static final Logger logger = Logger.getLogger(Nic.class);
+    private static final String vnicLiteral = "VNic ";
     private Publisher publisher;
     private VNicHelper vnicHelper;
 
@@ -58,10 +59,10 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
             discover();
 
         } catch (InvalidLinkNameException ex) {
-            logger.error("VNic " + vNicMBean + " couldn't be created", ex);
+            logger.error(vnicLiteral + vNicMBean + " couldn't be created", ex);
             throw ex;
         } catch (LinkException e) {
-            logger.error("VNic " + vNicMBean + " couldn't be created", e);
+            logger.error(vnicLiteral + vNicMBean + " couldn't be created", e);
             throw e;
         }
 
@@ -82,10 +83,10 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
             discover();
 
         } catch (InvalidLinkNameException ex) {
-            logger.error("VNic " + name + " couldn't be created", ex);
+            logger.error(vnicLiteral + name + " couldn't be created", ex);
             throw ex;
         } catch (LinkException e) {
-            logger.error("VNic " + name + " couldn't be deleted", e);
+            logger.error(vnicLiteral + name + " couldn't be deleted", e);
             throw e;
         }
     }

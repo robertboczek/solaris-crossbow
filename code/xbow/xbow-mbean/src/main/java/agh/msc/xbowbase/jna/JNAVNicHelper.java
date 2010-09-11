@@ -52,6 +52,7 @@ public class JNAVNicHelper extends JNALinkHelper implements VNicHelper{
     public void deleteVNic(String name, boolean temporary) throws LinkException {
 
         int persitent_type = checkPersistenceType(temporary);
+        
         logger.info("Trying to remove vnic : " + name + ", temporary: " + temporary);
         int rc = handle.delete_vnic(name, persitent_type);
 
@@ -73,6 +74,7 @@ public class JNAVNicHelper extends JNALinkHelper implements VNicHelper{
     public void createVNic(String name, boolean temporary, String parent) throws LinkException {
 
         int persitent_type = checkPersistenceType(temporary);
+
         logger.info("Trying to create vnic : " + name + ", temporary: " + temporary);
         int rc = handle.create_vnic(name, persitent_type, parent);
 
