@@ -10,12 +10,12 @@
 #include <common/defs.h>
 #include <common/mappings.h>
 
-#include "aux.h"
-#include "defs.h"
-#include "flowadm_wrapper.h"
-#include "functor.h"
-#include "memory.h"
-#include "types.h"
+#include <flow/aux.h>
+#include <flow/defs.h>
+#include <flow/flowadm_wrapper.h>
+#include <flow/functor.h>
+#include <flow/memory.h>
+#include <flow/types.h>
 
 
 dladm_handle_t handle = 0;

@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "etherstub.h"
+#include <etherstub/etherstub.h>
 
 
 int main( int agrc, char** argv )

@@ -1,4 +1,4 @@
-#include "functor.h"
+#include <link/functor.h>
 
 
 int count( dladm_handle_t handle, datalink_id_t link_id, void* counter )

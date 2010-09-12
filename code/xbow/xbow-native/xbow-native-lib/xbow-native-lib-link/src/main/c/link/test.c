@@ -4,8 +4,8 @@
 
 #include <common/defs.h>
 
-#include "ip.h"
-#include "link.h"
+#include <link/ip.h>
+#include <link/link.h>
 
 
 int main( int agrc, char** argv )

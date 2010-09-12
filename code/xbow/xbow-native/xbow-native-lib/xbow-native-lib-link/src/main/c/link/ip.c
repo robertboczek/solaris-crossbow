@@ -11,7 +11,7 @@
 #include <common/defs.h>
 #include <common/mappings.h>
 
-#include "ip.h"
+#include <link/ip.h>
 
 
 int set_netmask( char* link, char* mask )

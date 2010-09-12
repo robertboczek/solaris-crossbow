@@ -4,8 +4,8 @@
 
 #include <common/defs.h>
 
-#include "defs.h"
-#include "memory.h"
+#include <flow/defs.h>
+#include <flow/memory.h>
 
 
 key_value_pairs_t* malloc_key_value_pairs( size_t len )

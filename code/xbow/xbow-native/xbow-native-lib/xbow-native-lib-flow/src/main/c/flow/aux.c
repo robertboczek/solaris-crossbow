@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "aux.h"
+#include <flow/aux.h>
 
 
 char* strend( char* s )

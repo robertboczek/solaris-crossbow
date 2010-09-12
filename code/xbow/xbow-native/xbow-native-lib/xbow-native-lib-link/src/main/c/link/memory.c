@@ -2,8 +2,8 @@
 
 #include <stdlib.h>
 
-#include "memory.h"
-#include "types.h"
+#include <link/memory.h>
+#include <link/types.h>
 
 
 nic_info_t* malloc_nic_info( void )

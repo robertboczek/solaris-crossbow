@@ -1,4 +1,4 @@
-#include "memory.h"
+#include <etherstub/memory.h>
 
 void free_char_array( char **array ){
 

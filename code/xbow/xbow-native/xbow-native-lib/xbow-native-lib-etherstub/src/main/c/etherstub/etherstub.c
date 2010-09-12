@@ -10,7 +10,7 @@
 
 #include <netinet/vrrp.h>
 
-#include "etherstub.h"
+#include <etherstub/etherstub.h>
 
 #define MAXVNIC		256
 #define MAXLENGTH	100

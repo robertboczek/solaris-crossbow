@@ -11,10 +11,10 @@
 #include <common/defs.h>
 #include <common/mappings.h>
 
-#include "functor.h"
-#include "link.h"
-#include "memory.h"
-#include "types.h"
+#include <link/functor.h>
+#include <link/link.h>
+#include <link/memory.h>
+#include <link/types.h>
 
 #define MAXVNIC		256
 #define MAXLENGTH	100

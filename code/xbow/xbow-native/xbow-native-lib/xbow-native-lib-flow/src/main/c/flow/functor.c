@@ -5,9 +5,9 @@
 
 #include <common/defs.h>
 
-#include "defs.h"
-#include "functor.h"
-#include "types.h"
+#include <flow/defs.h>
+#include <flow/functor.h>
+#include <flow/types.h>
 
 
 extern dladm_handle_t handle;

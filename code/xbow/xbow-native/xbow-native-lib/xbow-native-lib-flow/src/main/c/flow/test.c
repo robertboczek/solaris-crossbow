@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "flowadm_wrapper.h"
-#include "memory.h"
+#include <flow/flowadm_wrapper.h>
+#include <flow/memory.h>
 
 
 int main( int agrc, char** argv )
