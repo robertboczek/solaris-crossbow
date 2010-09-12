@@ -227,12 +227,7 @@ public class JNALinkHelper implements LinkHelper {
      */
     @Override
     public String getIpAddress(String link) throws LinkException {
-
-        String ipAddress = handle.get_ip_address( link );
-
-	handle.free( ipAddress );
-
-        return ipAddress;
+        return handle.get_ip_address(link);
     }
 
     /**

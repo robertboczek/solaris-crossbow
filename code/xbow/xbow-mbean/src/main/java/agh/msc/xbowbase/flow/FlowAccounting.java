@@ -10,8 +10,6 @@ import java.util.List;
  */
 public class FlowAccounting implements FlowAccountingMBean {
 
-        private static final String notSupported = "Not supported yet.";
-
 	@Override
 	public boolean isAccountingEnabled() {
 		return accountingEnabled;
@@ -19,22 +17,22 @@ public class FlowAccounting implements FlowAccountingMBean {
 
 	@Override
 	public void enableAccounting() {
-		throw new UnsupportedOperationException(notSupported);
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override
 	public void disableAccounting() {
-		throw new UnsupportedOperationException(notSupported);
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override
 	public FlowUsage getUsage(String flowName) {
-		throw new UnsupportedOperationException(notSupported);
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	@Override
 	public List<FlowUsage> getUsage(String flowName, Date start, Date end) {
-		throw new UnsupportedOperationException(notSupported);
+		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 

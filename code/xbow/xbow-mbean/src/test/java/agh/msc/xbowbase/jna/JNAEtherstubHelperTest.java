@@ -126,7 +126,6 @@ public class JNAEtherstubHelperTest {
 
         String []names = etherstubHelper.getEtherstubNames();
 
-        assertNotNull(names);
         assertEquals(0, names.length);
     }
 
@@ -147,47 +146,8 @@ public class JNAEtherstubHelperTest {
     }
 
     @Test
-    public void testFreeingTheMemoryAfterReadingEtherstubNames() throws EtherstubException{
-
-        Pointer p = mock(Pointer.class);
-
-        when(handle.get_etherstub_names())
-                .thenReturn(p);
-
-        when(p.getStringArray(0)).thenReturn(new String[]{"etherstub1", "ether12"});
-
-
-        etherstubHelper.getEtherstubNames();
-
-        verify(handle).get_etherstub_names();
-        verify(p).getStringArray(0);
-        verify(handle).free_char_array(p);
-        
-    }
-
-    @Test
     public void testGettingEtherstubParameter() throws EtherstubException{
 
-        String value = "1500";
-        String etherName = "ether1";
-        LinkParameters linkParameter = LinkParameters.MTU;
-        Pointer p = mock(Pointer.class);
-
-        when(handle.get_etherstub_parameter(anyString(), anyString()))
-                .thenReturn(p);
-
-        when(p.getString(0)).thenReturn(value);
-
-        String parameterValue = etherstubHelper.getEtherstubParameter(etherName, linkParameter);
-
-        assertEquals(value, parameterValue);
-    }
-
-    @Test
-    public void testFreeingMemoryAfterGettingEtherstubParameterValue() throws EtherstubException{
-
-        String etherName = "ether1";
-        LinkParameters linkParameter = LinkParameters.MTU;
         Pointer p = mock(Pointer.class);
 
         when(handle.get_etherstub_parameter(anyString(), anyString()))
@@ -195,88 +155,39 @@ public class JNAEtherstubHelperTest {
 
         when(p.getString(0)).thenReturn("1500");
 
-        etherstubHelper.getEtherstubParameter(etherName, linkParameter);
+        String value = etherstubHelper.getEtherstubParameter("ether1", LinkParameters.MTU);
 
-        verify(handle).get_etherstub_parameter(etherName, linkParameter.toString());
-        verify(p).getString(0);
-        verify(handle).free_char_string(p);
-
+        assertEquals("1500", value);
     }
 
     @Test
     public void testGettingEtherstubProperty() throws EtherstubException{
 
-        String etherName = "ether1";
-        LinkProperties linkProperty = LinkProperties.MAXBW;
-        String value = "9000";
         Pointer p = mock(Pointer.class);
 
         when(handle.get_etherstub_property(anyString(), anyString()))
                 .thenReturn(p);
 
-        when(p.getString(0)).thenReturn(value);
+        when(p.getString(0)).thenReturn("9000");
 
-        String propertyValue = etherstubHelper.getEtherstubProperty(etherName, linkProperty);
+        String value = etherstubHelper.getEtherstubProperty("ether1", LinkProperties.MAXBW);
 
-        assertEquals(value, propertyValue);
-    }
-
-    @Test
-    public void testFreeingMemoryAfterGettingEtherstubPropertyValue() throws EtherstubException{
-
-        String etherName = "ether1";
-        LinkProperties linkProperty = LinkProperties.MAXBW;
-        String value = "9000";
-        Pointer p = mock(Pointer.class);
-
-        when(handle.get_etherstub_property(anyString(), anyString()))
-                .thenReturn(p);
-
-        when(p.getString(0)).thenReturn(value);
-
-        etherstubHelper.getEtherstubProperty(etherName, linkProperty);
-
-        verify(handle).get_etherstub_property(etherName, linkProperty.toString());
-        verify(p).getString(0);
-        verify(handle).free_char_string(p);
+        assertEquals("9000", value);
     }
 
     @Test
     public void testGettingEtherstubStatistic() throws EtherstubException{
 
-        String value = "1543";
-        String etherName = "ether1";
-        LinkStatistics linkStatistic = LinkStatistics.IPACKETS;
         Pointer p = mock(Pointer.class);
 
         when(handle.get_etherstub_statistic(anyString(), anyString()))
                 .thenReturn(p);
 
-        when(p.getString(0)).thenReturn(value);
+        when(p.getString(0)).thenReturn("1543");
 
-        String statisticValue = etherstubHelper.getEtherstubStatistic(etherName, linkStatistic);
+        String value = etherstubHelper.getEtherstubStatistic("ether1", LinkStatistics.IPACKETS);
 
-        assertEquals(value, statisticValue);
-    }
-
-    @Test
-    public void testFreeingMemoryAfterGettingEtherstubStatisticValue() throws EtherstubException{
-
-        String value = "1543";
-        String etherName = "ether1";
-        LinkStatistics linkStatistic = LinkStatistics.IPACKETS;
-        Pointer p = mock(Pointer.class);
-
-        when(handle.get_etherstub_statistic(anyString(), anyString()))
-                .thenReturn(p);
-
-        when(p.getString(0)).thenReturn(value);
-
-        etherstubHelper.getEtherstubStatistic(etherName, linkStatistic);
-
-        verify(handle).get_etherstub_statistic(etherName, linkStatistic.toString());
-        verify(p).getString(0);
-        verify(handle).free_char_string(p);
+        assertEquals("1543", value);
     }
 
 
