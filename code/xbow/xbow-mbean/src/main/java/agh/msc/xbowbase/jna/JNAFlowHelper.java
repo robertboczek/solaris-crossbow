@@ -255,7 +255,7 @@ public class JNAFlowHelper implements FlowHelper {
 	}
 
 
-	private static final String LIB_NAME = "flowadm_wrapper";
+	private static final String LIB_NAME = "flow";
 
 	FlowHandle handle = null;
 

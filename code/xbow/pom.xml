@@ -13,5 +13,16 @@
 		<module>xbow-mbean</module>
 	</modules>
 
+	<developers>
+		<developer>
+			<id>robert</id>
+			<name>Robert Boczek</name>
+		</developer>
+		<developer>
+			<id>cieplik</id>
+			<name>Dawid Cieplinski</name>
+		</developer>
+	</developers>
+
 </project>
 

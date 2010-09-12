@@ -218,7 +218,7 @@ public class JNALinkHelper implements LinkHelper {
         return value;
     }    
     
-    static final String LIB_NAME = "link_wrapper";
+    static final String LIB_NAME = "link";
     protected LinkHandle handle = null;
     private static final Logger logger = Logger.getLogger(JNALinkHelper.class);
 
