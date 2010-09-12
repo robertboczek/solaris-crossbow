@@ -79,6 +79,47 @@ public class FlowTest {
 	}
 
 
+	@Test
+	public void testSettingPropertiesWithHelper() throws XbowException {
+
+		Map< String, String > properties = new HashMap< String, String >();
+
+		flow.setName( "flow13" );
+		flow.setProperties( properties, true );
+
+		verify( helper ).setProperties( flow.getName(), properties, true );
+		verify( helper ).getProperties( flow.getName() );
+
+	}
+
+
+	@Test
+	public void testResettingPropertiesWithHelper() throws XbowException {
+
+		List< String > properties = new LinkedList< String >();
+
+		flow.setName( "name" );
+		flow.resetProperties( properties, true );
+
+		verify( helper ).resetProperties( flow.getName(), properties, true );
+		verify( helper ).getProperties( flow.getName() );
+
+	}
+
+
+	@Test
+	public void testGettingPropertiesWithHelper() throws XbowException {
+
+		Map< String, String > properties = new HashMap< String, String >();
+
+		when( helper.getProperties( anyString() ) )
+			.thenReturn( properties );
+
+		assertEquals( properties, flow.getProperties() );
+
+	}
+
+
 	@Test( expected = NoSuchFlowException.class )
 	public void testGetNonInstantiatedFlowsAttributes() throws NoSuchFlowException {
 
@@ -151,6 +192,27 @@ public class FlowTest {
 			.when( helper ).resetProperties( eq( flow.getName() ), eq( props ), anyBoolean() );
 
 		flow.resetProperties( props, true );
+
+	}
+
+
+	@Test
+	public void testEquals() {
+
+		flow.setName( "name" );
+
+		Flow aFlow = new Flow();
+		aFlow.setName( flow.getName() + "0" );
+
+		Flow oneMoreFlow = new Flow();
+		oneMoreFlow.setName( flow.getName() );
+
+		String someObject = "someObject";
+
+		assertTrue( flow.equals( flow ) );
+		assertTrue( flow.equals( oneMoreFlow ) );
+		assertFalse( flow.equals( aFlow ) );
+		assertFalse( flow.equals( someObject ) );
 
 	}
 

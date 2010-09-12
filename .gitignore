@@ -1,9 +1,6 @@
-code/xbow-base/nbactions.xml
-code/xbow-base/src/main/c/flowadm/Makefile.defs
-code/xbow-base/src/main/c/etherstub/Makefile.defs
-code/xbow-base/src/main/c/link/Makefile.defs
 target/
 code/sync.sh
+nbactions.xml
 *.dia~
 *.swp
 *.swo

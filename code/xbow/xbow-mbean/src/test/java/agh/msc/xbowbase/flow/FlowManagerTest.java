@@ -10,10 +10,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -25,21 +22,10 @@ import static org.mockito.Mockito.*;
  */
 public class FlowManagerTest {
 
-	public FlowManagerTest() {
-	}
-
-
-	@BeforeClass
-	public static void setUpClass() throws Exception {
-	}
-
-	@AfterClass
-	public static void tearDownClass() throws Exception {
-	}
-
-
 	@Before
 	public void setUp() {
+
+		flow = new Flow();
 
 		helper = mock( FlowHelper.class );
 		publisher = mock( Publisher.class );
@@ -48,10 +34,6 @@ public class FlowManagerTest {
 		flowManager.setFlowadm( helper );
 		flowManager.setPublisher( publisher );
 
-	}
-
-	@After
-	public void tearDown() {
 	}
 
 
@@ -63,8 +45,8 @@ public class FlowManagerTest {
 		Set< String > flows = new HashSet< String >( Arrays.asList( "zyzio", "dyzio" ) );
 		List< FlowInfo > flowInfos = new LinkedList< FlowInfo >();
 
-		for ( String flow : flows ) {
-			flowInfos.add( new FlowInfo( flow, null, null, null, true ) );
+		for ( String f : flows ) {
+			flowInfos.add( new FlowInfo( f, null, null, null, true ) );
 		}
 
 		// Stub.
@@ -120,6 +102,53 @@ public class FlowManagerTest {
 
 	}
 
+
+	@Test
+	public void testCreateAndPublishFlow() throws XbowException {
+
+		flowManager.create( flow );
+
+		verify( publisher ).publish( flow );
+
+	}
+
+
+	@Test
+	public void testOnlyCreateFlow() throws XbowException {
+
+		flowManager.setPublisher( null );
+		flowManager.create( flow );
+
+	}
+
+
+	@Test
+	public void testRemoveAndUnpublishFlow() throws XbowException, NotPublishedException {
+
+		flow.setName( "flow" );
+
+		flowManager.remove( flow.getName(), true );
+
+		verify( helper ).remove( flow.getName(), true );
+		verify( publisher ).unpublish( flow.getName() );
+
+	}
+
+
+	@Test
+	public void testOnlyRemoveFlow() throws XbowException {
+
+		flow.setName( "ala" );
+		flowManager.setPublisher( null );
+
+		flowManager.remove( flow.getName(), true );
+
+		verify( helper ).remove( flow.getName(), true );
+
+	}
+
+
+	private Flow flow;
 
 	private FlowManager flowManager;
 	private FlowHelper helper;

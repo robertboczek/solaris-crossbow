@@ -195,11 +195,9 @@ public class JNALinkHelper implements LinkHelper {
 		public String getNetmask( String link ) {
 
 			String netmask = handle.get_netmask( link );
-			String res = new String( netmask );
-
 			handle.free( netmask );
 
-			return res;
+			return netmask;
 
 		}
 
