@@ -14,7 +14,7 @@
 	<name>link</name>
 	<packaging>nar</packaging>
 
-	<build>   
+	<build>
 		<plugins>
 
 			<plugin>
@@ -24,37 +24,11 @@
 				<extensions>true</extensions>
 
 				<configuration>
-					<libraries>
-						<library>
-							<type>shared</type>
-						</library>
-					</libraries>
 					<linker>
-						<name>gcc</name>
-						<options>
-							<option>${commonLinkerOptions}</option>
-						</options>
+						<sysLibs combine.children="append">
+							<sysLib><name>dlpi</name></sysLib>
+						</sysLibs>
 					</linker>
-					<c>
-						<name>gcc</name>
-						<includes>
-							<include>**/*.c</include>
-						</includes>
-						<options>
-							<option>${commonCompilerOptions}</option>
-						</options>
-						<defines>
-							<define>${commonDefines}</define>
-						</defines>
-					</c>
-					<!--
-					<tests>
-						<test>
-							<name>test</name>
-							<link>shared</link>
-						</test>
-					</tests>
-					-->
 				</configuration>
 			</plugin>
 

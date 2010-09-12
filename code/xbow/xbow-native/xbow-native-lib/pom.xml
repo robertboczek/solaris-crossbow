@@ -29,20 +29,54 @@
 		</dependency>
 	</dependencies>
 
-	<properties>
+	<build>
+		<plugins>
 
-		<commonCompilerOptions>
-			-std=c99
-			-fPIC
-			-Wall -pedantic
-			-g 
-		</commonCompilerOptions>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-nar-plugin</artifactId>
+				<version>2.1-SNAPSHOT</version>
+				<extensions>true</extensions>
 
-		<commonDefines>__EXTENSIONS__</commonDefines>
+				<configuration>
+					<libraries>
+						<library>
+							<type>shared</type>
+						</library>
+					</libraries>
+					<c>
+						<name>gcc</name>
+						<includes>
+							<include>**/*.c</include>
+						</includes>
+						<debug>true</debug>
+						<options>
+							<option>-std=c99</option>
+							<option>-Wall</option>
+							<option>-pedantic</option>
+						</options>
+						<defines>
+							<define>__EXTENSIONS__</define>
+						</defines>
+					</c>
+					<linker>
+						<name>gcc</name>
+						<sysLibs>
+							<sysLib><name>dladm</name></sysLib>
+							<sysLib><name>cmockery</name></sysLib>
+						</sysLibs>
+					</linker>
+					<tests>
+						<test>
+							<name>test</name>
+							<link>shared</link>
+						</test>
+					</tests>
+				</configuration>
+			</plugin>
 
-		<commonLinkerOptions>-ldladm</commonLinkerOptions>
-
-	</properties>
+		</plugins>
+	</build>
 
 </project>
 

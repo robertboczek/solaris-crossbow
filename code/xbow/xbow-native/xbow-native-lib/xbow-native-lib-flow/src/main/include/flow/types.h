@@ -1,6 +1,8 @@
 #ifndef FLOWADM_WRAPPER_TYPES_H
 #define FLOWADM_WRAPPER_TYPES_H
 
+#include <stddef.h>
+
 
 typedef struct
 {
