@@ -1,5 +1,11 @@
 <project>
 
+	<parent>
+		<groupId>xbow-native</groupId>
+		<artifactId>xbow-native</artifactId>
+		<version>1.0.0</version>
+	</parent>
+
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>xbow-native</groupId>
@@ -44,26 +50,9 @@
 							<type>shared</type>
 						</library>
 					</libraries>
-					<c>
-						<name>gcc</name>
-						<includes>
-							<include>**/*.c</include>
-						</includes>
-						<debug>true</debug>
-						<options>
-							<option>-std=c99</option>
-							<option>-Wall</option>
-							<option>-pedantic</option>
-						</options>
-						<defines>
-							<define>__EXTENSIONS__</define>
-						</defines>
-					</c>
 					<linker>
-						<name>gcc</name>
-						<sysLibs>
+						<sysLibs combine.children="append">
 							<sysLib><name>dladm</name></sysLib>
-							<sysLib><name>cmockery</name></sysLib>
 						</sysLibs>
 					</linker>
 					<tests>

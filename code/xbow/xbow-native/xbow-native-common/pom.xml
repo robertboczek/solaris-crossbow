@@ -2,13 +2,19 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
+	<parent>
+		<groupId>xbow-native</groupId>
+		<artifactId>xbow-native</artifactId>
+		<version>1.0.0</version>
+	</parent>
+
 	<groupId>xbow-native</groupId>
 	<artifactId>common</artifactId>
 	<version>1.0.0</version>
 	<name>common</name>
 	<packaging>nar</packaging>
 
-	<build>   
+	<build>
 		<plugins>
 
 			<plugin>
@@ -23,23 +29,6 @@
 							<type>static</type>
 						</library>
 					</libraries>
-					<linker>
-						<name>gcc</name>
-						<sysLibs>
-							<sysLib>
-								<name>cmockery</name>
-							</sysLib>
-						</sysLibs>
-					</linker>
-					<c>
-						<name>gcc</name>
-						<includes>
-							<include>**/*.c</include>
-						</includes>
-						<options>
-							<option>-fPIC</option>
-						</options>
-					</c>
 					<tests>
 						<test>
 							<name>test</name>

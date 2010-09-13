@@ -29,5 +29,43 @@
 		</dependency>
 	</dependencies>
 
+	<build>
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-nar-plugin</artifactId>
+				<version>2.1-SNAPSHOT</version>
+				<extensions>true</extensions>
+
+				<configuration>
+					<linker>
+						<name>gcc</name>
+						<sysLibs>
+							<sysLib><name>cmockery</name></sysLib>
+						</sysLibs>
+					</linker>
+					<c>
+						<name>gcc</name>
+						<includes>
+							<include>**/*.c</include>
+						</includes>
+						<debug>true</debug>
+						<options>
+							<option>-fPIC</option>
+							<option>-std=c99</option>
+							<option>-Wall</option>
+							<option>-pedantic</option>
+						</options>
+						<defines>
+							<define>__EXTENSIONS__</define>
+						</defines>
+					</c>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+
 </project>
 
