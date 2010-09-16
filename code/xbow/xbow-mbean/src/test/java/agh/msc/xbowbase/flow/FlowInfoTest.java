@@ -1,5 +1,7 @@
 package agh.msc.xbowbase.flow;
 
+import agh.msc.xbowbase.flow.enums.FlowAttribute;
+import agh.msc.xbowbase.flow.enums.FlowProperty;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.After;
@@ -46,11 +48,11 @@ public class FlowInfoTest {
 		String name = "ala";
 		String link = "e1000g2";
 
-		Map< String, String > attrs = new HashMap< String, String >();
-		attrs.put( "transport", "udp" );
+		Map< FlowAttribute, String > attrs = new HashMap< FlowAttribute, String >();
+		attrs.put( FlowAttribute.TRANSPORT, "udp" );
 
-		Map< String, String > props = new HashMap< String, String >();
-		props.put( "priority", "low" );
+		Map< FlowProperty, String > props = new HashMap< FlowProperty, String >();
+		props.put( FlowProperty.PRIORITY, "low" );
 
 		boolean temporary = true;
 

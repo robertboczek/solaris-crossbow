@@ -1,15 +1,19 @@
 package agh.msc.xbowbase.jna;
 
 import agh.msc.xbowbase.exception.IncompatibleFlowException;
+import agh.msc.xbowbase.exception.NoSuchEnumException;
 import agh.msc.xbowbase.exception.NoSuchFlowException;
 import agh.msc.xbowbase.exception.ValidationException;
 import agh.msc.xbowbase.exception.XbowException;
 import agh.msc.xbowbase.flow.FlowInfo;
+import agh.msc.xbowbase.flow.enums.FlowAttribute;
+import agh.msc.xbowbase.flow.enums.FlowProperty;
 import agh.msc.xbowbase.jna.mapping.FlowHandle;
 import agh.msc.xbowbase.jna.util.MapToKeyValuePairsTranslator;
 import agh.msc.xbowbase.lib.FlowHelper;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -73,7 +77,7 @@ public class JNAFlowHelper implements FlowHelper {
 	 * @see  FlowHelper#getAttributes(java.lang.String)
 	 */
 	@Override
-	public Map< String, String > getAttributes( String flowName ) throws NoSuchFlowException {
+	public Map< FlowAttribute, String > getAttributes( String flowName ) throws NoSuchFlowException {
 
 		for ( FlowInfo flowInfo : getFlowsInfo() ) {
 			if ( flowInfo.getName().equals( flowName ) ) {
@@ -92,17 +96,17 @@ public class JNAFlowHelper implements FlowHelper {
 	 * @see  FlowHelper#setProperties(java.lang.String, java.util.Map, boolean)
 	 */
 	@Override
-	public void setProperties( String flowName, Map< String, String > properties, boolean temporary )
+	public void setProperties( String flowName, Map< FlowProperty, String > properties, boolean temporary )
 		throws ValidationException,
 		       XbowException {
 
 		// Call set_property sequentially, each time setting single property.
 
-		for ( Map.Entry< String, String > entry : properties.entrySet() ) {
+		for ( Map.Entry< FlowProperty, String > entry : properties.entrySet() ) {
 
 			String values[] = entry.getValue().split( "," );
 
-			int rc = handle.set_property( flowName, entry.getKey(), values, values.length, temporary );
+			int rc = handle.set_property( flowName, entry.getKey().toString(), values, values.length, temporary );
 
 			logger.debug( "set_property returned with rc == " + rc + " ." );
 
@@ -127,7 +131,7 @@ public class JNAFlowHelper implements FlowHelper {
 	 * @see  FlowHelper#getProperties(java.lang.String)
 	 */
 	@Override
-	public Map< String, String > getProperties( String flowName ) throws NoSuchFlowException {
+	public Map< FlowProperty, String > getProperties( String flowName ) throws NoSuchFlowException {
 
 		// TODO-DAWID: rc z helpera (obsluga sytuacji, gdy flow nie istnieje)
 
@@ -135,7 +139,17 @@ public class JNAFlowHelper implements FlowHelper {
 
 		FlowHandle.KeyValuePairsStruct kvps = handle.get_properties( flowName );
 
-		Map< String, String > properties = MapToKeyValuePairsTranslator.toMap( kvps.fill() );
+		Map< FlowProperty, String > properties = new HashMap< FlowProperty, String >();
+
+		try {
+
+			for ( Map.Entry< FlowProperty, String > entry : MapToKeyValuePairsTranslator.toPropMap( kvps.fill() ).entrySet() ) {
+				properties.put( entry.getKey(), entry.getValue() );
+			}
+
+		} catch ( NoSuchEnumException e ) {
+			logger.error( "Could not find mapping for property", e );
+		}
 
 		// Free the memory.
 
@@ -150,15 +164,15 @@ public class JNAFlowHelper implements FlowHelper {
 	 * @see  FlowHelper#resetProperties(java.lang.String, java.util.List, boolean)
 	 */
 	@Override
-	public void resetProperties( String flowName, List< String > properties, boolean temporary )
+	public void resetProperties( String flowName, List< FlowProperty > properties, boolean temporary )
 		throws NoSuchFlowException,
 		       ValidationException {
 
 		// Reset properties sequentially.
 
-		for ( String property : properties ) {
+		for ( FlowProperty property : properties ) {
 
-			int rc = handle.reset_property( flowName, property, temporary );
+			int rc = handle.reset_property( flowName, property.toString(), temporary );
 
 			logger.debug( "reset_property returned with rc == " + rc );
 
@@ -170,7 +184,7 @@ public class JNAFlowHelper implements FlowHelper {
 
 			} else if ( XbowStatus.XBOW_STATUS_PROP_PARSE_ERR.ordinal() == rc ) {
 
-				throw new ValidationException( property );
+				throw new ValidationException( property.toString() );
 
 			}
 
@@ -236,13 +250,19 @@ public class JNAFlowHelper implements FlowHelper {
 
 			// Append to the resulting list.
 
-			res.add( new FlowInfo(
-				struct.name,
-				struct.link,
-				MapToKeyValuePairsTranslator.toMap( struct.attrs.fill() ),
-				MapToKeyValuePairsTranslator.toMap( struct.props.fill() ),
-				struct.temporary
-			) );
+			try {
+
+				res.add( new FlowInfo(
+					struct.name,
+					struct.link,
+					MapToKeyValuePairsTranslator.toAttrMap( struct.attrs.fill() ),
+					MapToKeyValuePairsTranslator.toPropMap( struct.props.fill() ),
+					struct.temporary
+				) );
+
+			} catch ( NoSuchEnumException e ) {
+				logger.error( "Could not find mapping for enum.", e );
+			}
 
 		}
 

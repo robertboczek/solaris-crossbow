@@ -2,6 +2,8 @@ package agh.msc.xbowbase.flow.util;
 
 import agh.msc.xbowbase.flow.Flow;
 import agh.msc.xbowbase.flow.FlowInfo;
+import agh.msc.xbowbase.flow.enums.FlowAttribute;
+import agh.msc.xbowbase.flow.enums.FlowProperty;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.After;
@@ -32,11 +34,11 @@ public class FlowToFlowInfoTranslatorTest {
 	@Before
 	public void setUp() {
 
-		attrs = new HashMap< String, String >();
-		attrs.put( "transport", "tcp" );
+		attrs = new HashMap< FlowAttribute, String >();
+		attrs.put( FlowAttribute.TRANSPORT, "tcp" );
 
-		props = new HashMap< String, String >();
-		props.put( "priority", "high" );
+		props = new HashMap< FlowProperty, String >();
+		props.put( FlowProperty.PRIORITY, "high" );
 
 	}
 
@@ -95,6 +97,7 @@ public class FlowToFlowInfoTranslatorTest {
 	}
 
 
-	Map< String, String > attrs, props;
+	Map< FlowAttribute, String > attrs;
+	Map< FlowProperty, String > props;
 
 }

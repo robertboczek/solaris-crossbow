@@ -1,5 +1,8 @@
 package agh.msc.xbowbase.jna.util;
 
+import agh.msc.xbowbase.exception.NoSuchEnumException;
+import agh.msc.xbowbase.flow.enums.FlowAttribute;
+import agh.msc.xbowbase.flow.enums.FlowProperty;
 import agh.msc.xbowbase.jna.mapping.FlowHandle;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,18 +17,21 @@ import java.util.Map.Entry;
 public class MapToKeyValuePairsTranslator {
 
 	/**
-	 * @brief  Translates between KeyValuePairsStruct instance and Map< String, String > instance.
+	 * @brief  Translates between KeyValuePairsStruct instance and Map< FlowAttribute, String > instance.
 	 *
 	 * @param  kvps  KeyValuePairsStruct instance
 	 *
-	 * @return  Map< String, String > instance
+	 * @throws  NoSuchEnumException  Could not map one of kvps's keys to FlowAttribute.
+	 *
+	 * @return  Map< FlowAttribute, String > instance
 	 */
-	public static Map< String, String > toMap( FlowHandle.KeyValuePairsStruct kvps ) {
+	public static Map< FlowAttribute, String > toAttrMap( FlowHandle.KeyValuePairsStruct kvps )
+		throws NoSuchEnumException {
 
-		Map< String, String > map = new HashMap< String, String >();
+		Map< FlowAttribute, String > map = new HashMap< FlowAttribute, String >();
 
 		for ( FlowHandle.KeyValuePairStruct kvp : kvps.keyValuePairs.kvp ) {
-			map.put( kvp.key, kvp.value );
+			map.put( FlowAttribute.fromString( kvp.key ), kvp.value );
 		}
 
 		return map;
@@ -34,13 +40,36 @@ public class MapToKeyValuePairsTranslator {
 
 
 	/**
-	 * @brief  Translates between Map< String, String > instance and KeyValuePairsStruct instance.
+	 * @brief  Translates between KeyValuePairsStruct instance and Map< FlowProperty, String > instance.
 	 *
-	 * @param  map  Map< String, String > instance
+	 * @param  kvps  KeyValuePairsStruct instance
+	 *
+	 * @throws  NoSuchEnumException  Could not map one of kvps's keys to FlowProperty.
+	 *
+	 * @return  Map< FlowProperty, String > instance
+	 */
+	public static Map< FlowProperty, String > toPropMap( FlowHandle.KeyValuePairsStruct kvps )
+		throws NoSuchEnumException {
+
+		Map< FlowProperty, String > map = new HashMap< FlowProperty, String >();
+
+		for ( FlowHandle.KeyValuePairStruct kvp : kvps.keyValuePairs.kvp ) {
+			map.put( FlowProperty.fromString( kvp.key ), kvp.value );
+		}
+
+		return map;
+
+	}
+
+
+	/**
+	 * @brief  Translates between Map< K, String > instance and KeyValuePairsStruct instance.
+	 *
+	 * @param  map  Map< K, String > instance
 	 *
 	 * @return  KeyValuePairsStruct instance
 	 */
-	public static FlowHandle.KeyValuePairsStruct.ByReference toKeyValuePairs( Map< String, String > map ) {
+	public static < K > FlowHandle.KeyValuePairsStruct.ByReference toKeyValuePairs( Map< K, String > map ) {
 
 		FlowHandle.KeyValuePairsStruct.ByReference kvps = new FlowHandle.KeyValuePairsStruct.ByReference();
 
@@ -51,11 +80,11 @@ public class MapToKeyValuePairsTranslator {
 
 		int i = 0;
 
-		for ( Entry< String, String > entry : map.entrySet() ) {
+		for ( Entry< K, String > entry : map.entrySet() ) {
 
 			kvps.keyValuePairs.kvp[ i ] = new FlowHandle.KeyValuePairStruct.ByReference();
 
-			kvps.keyValuePairs.kvp[ i ].key = entry.getKey();
+			kvps.keyValuePairs.kvp[ i ].key = entry.getKey().toString();
 			kvps.keyValuePairs.kvp[ i ].value = entry.getValue();
 
 			++i;

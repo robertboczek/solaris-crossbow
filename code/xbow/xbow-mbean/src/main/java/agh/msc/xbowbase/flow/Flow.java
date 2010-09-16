@@ -1,7 +1,10 @@
 package agh.msc.xbowbase.flow;
 
+import agh.msc.xbowbase.exception.NoSuchEnumException;
 import agh.msc.xbowbase.exception.NoSuchFlowException;
 import agh.msc.xbowbase.exception.ValidationException;
+import agh.msc.xbowbase.flow.enums.FlowAttribute;
+import agh.msc.xbowbase.flow.enums.FlowProperty;
 import agh.msc.xbowbase.lib.FlowHelper;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -59,7 +62,7 @@ public class Flow implements FlowMBean {
 	 * @see  FlowMBean#getAttributes()
 	 */
 	@Override
-	public Map< String, String > getAttributes() throws NoSuchFlowException {
+	public Map< FlowAttribute, String > getAttributes() throws NoSuchFlowException {
 		return flowadm.getAttributes( name );
 	}
 
@@ -71,7 +74,7 @@ public class Flow implements FlowMBean {
 	 *
 	 * @return  flow's attributes map
 	 */
-	public Map< String, String > getAttrs() {
+	public Map< FlowAttribute, String > getAttrs() {
 		return attrs;
 	}
 
@@ -82,7 +85,7 @@ public class Flow implements FlowMBean {
 	 *
 	 * @param  attrs  flow's attributes
 	 */
-	public void setAttrs( Map< String, String > attrs ) {
+	public void setAttrs( Map< FlowAttribute, String > attrs ) {
 		this.attrs = attrs;
 	}
 
@@ -93,7 +96,7 @@ public class Flow implements FlowMBean {
 	 * @see  FlowMBean#getProperties()
 	 */
 	@Override
-	public Map< String, String > getProperties() throws NoSuchFlowException {
+	public Map< FlowProperty, String > getProperties() throws NoSuchFlowException {
 		props = flowadm.getProperties( name );
 		return props;
 	}
@@ -104,8 +107,9 @@ public class Flow implements FlowMBean {
 	 * @see  FlowMBean#setProperties(java.util.Map, boolean)
 	 */
 	@Override
-	public void setProperties( Map< String, String > properties, boolean temporary ) throws NoSuchFlowException,
-	                                                                                        ValidationException {
+	public void setProperties( Map< FlowProperty, String > properties, boolean temporary )
+		throws NoSuchFlowException,
+		       ValidationException {
 
 		try {
 
@@ -138,7 +142,7 @@ public class Flow implements FlowMBean {
 	 *
 	 * @return  flow's properties map
 	 */
-	public Map< String, String > getProps() {
+	public Map< FlowProperty, String > getProps() {
 		return props;
 	}
 
@@ -149,7 +153,7 @@ public class Flow implements FlowMBean {
 	 *
 	 * @param  props  flow's properties
 	 */
-	public void setProps( Map< String, String > props ) {
+	public void setProps( Map< FlowProperty, String > props ) {
 		this.props = props;
 	}
 
@@ -158,8 +162,9 @@ public class Flow implements FlowMBean {
 	 * @see  FlowMBean#resetProperties(java.util.List, boolean)
 	 */
 	@Override
-	public void resetProperties( List< String > properties, boolean temporary ) throws NoSuchFlowException,
-	                                                                                   ValidationException {
+	public void resetProperties( List< FlowProperty > properties, boolean temporary )
+		throws NoSuchFlowException,
+		       ValidationException {
 
 		try {
 
@@ -255,28 +260,68 @@ public class Flow implements FlowMBean {
 	 * jconsole only
 	 */
 
+	@Override
+	public Map< String, String > get_Attributes() throws NoSuchFlowException {
+
+		Map< String, String > res = new HashMap< String, String >();
+
+		for ( Map.Entry< FlowAttribute, String > entry : getAttributes().entrySet() ) {
+			res.put( entry.getKey().toString(), entry.getValue() );
+		}
+
+		return res;
+
+	}
+
+
+	@Override
 	public void _setProperty( String name, String value, boolean temporary ) throws NoSuchFlowException,
 	                                                                                ValidationException {
 
-		Map< String, String > map = new HashMap< String, String >();
-		map.put( name, value );
+		Map< FlowProperty, String > map = new HashMap< FlowProperty, String >();
+
+		try {
+			map.put( FlowProperty.fromString( name ), value );
+		} catch ( NoSuchEnumException e ) {
+			throw new ValidationException( name );
+		}
 
 		setProperties( map, temporary );
 
 	}
 
+
+	@Override
+	public Map< String, String > get_Properties() throws NoSuchFlowException {
+
+		Map< String, String > res = new HashMap< String, String >();
+
+		for ( Map.Entry< FlowProperty, String > entry : getProperties().entrySet() ) {
+			res.put( entry.getKey().toString(), entry.getValue() );
+		}
+
+		return res;
+
+	}
+
+
+	@Override
 	public void _resetProperty( String name, boolean temporary ) throws NoSuchFlowException,
 	                                                                    ValidationException {
 
-		resetProperties( Arrays.asList( name ), temporary );
+		try {
+			resetProperties( Arrays.asList( FlowProperty.fromString( name ) ), temporary );
+		} catch ( NoSuchEnumException e ) {
+			throw new ValidationException( name );
+		}
 
 	}
 
 
 	protected String name;
 	protected String link;
-	protected Map< String, String > attrs = new HashMap< String, String >();
-	protected Map< String, String > props = new HashMap< String, String >();
+	protected Map< FlowAttribute, String > attrs = new HashMap< FlowAttribute, String >();
+	protected Map< FlowProperty, String > props = new HashMap< FlowProperty, String >();
 	protected boolean temporary;
 
 	private FlowHelper flowadm = null;

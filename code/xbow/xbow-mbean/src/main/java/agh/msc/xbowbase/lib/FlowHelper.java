@@ -5,6 +5,8 @@ import agh.msc.xbowbase.exception.NoSuchFlowException;
 import agh.msc.xbowbase.exception.ValidationException;
 import agh.msc.xbowbase.exception.XbowException;
 import agh.msc.xbowbase.flow.FlowInfo;
+import agh.msc.xbowbase.flow.enums.FlowAttribute;
+import agh.msc.xbowbase.flow.enums.FlowProperty;
 import java.util.List;
 import java.util.Map;
 
@@ -70,7 +72,7 @@ public interface FlowHelper {
 	 *
 	 * @return  attributes map
 	 */
-	Map< String, String > getAttributes( String flowName ) throws NoSuchFlowException;
+	Map< FlowAttribute, String > getAttributes( String flowName ) throws NoSuchFlowException;
 
 
 	/**
@@ -83,7 +85,7 @@ public interface FlowHelper {
 	 * @throws  NoSuchFlowException  the flow with specified name doesn't exist in the system
 	 * @throws  ValidationException  error while validating attributes
 	 */
-	void setProperties( String flowName, Map< String, String > properties, boolean temporary )
+	void setProperties( String flowName, Map< FlowProperty, String > properties, boolean temporary )
 		throws NoSuchFlowException,
 		       ValidationException,
 		       XbowException;
@@ -98,7 +100,7 @@ public interface FlowHelper {
 	 *
 	 * @return  properties map
 	 */
-	Map< String, String > getProperties( String flowName ) throws NoSuchFlowException;
+	Map< FlowProperty, String > getProperties( String flowName ) throws NoSuchFlowException;
 
 
 	/**
@@ -111,7 +113,7 @@ public interface FlowHelper {
 	 * @throws  NoSuchFlowException  the flow with specified name doesn't exist in the system
 	 * @throws  ValidationException  error while validating properties
 	 */
-	void resetProperties( String flowName, List< String > properties, boolean temporary )
+	void resetProperties( String flowName, List< FlowProperty > properties, boolean temporary )
 		throws NoSuchFlowException,
 		       ValidationException;
 

@@ -3,6 +3,8 @@ package agh.msc.xbowbase.flow;
 import agh.msc.xbowbase.exception.NoSuchFlowException;
 import agh.msc.xbowbase.exception.ValidationException;
 import agh.msc.xbowbase.exception.XbowException;
+import agh.msc.xbowbase.flow.enums.FlowAttribute;
+import agh.msc.xbowbase.flow.enums.FlowProperty;
 import agh.msc.xbowbase.lib.FlowHelper;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -56,11 +58,11 @@ public class FlowTest {
 		String name = "koszalek";
 		String link = "e1000g1";
 
-		Map< String, String > attrs = new HashMap< String, String >();
-		attrs.put( "transport", "udp" );
+		Map< FlowAttribute, String > attrs = new HashMap< FlowAttribute, String >();
+		attrs.put( FlowAttribute.TRANSPORT, "udp" );
 
-		Map< String, String > props = new HashMap< String, String >();
-		props.put( "maxbw", "10M" );
+		Map< FlowProperty, String > props = new HashMap< FlowProperty, String >();
+		props.put( FlowProperty.MAXBW, "10M" );
 
 		boolean temporary = false;
 
@@ -82,7 +84,7 @@ public class FlowTest {
 	@Test
 	public void testSettingPropertiesWithHelper() throws XbowException {
 
-		Map< String, String > properties = new HashMap< String, String >();
+		Map< FlowProperty, String > properties = new HashMap< FlowProperty, String >();
 
 		flow.setName( "flow13" );
 		flow.setProperties( properties, true );
@@ -96,7 +98,7 @@ public class FlowTest {
 	@Test
 	public void testResettingPropertiesWithHelper() throws XbowException {
 
-		List< String > properties = new LinkedList< String >();
+		List< FlowProperty > properties = new LinkedList< FlowProperty >();
 
 		flow.setName( "name" );
 		flow.resetProperties( properties, true );
@@ -110,7 +112,7 @@ public class FlowTest {
 	@Test
 	public void testGettingPropertiesWithHelper() throws XbowException {
 
-		Map< String, String > properties = new HashMap< String, String >();
+		Map< FlowProperty, String > properties = new HashMap< FlowProperty, String >();
 
 		when( helper.getProperties( anyString() ) )
 			.thenReturn( properties );
@@ -145,7 +147,7 @@ public class FlowTest {
 	@Test( expected = NoSuchFlowException.class )
 	public void testSetNonInstantiatedFlowsProperties() throws XbowException {
 
-		Map< String, String > props = new HashMap< String, String >();
+		Map< FlowProperty, String > props = new HashMap< FlowProperty, String >();
 
 		doThrow( new NoSuchFlowException( flow.getName() ) )
 			.when( helper ).setProperties( eq( flow.getName() ), eq( props ), anyBoolean() );
@@ -158,10 +160,10 @@ public class FlowTest {
 	@Test( expected = ValidationException.class )
 	public void testSetInvalidFlowProperties() throws XbowException {
 
-		Map< String, String > props = new HashMap< String, String >();
-		props.put( "prioority", "medum" );
+		Map< FlowProperty, String > props = new HashMap< FlowProperty, String >();
+		props.put( FlowProperty.PRIORITY, "medum" );
 
-		doThrow( new ValidationException( props.keySet().toArray( new String[]{} )[ 0 ] ) )
+		doThrow( new ValidationException( "" ) )
 			.when( helper ).setProperties( eq( flow.getName() ), eq( props ), anyBoolean() );
 
 		flow.setProperties( props, true );
@@ -172,7 +174,7 @@ public class FlowTest {
 	@Test( expected = NoSuchFlowException.class )
 	public void testResetNonInstantiatedFlowsProperties() throws XbowException {
 
-		List< String > props = new LinkedList< String >();
+		List< FlowProperty > props = new LinkedList< FlowProperty >();
 
 		doThrow( new NoSuchFlowException( flow.getName() ) )
 			.when( helper ).resetProperties( eq( flow.getName() ), eq( props ), anyBoolean() );
@@ -185,11 +187,11 @@ public class FlowTest {
 	@Test( expected = ValidationException.class )
 	public void testResetInvalidFlowProperties() throws XbowException {
 
-		List< String > props = new LinkedList< String >();
-		props.add( "prioority" );
+		List< FlowProperty > props = new LinkedList< FlowProperty >();
+		props.add( FlowProperty.MAXBW );
 
-		doThrow( new ValidationException( props.get( 0 ) ) )
-			.when( helper ).resetProperties( eq( flow.getName() ), eq( props ), anyBoolean() );
+		doThrow( new ValidationException( "prioority" ) )
+			.when( helper ).resetProperties( eq( flow.getName() ), anyList(), anyBoolean() );
 
 		flow.resetProperties( props, true );
 

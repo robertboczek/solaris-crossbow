@@ -7,6 +7,17 @@ BUILDING
 
 	Remember to add Cmockery lib path to LD_LIBRARY_PATH.
 
+* Native code coverage reports with lcov
+
+	lcov (http://ltp.sourceforge.net/coverage/lcov.php) has to be installed
+	in order to generate coverage reports.
+
+	Also, location of coverage-lcov.sh (see code/sh/coverage-lcov.sh)
+	has to be added to PATH and execution permissions for coverage-lcov.sh
+	have to be set.
+
+	Native code coverage reports are enabled in `coverage' profile
+	(mvn -P coverage ...).
 
 * Maven
 

@@ -2,6 +2,8 @@ package agh.msc.xbowbase.flow;
 
 import agh.msc.xbowbase.publisher.Publisher;
 import agh.msc.xbowbase.exception.XbowException;
+import agh.msc.xbowbase.flow.enums.FlowAttribute;
+import agh.msc.xbowbase.flow.enums.FlowProperty;
 import agh.msc.xbowbase.flow.util.FlowToFlowInfoTranslator;
 import agh.msc.xbowbase.lib.FlowHelper;
 import agh.msc.xbowbase.publisher.exception.NotPublishedException;
@@ -201,14 +203,14 @@ public class FlowManager implements FlowManagerMBean, NotificationListener {
 	@Override
 	public void _create( String flowName, String link, String attributes ) throws XbowException {
 
-		Map< String, String > attrs = new HashMap< String, String >();
+		Map< FlowAttribute, String > attrs = new HashMap< FlowAttribute, String >();
 
 		for ( String entry : attributes.split( "," ) ) {
-			attrs.put( entry.split( "=" )[ 0 ], entry.split( "=" )[ 1 ] );
+			attrs.put( FlowAttribute.fromString( entry.split( "=" )[ 0 ] ), entry.split( "=" )[ 1 ] );
 		}
 
-		Map< String, String > props = new HashMap< String, String >();
-		props.put( "priority", "medium" );
+		Map< FlowProperty, String > props = new HashMap< FlowProperty, String >();
+		props.put( FlowProperty.PRIORITY, "medium" );
 
 		Flow flow = FlowToFlowInfoTranslator.toFlow( new FlowInfo(
 			flowName, link, attrs, props, false

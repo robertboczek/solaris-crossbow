@@ -1,6 +1,8 @@
 package agh.msc.xbowbase.jna.mapping;
 
 import agh.msc.xbowbase.flow.FlowInfo;
+import agh.msc.xbowbase.flow.enums.FlowAttribute;
+import agh.msc.xbowbase.flow.enums.FlowProperty;
 import agh.msc.xbowbase.jna.util.MapToKeyValuePairsTranslator;
 import com.sun.jna.Library;
 import com.sun.jna.Pointer;
@@ -98,11 +100,13 @@ public interface FlowHandle extends Library {
 		}
 
 		public FlowInfoStruct( FlowInfo flowInfo ) {
+
 			this.name = flowInfo.getName();
 			this.link = flowInfo.getLink();
 			this.attrs = MapToKeyValuePairsTranslator.toKeyValuePairs( flowInfo.getAttributes() );
 			this.props = MapToKeyValuePairsTranslator.toKeyValuePairs( flowInfo.getProperties() );
 			this.temporary = flowInfo.isTemporary();
+
 		}
 
 		public String name, link;

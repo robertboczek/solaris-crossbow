@@ -2,6 +2,8 @@ package agh.msc.xbowbase.flow;
 
 import agh.msc.xbowbase.exception.NoSuchFlowException;
 import agh.msc.xbowbase.exception.ValidationException;
+import agh.msc.xbowbase.flow.enums.FlowAttribute;
+import agh.msc.xbowbase.flow.enums.FlowProperty;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +38,7 @@ public interface FlowMBean {
 	 *
 	 * @return  flow attributes map
 	 */
-	public Map< String, String > getAttributes() throws NoSuchFlowException;
+	public Map< FlowAttribute, String > getAttributes() throws NoSuchFlowException;
 
 	/**
 	 * @brief  Properties getter method.
@@ -45,7 +47,7 @@ public interface FlowMBean {
 	 *
 	 * @return  flow properties map
 	 */
-	public Map< String, String > getProperties() throws NoSuchFlowException;
+	public Map< FlowProperty, String > getProperties() throws NoSuchFlowException;
 
 	/**
 	 * @brief  Properties setter method.
@@ -57,8 +59,9 @@ public interface FlowMBean {
 	 * @throws  NoSuchFlowException  the flow hasn't been created in the system
 	 * @throws  ValidationException  properties validation failed
 	 */
-	public void setProperties( Map< String, String > properties, boolean temporary ) throws NoSuchFlowException,
-	                                                                                        ValidationException;
+	public void setProperties( Map< FlowProperty, String > properties, boolean temporary )
+		throws NoSuchFlowException,
+		       ValidationException;
 
 	/**
 	 * @brief  Resets flow's properties.
@@ -69,8 +72,9 @@ public interface FlowMBean {
 	 * @throws  NoSuchFlowException  the flow hasn't been created in the system
 	 * @throws  ValidationException  properties validation failed
 	 */
-	public void resetProperties( List< String > properties, boolean temporary ) throws NoSuchFlowException,
-	                                                                                   ValidationException;
+	public void resetProperties( List< FlowProperty > properties, boolean temporary )
+		throws NoSuchFlowException,
+		       ValidationException;
 
 	/**
 	 * @brief  Temporary getter method.
@@ -84,8 +88,12 @@ public interface FlowMBean {
 	 * jconsole only
 	 */
 
+	public Map< String, String > get_Attributes() throws NoSuchFlowException;
+
 	public void _setProperty( String name, String value, boolean temporary ) throws NoSuchFlowException,
-                                                                                 ValidationException;
+	                                                                                ValidationException;
+
+	public Map< String, String > get_Properties() throws NoSuchFlowException;
 
 	public void _resetProperty( String name, boolean temporary ) throws NoSuchFlowException,
 	                                                                    ValidationException;

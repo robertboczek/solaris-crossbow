@@ -1,5 +1,7 @@
 package agh.msc.xbowbase.flow;
 
+import agh.msc.xbowbase.flow.enums.FlowAttribute;
+import agh.msc.xbowbase.flow.enums.FlowProperty;
 import java.util.Map;
 
 
@@ -26,7 +28,7 @@ public class FlowInfo {
 	 * @param  temporary   is the flow temporary
 	 */
 	public FlowInfo( String name, String link,
-	                 Map< String, String > attributes, Map< String, String > properties,
+	                 Map< FlowAttribute, String > attributes, Map< FlowProperty, String > properties,
 	                 boolean temporary ) {
 
 		this.name = name;
@@ -63,7 +65,7 @@ public class FlowInfo {
 	 *
 	 * @return  flow attributes map
 	 */
-	public Map< String, String > getAttributes() {
+	public Map< FlowAttribute, String > getAttributes() {
 		return attributes;
 	}
 
@@ -73,7 +75,7 @@ public class FlowInfo {
 	 *
 	 * @return  flow properties map
 	 */
-	public Map< String, String > getProperties() {
+	public Map< FlowProperty, String > getProperties() {
 		return properties;
 	}
 
@@ -89,7 +91,8 @@ public class FlowInfo {
 
 
 	private String name, link;
-	private Map< String, String > attributes, properties;
+	private Map< FlowAttribute, String > attributes;
+	private Map< FlowProperty, String > properties;
 	private boolean temporary;
 
 }
