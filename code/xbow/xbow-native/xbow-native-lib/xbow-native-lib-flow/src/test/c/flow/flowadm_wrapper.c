@@ -20,7 +20,7 @@ dladm_status_t dladm_flow_remove( dladm_handle_t handle, char* flow,
 void test_removing_flow( void** state )
 {
 	char flow[] = "flow";
-	boolean_t temporary = 1;
+	boolean_t temporary = 1; 
 
 	expect_string( dladm_flow_remove, flow, flow );
 	expect_value( dladm_flow_remove, temporary, temporary );

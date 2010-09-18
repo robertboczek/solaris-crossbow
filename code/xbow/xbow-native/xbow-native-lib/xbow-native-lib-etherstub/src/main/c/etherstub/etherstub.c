@@ -183,6 +183,9 @@ char* get_etherstub_statistic( char *name, char* property){
 		sprintf(tmp, "%d", (int)stats.rbytes); 
 	}else if(strcmp(property, "OBYTES") == 0){
 		sprintf(tmp, "%d", (int)stats.obytes); 
+	}else{
+		free(tmp);
+		tmp = NULL;
 	}
 
 	return tmp;

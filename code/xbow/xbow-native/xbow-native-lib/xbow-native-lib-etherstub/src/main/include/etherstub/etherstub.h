@@ -49,7 +49,7 @@ char** get_etherstub_names( );
  * \param  property  	type of requested parameter
  *
  * \return  will contain value of requested parameter
- * 		caller is responsible for freeing the memory
+ * 		caller is responsible for freeing the memory, when value couldn't be readed NULL is returned
 */
 char* get_etherstub_parameter( char *name, char* parameter);
 
@@ -59,7 +59,7 @@ char* get_etherstub_parameter( char *name, char* parameter);
  * \param  property  	type of requested statistic
  *
  * \return  will contain value of requested statistic
- * 		caller is responsible for freeing the memory
+ * 		caller is responsible for freeing the memory, when value couldn't be readed NULL is returned
 */
 char* get_etherstub_statistic( char *name, char* property);
 /**
@@ -80,7 +80,7 @@ int set_etherstub_property( char *name, char* property, char *value );
  * \param  property  	type of property to be read
  *
  * \return  will contain values of requested property
- * 		caller is responsible for freeing the memory
+ * 		caller is responsible for freeing the memory, when value couldn't be readed NULL is returned
 
 */
 char* get_etherstub_property( char *name, char* property);
