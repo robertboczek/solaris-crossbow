@@ -18,18 +18,18 @@ int main( int argc, char** argv )
 		unit_test( test_creating_vnic_with_too_long_name ),
 		unit_test( test_getting_link_names ),
 		unit_test( test_getting_link_names_when_opeartion_fails ),
-		/*unit_test( test_successful_getting_parameter_value ),
-		unit_test( test_getting_parameter_value_of_etherstub_with_wrong_name ),
+		unit_test( test_successful_getting_parameter_value ),
+		unit_test( test_getting_parameter_value_of_link_with_wrong_name ),
 		unit_test( test_getting_parameter_value_when_operation_fails ),
 		unit_test( test_successful_getting_property_value ),
-		unit_test( test_getting_property_value_of_etherstub_with_wrong_name ),
+		unit_test( test_getting_property_value_of_link_with_wrong_name ),
 		unit_test( test_getting_property_value_when_operation_fails ),
 		unit_test( test_getting_statistic_value_when_operation_fails ),
 		unit_test( test_successful_getting_statistic_value ),
-		unit_test( test_getting_statistic_value_of_etherstub_with_wrong_name ),
-		unit_test( test_setting_property_value_of_etherstub_with_wrong_name ),
+		unit_test( test_getting_statistic_value_of_link_with_wrong_name ),
+		unit_test( test_setting_property_value_of_link_with_wrong_name ),
 		unit_test( test_successful_setting_property_value ),
-		unit_test( test_setting_property_value_when_operation_fails ),*/
+		unit_test( test_setting_property_value_when_operation_fails ),
 	};
 
 	init_mapping();

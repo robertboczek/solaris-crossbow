@@ -68,7 +68,7 @@ dladm_status_t	dladm_walk(dladm_walkcb_t *p, dladm_handle_t handle, void *pointe
 	return ( dladm_status_t ) mock();
 
 }
-/*
+
 dladm_status_t	dladm_get_linkprop(dladm_handle_t handle, datalink_id_t link_id,
 			    dladm_prop_type_t a, const char *parameter, char **value, uint_t *b)
 {
@@ -86,10 +86,10 @@ dladm_status_t	dladm_get_linkprop(dladm_handle_t handle, datalink_id_t link_id,
 }
 
 kstat_t	*dladm_kstat_lookup(kstat_ctl_t *ctl, const char *link, int a,
-			    const char *etherstub, const char *b)
+			    const char *vnic, const char *b)
 {
 
-	check_expected( etherstub );
+	check_expected( vnic );
 
 	return ( kstat_t* ) mock();
 
@@ -130,7 +130,7 @@ dladm_status_t	dladm_set_linkprop(dladm_handle_t handle, datalink_id_t link,
 
 }
 
-*/
+
 void test_successful_removing_vnic( void** state )
 {
 	char vnic[] = "vnic1";
@@ -264,7 +264,7 @@ void test_creating_vnic_with_too_long_name( void** state )
 
 void test_creating_vnic_with_invalid_parent_link_name( void** state )
 {
-	char etherstub[] = "vnic1";
+	char vnic[] = "vnic1";
 	boolean_t temporary = 0; //persistent
 	char parent[] = "invalidparentlinkname";
 
@@ -273,7 +273,7 @@ void test_creating_vnic_with_invalid_parent_link_name( void** state )
 	will_return( dladm_name2info, DLADM_STATUS_FAILED );
 
 
-	assert_true( XBOW_STATUS_INVALID_PARENT_NAME == create_vnic( etherstub, temporary, parent ) );
+	assert_true( XBOW_STATUS_INVALID_PARENT_NAME == create_vnic( vnic, temporary, parent ) );
 
 }
 
@@ -318,29 +318,29 @@ void test_getting_link_names_when_opeartion_fails( void** state )
 	assert_string_equal( NULL, link_names );
 
 }
-/*
-void test_getting_parameter_value_of_etherstub_with_wrong_name( void** state )
+
+void test_getting_parameter_value_of_link_with_wrong_name( void** state )
 {
 
-	char etherstub[] = "vxcvxcvcx1";
+	char vnic[] = "vxcvxcvcx1";
 	char parameter[] = "mtu";
 
-	expect_string( dladm_name2info, etherstub, etherstub );
+	expect_string( dladm_name2info, vnic, vnic );
 
 	will_return( dladm_name2info, DLADM_STATUS_BADVAL );
 
-	assert_string_equal( NULL, get_etherstub_parameter( etherstub, parameter )); 	
+	assert_string_equal( NULL, get_link_parameter( vnic, parameter )); 	
 
 }
 
 void test_successful_getting_parameter_value( void** state )
 {
 
-	char etherstub[] = "etherstub";
+	char vnic[] = "vnic1";
 	char parameter[] = "mtu";
 	char value[] = "1500";
 
-	expect_string( dladm_name2info, etherstub, etherstub );
+	expect_string( dladm_name2info, vnic, vnic );
 
 	will_return( dladm_name2info, DLADM_STATUS_OK );
 
@@ -348,17 +348,17 @@ void test_successful_getting_parameter_value( void** state )
 
 	will_return( dladm_get_linkprop, DLADM_STATUS_OK );
 
-	assert_string_equal(value, get_etherstub_parameter( etherstub, parameter )); 	
+	assert_string_equal(value, get_link_parameter( vnic, parameter )); 	
 
 }
 
 void test_getting_parameter_value_when_operation_fails( void** state )
 {
 
-	char etherstub[] = "etherstub";
+	char vnic[] = "vnic1";
 	char parameter[] = "mtu";
 
-	expect_string( dladm_name2info, etherstub, etherstub );
+	expect_string( dladm_name2info, vnic, vnic );
 
 	will_return( dladm_name2info, DLADM_STATUS_OK );
 
@@ -366,32 +366,32 @@ void test_getting_parameter_value_when_operation_fails( void** state )
 
 	will_return( dladm_get_linkprop, DLADM_STATUS_FAILED );
 
-	assert_string_equal(NULL, get_etherstub_parameter( etherstub, parameter )); 	
+	assert_string_equal(NULL, get_link_parameter( vnic, parameter )); 	
 
 }
 
-void test_getting_property_value_of_etherstub_with_wrong_name( void** state )
+void test_getting_property_value_of_link_with_wrong_name( void** state )
 {
 
-	char etherstub[] = "vxcvxcvcx1";
+	char vnic[] = "vxcvxcvcx1";
 	char parameter[] = "priority";
 
-	expect_string( dladm_name2info, etherstub, etherstub );
+	expect_string( dladm_name2info, vnic, vnic );
 
 	will_return( dladm_name2info, DLADM_STATUS_BADVAL );
 
-	assert_string_equal( NULL, get_etherstub_property( etherstub, parameter )); 	
+	assert_string_equal( NULL, get_link_property( vnic, parameter )); 	
 
 }
 
 void test_successful_getting_property_value( void** state )
 {
 
-	char etherstub[] = "etherstub";
+	char vnic[] = "vnic";
 	char parameter[] = "priority";
 	char value[] = "high";
 
-	expect_string( dladm_name2info, etherstub, etherstub );
+	expect_string( dladm_name2info, vnic, vnic );
 
 	will_return( dladm_name2info, DLADM_STATUS_OK );
 
@@ -399,17 +399,17 @@ void test_successful_getting_property_value( void** state )
 
 	will_return( dladm_get_linkprop, DLADM_STATUS_OK );
 
-	assert_string_equal(value, get_etherstub_property( etherstub, parameter )); 	
+	assert_string_equal(value, get_link_property( vnic, parameter )); 	
 
 }
 
 void test_getting_property_value_when_operation_fails( void** state )
 {
 
-	char etherstub[] = "etherstub";
+	char vnic[] = "vnic";
 	char parameter[] = "fdsfdff";
 
-	expect_string( dladm_name2info, etherstub, etherstub );
+	expect_string( dladm_name2info, vnic, vnic );
 
 	will_return( dladm_name2info, DLADM_STATUS_OK );
 
@@ -417,90 +417,90 @@ void test_getting_property_value_when_operation_fails( void** state )
 
 	will_return( dladm_get_linkprop, DLADM_STATUS_FAILED );
 
-	assert_string_equal(NULL, get_etherstub_property( etherstub, parameter )); 	
+	assert_string_equal(NULL, get_link_property( vnic, parameter )); 	
 
 }
 
-void test_getting_statistic_value_of_etherstub_with_wrong_name( void** state )
+void test_getting_statistic_value_of_link_with_wrong_name( void** state )
 {
 
-	char etherstub[] = "vxcvxcvcx1";
+	char vnic[] = "vxcvxcvcx1";
 	char statistic[] = "IPACKETS";
 
-	expect_string( dladm_name2info, etherstub, etherstub );
+	expect_string( dladm_name2info, vnic, vnic );
 
 	will_return( dladm_name2info, DLADM_STATUS_BADVAL );
 
-	assert_string_equal( NULL, get_etherstub_statistic( etherstub, statistic )); 	
+	assert_string_equal( NULL, get_link_statistic( vnic, statistic )); 	
 
 }
 
 void test_successful_getting_statistic_value( void** state )
 {
 
-	char etherstub[] = "etherstub";
+	char vnic[] = "vnic";
 	char statistic[] = "IPACKETS";
 	char value[] = "2000";
 
 	kstat_t *stat = malloc( sizeof(kstat_t) );
 	kstat_ctl_t *kcp = malloc( sizeof(kstat_ctl_t) );
 
-	expect_string( dladm_name2info, etherstub, etherstub );
+	expect_string( dladm_name2info, vnic, vnic );
 
 	will_return( dladm_name2info, DLADM_STATUS_OK );
 
 	will_return( kstat_open, kcp );	
 
-	expect_string( dladm_kstat_lookup, etherstub, etherstub );
+	expect_string( dladm_kstat_lookup, vnic, vnic );
 
 	will_return( dladm_kstat_lookup, stat );
 
 	will_return( kstat_close, 0 );
 
-	assert_string_equal(value, get_etherstub_statistic( etherstub, statistic )); 	
+	assert_string_equal(value, get_link_statistic( vnic, statistic )); 	
 
 }
 
 void test_getting_statistic_value_when_operation_fails( void** state )
 {
 
-	char etherstub[] = "etherstub";
+	char vnic[] = "vnic";
 	char statistic[] = "IPACKETS";
 
-	expect_string( dladm_name2info, etherstub, etherstub );
+	expect_string( dladm_name2info, vnic, vnic );
 
 	will_return( dladm_name2info, DLADM_STATUS_OK );
 
 	will_return( kstat_open, NULL );
 
-	assert_string_equal(NULL, get_etherstub_statistic( etherstub, statistic )); 	
+	assert_string_equal(NULL, get_link_statistic( vnic, statistic )); 	
 
 }
 
-void test_setting_property_value_of_etherstub_with_wrong_name( void** state )
+void test_setting_property_value_of_link_with_wrong_name( void** state )
 {
 
-	char etherstub[] = "vxcvxcvcx1";
+	char vnic[] = "vxcvxcvcx1";
 	char property[] = "priority";
 	char value[] = "high";
 
-	expect_string( dladm_name2info, etherstub, etherstub );
+	expect_string( dladm_name2info, vnic, vnic );
 
 	will_return( dladm_name2info, DLADM_STATUS_BADVAL );
 
-	assert_int_equal( XBOW_STATUS_INVALID_NAME, set_etherstub_property( etherstub, property, value )); 	
+	assert_int_equal( XBOW_STATUS_INVALID_NAME, set_link_property( vnic, property, value )); 	
 
 }
 
 void test_successful_setting_property_value( void** state )
 {
 
-	char etherstub[] = "etherstub";
+	char vnic[] = "vnic";
 	char property[] = "priority";
 	char value[] = "high";
 	uint32_t	flags = DLADM_OPT_ACTIVE | DLADM_OPT_PERSIST | DLADM_OPT_FORCE;
 
-	expect_string( dladm_name2info, etherstub, etherstub );
+	expect_string( dladm_name2info, vnic, vnic );
 
 	will_return( dladm_name2info, DLADM_STATUS_OK );
 
@@ -509,19 +509,19 @@ void test_successful_setting_property_value( void** state )
 
 	will_return( dladm_set_linkprop, DLADM_STATUS_OK );
 
-	assert_int_equal(XBOW_STATUS_OK, set_etherstub_property( etherstub, property, value )); 	
+	assert_int_equal(XBOW_STATUS_OK, set_link_property( vnic, property, value )); 	
 
 }
 
 void test_setting_property_value_when_operation_fails( void** state )
 {
 
-	char etherstub[] = "etherstub";
+	char vnic[] = "vnic";
 	char property[] = "fdsfdff";
 	char value[] = "high";
 	uint32_t	flags = DLADM_OPT_ACTIVE | DLADM_OPT_PERSIST | DLADM_OPT_FORCE;
 
-	expect_string( dladm_name2info, etherstub, etherstub );
+	expect_string( dladm_name2info, vnic, vnic );
 
 	will_return( dladm_name2info, DLADM_STATUS_OK );
 
@@ -530,8 +530,7 @@ void test_setting_property_value_when_operation_fails( void** state )
 
 	will_return( dladm_set_linkprop, DLADM_STATUS_FAILED );
 
-	assert_int_equal(XBOW_STATUS_OPERATION_FAILURE, set_etherstub_property( etherstub, property, value )); 	
+	assert_int_equal(XBOW_STATUS_OPERATION_FAILURE, set_link_property( vnic, property, value )); 	
 
 }
 
-*/
