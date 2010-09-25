@@ -145,7 +145,7 @@ int delete_vnic( char* name, int temporary )
 	if (status != DLADM_STATUS_OK)
 		return XBOW_STATUS_INVALID_NAME; 
 
-	// status = dladm_vnic_delete(handle, vnic_linkid, flags);
+	status = dladm_vnic_delete(handle, vnic_linkid, flags);
 
 	if (status != DLADM_STATUS_OK)
 		return XBOW_STATUS_OPERATION_FAILURE;
