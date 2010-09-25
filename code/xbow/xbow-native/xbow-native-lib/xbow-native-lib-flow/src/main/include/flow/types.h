@@ -14,7 +14,7 @@ key_value_pair_t;
 typedef struct
 {
 	key_value_pair_t** key_value_pairs;
-	size_t key_value_pairs_len;
+	size_t len;
 }
 key_value_pairs_t;
 
@@ -40,7 +40,7 @@ flow_info_t;
 typedef struct
 {
 	flow_info_t** flow_infos;
-	size_t flow_infos_len;
+	size_t len;
 }
 flow_infos_t;
 

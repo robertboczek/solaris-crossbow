@@ -67,6 +67,10 @@ int create( flow_info_t* flow_info, int temporary )
 				                     NULL /* no root dir */ );
 			}
 		}
+		else
+		{
+			rc = DLADM_STATUS_PROP_PARSE_ERR;
+		}
 	}
 
 	dladm_free_props( proplist );
@@ -269,8 +273,8 @@ flow_infos_t* get_flows_info( char* link_name[] )
 				++key_value_pair_it;
 			}
 
-			flow_info->attrs->key_value_pairs_len = key_value_pair_it
-			                                        - flow_info->attrs->key_value_pairs;
+			flow_info->attrs->len = key_value_pair_it
+			                        - flow_info->attrs->key_value_pairs;
 
 			// Remember that you can write at most MAXFLOWINFOATTRS
 			// (defined in defs.h) key-value pairs for a given flow_info_t!
@@ -286,7 +290,7 @@ flow_infos_t* get_flows_info( char* link_name[] )
 		free( flow_attrs );
 	}
 
-	flow_infos->flow_infos_len = flow_info_it;
+	flow_infos->len = flow_info_it;
 
 	// Clean up.
 	
@@ -349,13 +353,14 @@ key_value_pairs_t* get_properties( char* flow )
 
 	dladm_walk_flowprop( &get_props, flow, &arg );
 
-	key_value_pairs->key_value_pairs_len = arg.key_value_pair_it
-	                                       - key_value_pairs->key_value_pairs;
+	key_value_pairs->len = arg.key_value_pair_it
+	                       - key_value_pairs->key_value_pairs;
 
 	return key_value_pairs;
 }
 
 
+#if 0
 int enable_accounting()
 {
 	priv_set( PRIV_ON, PRIV_EFFECTIVE, PRIV_SYS_DL_CONFIG, NULL );
@@ -381,4 +386,5 @@ int disable_accounting()
 
 	return 0;
 }
+#endif
 

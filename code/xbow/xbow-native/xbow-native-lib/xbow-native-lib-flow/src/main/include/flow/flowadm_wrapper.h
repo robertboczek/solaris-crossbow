@@ -106,9 +106,11 @@ key_value_pairs_t* get_properties( char* flow );
  * Accounting-specific functions.
  */
 
+#if 0
 int enable_accounting();
 
 int disable_accounting();
+#endif
 
 #endif
 

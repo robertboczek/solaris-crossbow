@@ -15,7 +15,7 @@ char* flatten_key_value_pairs( key_value_pairs_t* kvps )
 {
 	size_t buffer_len = 1;  // '\0' at the end
 
-	for ( int i = 0; i < kvps->key_value_pairs_len; ++i )
+	for ( int i = 0; i < kvps->len; ++i )
 	{
 		buffer_len += strlen( kvps->key_value_pairs[ i ]->key );
 		buffer_len += strlen( kvps->key_value_pairs[ i ]->value );
@@ -27,7 +27,7 @@ char* flatten_key_value_pairs( key_value_pairs_t* kvps )
 	char* buffer = malloc( buffer_len );
 	*buffer = '\0';
 
-	for ( int i = 0; i < kvps->key_value_pairs_len; ++i )
+	for ( int i = 0; i < kvps->len; ++i )
 	{
 		sprintf( strend( buffer ), "%s=%s,",
 		         kvps->key_value_pairs[ i ]->key,

@@ -30,7 +30,7 @@ int get_attrs( dladm_handle_t handle, dladm_flow_attr_t* flow_attr,
 {
 	dladm_flow_attr_t** attrs = arg;
 
-	memcpy( *attrs, flow_attr, sizeof( *flow_attr ) );
+	memcpy( *attrs, flow_attr, sizeof( **attrs ) );
 	++( *attrs );
 
 	return DLADM_WALK_CONTINUE;

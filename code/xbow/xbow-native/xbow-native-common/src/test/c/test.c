@@ -14,14 +14,9 @@ void test_ok_status_mapping( void** state )
 }
 
 
-void test_negative_status_mapping( void** state )
+void test_incorrect_dladm_status_mapping( void** state )
 {
 	assert_int_equal( XBOW_STATUS_UNKNOWN_ERR, map_status( -1 ) );
-}
-
-
-void test_not_mapped_status_mapping( void** state )
-{
 	assert_int_equal( XBOW_STATUS_UNKNOWN_ERR, map_status( XBOW_STATUS_LEN_ ) );
 }
 
@@ -35,8 +30,7 @@ int main( int argc, char** argv )
 	const UnitTest tests[] =
 	{
 		unit_test( test_ok_status_mapping ),
-		unit_test( test_negative_status_mapping ),
-		unit_test( test_not_mapped_status_mapping ),
+		unit_test( test_incorrect_dladm_status_mapping ),
 	};
 
 	return run_tests( tests );
