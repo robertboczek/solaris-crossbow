@@ -323,6 +323,8 @@ int set_property( char* flow,
 		rc = dladm_parse_flow_props( key, &proplist, 1 );
 	}
 
+	dladm_free_props( proplist );
+
 	if ( DLADM_STATUS_OK == rc )
 	{
 		int persist_opt = ( temporary ? DLADM_OPT_ACTIVE : DLADM_OPT_PERSIST );

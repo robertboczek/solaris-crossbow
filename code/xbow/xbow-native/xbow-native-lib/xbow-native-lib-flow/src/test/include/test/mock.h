@@ -37,5 +37,10 @@ dladm_status_t dladm_flow_add( dladm_handle_t handle, datalink_id_t linkid,
                                dladm_arg_list_t* proplist, char* flowname,
                                boolean_t temporary, const char* root );
 
+
+dladm_status_t dladm_set_flowprop( dladm_handle_t handle, const char* flow,
+                                   const char* key, char** values,
+                                   uint_t values_len, uint_t persist_opt,
+                                   char** root );
 #endif
 

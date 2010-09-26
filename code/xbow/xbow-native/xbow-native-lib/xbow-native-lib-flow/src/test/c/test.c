@@ -23,6 +23,9 @@ int main( int argc, char** argv )
 		unit_test_setup_teardown( test_create_invalid_properties, alloc_info, free_info ),
 		unit_test_setup_teardown( test_create_invalid_name, alloc_info, free_info ),
 		unit_test_setup_teardown( test_create_flow, alloc_info, free_info ),
+		unit_test( test_reset_property ),
+		unit_test( test_reset_property_invalid_key ),
+		unit_test( test_set_property ),
 
 		/* functor.c */
 		unit_test( test_count_functor ),

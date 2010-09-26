@@ -65,6 +65,9 @@ dladm_status_t dladm_parse_flow_attrs( char* str, dladm_arg_list_t** listp,
 dladm_status_t dladm_parse_flow_props( char* str, dladm_arg_list_t** listp,
                                        boolean_t novalues )
 {
+	check_expected( str );
+
+	*listp = mock();
 	return ( dladm_status_t ) mock();
 }
 
@@ -77,6 +80,18 @@ dladm_status_t dladm_flow_add( dladm_handle_t handle, datalink_id_t linkid,
 	check_expected( linkid );
 	check_expected( flowname );
 	check_expected( temporary );
+
+	return ( dladm_status_t ) mock();
+}
+
+
+dladm_status_t dladm_set_flowprop( dladm_handle_t handle, const char* flow,
+                                   const char* key, char** values,
+                                   uint_t values_len, uint_t persist_opt,
+                                   char** errprop )
+{
+	check_expected( flow );
+	check_expected( key );
 
 	return ( dladm_status_t ) mock();
 }
