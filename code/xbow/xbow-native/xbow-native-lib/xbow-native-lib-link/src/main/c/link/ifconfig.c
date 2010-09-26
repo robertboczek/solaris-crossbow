@@ -196,7 +196,7 @@ int ifconfig_plumb( char* link )
 	 * the stream for tunneling interfaces.
 	 */
 
-	#define UDP_DEV_NAME "udp"
+	#define UDP_DEV_NAME "/dev/udp"
 
 	udp_dev_name = UDP_DEV_NAME;
 

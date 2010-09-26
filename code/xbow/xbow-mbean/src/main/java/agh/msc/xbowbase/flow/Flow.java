@@ -275,7 +275,7 @@ public class Flow implements FlowMBean {
 
 
 	@Override
-	public void _setProperty( String name, String value, boolean temporary ) throws NoSuchFlowException,
+	public void set_Property( String name, String value, boolean temporary ) throws NoSuchFlowException,
 	                                                                                ValidationException {
 
 		Map< FlowProperty, String > map = new HashMap< FlowProperty, String >();

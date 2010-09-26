@@ -44,6 +44,6 @@ public interface VNicManagerMBean {
 		 * jconsole only
 		 */
 
-    void createJC( String name, boolean temporary, String parent ) throws LinkException;
+    void _create( String name, boolean temporary, String parent ) throws LinkException;
 
 }

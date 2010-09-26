@@ -43,6 +43,8 @@ public interface LinkHandle extends Library {
 	public NicInfosStruct get_nic_infos();
 
 	public int plumb( String link );
+	public boolean is_plumbed( String link );
+
 	public int set_netmask( String link, String mask );
 	public String get_netmask( String link );
 

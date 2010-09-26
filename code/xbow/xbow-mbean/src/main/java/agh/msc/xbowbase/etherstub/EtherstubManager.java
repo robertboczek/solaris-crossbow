@@ -88,7 +88,7 @@ public class EtherstubManager implements EtherstubManagerMBean, NotificationList
      */
     @Override
     public void discover() throws EtherstubException {
-        logger.info("TherstubManager.discover()... searching for new etherstubs's and ones that don't exist any more");
+        logger.info("EtherstubManager.discover()... searching for new etherstubs's and ones that don't exist any more");
 
         
         if(publisher != null){
@@ -99,6 +99,7 @@ public class EtherstubManager implements EtherstubManagerMBean, NotificationList
             for (EtherstubMBean etherstubMBean : currentMBeans) {
                 if (etherstubsSet.contains(etherstubMBean) == false) {
                     //create and register new EtherstubMBean
+									( ( Etherstub ) etherstubMBean ).setEtherstubHelper( etherstubHelper );  // TODO: < this is temporary. investigate
                     registerNewEtherstubMBean(etherstubMBean);
                 }
             }
@@ -210,7 +211,7 @@ public class EtherstubManager implements EtherstubManagerMBean, NotificationList
 		 */
 
 		@Override
-		public void createJC( String name, boolean temporary ) throws EtherstubException {
+		public void _create( String name, boolean temporary ) throws EtherstubException {
 			create( new Etherstub( name, temporary ) );
 		}
 }

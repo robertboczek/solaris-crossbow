@@ -73,6 +73,15 @@ public interface LinkHelper {
      */
     public void plumb(String link);
 
+		/**
+		 * TODO-DAWID: comments
+		 *
+		 *
+		 * @param link
+		 * @return
+		 */
+		public boolean isPlumbed( String link );
+
     /**
      * @brief  For given interface, sets its netmask.
      *

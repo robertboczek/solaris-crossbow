@@ -167,6 +167,14 @@ public class JNALinkHelper implements LinkHelper {
 		}
 
 
+		@Override
+		public boolean isPlumbed( String link ) {
+
+			return handle.is_plumbed( link );
+
+		}
+
+
 		/**
 		 * @see  LinkHelper#setNetmask(java.lang.String, java.lang.String)
 		 */

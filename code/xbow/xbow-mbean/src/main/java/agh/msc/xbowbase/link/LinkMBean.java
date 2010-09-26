@@ -114,12 +114,10 @@ public interface LinkMBean {
 	 * jconsole only
 	 */
 
-	/*
-	public Map< String, String > getPropertiesJC() throws LinkException;
+	public Map< String, String > get_Properties() throws LinkException;
 
-	public void setPropertyJC( String property, String value ) throws LinkException;
+	public void _setProperty( String property, String value ) throws LinkException;
 
-	public Map< String, String > getParametersJC() throws LinkException;
-	 */
+	public Map< String, String > get_Parameters() throws LinkException;
 
 }

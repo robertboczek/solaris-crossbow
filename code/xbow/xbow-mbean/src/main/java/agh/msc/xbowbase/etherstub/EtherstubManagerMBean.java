@@ -52,6 +52,6 @@ public interface EtherstubManagerMBean {
 		 * jconsole only
 		 */
 
-		public void createJC( String name, boolean temporary ) throws EtherstubException;
+		public void _create( String name, boolean temporary ) throws EtherstubException;
  
 }

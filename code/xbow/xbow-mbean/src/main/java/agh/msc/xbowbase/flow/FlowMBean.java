@@ -90,7 +90,7 @@ public interface FlowMBean {
 
 	public Map< String, String > get_Attributes() throws NoSuchFlowException;
 
-	public void _setProperty( String name, String value, boolean temporary ) throws NoSuchFlowException,
+	public void set_Property( String name, String value, boolean temporary ) throws NoSuchFlowException,
 	                                                                                ValidationException;
 
 	public Map< String, String > get_Properties() throws NoSuchFlowException;

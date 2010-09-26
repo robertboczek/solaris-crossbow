@@ -19,24 +19,6 @@ public class Nic extends Link implements NicMBean {
         super(name);
     }
     
-    /**
-     * @see  NicMBean#isPlumbed()
-     */
-    @Override
-    public boolean isPlumbed() {
-			// TODO-DAWID
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /**
-     * @see  NicMBean#setPlumbed( boolean )
-     */
-    @Override
-    public void setPlumbed(boolean plumbed) {
-			nicHelper.plumb( name );
-			// TODO-DAWID
-        // throw new UnsupportedOperationException("Not supported yet.");
-    }
 
     /**
      * @see  NicMBean#isUp()

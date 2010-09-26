@@ -150,13 +150,24 @@ public abstract class Link implements LinkMBean {
 
     @Override
     public boolean isPlumbed() throws LinkException {
-        throw new UnsupportedOperationException("Not supported yet.");
+			return linkHelper.isPlumbed( name );
     }
 
-    @Override
-    public void setPlumbed(boolean plumbed) throws LinkException {
-        linkHelper.plumb(name);
-    }
+		@Override
+		public void setPlumbed( boolean plumbed ) throws LinkException {
+
+			if ( ! isPlumbed() ) {
+
+				linkHelper.plumb( name );
+				logger.info( name + " plumbed." );
+
+			} else {
+
+				logger.info( "Not plumbing " + name + " as it's already plumbed." );
+
+			}
+
+		}
 
     @Override
     public boolean isUp() throws LinkException {
@@ -171,4 +182,43 @@ public abstract class Link implements LinkMBean {
     public void setLinkHelper(LinkHelper linkHelper) {
         this.linkHelper = linkHelper;
     }
+
+
+	/*
+	 * JConsole only
+	 */
+
+	@Override
+	public Map< String, String > get_Properties() throws LinkException {
+
+		Map< String, String > res = new HashMap< String, String >();
+
+		for ( Map.Entry< LinkProperties, String > entry : getProperties().entrySet() ) {
+			res.put( entry.getKey().toString(), entry.getValue() );
+		}
+
+		return res;
+
+	}
+
+
+	@Override
+	public void _setProperty( String property, String value ) throws LinkException {
+		setProperty( LinkProperties.fromString( property ), value );
+	}
+
+
+	@Override
+	public Map< String, String > get_Parameters() throws LinkException {
+
+		Map< String, String > res = new HashMap< String, String >();
+
+		for ( Map.Entry< LinkParameters, String > entry : getParameters().entrySet() ) {
+			res.put( entry.getKey().toString(), entry.getValue() );
+		}
+
+		return res;
+
+	}
+
 }

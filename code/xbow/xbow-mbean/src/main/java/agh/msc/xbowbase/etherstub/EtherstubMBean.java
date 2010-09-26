@@ -75,9 +75,9 @@ public interface EtherstubMBean {
 		 * JConsole only
 		 */
 
-    public Map< String, String > getPropertiesJC() throws EtherstubException;
+    public Map< String, String > get_Properties() throws EtherstubException;
 
-    public Map< String, String > getParametersJC() throws EtherstubException;
+    public Map< String, String > get_Parameters() throws EtherstubException;
 
-		public void setPropertyJC( String property, String value ) throws EtherstubException;
+		public void set_Property( String property, String value ) throws EtherstubException;
 }

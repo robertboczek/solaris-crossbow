@@ -54,6 +54,9 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
 
         try {
             this.vnicHelper.createVNic(vNicMBean.getName(), vNicMBean.isTemporary(), vNicMBean.getParent());
+
+						// TODO: this is temporary. investigate (vnicHelper was not injected)
+						( ( VNic ) vNicMBean ).setVNicHelper( vnicHelper );
             registerNewVNicMBean(vNicMBean);
             discover();
 
@@ -201,7 +204,7 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
 		 * jconsole only
 		 */
 		@Override
-    public void createJC( String name, boolean temporary, String parent ) throws LinkException {
+    public void _create( String name, boolean temporary, String parent ) throws LinkException {
 			create( new VNic( name, temporary, parent ) );
 		}
 }
