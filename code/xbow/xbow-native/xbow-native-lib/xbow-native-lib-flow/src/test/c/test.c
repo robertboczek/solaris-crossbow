@@ -26,6 +26,10 @@ int main( int argc, char** argv )
 		unit_test( test_reset_property ),
 		unit_test( test_reset_property_invalid_key ),
 		unit_test( test_set_property ),
+		unit_test( test_get_flows_info_with_empty_input ),
+		unit_test( test_get_flow_info_one_flow ),
+		unit_test( test_init ),
+		unit_test( test_init_failed ),
 
 		/* functor.c */
 		unit_test( test_count_functor ),

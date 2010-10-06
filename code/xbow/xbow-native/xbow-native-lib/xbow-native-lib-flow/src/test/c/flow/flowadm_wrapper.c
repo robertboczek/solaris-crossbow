@@ -1,4 +1,5 @@
 #include <libdladm.h>
+#include <libdlflow.h>
 
 #include <string.h>
 
@@ -150,6 +151,126 @@ void test_set_property( void** state )
 	will_return( dladm_set_flowprop, DLADM_STATUS_OK );
 
 	assert_int_equal( XBOW_STATUS_OK, set_property( flow, key, values, 1, temporary ) );
+}
+
+
+void test_get_flows_info_with_empty_input( void** state )
+{
+	char* links[] = { NULL };
+
+	// Check no interaction with *adm functions takes place.
+
+	get_flows_info( links );
+}
+
+
+void test_get_flow_info_one_flow( void** state )
+{
+	char* links[] = { "alink", "onemore", NULL };
+	datalink_id_t link_ids[ LEN( links ) - 1 ] = { 13, 15 };
+	char* ips[] = { "1.2.3.4", "4.3.2.1" };
+	dladm_flow_attr_t attrs[] = { { .fa_linkid = link_ids[ 0 ],
+	                                .fa_flowname = "aflow",
+	                                .fa_flow_desc = { .fd_mask = FLOW_IP_LOCAL | FLOW_IP_PROTOCOL | FLOW_ULP_PORT_LOCAL,
+	                                                  .fd_protocol = IPPROTO_TCP,
+	                                                  .fd_local_port = 12 } },
+
+	                              { .fa_linkid = link_ids[ 1 ],
+	                                .fa_flowname = "anotherflow",
+	                                .fa_flow_desc = { .fd_mask = FLOW_IP_REMOTE | FLOW_IP_DSFIELD | FLOW_ULP_PORT_REMOTE,
+	                                                  .fd_dsfield = 1,
+	                                                  .fd_dsfield_mask = 5,
+	                                                  .fd_remote_port = 15 } } };
+	int one = 1;
+	int flows_len = LEN( attrs );
+
+	STATIC_CHECK( LEN( links ) - 1 == LEN( link_ids ) );
+	STATIC_CHECK( LEN( links ) - 1 == LEN( attrs ) );
+
+	for ( size_t i = 0; i < LEN( links ) - 1; ++i )
+	{
+		expect_string( dladm_name2info, link, links[ i ] );
+		will_return( dladm_name2info, ( void* )( link_ids + i ) );
+		will_return( dladm_name2info, DLADM_STATUS_OK );
+
+		expect_value( dladm_walk_flow, link_id, link_ids[ i ] );
+		will_return( dladm_walk_flow, sizeof( flows_len ) );  // We want to write to arg.
+		will_return( dladm_walk_flow, &flows_len );
+		will_return( dladm_walk_flow, DLADM_STATUS_OK );
+	}
+
+	// Mocks used by collect_flow_attrs.
+
+	for ( size_t i = 0; i < LEN( links ) - 1; ++i )
+	{
+		expect_string( dladm_name2info, link, links[ i ] );
+		will_return( dladm_name2info, ( void* )( link_ids + i ) );
+		will_return( dladm_name2info, DLADM_STATUS_OK );
+
+		expect_value( dladm_walk_flow, link_id, link_ids[ i ] );
+		will_return( dladm_walk_flow, sizeof( one ) );
+		will_return( dladm_walk_flow, &one );
+		will_return( dladm_walk_flow, DLADM_STATUS_OK );
+
+		expect_any( dladm_walk_flow, link_id );
+		will_return( dladm_walk_flow, ( void* )( -1 * sizeof( *attrs ) ) );  // This time we write to *arg.
+		will_return( dladm_walk_flow, ( attrs + i ) );
+		will_return( dladm_walk_flow, DLADM_STATUS_OK );
+	}
+
+	// First flow.
+
+	expect_any( dladm_flow_attr_ip2str, attr );
+	will_return( dladm_flow_attr_ip2str, strlen( ips[ 0 ] ) );
+	will_return( dladm_flow_attr_ip2str, ips[ 0 ] );
+
+	expect_value( dladm_proto2str, protocol, IPPROTO_TCP );
+	will_return( dladm_proto2str, "tcp" );
+
+	expect_string( dladm_walk_flowprop, flow, attrs[ 0 ].fa_flowname );
+	will_return( dladm_walk_flowprop, 0 );  // Don't write any properties.
+	will_return( dladm_walk_flowprop, DLADM_STATUS_OK );
+
+	// Second one.
+	
+	expect_any( dladm_flow_attr_ip2str, attr );
+	will_return( dladm_flow_attr_ip2str, strlen( ips[ 1 ] ) );
+	will_return( dladm_flow_attr_ip2str, ips[ 1 ] );
+
+	expect_string( dladm_walk_flowprop, flow, attrs[ 1 ].fa_flowname );
+	will_return( dladm_walk_flowprop, 0 );  // Don't write any properties.
+	will_return( dladm_walk_flowprop, DLADM_STATUS_OK );
+
+	flow_infos_t* infos = get_flows_info( links );
+
+	// Some simple checks.
+
+	assert_int_equal( LEN( attrs ), infos->len );
+
+	for ( size_t i = 0; i < LEN( attrs ); ++i )
+	{
+		assert_string_equal( attrs[ i ].fa_flowname, infos->flow_infos[ i ]->name );
+		assert_string_equal( links[ i ], infos->flow_infos[ i ]->link );
+		assert_int_equal( 0, infos->flow_infos[ i ]->props->len );
+	}
+
+	free_flow_infos( infos );
+}
+
+
+void test_init( void** state )
+{
+	will_return( dladm_open, DLADM_STATUS_OK );
+	
+	assert_true( XBOW_STATUS_OK == init() );
+}
+
+
+void test_init_failed( void** state )
+{
+	will_return( dladm_open, DLADM_STATUS_BADARG );
+
+	assert_false( XBOW_STATUS_OK == init() );
 }
 
 

@@ -13,6 +13,10 @@ void test_create_flow( void** state );
 void test_reset_property( void** state );
 void test_reset_property_invalid_key( void** state );
 void test_set_property( void** state );
+void test_get_flows_info_with_empty_input( void** state );
+void test_get_flow_info_one_flow( void** state );
+void test_init( void** state );
+void test_init_failed( void** state );
 
 #endif
 

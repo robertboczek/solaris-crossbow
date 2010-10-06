@@ -119,8 +119,9 @@ static void collect_flow_attrs( char* link_name,
 	// Collect attributes.
 
 	*flow_attrs = malloc( sizeof( **flow_attrs ) * ( *len ) );
-	dladm_walk_flow( &get_attrs, handle, link_id, flow_attrs, 0 );
-	*flow_attrs -= *len;
+
+	dladm_flow_attr_t* attrs_it = *flow_attrs;
+	dladm_walk_flow( &get_attrs, handle, link_id, &attrs_it, 0 );
 }
 
 
@@ -153,12 +154,9 @@ flow_infos_t* get_flows_info( char* link_name[] )
 
 		links = malloc( links_len * MAXLINKNAMELEN );
 
-		i = 0;
-		while ( link_name[ i ] != NULL )
+		for ( i = 0; i < links_len; ++i )
 		{
 			strcpy( links + i * MAXLINKNAMELEN, link_name[ i ] );
-
-			++i;
 		}
 	}
 
@@ -203,7 +201,7 @@ flow_infos_t* get_flows_info( char* link_name[] )
 			{
 				strcpy( ( *key_value_pair_it )->key, "local_ip" );
 				dladm_flow_attr_ip2str( flow_attrs + i,
-																( *key_value_pair_it )->value,
+				                        ( *key_value_pair_it )->value,
 				                        INET6_ADDRSTRLEN + 4 );
 
 				++key_value_pair_it;
