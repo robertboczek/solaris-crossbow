@@ -125,6 +125,22 @@ void test_reset_property( void** state )
 }
 
 
+void test_reset_property_persistently( void** state )
+{
+	temporary = 0;
+
+	expect_string( dladm_parse_flow_props, str, key );
+	will_return( dladm_parse_flow_props, NULL );
+	will_return( dladm_parse_flow_props, DLADM_STATUS_OK );
+
+	expect_string( dladm_set_flowprop, flow, flow );
+	expect_string( dladm_set_flowprop, key, key );
+	will_return( dladm_set_flowprop, DLADM_STATUS_OK );
+
+	assert_int_equal( XBOW_STATUS_OK, reset_property( flow, key, temporary ) );
+}
+
+
 void test_reset_property_invalid_key( void** state )
 {
 	expect_string( dladm_parse_flow_props, str, key );
@@ -161,6 +177,23 @@ void test_get_flows_info_with_empty_input( void** state )
 	// Check no interaction with *adm functions takes place.
 
 	get_flows_info( links );
+}
+
+
+void test_get_flows_info_all_links( void** state )
+{
+	int links_len = 0;
+
+	// No links in the system to make the test short.
+	
+	will_return( dladm_walk_datalink_id, sizeof( links_len ) );
+	will_return( dladm_walk_datalink_id, &links_len );
+	will_return( dladm_walk_datalink_id, DLADM_STATUS_OK );
+
+	will_return( dladm_walk_datalink_id, 0 );
+	will_return( dladm_walk_datalink_id, DLADM_STATUS_OK );
+
+	get_flows_info( NULL );
 }
 
 

@@ -24,10 +24,13 @@ int main( int argc, char** argv )
 		unit_test_setup_teardown( test_create_invalid_name, alloc_info, free_info ),
 		unit_test_setup_teardown( test_create_flow, alloc_info, free_info ),
 		unit_test( test_reset_property ),
+		unit_test( test_reset_property_persistently ),
 		unit_test( test_reset_property_invalid_key ),
 		unit_test( test_set_property ),
 		unit_test( test_get_flows_info_with_empty_input ),
 		unit_test( test_get_flow_info_one_flow ),
+
+		unit_test( test_get_flows_info_all_links ),
 		unit_test( test_init ),
 		unit_test( test_init_failed ),
 
