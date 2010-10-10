@@ -121,7 +121,7 @@ nic_infos_t* get_nic_infos( void )
 	                        DATALINK_CLASS_PHYS, DATALINK_ANY_MEDIATYPE,
 	                        DLADM_OPT_ACTIVE | DLADM_OPT_PERSIST );
 
-	nic_infos->nic_infos_len = nic_infos_it - nic_infos->nic_infos;
+	nic_infos->len = nic_infos_it - nic_infos->nic_infos;
 
 	return nic_infos;
 }

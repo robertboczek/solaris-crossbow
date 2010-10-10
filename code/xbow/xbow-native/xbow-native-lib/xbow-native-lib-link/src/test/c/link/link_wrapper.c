@@ -5,6 +5,9 @@
 
 #include <kstat.h>
 
+#include <stdlib.h>
+#include <string.h>
+
 #include <link/link.h>
 #include <common/defs.h>
 

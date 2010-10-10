@@ -1,8 +1,10 @@
 #include <common/mappings.h>
 
 #include <test/common.h>
-
+#include <test/link/functor.h>
+#include <test/link/link.h>
 #include <test/link/link_wrapper.h>
+
 
 int main( int argc, char** argv )
 {
@@ -30,6 +32,14 @@ int main( int argc, char** argv )
 		unit_test( test_setting_property_value_of_link_with_wrong_name ),
 		unit_test( test_successful_setting_property_value ),
 		unit_test( test_setting_property_value_when_operation_fails ),
+
+		/* functor.c */
+		unit_test( test_count_functor ),
+
+		/* link.c */
+		unit_test( test_init ),
+		unit_test( test_init_failed ),
+		unit_test( test_get_nic_infos_no_nics ),
 	};
 
 	init_mapping();

@@ -12,7 +12,7 @@ nic_info_t;
 typedef struct
 {
 	nic_info_t** nic_infos;
-	size_t nic_infos_len;
+	size_t len;
 }
 nic_infos_t;
 
