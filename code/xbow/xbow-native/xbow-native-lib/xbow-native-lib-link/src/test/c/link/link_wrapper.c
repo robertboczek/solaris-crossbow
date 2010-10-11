@@ -11,7 +11,7 @@
 #include <link/link.h>
 #include <common/defs.h>
 
-#include <test/common.h>
+#include <mock/cmockery.h>
 
 
 dladm_status_t dladm_name2info(dladm_handle_t handle, const char *vnic,

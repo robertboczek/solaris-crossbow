@@ -8,7 +8,11 @@
 #include <flow/memory.h>
 #include <flow/types.h>
 
-#include <test/common.h>
+#include <mock/cmockery.h>
+#include <mock/common.h>
+#include <mock/flow.h>
+#include <mock/link.h>
+
 #include <test/flow/functor.h>
 
 

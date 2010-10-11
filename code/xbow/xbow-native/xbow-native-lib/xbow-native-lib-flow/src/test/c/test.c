@@ -1,6 +1,7 @@
 #include <common/mappings.h>
 
-#include <test/common.h>
+#include <mock/cmockery.h>
+
 #include <test/flow/aux.h>
 #include <test/flow/flowadm_wrapper.h>
 #include <test/flow/functor.h>

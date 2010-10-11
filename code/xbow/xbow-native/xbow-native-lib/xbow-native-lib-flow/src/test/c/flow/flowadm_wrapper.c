@@ -8,8 +8,10 @@
 #include <flow/flowadm_wrapper.h>
 #include <flow/memory.h>
 
-#include <test/common.h>
-#include <test/mock.h>
+#include <mock/cmockery.h>
+#include <mock/common.h>
+#include <mock/flow.h>
+#include <mock/link.h>
 
 
 static char flow[] = "aflow", key[] = "akey";

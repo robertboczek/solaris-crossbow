@@ -4,7 +4,11 @@
 #include <flow/aux.h>
 #include <flow/memory.h>
 
-#include <test/common.h>
+#include <mock/cmockery.h>
+#include <mock/common.h>
+#include <mock/flow.h>
+#include <mock/link.h>
+
 #include <test/flow/aux.h>
 
 

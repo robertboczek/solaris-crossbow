@@ -1,6 +1,9 @@
 #include <common/mappings.h>
 
-#include <test/common.h>
+#include <mock/cmockery.h>
+#include <mock/common.h>
+#include <mock/link.h>
+
 #include <test/link/functor.h>
 #include <test/link/link.h>
 #include <test/link/link_wrapper.h>

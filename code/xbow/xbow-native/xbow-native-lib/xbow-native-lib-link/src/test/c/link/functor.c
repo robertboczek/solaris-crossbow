@@ -1,6 +1,7 @@
 #include <link/functor.h>
 
-#include <test/common.h>
+#include <mock/cmockery.h>
+
 #include <test/link/functor.h>
 
 

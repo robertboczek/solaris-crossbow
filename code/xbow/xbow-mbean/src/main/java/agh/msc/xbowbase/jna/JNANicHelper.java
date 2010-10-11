@@ -67,9 +67,7 @@ public class JNANicHelper extends JNALinkHelper implements NicHelper {
 
             // Append to the resulting list.
 
-            res.add(new NicInfo(
-                    struct.name,
-                    struct.up));
+            res.add( new NicInfo( struct.name, struct.up ) );
 
         }
 

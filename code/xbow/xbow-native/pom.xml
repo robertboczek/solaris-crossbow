@@ -16,6 +16,7 @@
 
 	<modules>
 		<module>xbow-native-system-headers</module>
+		<module>xbow-native-mock</module>
 		<module>xbow-native-common</module>
 		<module>xbow-native-lib</module>
 	</modules>

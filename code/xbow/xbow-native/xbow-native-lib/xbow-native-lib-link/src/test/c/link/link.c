@@ -4,9 +4,11 @@
 #include <link/link.h>
 #include <link/memory.h>
 
-#include <test/common.h>
+#include <mock/cmockery.h>
+#include <mock/common.h>
+#include <mock/link.h>
+
 #include <test/link/functor.h>
-#include <test/mock.h>
 
 
 void test_init( void** state )
