@@ -22,6 +22,9 @@ import org.apache.log4j.Logger;
 public class JNALinkHelper implements LinkHelper {
 
     private LinkValidator linkValidator;
+    static final String LIB_NAME = "link-1.0.0";
+    protected LinkHandle handle = null;
+    private static final Logger logger = Logger.getLogger(JNALinkHelper.class);
 
     /**
      * Creates the helper object and initializes underlying handler.
@@ -65,7 +68,6 @@ public class JNALinkHelper implements LinkHelper {
         this.handle = handle;
     }
 
-
     /**
      * @see  NicHelper#getLinkNames(boolean)
      */
@@ -76,12 +78,12 @@ public class JNALinkHelper implements LinkHelper {
         int typeOfLink = isVNic ? 0 : 1;
         Pointer pointer = handle.get_link_names(typeOfLink);
 
-        if(pointer != null){
+        if (pointer != null) {
 
-            String []array = pointer.getStringArray(0);
+            String[] array = pointer.getStringArray(0);
             handle.free_char_array(pointer);
             return (array == null) ? new String[]{} : array;
-        }else{
+        } else {
             return new String[]{};
         }
 
@@ -121,18 +123,18 @@ public class JNALinkHelper implements LinkHelper {
 
         logger.info("Trying to set links's : " + name + ", property : " + property + " value : " + value);
 
-        int returnValue = handle.set_link_property( name, property.toString(), value);
+        int returnValue = handle.set_link_property(name, property.toString(), value);
 
 
-        if(returnValue == XbowStatus.XBOW_STATUS_OK.ordinal()){
-            
+        if (returnValue == XbowStatus.XBOW_STATUS_OK.ordinal()) {
+
             return;
 
         } else if (returnValue == XbowStatus.XBOW_STATUS_INVALID_NAME.ordinal()) {
 
             throw new InvalidLinkNameException("Invalid link name: " + name);
 
-        }  else if (returnValue == XbowStatus.XBOW_STATUS_OPERATION_FAILURE.ordinal()) {
+        } else if (returnValue == XbowStatus.XBOW_STATUS_OPERATION_FAILURE.ordinal()) {
 
             throw new LinkException("Unable to set property " + property);
 
@@ -141,7 +143,7 @@ public class JNALinkHelper implements LinkHelper {
             throw new LinkException("Unknown error while setting property " + property);
 
         }
-        
+
     }
 
     /**
@@ -152,63 +154,58 @@ public class JNALinkHelper implements LinkHelper {
 
         logger.info("Trying to read link's : " + name + ", property : " + property);
 
-        Pointer p = handle.get_link_property( name, property.toString());
+        Pointer p = handle.get_link_property(name, property.toString());
         return getStringFromPointer(p);
 
     }
 
+    @Override
+    public void plumb(String link) {
 
-		@Override
-		public void plumb( String link ) {
+        logger.debug("plumb: entry");
+        handle.plumb(link);
 
-			logger.debug( "plumb: entry" );
-			handle.plumb( link );
+    }
 
-		}
+    @Override
+    public boolean isPlumbed(String link) {
 
+        return handle.is_plumbed(link);
 
-		@Override
-		public boolean isPlumbed( String link ) {
+    }
 
-			return handle.is_plumbed( link );
+    /**
+     * @see  LinkHelper#setNetmask(java.lang.String, java.lang.String)
+     */
+    @Override
+    public void setNetmask(String name, String mask) throws ValidationException,
+            LinkException {
 
-		}
+        logger.info("Setting " + name + " mask to " + mask);
 
+        int rc = handle.set_netmask(name, mask);
 
-		/**
-		 * @see  LinkHelper#setNetmask(java.lang.String, java.lang.String)
-		 */
-		@Override
-		public void setNetmask( String name, String mask ) throws ValidationException,
-		                                                          LinkException {
+        if (XbowStatus.XBOW_STATUS_OK.ordinal() != rc) {
 
-			logger.info( "Setting " + name + " mask to " + mask );
+            if (XbowStatus.XBOW_STATUS_INVALID_VALUE.ordinal() == rc) {
+                throw new ValidationException(mask);
+            } else {
+                throw new LinkException("set_netmask returned with rc == " + String.valueOf(rc));
+            }
 
-			int rc = handle.set_netmask( name, mask );
+        }
 
-			if ( XbowStatus.XBOW_STATUS_OK.ordinal() != rc ) {
+    }
 
-				if ( XbowStatus.XBOW_STATUS_INVALID_VALUE.ordinal() == rc ) {
-					throw new ValidationException( mask );
-				} else {
-					throw new LinkException( "set_netmask returned with rc == " + String.valueOf( rc ) );
-				}
+    @Override
+    public String getNetmask(String link) {
 
-			}
-		
-		}
+        String netmask = handle.get_netmask(link);
+        handle.free(netmask);
 
+        return netmask;
 
-		@Override
-		public String getNetmask( String link ) {
-
-			String netmask = handle.get_netmask( link );
-			handle.free( netmask );
-
-			return netmask;
-
-		}
-
+    }
 
     /**
      * Method return string on which Pointer p points and frees the memory allocated by the library
@@ -217,16 +214,12 @@ public class JNALinkHelper implements LinkHelper {
      * @return String on which pointer points
      */
     protected String getStringFromPointer(Pointer p) {
-        
+
         String value = (p != null) ? p.getString(0) : null;
         handle.free_char_string(p);
 
         return value;
-    }    
-    
-    static final String LIB_NAME = "link";
-    protected LinkHandle handle = null;
-    private static final Logger logger = Logger.getLogger(JNALinkHelper.class);
+    }
 
     /**
      * @see LinkHelper#getIpAddress(java.lang.String)
@@ -244,8 +237,8 @@ public class JNALinkHelper implements LinkHelper {
 
         logger.debug("Trying to set ip address: " + ipAddress + " to link: " + link);
 
-        if(linkValidator != null &&
-                linkValidator.isIpAddressValid(ipAddress) == false){
+        if (linkValidator != null &&
+                linkValidator.isIpAddressValid(ipAddress) == false) {
 
             throw new ValidationException("Provided ipAddress: " + ipAddress + " is incorrect. Couldn't change ip address to: " + link);
 
@@ -253,15 +246,15 @@ public class JNALinkHelper implements LinkHelper {
 
         int returnValue = handle.set_ip_address(link, ipAddress);
 
-        if(returnValue == XbowStatus.XBOW_STATUS_OK.ordinal()){
+        if (returnValue == XbowStatus.XBOW_STATUS_OK.ordinal()) {
 
             return;
-        
-        }else if(returnValue == XbowStatus.XBOW_STATUS_OPERATION_FAILURE.ordinal()){
+
+        } else if (returnValue == XbowStatus.XBOW_STATUS_OPERATION_FAILURE.ordinal()) {
 
             throw new LinkException("Couldn't set ip address - operation failed");
 
-        }else{
+        } else {
 
             throw new LinkException("Unknown error occured while setting ip address");
 
@@ -274,9 +267,40 @@ public class JNALinkHelper implements LinkHelper {
      *
      * @param linkValidator LinkValidator implementation instance
      */
-    public void setLinkValidator(LinkValidator linkValidator){
+    public void setLinkValidator(LinkValidator linkValidator) {
 
         this.linkValidator = linkValidator;
-        
+
+    }
+
+    /**
+     * @see LinkHelper#putUp(java.lang.String, boolean)
+     */
+    @Override
+    public void putUp(String link, boolean up) throws LinkException {
+
+        int upDownProp = (up) ? 1 : 0;
+        int result = handle.ifconfig_up(link, upDownProp);
+        System.out.println("fds:" + result + " " + XbowStatus.XBOW_STATUS_OK.ordinal());
+
+        if (result != XbowStatus.XBOW_STATUS_OK.ordinal()) {
+            String message = "Couldn't put link " + link + " ";
+            message += (up) ? "up" : "down";
+            throw new LinkException(message);
+
+        }
+    }
+
+    /**
+     * @see LinkHelper#isUp(java.lang.String) 
+     */
+    @Override
+    public boolean isUp(String link) throws LinkException {
+        int value = handle.ifconfig_is_up(link);
+        if (value == 0 || value == 1) {
+            return (value == 0) ? false : true;
+        } else {
+            throw new LinkException("Couldn't get the info about link: " + link + " up or down state");
+        }
     }
 }

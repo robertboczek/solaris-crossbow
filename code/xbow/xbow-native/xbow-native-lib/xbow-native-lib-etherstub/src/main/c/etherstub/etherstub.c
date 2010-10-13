@@ -28,6 +28,7 @@ int init()
 	return dladm_open( &handle );
 }
 
+
 int delete_etherstub( char* name, int temporary )
 {
 
@@ -123,10 +124,12 @@ char* get_etherstub_parameter( char *name, char* parameter)
 {
 
 	dladm_status_t status;
+	datalink_class_t	class;
 	datalink_id_t linkid;
 	uint_t		maxpropertycnt = 1;
+	uint32_t	flags = DLADM_OPT_ACTIVE;
 
-	status = dladm_name2info(handle, name, &linkid, NULL, NULL,
+	status = dladm_name2info(handle, name, &linkid, NULL, &class,
 	    NULL);
 
 	if (status != DLADM_STATUS_OK)
@@ -134,10 +137,33 @@ char* get_etherstub_parameter( char *name, char* parameter)
 
 	char *value = (char*)malloc(MAXLENGTH);
 
-	status = dladm_get_linkprop(handle, linkid,
-			    DLADM_PROP_VAL_CURRENT, parameter, &value, &maxpropertycnt);
+	dladm_vnic_attr_t	vinfo;
 
-	if (status != DLADM_STATUS_OK){
+	if(strcasecmp("OVER", parameter) == 0)
+	{
+		if (dladm_vnic_info(handle, linkid, &vinfo, flags) !=
+		    DLADM_STATUS_OK) {
+			(void) strcpy(value, "?");
+			return value;
+		}
+		
+		if (dladm_datalink_id2info(handle, vinfo.va_link_id, NULL, NULL,
+		    NULL, value, MAXLENGTH) != DLADM_STATUS_OK)
+			(void) strcpy(value, "?");
+	}
+	else if(strcasecmp("MTU", parameter) == 0 || strcasecmp("BRIDGE", parameter) == 0 || strcasecmp("STATE", parameter) == 0)
+	{
+		status = dladm_get_linkprop(handle, linkid,
+			    DLADM_PROP_VAL_CURRENT, parameter, &value, &maxpropertycnt);
+	}
+	else if(strcasecmp("CLASS", parameter) == 0)
+	{
+		(void) dladm_class2str(class, value);
+	}
+
+
+	if (status != DLADM_STATUS_OK)
+	{
 		free(value);
 		value = NULL;
 	}
@@ -171,17 +197,17 @@ char* get_etherstub_statistic( char *name, char* property){
 	(void) kstat_close(kcp);
 	char* tmp = (char*)malloc(sizeof(char)*MAXLENGTH);
 
-	if(strcmp(property, "IPACKETS") == 0){
+	if(strcasecmp(property, "IPACKETS") == 0){
 		sprintf(tmp, "%d", (int)stats.ipackets); 
-	}else if(strcmp(property, "IERRORS") == 0){
+	}else if(strcasecmp(property, "IERRORS") == 0){
 		sprintf(tmp, "%d", (int)stats.ierrors); 
-	}else if(strcmp(property, "OPACKETS") == 0){
+	}else if(strcasecmp(property, "OPACKETS") == 0){
 		sprintf(tmp, "%d", (int)stats.opackets); 
-	}else if(strcmp(property, "OERRORS") == 0){
+	}else if(strcasecmp(property, "OERRORS") == 0){
 		sprintf(tmp, "%d", (int)stats.oerrors); 
-	}else if(strcmp(property, "RBYTES") == 0){
+	}else if(strcasecmp(property, "RBYTES") == 0){
 		sprintf(tmp, "%d", (int)stats.rbytes); 
-	}else if(strcmp(property, "OBYTES") == 0){
+	}else if(strcasecmp(property, "OBYTES") == 0){
 		sprintf(tmp, "%d", (int)stats.obytes); 
 	}else{
 		free(tmp);
@@ -239,3 +265,4 @@ char* get_etherstub_property( char *name, char* property )
 
 	return value;
 }
+

@@ -24,7 +24,7 @@ public class JNAEtherstubHelper implements EtherstubHelper {
     /** Logger */
     private static final Logger logger = Logger.getLogger(JNAEtherstubHelper.class);
 
-    private final String LIBNAME = "etherstub";
+    private final String LIBNAME = "etherstub-1.0.0";
     private EtherstubHandle handle;
 
     /**

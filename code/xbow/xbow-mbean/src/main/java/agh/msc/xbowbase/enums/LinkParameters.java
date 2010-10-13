@@ -11,5 +11,6 @@ public enum LinkParameters {
     BRIDGE,
     OVER,
     STATE,
-    MTU;
+    MTU,
+    CLASS;
 }

@@ -1,0 +1,4 @@
+
+export LD_LIBRARY_PATH=$PWD/../xbow/xbow-native/xbow-native-common/target/:$PWD/../xbow/xbow-native/xbow-native-lib/xbow-native-lib-etherstub/target/nar/etherstub-1.0.0-x86-SunOS-gcc-shared/lib/x86-SunOS-gcc/shared/:$PWD/../xbow/xbow-native/xbow-native-lib/xbow-native-lib-flow/target/nar/flow-1.0.0-x86-SunOS-gcc-shared/lib/x86-SunOS-gcc/shared/:$PWD/../xbow/xbow-native/xbow-native-lib/xbow-native-lib-link/target/nar/link-1.0.0-x86-SunOS-gcc-shared/lib/x86-SunOS-gcc/shared/
+
+echo $LD_LIBRARY_PATH

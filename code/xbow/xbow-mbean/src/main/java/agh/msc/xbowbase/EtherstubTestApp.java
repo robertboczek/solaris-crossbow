@@ -7,6 +7,7 @@ import agh.msc.xbowbase.jna.JNAEtherstubHelper;
 import agh.msc.xbowbase.jna.JNALinkHelper;
 import agh.msc.xbowbase.jna.JNAVNicHelper;
 import agh.msc.xbowbase.lib.EtherstubHelper;
+import agh.msc.xbowbase.lib.LinkHelper;
 import agh.msc.xbowbase.lib.VNicHelper;
 
 /**
@@ -19,8 +20,19 @@ public class EtherstubTestApp {
 
         EtherstubHelper etherstubadm = new JNAEtherstubHelper();
 
+        LinkHelper linkHelper = new JNALinkHelper();
+
+        System.out.println(linkHelper.getLinkParameter("vnic1", LinkParameters.STATE));
+
+        //linkHelper.
+        linkHelper.putUp("vnic2", true);
+
+        System.out.println(linkHelper.getLinkParameter("vnic2", LinkParameters.OVER));
+
+        System.out.println(linkHelper.isUp("vnic2"));
+
         //test creating etherstub
-        etherstubadm.createEtherstub("etherstub23", false);
+       /* etherstubadm.createEtherstub("etherstub23", false);
 
         //test removing etherstub
         etherstubadm.deleteEtherstub("etherstub23", false);
@@ -67,7 +79,7 @@ public class EtherstubTestApp {
 
         String inpackets = helper.getLinkStatistic("e1000g0", LinkStatistics.IPACKETS);
         System.out.println("Input packets received by e1000g0 is: " + inpackets);
-        
+        */
 
     }
 }

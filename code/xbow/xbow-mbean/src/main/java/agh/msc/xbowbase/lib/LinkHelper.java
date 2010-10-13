@@ -73,14 +73,32 @@ public interface LinkHelper {
      */
     public void plumb(String link);
 
-		/**
-		 * TODO-DAWID: comments
-		 *
-		 *
-		 * @param link
-		 * @return
-		 */
-		public boolean isPlumbed( String link );
+    /**
+     * TODO-DAWID: comments
+     *
+     *
+     * @param link
+     * @return
+     */
+    public boolean isPlumbed(String link);
+
+    /**
+     * Puts specified link up or down
+     *
+     * @param link Link name
+     * @param up True if link is to be put up, false otherwise
+     *
+     */
+    public void putUp(String link, boolean up) throws LinkException;
+
+    /**
+     * Return info whether link is up or down
+     *
+     * @param link Link name
+     *
+     * @return Returns true if link is up, false otherwise
+     */
+    public boolean isUp(String link) throws LinkException;
 
     /**
      * @brief  For given interface, sets its netmask.
