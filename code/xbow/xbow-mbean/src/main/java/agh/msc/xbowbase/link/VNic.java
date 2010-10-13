@@ -1,5 +1,6 @@
 package agh.msc.xbowbase.link;
 
+import agh.msc.xbowbase.enums.LinkParameters;
 import agh.msc.xbowbase.exception.LinkException;
 import agh.msc.xbowbase.lib.VNicHelper;
 import org.apache.log4j.Logger;
@@ -12,7 +13,7 @@ import org.apache.log4j.Logger;
 public class VNic extends Link implements VNicMBean {
 
     private static final Logger logger = Logger.getLogger(VNic.class);
-    private final String parent;
+    private String parent;
     private final boolean temporary;
     private boolean plumbed;
     private boolean up;
@@ -93,6 +94,10 @@ public class VNic extends Link implements VNicMBean {
      */
     @Override
     public String getParent() throws LinkException {
+        
+        if(this.parent == null){
+            this.parent = this.linkHelper.getLinkParameter(this.name, LinkParameters.OVER);
+        }
         return this.parent;
     }
 

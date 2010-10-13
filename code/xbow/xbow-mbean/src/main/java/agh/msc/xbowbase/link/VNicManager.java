@@ -114,11 +114,11 @@ public class VNicManager implements VNicManagerMBean, NotificationListener {
         if (publisher != null) {
             Set<Object> vnicSet = new HashSet<Object>(publisher.getPublished());
 
-            //check for new Etherstubs
+            //check for new vnic's
             for (VNicMBean vNicMBean : currentMBeans) {
                 if (vnicSet.contains(vNicMBean) == false) {
                     //create and register new VnicMBean
-									( ( VNic ) vNicMBean ).setVNicHelper( vnicHelper );
+                    ( ( VNic ) vNicMBean ).setVNicHelper( vnicHelper );
                     registerNewVNicMBean(vNicMBean);
                 }
             }

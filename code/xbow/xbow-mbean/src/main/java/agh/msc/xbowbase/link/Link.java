@@ -171,12 +171,12 @@ public abstract class Link implements LinkMBean {
 
     @Override
     public boolean isUp() throws LinkException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return this.linkHelper.isUp(this.name);
     }
 
     @Override
     public void setUp(boolean up) throws LinkException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.linkHelper.putUp(this.name, up);
     }
 
     public void setLinkHelper(LinkHelper linkHelper) {

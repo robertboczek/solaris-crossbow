@@ -51,6 +51,9 @@ public interface LinkHandle extends Library {
 	public String get_ip_address(String link);
 	public int set_ip_address(String link, String address);
 
+        public int ifconfig_up( String link, int up_down );
+        public int ifconfig_is_up( String link );
+
 	public int delete_vnic(String name, int temporary);
 	public int create_vnic(String name, int temporary, String parent);
 	public Pointer get_link_names(int link_type);
