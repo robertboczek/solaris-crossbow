@@ -19,5 +19,9 @@ dladm_status_t dladm_walk_datalink_id( int ( *fn )( dladm_handle_t, datalink_id_
                                        dladm_handle_t handle, void* argp, datalink_class_t class,
                                        datalink_media_t dmedia, uint32_t flags );
 
+
+dladm_status_t dladm_walk( dladm_walkcb_t* p, dladm_handle_t handle, void* pointer,
+                           datalink_class_t data_link_class, datalink_media_t b, uint32_t flags );
+
 #endif
 

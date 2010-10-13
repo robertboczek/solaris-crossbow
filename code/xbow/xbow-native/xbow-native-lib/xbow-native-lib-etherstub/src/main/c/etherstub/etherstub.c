@@ -59,11 +59,8 @@ int create_etherstub( char* name, int temporary )
 {
 	uint32_t flags;
 	dladm_status_t status;
-	char etherstub_name[MAXLINKNAMELEN];
-	uchar_t mac_addr[ETHERADDRL];
-
-	etherstub_name[0] = '\0';
-	bzero(mac_addr, sizeof (mac_addr));
+	char etherstub_name[MAXLINKNAMELEN] = { 0 };
+	uchar_t mac_addr[ETHERADDRL] = { 0 };
 
 	flags = DLADM_OPT_ANCHOR | DLADM_OPT_ACTIVE | DLADM_OPT_PERSIST;
 

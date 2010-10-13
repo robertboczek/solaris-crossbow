@@ -1,9 +1,6 @@
 #include <libdladm.h>
 #include <libdllink.h>
 #include <libdlvnic.h>
-#include <libdlstat.h>
-
-#include <kstat.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -12,126 +9,8 @@
 #include <common/defs.h>
 
 #include <mock/cmockery.h>
-
-
-dladm_status_t dladm_name2info(dladm_handle_t handle, const char *vnic,
-			    datalink_id_t *link_id, uint32_t *flags, datalink_class_t *link,
-			    uint32_t *flag2){
-
-	check_expected( vnic );
-
-	return ( dladm_status_t ) mock();
-}
-
-dladm_status_t	dladm_vnic_delete(dladm_handle_t handle, datalink_id_t link_id,
-			    uint32_t flags){	
-
-	check_expected( flags );
-
-	return ( dladm_status_t ) mock();
-
-}
-
-boolean_t dladm_valid_linkname(const char *vnic){
-
-	check_expected( vnic );
-	
-	return ( dladm_status_t ) mock();
-
-}
-
-dladm_status_t dladm_vnic_create(dladm_handle_t handle, const char *vnic,
-			    datalink_id_t link, vnic_mac_addr_type_t macaddress, uchar_t *a,
-			    uint_t e, int *d, uint_t k, uint16_t h, vrid_t l, int b,
-			    datalink_id_t *f, dladm_arg_list_t *g, uint32_t flags){
-
-	check_expected( vnic );
-	check_expected( flags );
-
-	return ( dladm_status_t ) mock();
-
-}
-
-dladm_status_t	dladm_walk(dladm_walkcb_t *p, dladm_handle_t handle, void *pointer,
-			    datalink_class_t data_link_class, datalink_media_t b, uint32_t flags){
-
-	check_expected( flags );
-	check_expected( data_link_class );
-
-	link_names_t* link_names =  (link_names_t*)pointer;
-	link_names->array[0] = (char*)malloc(7);
-	link_names->array[1] = (char*)malloc(7);
-
-	strcpy(link_names->array[0], "vnic1");
-	strcpy(link_names->array[1], "vnic2");
-	link_names->array[2] = NULL;
-
-	link_names->number_of_elements = 2;
-
-	return ( dladm_status_t ) mock();
-
-}
-
-dladm_status_t	dladm_get_linkprop(dladm_handle_t handle, datalink_id_t link_id,
-			    dladm_prop_type_t a, const char *parameter, char **value, uint_t *b)
-{
-
-	check_expected( parameter );	
-
-	if(strcmp(parameter, "priority") == 0){
-		strcpy(*value, "high");
-	}else if(strcmp(parameter, "mtu") == 0){
-		strcpy(*value, "1500");
-	}
-
-	return ( dladm_status_t ) mock();
-
-}
-
-kstat_t	*dladm_kstat_lookup(kstat_ctl_t *ctl, const char *link, int a,
-			    const char *vnic, const char *b)
-{
-
-	check_expected( vnic );
-
-	return ( kstat_t* ) mock();
-
-}
-
-void dladm_get_stats(kstat_ctl_t *ctl, kstat_t *t, pktsum_t *stats)
-{
-
-
-	stats->ierrors = 1567;
-	stats->ipackets = 2000;
-	
-
-}
-
-kstat_ctl_t *kstat_open(void)
-{
-
-	return ( kstat_ctl_t* ) mock();
-
-}
-
-int kstat_close(kstat_ctl_t *ctl)
-{
-
-	return (int) mock();
-	
-}
-
-dladm_status_t	dladm_set_linkprop(dladm_handle_t handle, datalink_id_t link,
-			    const char *property, char **value, uint_t a, uint_t flags)
-{
-
-	check_expected( property );
-	check_expected( flags );	
-
-	return ( dladm_status_t ) mock();
-
-}
+#include <mock/kstat.h>
+#include <mock/link.h>
 
 
 void test_successful_removing_vnic( void** state )
@@ -139,9 +18,10 @@ void test_successful_removing_vnic( void** state )
 	char vnic[] = "vnic1";
 	boolean_t temporary = 0; //persistent
 	dladm_status_t flags = DLADM_OPT_ACTIVE | DLADM_OPT_PERSIST;
+	datalink_id_t linkid;
 
-	expect_string( dladm_name2info, vnic, vnic );
-
+	expect_string( dladm_name2info, link, vnic );
+	will_return( dladm_name2info, &linkid );
 	will_return( dladm_name2info, DLADM_STATUS_OK );
 
 	expect_value( dladm_vnic_delete, flags, flags);
@@ -157,9 +37,10 @@ void test_temporal_removing_vnic( void** state )
 	char vnic[] = "vnic1";
 	boolean_t temporary = 1; //temporal
 	dladm_status_t flags = DLADM_OPT_ACTIVE;
+	datalink_id_t linkid;
 
-	expect_string( dladm_name2info, vnic, vnic );
-
+	expect_string( dladm_name2info, link, vnic );
+	will_return( dladm_name2info, &linkid );
 	will_return( dladm_name2info, DLADM_STATUS_OK );
 
 	expect_value( dladm_vnic_delete, flags, flags);
@@ -174,9 +55,10 @@ void test_removing_invalidname_vnic( void** state )
 {
 	char vnic[] = "invalidname232";
 	boolean_t temporary = 0; //persistent
+	datalink_id_t linkid;
 
-	expect_string( dladm_name2info, vnic, vnic );
-
+	expect_string( dladm_name2info, link, vnic );
+	will_return( dladm_name2info, &linkid );
 	will_return( dladm_name2info, DLADM_STATUS_BADVAL );
 
 	assert_true( XBOW_STATUS_INVALID_NAME == delete_vnic( vnic, temporary ) );
@@ -189,12 +71,13 @@ void test_successful_creating_vnic( void** state )
 	char parent[] = "e100g0";
 	boolean_t temporary = 0; //persistent
 	uint32_t flags = DLADM_OPT_ACTIVE | DLADM_OPT_PERSIST;
+	datalink_id_t linkid;
 
-	expect_string( dladm_name2info, vnic, parent );
-
+	expect_string( dladm_name2info, link, parent );
+	will_return( dladm_name2info, &linkid );
 	will_return( dladm_name2info, DLADM_STATUS_OK );
 
-	expect_string( dladm_valid_linkname, vnic, vnic );
+	expect_string( dladm_valid_linkname, link, vnic );
 
 	will_return( dladm_valid_linkname, 1 );
 
@@ -213,13 +96,14 @@ void test_temporal_creating_vnic( void** state )
 	char parent[] = "e1000g0";
 	boolean_t temporary = 1; //temporal
 	uint32_t flags = DLADM_OPT_ACTIVE;
+	datalink_id_t linkid;
 
-	expect_string( dladm_name2info, vnic, parent );
-
+	expect_string( dladm_name2info, link, parent );
+	will_return( dladm_name2info, &linkid );
 	will_return( dladm_name2info, DLADM_STATUS_OK );
 
 
-	expect_string( dladm_valid_linkname, vnic, vnic );
+	expect_string( dladm_valid_linkname, link, vnic );
 
 	will_return( dladm_valid_linkname, 1 );
 
@@ -237,12 +121,13 @@ void test_temporal_creating_vnic_with_invalid_name( void** state )
 	char vnic[] = "invalidname1";
 	char parent[] = "e100g0";
 	boolean_t temporary = 1; //temporal
+	datalink_id_t linkid;
 
-	expect_string( dladm_name2info, vnic, parent );
-
+	expect_string( dladm_name2info, link, parent );
+	will_return( dladm_name2info, &linkid );
 	will_return( dladm_name2info, DLADM_STATUS_OK );
 
-	expect_string( dladm_valid_linkname, vnic, vnic );
+	expect_string( dladm_valid_linkname, link, vnic );
 
 	will_return( dladm_valid_linkname, 0 );
 
@@ -255,9 +140,10 @@ void test_creating_vnic_with_too_long_name( void** state )
 	char vnic[] = "vnicvnicvnicnvicnvicnivncvnicvnicvnic";
 	boolean_t temporary = 0; //persistent
 	char parent[] = "e1000g0";
+	datalink_id_t linkid;
 
-	expect_string( dladm_name2info, vnic, parent );
-
+	expect_string( dladm_name2info, link, parent );
+	will_return( dladm_name2info, &linkid );
 	will_return( dladm_name2info, DLADM_STATUS_OK );
 
 
@@ -270,9 +156,10 @@ void test_creating_vnic_with_invalid_parent_link_name( void** state )
 	char vnic[] = "vnic1";
 	boolean_t temporary = 0; //persistent
 	char parent[] = "invalidparentlinkname";
+	datalink_id_t linkid;
 
-	expect_string( dladm_name2info, vnic, parent );
-
+	expect_string( dladm_name2info, link, parent );
+	will_return( dladm_name2info, &linkid );
 	will_return( dladm_name2info, DLADM_STATUS_FAILED );
 
 
@@ -283,26 +170,38 @@ void test_creating_vnic_with_invalid_parent_link_name( void** state )
 
 void test_getting_link_names( void** state )
 {
-
 	int link_type = 0; // i want vnic names
 	uint32_t flags = DLADM_OPT_ACTIVE;
 	datalink_class_t data_link_class = DATALINK_CLASS_VNIC;
+	char* links[] = { "vnic1", "vnic2" };
 
-	expect_value( dladm_walk, data_link_class, data_link_class);
+	link_names_t link_names = { .number_of_elements = LEN( links ) };
+	
+	link_names.array = malloc( sizeof( *link_names.array ) * ( LEN( links ) + 1 ) );
+
+	for ( int i = 0; i < LEN( links ); ++i )
+	{
+		link_names.array[ i ] = malloc( strlen( links[ i ] ) + 1 );
+		strcpy( link_names.array[ i ], links[ i ] );
+	}
+	link_names.array[ LEN( links ) ] = NULL;
+
+	expect_value( dladm_walk, data_link_class, data_link_class );
 	expect_value( dladm_walk, flags, flags );
 
+	will_return( dladm_walk, sizeof( link_names ) );
+	will_return( dladm_walk, &link_names );
 	will_return( dladm_walk, DLADM_STATUS_OK );
 
-	char **link_names = get_link_names( link_type );
-	int i = 0;
-	while(link_names[i] != NULL){
-		i++;
+	char** names = get_link_names( link_type );
+
+	int i;
+	for ( i = 0; NULL != names[ i ]; ++i )
+	{
+		assert_string_equal( links[ i ], names[ i ] );
 	}
-	assert_int_equal( 2, i ); 
 
-	assert_string_equal( "vnic1", link_names[0] );
-	assert_string_equal( "vnic2", link_names[1] );
-
+	assert_int_equal( LEN( links ), i ); 
 }
 
 void test_getting_link_names_when_opeartion_fails( void** state )
@@ -314,12 +213,12 @@ void test_getting_link_names_when_opeartion_fails( void** state )
 	expect_value( dladm_walk, data_link_class, data_link_class);
 	expect_value( dladm_walk, flags, flags );
 
+	will_return( dladm_walk, 0 );
 	will_return( dladm_walk, DLADM_STATUS_FAILED );
 
 	char **link_names = get_link_names( link_type );
 
 	assert_string_equal( NULL, link_names );
-
 }
 
 void test_getting_parameter_value_of_link_with_wrong_name( void** state )
@@ -327,9 +226,10 @@ void test_getting_parameter_value_of_link_with_wrong_name( void** state )
 
 	char vnic[] = "vxcvxcvcx1";
 	char parameter[] = "mtu";
+	datalink_id_t linkid;
 
-	expect_string( dladm_name2info, vnic, vnic );
-
+	expect_string( dladm_name2info, link, vnic );
+	will_return( dladm_name2info, &linkid );
 	will_return( dladm_name2info, DLADM_STATUS_BADVAL );
 
 	assert_string_equal( NULL, get_link_parameter( vnic, parameter )); 	
@@ -338,21 +238,20 @@ void test_getting_parameter_value_of_link_with_wrong_name( void** state )
 
 void test_successful_getting_parameter_value( void** state )
 {
-
 	char vnic[] = "vnic1";
 	char parameter[] = "mtu";
 	char value[] = "1500";
+	datalink_id_t linkid;
 
-	expect_string( dladm_name2info, vnic, vnic );
-
+	expect_string( dladm_name2info, link, vnic );
+	will_return( dladm_name2info, &linkid );
 	will_return( dladm_name2info, DLADM_STATUS_OK );
 
 	expect_string( dladm_get_linkprop, parameter, parameter );	
-
+	will_return( dladm_get_linkprop, value );
 	will_return( dladm_get_linkprop, DLADM_STATUS_OK );
 
 	assert_string_equal(value, get_link_parameter( vnic, parameter )); 	
-
 }
 
 void test_getting_parameter_value_when_operation_fails( void** state )
@@ -360,13 +259,14 @@ void test_getting_parameter_value_when_operation_fails( void** state )
 
 	char vnic[] = "vnic1";
 	char parameter[] = "mtu";
+	datalink_id_t linkid;
 
-	expect_string( dladm_name2info, vnic, vnic );
-
+	expect_string( dladm_name2info, link, vnic );
+	will_return( dladm_name2info, &linkid );
 	will_return( dladm_name2info, DLADM_STATUS_OK );
 
 	expect_string( dladm_get_linkprop, parameter, parameter );	
-
+	will_return( dladm_get_linkprop, "1500" );
 	will_return( dladm_get_linkprop, DLADM_STATUS_FAILED );
 
 	assert_string_equal(NULL, get_link_parameter( vnic, parameter )); 	
@@ -378,9 +278,10 @@ void test_getting_property_value_of_link_with_wrong_name( void** state )
 
 	char vnic[] = "vxcvxcvcx1";
 	char parameter[] = "priority";
+	datalink_id_t linkid;
 
-	expect_string( dladm_name2info, vnic, vnic );
-
+	expect_string( dladm_name2info, link, vnic );
+	will_return( dladm_name2info, &linkid );
 	will_return( dladm_name2info, DLADM_STATUS_BADVAL );
 
 	assert_string_equal( NULL, get_link_property( vnic, parameter )); 	
@@ -393,13 +294,14 @@ void test_successful_getting_property_value( void** state )
 	char vnic[] = "vnic";
 	char parameter[] = "priority";
 	char value[] = "high";
+	datalink_id_t linkid;
 
-	expect_string( dladm_name2info, vnic, vnic );
-
+	expect_string( dladm_name2info, link, vnic );
+	will_return( dladm_name2info, &linkid );
 	will_return( dladm_name2info, DLADM_STATUS_OK );
 
 	expect_string( dladm_get_linkprop, parameter, parameter );	
-
+	will_return( dladm_get_linkprop, value );
 	will_return( dladm_get_linkprop, DLADM_STATUS_OK );
 
 	assert_string_equal(value, get_link_property( vnic, parameter )); 	
@@ -411,13 +313,14 @@ void test_getting_property_value_when_operation_fails( void** state )
 
 	char vnic[] = "vnic";
 	char parameter[] = "fdsfdff";
+	datalink_id_t linkid;
 
-	expect_string( dladm_name2info, vnic, vnic );
-
+	expect_string( dladm_name2info, link, vnic );
+	will_return( dladm_name2info, &linkid );
 	will_return( dladm_name2info, DLADM_STATUS_OK );
 
 	expect_string( dladm_get_linkprop, parameter, parameter );	
-
+	will_return( dladm_get_linkprop, "" );
 	will_return( dladm_get_linkprop, DLADM_STATUS_FAILED );
 
 	assert_string_equal(NULL, get_link_property( vnic, parameter )); 	
@@ -429,9 +332,10 @@ void test_getting_statistic_value_of_link_with_wrong_name( void** state )
 
 	char vnic[] = "vxcvxcvcx1";
 	char statistic[] = "IPACKETS";
+	datalink_id_t linkid;
 
-	expect_string( dladm_name2info, vnic, vnic );
-
+	expect_string( dladm_name2info, link, vnic );
+	will_return( dladm_name2info, &linkid );
 	will_return( dladm_name2info, DLADM_STATUS_BADVAL );
 
 	assert_string_equal( NULL, get_link_statistic( vnic, statistic )); 	
@@ -440,28 +344,29 @@ void test_getting_statistic_value_of_link_with_wrong_name( void** state )
 
 void test_successful_getting_statistic_value( void** state )
 {
-
 	char vnic[] = "vnic";
 	char statistic[] = "IPACKETS";
 	char value[] = "2000";
+	datalink_id_t linkid;
+	kstat_t stat;
+	kstat_ctl_t kcp;
+	pktsum_t stats = { .ierrors = 1567, .ipackets = 2000 };
 
-	kstat_t *stat = malloc( sizeof(kstat_t) );
-	kstat_ctl_t *kcp = malloc( sizeof(kstat_ctl_t) );
-
-	expect_string( dladm_name2info, vnic, vnic );
-
+	expect_string( dladm_name2info, link, vnic );
+	will_return( dladm_name2info, &linkid );
 	will_return( dladm_name2info, DLADM_STATUS_OK );
 
-	will_return( kstat_open, kcp );	
+	will_return( kstat_open, &kcp );	
 
 	expect_string( dladm_kstat_lookup, vnic, vnic );
 
-	will_return( dladm_kstat_lookup, stat );
+	will_return( dladm_kstat_lookup, &stat );
+
+	will_return( dladm_get_stats, &stats );
 
 	will_return( kstat_close, 0 );
 
 	assert_string_equal(value, get_link_statistic( vnic, statistic )); 	
-
 }
 
 void test_getting_statistic_value_when_operation_fails( void** state )
@@ -469,9 +374,10 @@ void test_getting_statistic_value_when_operation_fails( void** state )
 
 	char vnic[] = "vnic";
 	char statistic[] = "IPACKETS";
+	datalink_id_t linkid;
 
-	expect_string( dladm_name2info, vnic, vnic );
-
+	expect_string( dladm_name2info, link, vnic );
+	will_return( dladm_name2info, &linkid );
 	will_return( dladm_name2info, DLADM_STATUS_OK );
 
 	will_return( kstat_open, NULL );
@@ -486,9 +392,10 @@ void test_setting_property_value_of_link_with_wrong_name( void** state )
 	char vnic[] = "vxcvxcvcx1";
 	char property[] = "priority";
 	char value[] = "high";
+	datalink_id_t linkid;
 
-	expect_string( dladm_name2info, vnic, vnic );
-
+	expect_string( dladm_name2info, link, vnic );
+	will_return( dladm_name2info, &linkid );
 	will_return( dladm_name2info, DLADM_STATUS_BADVAL );
 
 	assert_int_equal( XBOW_STATUS_INVALID_NAME, set_link_property( vnic, property, value )); 	
@@ -502,9 +409,10 @@ void test_successful_setting_property_value( void** state )
 	char property[] = "priority";
 	char value[] = "high";
 	uint32_t	flags = DLADM_OPT_ACTIVE | DLADM_OPT_PERSIST | DLADM_OPT_FORCE;
+	datalink_id_t linkid;
 
-	expect_string( dladm_name2info, vnic, vnic );
-
+	expect_string( dladm_name2info, link, vnic );
+	will_return( dladm_name2info, &linkid );
 	will_return( dladm_name2info, DLADM_STATUS_OK );
 
 	expect_string( dladm_set_linkprop, property, property );
@@ -523,9 +431,10 @@ void test_setting_property_value_when_operation_fails( void** state )
 	char property[] = "fdsfdff";
 	char value[] = "high";
 	uint32_t	flags = DLADM_OPT_ACTIVE | DLADM_OPT_PERSIST | DLADM_OPT_FORCE;
+	datalink_id_t linkid;
 
-	expect_string( dladm_name2info, vnic, vnic );
-
+	expect_string( dladm_name2info, link, vnic );
+	will_return( dladm_name2info, &linkid );
 	will_return( dladm_name2info, DLADM_STATUS_OK );
 
 	expect_string( dladm_set_linkprop, property, property );	

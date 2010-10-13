@@ -1,6 +1,7 @@
 #include <string.h>
 
 #include <mock/cmockery.h>
+#include <mock/common.h>
 #include <mock/flow.h>
 
 

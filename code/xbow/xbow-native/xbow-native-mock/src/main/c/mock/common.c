@@ -23,7 +23,7 @@ void fill_buffer( void* target, void* source, int len )
 	{
 		// Indirection.
 
-		target = *( ( char** ) target );
+		target = *( ( void** ) target );
 		len = -len;
 	}
 

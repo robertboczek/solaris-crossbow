@@ -1,6 +1,6 @@
 #include <common/mappings.h>
 
-#include <test/common.h>
+#include <mock/cmockery.h>
 
 #include <test/etherstub/etherstub_wrapper.h>
 

@@ -200,7 +200,7 @@ int create_vnic( char* name, int temporary, char *parent )
 int get_name(const char *name, void *prop){
 	
 	link_names_t* link_names =  (link_names_t*)prop;
-	link_names->array[link_names->number_of_elements] = (char*)malloc(sizeof(char)*(strlen(name)+1));
+	link_names->array[link_names->number_of_elements] = malloc(strlen(name)+1);
 	strcpy(link_names->array[link_names->number_of_elements++], name);
 
 }
@@ -228,7 +228,7 @@ char** get_link_names( int link_type )
 	    data_link_class, DATALINK_ANY_MEDIATYPE, flags) != DLADM_STATUS_OK){
 		int i;
 		for(i = 0; i < link_names.number_of_elements; i++){
-			free(link_names.array[link_names.number_of_elements]);
+			free(link_names.array[ i ]);
 		}
 		free(link_names.array);
 		return NULL;
