@@ -46,7 +46,7 @@ public class VNicTest {
 
         Map<LinkParameters, String> map = vnic.getParameters();
 
-        assertEquals(map.size(), 4);
+        assertEquals( LinkParameters.values().length, map.size() );
 
         assertEquals("1200", map.get(LinkParameters.MTU));
 
