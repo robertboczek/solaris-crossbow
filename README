@@ -7,6 +7,8 @@ BUILDING
 
 	Remember to add Cmockery lib path to LD_LIBRARY_PATH.
 
+	TEMPORARY: You also have to invoke sh/mock-symlinks.sh from code dir before building.
+
 * Native code coverage reports with lcov
 
 	lcov (http://ltp.sourceforge.net/coverage/lcov.php) has to be installed
@@ -22,4 +24,9 @@ BUILDING
 * Maven
 
 	Invoke mvn inside xbow dir to build the source.
+
+
+RUNNING
+
+	Invoke sh/run.sh (from code dir)
 

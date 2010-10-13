@@ -33,12 +33,16 @@
 			<version>1.0.0</version>
 			<type>nar</type>
 		</dependency>
+
+		<!--
+		TODO: nar nie obsluguje linkowania tylko dla testow
 		<dependency>
 			<groupId>xbow-native</groupId>
 			<artifactId>mock</artifactId>
 			<version>1.0.0</version>
 			<type>nar</type>
 		</dependency>
+		-->
 	</dependencies>
 
 	<build>

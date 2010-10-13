@@ -5,7 +5,7 @@
 #include <mock/link.h>
 
 #include <test/link/functor.h>
-#include <test/link/link.h>
+#include <test/link/nic.h>
 #include <test/link/link_wrapper.h>
 
 

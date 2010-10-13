@@ -1,5 +1,5 @@
-#ifndef LINK_LINK_TEST_H
-#define LINK_LINK_TEST_H
+#ifndef LINK_NIC_TEST_H
+#define LINK_NIC_TEST_H
 
 
 void test_init( void** state );
