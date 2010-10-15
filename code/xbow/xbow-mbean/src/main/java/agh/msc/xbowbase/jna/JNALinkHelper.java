@@ -160,17 +160,22 @@ public class JNALinkHelper implements LinkHelper {
     }
 
     @Override
-    public void plumb(String link) {
+    public void plumb( String link ) throws LinkException {
 
-        logger.debug("plumb: entry");
-        handle.plumb(link);
+			logger.info( "Plumbing " + link );
+
+			int rc = handle.plumb( link );
+
+			if ( XbowStatus.XBOW_STATUS_OK.ordinal() != rc ) {
+				throw new LinkException( "plumb returned with rc == " + String.valueOf( rc ) );
+			}
 
     }
 
     @Override
-    public boolean isPlumbed(String link) {
+    public boolean isPlumbed( String link ) {
 
-        return handle.is_plumbed(link);
+        return handle.is_plumbed( link );
 
     }
 

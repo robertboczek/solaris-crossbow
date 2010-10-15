@@ -20,22 +20,6 @@ public class Nic extends Link implements NicMBean {
     }
     
 
-    /**
-     * @see  NicMBean#isUp()
-     */
-    @Override
-    public boolean isUp() {
-        return nicHelper.isUp(name);
-    }
-
-    /**
-     * @see  NicMBean#setUp( boolean )
-     */
-    @Override
-    public void setUp(boolean up) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
     public void setNicHelper(NicHelper nicHelper) {
         this.nicHelper = nicHelper;
 	super.linkHelper = nicHelper;

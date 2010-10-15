@@ -148,6 +148,14 @@ public class FlowManagerTest {
 	}
 
 
+	@Test
+	public void testFlowManagerDoesntFailWithoutPublisherSet() {
+
+		flowManager.setPublisher( null );
+
+	}
+
+
 	private Flow flow;
 
 	private FlowManager flowManager;

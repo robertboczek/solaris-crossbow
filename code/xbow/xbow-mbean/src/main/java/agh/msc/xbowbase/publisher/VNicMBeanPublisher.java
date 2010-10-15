@@ -1,5 +1,6 @@
 package agh.msc.xbowbase.publisher;
 
+import agh.msc.xbowbase.exception.LinkException;
 import agh.msc.xbowbase.link.VNicMBean;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
@@ -38,8 +39,19 @@ public class VNicMBeanPublisher extends MBeanPublisher {
      */
     @Override
     protected ObjectName createObjectName(Object object) throws MalformedObjectNameException {
-        return new ObjectName(String.format(
-                "agh.msc.xbowbase:type=VNic,name=%s", ((VNicMBean) object).getName()));
+
+			VNicMBean vnic = ( VNicMBean ) object;
+
+			String parent = "unknown";
+			try {
+				parent = vnic.getParent();
+			} catch ( LinkException e ) {
+			}
+
+			return new ObjectName(String.format(
+				"agh.msc.xbowbase:type=VNic,parent=%s,name=%s", parent, vnic.getName()
+			));
+
     }
 
     /**

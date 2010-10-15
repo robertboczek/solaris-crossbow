@@ -1,7 +1,6 @@
 package agh.msc.xbowbase.link;
 
 import agh.msc.xbowbase.lib.NicHelper;
-import agh.msc.xbowbase.link.util.NicToNicInfoTranslator;
 import agh.msc.xbowbase.publisher.Publisher;
 import agh.msc.xbowbase.publisher.exception.NotPublishedException;
 import java.util.HashSet;
@@ -55,7 +54,7 @@ public class NicManager implements NicManagerMBean, NotificationListener {
 
 					// Create new Nic object, initialize and register it.
 
-					Nic nic = NicToNicInfoTranslator.toNic( nicInfo );
+					Nic nic = new Nic( nicInfo.getName() );
 					nic.setNicHelper( nicHelper );
 
 					publisher.publish( nic );

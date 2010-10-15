@@ -68,19 +68,19 @@ public interface LinkHelper {
      * @brief  Performs plumbing needed for IP to use link.
      *
      * @param  link  link name
-     *
-     * // TODO-DAWID: exceptions
+		 *
+		 * @throws  LinkException  internal error occured while plumbing link
      */
-    public void plumb(String link);
+    public void plumb( String link ) throws LinkException;
 
     /**
-     * TODO-DAWID: comments
+		 * @brief  Evaluates to true if the link is plumbed.
      *
-     *
-     * @param link
-     * @return
+     * @param  link  link name
+		 *
+     * @return  true  iff the link is plumbed
      */
-    public boolean isPlumbed(String link);
+    public boolean isPlumbed( String link );
 
     /**
      * Puts specified link up or down

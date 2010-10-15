@@ -25,6 +25,7 @@ enum
 	XBOW_STATUS_INVALID_VALUE,
 	XBOW_STATUS_IOCTL_ERR,
 	XBOW_STATUS_ATTR_PARSE_ERR,
+	XBOW_STATUS_DLPI_ERR,
 
 	XBOW_STATUS_LEN_             // auxiliary, don't use it as a return code
 };

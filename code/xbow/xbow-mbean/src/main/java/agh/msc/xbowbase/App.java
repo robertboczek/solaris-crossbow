@@ -18,6 +18,7 @@ import agh.msc.xbowbase.link.validators.RegexLinkValidator;
 import agh.msc.xbowbase.publisher.EtherstubMBeanPublisher;
 import agh.msc.xbowbase.publisher.NicMBeanPublisher;
 import agh.msc.xbowbase.publisher.VNicMBeanPublisher;
+import com.sun.jna.Native;
 import java.lang.management.ManagementFactory;
 import java.util.Date;
 import javax.management.MBeanServer;

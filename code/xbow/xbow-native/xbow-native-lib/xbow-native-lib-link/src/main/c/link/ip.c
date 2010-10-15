@@ -106,7 +106,7 @@ char* get_netmask( char* link )
 
 int plumb( char* link )
 {
-	ifconfig_plumb( link );
+	ifplumb( link );
 }
 
 

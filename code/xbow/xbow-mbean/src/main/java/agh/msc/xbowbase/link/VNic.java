@@ -34,45 +34,6 @@ public class VNic extends Link implements VNicMBean {
     }
 
     /**
-     * @see VNicMBean#isPlumbed()
-     */
-    @Override
-    public boolean isPlumbed() throws LinkException {
-        //@todo use jna to get vnic's plumbed state
-        return plumbed;
-    }
-
-    /**
-     * @see VNicMBean#setPlumbed(boolean)
-     */
-    @Override
-    public void setPlumbed(boolean plumbed) throws LinkException {
-
-        vNicHelper.plumb(name);
-
-        //@todo use jna to set vnic's plumbed state
-        this.plumbed = plumbed;
-    }
-
-    /**
-     * @see VNicMBean#isUp() 
-     */
-    @Override
-    public boolean isUp() throws LinkException {
-        //@todo use jna to get vnic's up state
-        return this.up;
-    }
-
-    /**
-     * @see VNicMBean#setUp(boolean)
-     */
-    @Override
-    public void setUp(boolean up) throws LinkException {
-        //@todo use jna to set vnic's up state
-        this.up = up;
-    }
-
-    /**
      * @see VNicMBean#isTemporary()
      */
     @Override
