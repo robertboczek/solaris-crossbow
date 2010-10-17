@@ -103,8 +103,88 @@
 
 		\end{frame}
 
+		\begin{frame}{Available link operations}
 
-		\begin{frame}{User Interface}
+			\begin{itemize}
+				\item Plumbing
+				\item Putting interface up/down
+				\item Setting ip address
+				\item Setting mask address
+				\item Getting parent link name				
+			\end{itemize}
+		\end{frame}
+
+
+		\begin{frame}{Etherstub and Link(Vnic, Nic) parameters }
+
+			Read-only parameters:
+			
+			\begin{itemize}
+
+				\item BRIDGE - The name of the bridge to which this link is assigned, if any
+				\item OVER - The physical datalink(s) over which the datalink is operating
+				\item STATE - The link state of the datalink. The state can be up, down, or unknown
+				\item MTU - The maximum transmission unit size for the datalink being displayed
+				\item CLASS - The class of the datalink. dladm distinguishes between the following classes:
+
+					\begin{itemize}
+						\item phys - A physical datalink. 
+						\item vnic - A virtual network interface. 				
+					\end{itemize}			
+			\end{itemize}
+
+			Most often 1:1 MBean method : Native function mapping with return code to exception translation.
+
+		\end{frame}
+
+		\begin{frame}{Etherstub and Link(Vnic, Nic) properties }
+
+			Editable properties:
+			
+			\begin{itemize}
+
+				\item MAXBW - Sets the full duplex bandwidth for the link. The bandwidth is specified as an integer with one of the scale suffixes (K, M, or G for Kbps, Mbps, and Gbps). If no units are specified, the input value will be read as Mbps. The default is no bandwidth limit
+				\item LEARN_LIMIT - Limits the number of new or changed MAC sources to be learned over a bridge link. The default value is 1000. Valid values are greater or equal to 0.
+				\item CPUS - Names of processors that can perform operations for this link
+				\item PRIORITY - Sets the relative priority for the link. The value can be given as one of the tokens high, medium, or low. The default is high
+				
+			
+			\end{itemize}
+
+			Most often 1:1 MBean method : Native function mapping with return code to exception translation.
+
+		\end{frame}
+
+		\begin{frame}{Etherstub and Link(Vnic, Nic) satistics }
+
+			Read-only statistics:
+			
+			\begin{itemize}
+
+				\item IPACKETS - Number of packets received on this link
+				\item RBYTES - Number of bytes received on this link
+				\item IERRORS - Number of input errors
+				\item OPACKETS - Number of packets sent on this link
+				\item OBYTES - Number of bytes sent on this link
+				\item OERRORS - Number of output errors
+			
+			\end{itemize}
+
+			Most often 1:1 MBean method : Native function mapping with return code to exception translation.
+
+		\end{frame}
+
+		\begin{frame}{Graphic User Interface}
+
+			\begin{center}
+				Possible frameworks:
+				\begin{itemize}
+					\item Eclipse RCP
+					\item Jopr
+					\item Web frameworks(Spring 3, JSP)
+				
+				\end{itemize}
+			\end{center}
 		\end{frame}
 
 
@@ -137,7 +217,7 @@
 
 			\item FUTURE
 			
-				User Interface, QoS-aware zone migration
+				Graphic user Interface, QoS-aware zone migration
 
 		\end{itemize}
 
