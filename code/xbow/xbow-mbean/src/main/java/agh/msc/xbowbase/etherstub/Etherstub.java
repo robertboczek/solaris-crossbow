@@ -19,7 +19,6 @@ public class Etherstub implements EtherstubMBean {
 
     /** Logger */
     private static final Logger logger = Logger.getLogger(Etherstub.class);
-
     private String name;
     private boolean temporary;
     private Map<LinkParameters, String> parametersMap;
@@ -99,9 +98,8 @@ public class Etherstub implements EtherstubMBean {
     @Override
     public void setProperty(LinkProperties etherstubProperty, String value) throws EtherstubException {
 
-        logger.info("Setting new property value to property " + etherstubProperty
-                + " to etherstub: " + this.name + " with value: " + value);
-        
+        logger.info("Setting new property value to property " + etherstubProperty + " to etherstub: " + this.name + " with value: " + value);
+
         etherstubHelper.setEtherstubProperty(this.name, etherstubProperty, value);
         //@todo check return value
         this.propertiesMap.put(etherstubProperty, value);
@@ -150,41 +148,51 @@ public class Etherstub implements EtherstubMBean {
     }
 
 
-		/*
-		 * JConsole only
-		 */
+    /*
+     * JConsole only
+     */
+    @Override
+    public Map<String, String> get_Properties() throws EtherstubException {
 
-	@Override
-    public Map< String, String > get_Properties() throws EtherstubException {
+        Map<String, String> result = new HashMap<String, String>();
 
-			Map< String, String > result = new HashMap< String, String >();
+        for (Map.Entry<LinkProperties, String> entry : getProperties().entrySet()) {
+            result.put(entry.getKey().name(), entry.getValue());
+        }
 
-			for ( Map.Entry< LinkProperties, String > entry : getProperties().entrySet() ) {
-				result.put( entry.getKey().name(),  entry.getValue() );
-			}
+        return result;
 
-			return result;
+    }
 
-		}
+    @Override
+    public Map<String, String> get_Parameters() throws EtherstubException {
 
+        Map<String, String> res = new HashMap<String, String>();
+        Map<LinkParameters, String> map = getParameters();
 
-	@Override
-    public Map< String, String > get_Parameters() throws EtherstubException {
+        for (Map.Entry<LinkParameters, String> entry : map.entrySet()) {
+            res.put(entry.getKey().toString(), entry.getValue());
+        }
 
-			Map< String, String > res = new HashMap< String, String >();
-			Map< LinkParameters, String > map = getParameters();
+        return res;
 
-			for ( Map.Entry< LinkParameters, String > entry : map.entrySet() ) {
-				res.put( entry.getKey().toString(), entry.getValue() );
-			}
+    }
 
-			return res;
+    @Override
+    public void set_Property(String property, String value) throws EtherstubException {
+        setProperty(LinkProperties.fromString(property), value);
+    }
 
-		}
+    @Override
+    public Map<String, String> get_Statistics2() throws EtherstubException {
 
-	@Override
-	public void set_Property( String property, String value ) throws EtherstubException {
-		setProperty( LinkProperties.fromString( property ), value );
-	}
+        Map<String, String> res = new HashMap<String, String>();
 
+        for (LinkStatistics l : LinkStatistics.values()) {
+           res.put(l.toString(), etherstubHelper.getEtherstubStatistic(name, l));
+        }
+
+        return res;
+
+    }
 }

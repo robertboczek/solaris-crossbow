@@ -41,7 +41,6 @@ public interface EtherstubMBean {
      */
     public Map<LinkProperties, String> getProperties() throws EtherstubException;
 
-
     /**
      * @brief Map of etherstubs' parameters
      * Returns map of all existing parameters assigned to this etherstub
@@ -71,13 +70,14 @@ public interface EtherstubMBean {
     public void setProperty(LinkProperties etherstubProperty, String value) throws EtherstubException;
 
 
-		/*
-		 * JConsole only
-		 */
+    /*
+     * JConsole only
+     */
+    public Map<String, String> get_Properties() throws EtherstubException;
 
-    public Map< String, String > get_Properties() throws EtherstubException;
+    public Map<String, String> get_Parameters() throws EtherstubException;
 
-    public Map< String, String > get_Parameters() throws EtherstubException;
+    public void set_Property(String property, String value) throws EtherstubException;
 
-		public void set_Property( String property, String value ) throws EtherstubException;
+    public Map<String, String> get_Statistics2() throws EtherstubException;
 }

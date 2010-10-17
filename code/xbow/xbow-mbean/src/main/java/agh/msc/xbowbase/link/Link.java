@@ -150,24 +150,24 @@ public abstract class Link implements LinkMBean {
 
     @Override
     public boolean isPlumbed() throws LinkException {
-			return linkHelper.isPlumbed( name );
+        return linkHelper.isPlumbed(name);
     }
 
-		@Override
-		public void setPlumbed( boolean plumbed ) throws LinkException {
+    @Override
+    public void setPlumbed(boolean plumbed) throws LinkException {
 
-			if ( ! isPlumbed() ) {
+        if (!isPlumbed()) {
 
-				linkHelper.plumb( name );
-				logger.info( name + " plumbed." );
+            linkHelper.plumb(name);
+            logger.info(name + " plumbed.");
 
-			} else {
+        } else {
 
-				logger.info( "Not plumbing " + name + " as it's already plumbed." );
+            logger.info("Not plumbing " + name + " as it's already plumbed.");
 
-			}
+        }
 
-		}
+    }
 
     @Override
     public boolean isUp() throws LinkException {
@@ -184,41 +184,50 @@ public abstract class Link implements LinkMBean {
     }
 
 
-	/*
-	 * JConsole only
-	 */
+    /*
+     * JConsole only
+     */
+    @Override
+    public Map<String, String> get_Properties() throws LinkException {
 
-	@Override
-	public Map< String, String > get_Properties() throws LinkException {
+        Map<String, String> res = new HashMap<String, String>();
 
-		Map< String, String > res = new HashMap< String, String >();
+        for (Map.Entry<LinkProperties, String> entry : getProperties().entrySet()) {
+            res.put(entry.getKey().toString(), entry.getValue());
+        }
 
-		for ( Map.Entry< LinkProperties, String > entry : getProperties().entrySet() ) {
-			res.put( entry.getKey().toString(), entry.getValue() );
-		}
+        return res;
 
-		return res;
+    }
 
-	}
+    @Override
+    public void _setProperty(String property, String value) throws LinkException {
+        setProperty(LinkProperties.fromString(property), value);
+    }
 
+    @Override
+    public Map<String, String> get_Parameters() throws LinkException {
 
-	@Override
-	public void _setProperty( String property, String value ) throws LinkException {
-		setProperty( LinkProperties.fromString( property ), value );
-	}
+        Map<String, String> res = new HashMap<String, String>();
 
+        for (Map.Entry<LinkParameters, String> entry : getParameters().entrySet()) {
+            res.put(entry.getKey().toString(), entry.getValue());
+        }
 
-	@Override
-	public Map< String, String > get_Parameters() throws LinkException {
+        return res;
 
-		Map< String, String > res = new HashMap< String, String >();
+    }
 
-		for ( Map.Entry< LinkParameters, String > entry : getParameters().entrySet() ) {
-			res.put( entry.getKey().toString(), entry.getValue() );
-		}
+    @Override
+    public Map<String, String> get_Statistics2() throws LinkException {
 
-		return res;
+        Map<String, String> res = new HashMap<String, String>();
 
-	}
+        for (LinkStatistics l : LinkStatistics.values()) {
+           res.put(l.toString(), linkHelper.getLinkStatistic(name, l));
+        }
 
+        return res;
+
+    }
 }

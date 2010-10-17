@@ -120,4 +120,6 @@ public interface LinkMBean {
 
 	public Map< String, String > get_Parameters() throws LinkException;
 
+        public Map<String, String> get_Statistics2() throws LinkException;
+
 }
