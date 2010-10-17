@@ -138,20 +138,4 @@ public class JNALinkHelperTest {
 
 	}
 
-
-	@Test
-	public void testFreeMemoryAfterGetNetmask() {
-
-		String netmask = "255.255.0.0";
-		String link = "e1000g0";
-
-		when( handle.get_netmask( anyString() ) )
-			.thenReturn( netmask );
-
-		linkHelper.getNetmask( link );
-
-		verify( handle ).get_netmask( link );
-		verify( handle ).free( netmask );
-
-	}
 }

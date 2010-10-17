@@ -116,10 +116,12 @@ public interface LinkHelper {
      * @brief  Retrieves netmask for link.
      *
      * @param  link  link name
+		 *
+		 * @throws  LinkException  error while getting netmask
      *
      * @return  string representation of netmask set for link
      */
-    public String getNetmask(String link);
+    public String getNetmask(String link) throws LinkException;
 
     /**
      * Returns ip address assigned to this link

@@ -53,6 +53,25 @@ void free_nic_infos( nic_infos_t* nic_infos )
 	free( nic_infos );
 }
 
+
+buffer_t* malloc_buffer( size_t len )
+{
+	buffer_t* buffer = malloc( sizeof( *buffer ) );
+
+	buffer->buffer = malloc( len );
+	buffer->len = 0;
+
+	return buffer;
+}
+
+
+void free_buffer( buffer_t* buffer )
+{
+	free( buffer->buffer );
+	free( buffer );
+}
+
+
 void free_char_array( char **array ){
 
 	if(array != NULL){

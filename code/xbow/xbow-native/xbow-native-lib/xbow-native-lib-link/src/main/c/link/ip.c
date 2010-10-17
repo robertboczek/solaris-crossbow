@@ -58,19 +58,18 @@ int set_netmask( char* link, char* mask )
 }
 
 
-char* get_netmask( char* link )
+int get_netmask( char* link, buffer_t* buffer )
 {
 	int s;
-	size_t netmask_len = INET6_ADDRSTRLEN;
-	char* netmask = malloc( netmask_len );
+	int rc = XBOW_STATUS_OK;
 
-	memset( netmask, '\0', netmask_len );
+	memset( buffer->buffer, '\0', buffer->len );
 
 	// Try to create socket.
 
 	if ( -1 == (( s = socket( AF_INET, SOCK_DGRAM, 0 ) )) )
 	{
-		// TODO-DAWID: error handling
+		rc = XBOW_STATUS_UNKNOWN_ERR;
 	}
 	else
 	{
@@ -81,7 +80,7 @@ char* get_netmask( char* link )
 
 		if ( ioctl( s, SIOCGLIFNETMASK, &lifr ) < 0 )
 		{
-			// TODO-DAWID: error handling
+			rc = XBOW_STATUS_IOCTL_ERR;
 		}
 		else
 		{
@@ -89,18 +88,16 @@ char* get_netmask( char* link )
 
 			// Convert netmask to string.
 
-			if ( NULL == inet_ntop( AF_INET, addr, netmask, netmask_len ) )
+			if ( NULL == inet_ntop( AF_INET, addr, buffer->buffer, buffer->len ) )
 			{
-				// TODO-DAWID: error handling
-				
-				*netmask = '\0';
+				rc = XBOW_STATUS_UNKNOWN_ERR;
 			}
 		}
 
 		close( s );
 	}
 
-	return netmask;
+	return rc;
 }
 
 

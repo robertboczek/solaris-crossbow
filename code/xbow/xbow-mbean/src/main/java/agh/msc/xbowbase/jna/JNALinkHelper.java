@@ -203,12 +203,19 @@ public class JNALinkHelper implements LinkHelper {
     }
 
     @Override
-    public String getNetmask(String link) {
+    public String getNetmask( String link ) throws LinkException {
 
-        String netmask = handle.get_netmask(link);
-        handle.free(netmask);
+			logger.debug( "Getting netmask for " + link );
 
-        return netmask;
+			LinkHandle.BufferStruct buffer = new LinkHandle.BufferStruct( 256 );
+
+			int rc = handle.get_netmask( link, buffer );
+
+			if ( XbowStatus.XBOW_STATUS_OK.ordinal() != rc ) {
+				throw new LinkException( "get_netmask returned with rc == " + String.valueOf( rc ) );
+			}
+
+			return buffer.buffer;
 
     }
 

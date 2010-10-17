@@ -33,6 +33,20 @@ public interface LinkHandle extends Library {
 		public boolean up;
 	}
 
+	public class BufferStruct extends Structure {
+
+		public BufferStruct() {}
+
+		public BufferStruct( int len ) {
+			buffer = new String( new char[ len ] );
+			this.len = len;
+		}
+
+		public String buffer;
+		public int len;
+
+	}
+
 
 	/*
 	 * Functions
@@ -46,13 +60,13 @@ public interface LinkHandle extends Library {
 	public boolean is_plumbed( String link );
 
 	public int set_netmask( String link, String mask );
-	public String get_netmask( String link );
+	public int get_netmask( String link, BufferStruct buffer );
 
 	public String get_ip_address(String link);
 	public int set_ip_address(String link, String address);
 
-        public int ifconfig_up( String link, int up_down );
-        public int ifconfig_is_up( String link );
+	public int ifconfig_up( String link, int up_down );
+	public int ifconfig_is_up( String link );
 
 	public int delete_vnic(String name, int temporary);
 	public int create_vnic(String name, int temporary, String parent);
@@ -62,10 +76,13 @@ public interface LinkHandle extends Library {
 	public Pointer get_link_property( String name, String property);
 	public int set_link_property( String name, String property, String value );
 
+	public Pointer malloc_buffer( int len );
+
 	public void free( String s );
 	public void free_char_array( Pointer pointer );
 	public void free_char_string( Pointer pointer );
 	public void free_nic_info( NicInfoStruct nicInfoStruct );
 	public void free_nic_infos( NicInfosStruct linkInfosStruct );
+	public void free_buffer( Pointer buffer );
 
 }

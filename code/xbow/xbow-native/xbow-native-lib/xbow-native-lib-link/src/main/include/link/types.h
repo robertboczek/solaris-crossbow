@@ -22,6 +22,13 @@ typedef struct{
 	int number_of_elements;
 }link_names_t;
 
+typedef struct
+{
+	char* buffer;
+	int len;
+}
+buffer_t;
+
 
 #endif
 

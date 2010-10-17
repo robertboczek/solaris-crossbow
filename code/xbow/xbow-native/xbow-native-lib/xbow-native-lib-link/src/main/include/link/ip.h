@@ -1,6 +1,8 @@
 #ifndef LINK_IP_H
 #define LINK_IP_H
 
+#include <link/types.h>
+
 
 /**
  * \brief  Performs plumbing needed for IP to use link.
@@ -53,15 +55,14 @@ int set_netmask( char* link, char* mask );
 /**
  * \brief  Retrieves IPv4 netmask set for link.
  *
- * \param  link  link name
+ * \param  link    link name
+ * \param  buffer  pointer to buffer to be filled with netmask
  *
- * \return  string form of IPv4 netmask set for link
- * \return  NULL  on failure
- *
- * \warning  The caller is responsible for freeing the returned pointer
- *           with free function.
+ * \return  XBOW_STATUS_OK           on success
+ * \return  XBOW_STATUS_IOCTL_ERR    on ioctl error
+ * \return  XBOW_STATUS_UNKNOWN_ERR  on error
  */
-char* get_netmask( char* link );
+int get_netmask( char* link, buffer_t* buffer );
 
 #endif
 
