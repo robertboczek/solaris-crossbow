@@ -39,7 +39,6 @@ public class EtherstubManager implements EtherstubManagerMBean, NotificationList
         try {
             this.etherstubHelper
                     .createEtherstub(etherstubMBean.getName(), etherstubMBean.isTemporary());
-            registerNewEtherstubMBean(etherstubMBean);
             discover();
 
         } catch (TooLongEtherstubNameException e2) {
@@ -97,7 +96,7 @@ public class EtherstubManager implements EtherstubManagerMBean, NotificationList
 
             //check for new Etherstubs
             for (EtherstubMBean etherstubMBean : currentMBeans) {
-                if (etherstubsSet.contains(etherstubMBean) == false) {
+                if ( ! etherstubsSet.contains(etherstubMBean) ) {
                     //create and register new EtherstubMBean
 									( ( Etherstub ) etherstubMBean ).setEtherstubHelper( etherstubHelper );  // TODO: < this is temporary. investigate
                     registerNewEtherstubMBean(etherstubMBean);

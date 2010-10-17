@@ -90,40 +90,6 @@ public class EtherstubManagerTest {
 
     }
 
-    @Test
-    public void testPublishingEtherstubAfterCreation() throws EtherstubException{
-
-        when(etherstubHelper.getEtherstubNames()).thenReturn(new String[]{});
-
-        Publisher spyPublisher = spy(new EtherstubMBeanPublisher(null){
-
-            @Override
-            public void publish( Object object ){
-
-            }
-
-            @Override
-            public void unpublish( Object object ) throws NotPublishedException{
-
-            }
-
-            @Override
-            public List< Object > getPublished(){
-
-                return new LinkedList<Object>();
-            }
-
-        });
-
-        etherstubManager.setPublisher(spyPublisher);
-
-        etherstubManager.create(new Etherstub("etherstub", true));
-
-        InOrder inorder = inOrder(spyPublisher);
-        inorder.verify(spyPublisher).publish(new Etherstub("etherstub", false));
-
-    }
-
     @Test(expected=TooLongEtherstubNameException.class)
     public void testRemovingEtherstubWhenEtherstubNameIsTooLong() throws EtherstubException{
 

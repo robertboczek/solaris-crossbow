@@ -98,7 +98,7 @@ public class JNAEtherstubHelper implements EtherstubHelper {
     @Override
     public String[] getEtherstubNames() throws EtherstubException {
 
-        logger.debug("Trying to read names of exisitng etherstubs");
+        logger.debug("Trying to read names of existing etherstubs");
 
         Pointer pointer = handle.get_etherstub_names();
 
