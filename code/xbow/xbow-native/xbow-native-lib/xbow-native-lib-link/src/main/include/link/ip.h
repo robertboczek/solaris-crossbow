@@ -63,6 +63,28 @@ int set_netmask( char* link, char* mask );
  * \return  XBOW_STATUS_UNKNOWN_ERR  on error
  */
 int get_netmask( char* link, buffer_t* buffer );
+/**
+ * \brief  Returns info whether specified link is up or not
+ *
+ * \param  link  link name
+ *
+ * \return  0 - link is down
+ * \return  1 - link is up
+ * \return  2 - operation failed
+ *
+ */
+int ifconfig_is_up( char *link );
+
+/**
+ * \brief  Puts specified link up or down
+ *
+ * \param  link  	link name
+ * \param  up_down  	0 - put link down, 1 - put link up
+ *
+ * \return  XBOW_STATUS_OK                 on success
+ * \return  XBOW_STATUS_OPERATION_FAILURE  when operation failed
+ */
+int ifconfig_up( char *link, int up_down );
 
 #endif
 

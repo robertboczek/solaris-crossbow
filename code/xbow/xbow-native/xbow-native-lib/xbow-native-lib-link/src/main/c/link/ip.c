@@ -387,3 +387,42 @@ char* get_ip_address(char *link)
 	}
 }
 
+int ifconfig_up( char *link, int up_down )
+{
+	struct lifreq lifr = { 0 };	/* local lifreq struct */
+	int s;
+
+	s = socket(AF_INET, SOCK_DGRAM, 0);
+
+	(void) strncpy(lifr.lifr_name, link, strlen(link)+1);
+	if (ioctl(s, SIOCGLIFFLAGS, (caddr_t)&lifr) < 0)
+		return XBOW_STATUS_FLOW_INCOMPATIBLE;
+
+
+	if (up_down == 0) {
+		lifr.lifr_flags = lifr.lifr_flags & (~IFF_UP);
+	}
+	else{
+		lifr.lifr_flags |= IFF_UP;
+	}
+
+	if (ioctl(s, SIOCSLIFFLAGS, (caddr_t)&lifr) < 0)
+		return XBOW_STATUS_OPERATION_FAILURE;
+
+	return XBOW_STATUS_OK;
+}
+
+int ifconfig_is_up( char *link )
+{
+	struct lifreq lifr;	/* local lifreq struct */
+	int s;
+
+	s = socket(AF_INET, SOCK_DGRAM, 0);
+
+	(void) strncpy(lifr.lifr_name, link, strlen(link)+1);
+	if (ioctl(s, SIOCGLIFFLAGS, (caddr_t)&lifr) < 0)
+		return XBOW_STATUS_OPERATION_FAILURE;;
+
+
+	return (lifr.lifr_flags & IFF_UP) > 0 ? 1 : 0;
+}
