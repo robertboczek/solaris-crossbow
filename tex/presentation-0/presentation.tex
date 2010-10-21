@@ -1,0 +1,64 @@
+\documentclass{beamer}
+
+\usepackage[polish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{tabularx}
+
+\mode<presentation>{\usetheme{Dresden}}
+\setbeamercovered{dynamic}
+
+\title{some title}
+\author{Robert Boczek \and Dawid Ciepliński}
+\date{TODO}
+
+\AtBeginSection[]
+	{
+		\begin{frame}<beamer>
+		\frametitle{Outline}
+		\tableofcontents[currentsection]
+		\end{frame}
+	}
+
+
+\begin{document}
+
+\begin{frame}
+
+	\titlepage
+
+\end{frame}
+
+
+\section{sekcja}
+
+	\subsection{podsekcja}
+
+		\begin{frame}{title}
+
+			Docelowo: środowisko implementacji aplikacji administracyjnych oraz warstwy kontrolera dziennika.
+			
+		        \medskip
+			
+			Dlaczego akurat JAVA?
+
+			\begin{enumerate}
+				\item wciąż bardzo popularna
+				\item wieloplatformowa
+				\item przyjazna dla programisty
+				\item \textbf{czas potrzebny na naukę...}
+			\end{enumerate}
+			
+			\medskip
+			
+			Wady?
+			
+		\end{frame}
+
+\end{document}
+
+
+% vim: enc=utf8 :
