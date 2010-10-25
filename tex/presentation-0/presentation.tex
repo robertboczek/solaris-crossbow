@@ -159,10 +159,10 @@
 			
 			\begin{itemize}
 
-				\item MAXBW - Sets the full duplex bandwidth for the link. The bandwidth is specified as an integer with one of the scale suffixes (K, M, or G for Kbps, Mbps, and Gbps). If no units are specified, the input value will be read as Mbps. The default is no bandwidth limit
-				\item LEARN\_LIMIT - Limits the number of new or changed MAC sources to be learned over a bridge link. The default value is 1000. Valid values are greater or equal to 0.
-				\item CPUS - Names of processors that can perform operations for this link
-				\item PRIORITY - Sets the relative priority for the link. The value can be given as one of the tokens high, medium, or low. The default is high
+				\item MAXBW - The full duplex bandwidth specified as an integer with one of the scale suffixes (K, M, or G for Kbps, Mbps, and Gbps). The default is \textbf{no bandwidth limit}
+				\item LEARN\_LIMIT - Limits the number of new or changed MAC sources to be learned over a bridge link. The default is \textbf{1000}
+				\item CPUS - Names of processors that can perform operations for this link. The default is \textbf{no CPU binding}
+				\item PRIORITY - Relative priority for the link. Possible values are: \textbf{high}, \textbf{medium}, or \textbf{low}. The default is \textbf{high}
 			
 			\end{itemize}
 
