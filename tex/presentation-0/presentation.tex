@@ -11,18 +11,9 @@
 \mode<presentation>{\usetheme{Dresden}}
 \setbeamercovered{dynamic}
 
-\title{some title}
+\title{OpenSolaris, Crossbow and JIMS}
 \author{Robert Boczek \and Dawid Ciepliński}
 \date{26.10.2010}
-
-% \AtBeginSection[]
-% 	{
-% 		\begin{frame}<beamer>
-% 		\frametitle{Outline}
-% 		\tableofcontents[currentsection]
-% 		\end{frame}
-% 	}
-
 
 \begin{document}
 
@@ -43,6 +34,102 @@
 				\includegraphics[width=\textwidth]{img/domain.png}
 			\end{figure}
 		
+		\end{frame}
+
+
+\section{Customizable properties}
+
+	\subsection{}
+
+		\begin{frame}{Available link operations}
+
+			\begin{itemize}
+				\item Plumbing
+				\item Putting interface up/down
+				\item Setting IP address
+				\item Setting mask address
+				\item Getting parent link name				
+			\end{itemize}
+		\end{frame}
+
+
+		\begin{frame}{Etherstub and Link (Vnic, Nic) parameters }
+
+			Read-only parameters:
+			
+			\begin{itemize}
+
+				\item \textbf{BRIDGE} - The name of the bridge to which this link is assigned, if any
+				\item \textbf{OVER} - The physical datalink(s) over which the datalink is operating
+				\item \textbf{STATE} - The link state of the datalink. The state can be up, down, or unknown
+				\item \textbf{MTU} - The maximum transmission unit size for the datalink being displayed
+				\item \textbf{CLASS} - The class of the datalink. dladm distinguishes between the following classes:
+
+					\begin{itemize}
+						\item \textbf{phys} - A physical datalink. 
+						\item \textbf{vnic} - A virtual network interface. 				
+					\end{itemize}			
+			\end{itemize}
+
+		\end{frame}
+
+		\begin{frame}{Etherstub and Link (Vnic, Nic) properties }
+
+			Editable properties:
+			
+			\begin{itemize}
+
+				\item \textbf{maxbw} - The full duplex bandwidth specified as an integer with one of the scale suffixes (K, M, or G for Kbps, Mbps, and Gbps). The default is \textbf{no bandwidth limit}
+				\item \textbf{learn\_limit} - Limits the number of new or changed MAC sources to be learned over a bridge link. The default is \textbf{1000}
+				\item \textbf{cpus} - Names of processors that can perform operations for this link. The default is \textbf{no CPU binding}
+				\item \textbf{priority} - Relative priority for the link. Possible values are: \textbf{high}, \textbf{medium}, or \textbf{low}. The default is \textbf{high}
+			
+			\end{itemize}
+
+		\end{frame}
+
+		\begin{frame}{Etherstub and Link (Vnic, Nic) statistics }
+
+			Read-only statistics:
+			
+			\begin{itemize}
+
+				\item \textbf{IPACKETS} - Number of packets received on this link
+				\item \textbf{RBYTES} - Number of bytes received on this link
+				\item \textbf{IERRORS} - Number of input errors
+				\item \textbf{OPACKETS} - Number of packets sent on this link
+				\item \textbf{OBYTES} - Number of bytes sent on this link
+				\item \textbf{OERRORS} - Number of output errors
+			
+			\end{itemize}
+
+		\end{frame}
+
+
+		\begin{frame}{Flows}
+
+			Bandwidth control and priority for protocols, services and containers.
+
+			\medskip
+
+			Individual flow restrictions:
+
+			\begin{itemize}
+				\item \textbf{local\_port}, \textbf{remote\_port}
+				\item \textbf{transport} - \textbf{tcp}|\textbf{udp}|\textbf{sctp}|\textbf{icmp}|\textbf{icmpv6}
+				\item \textbf{dsfield}
+				\item \textbf{local\_ip[/prefix\_len]}, \textbf{remote\_ip[/prefix\_len]}
+			\end{itemize}
+
+			\medskip
+
+			Flow restrictions:
+
+			\begin{itemize}
+				\item \textbf{maxbw} - The full duplex bandwidth.
+				\item \textbf{priority} - Relative priority for the link.
+			\end{itemize}
+
 		\end{frame}
 
 
@@ -129,74 +216,6 @@
 
 		\end{frame}
 
-
-\section{Customizable properties}
-
-	\subsection{}
-
-		\begin{frame}{Available link operations}
-
-			\begin{itemize}
-				\item Plumbing
-				\item Putting interface up/down
-				\item Setting ip address
-				\item Setting mask address
-				\item Getting parent link name				
-			\end{itemize}
-		\end{frame}
-
-
-		\begin{frame}{Etherstub and Link (Vnic, Nic) parameters }
-
-			Read-only parameters:
-			
-			\begin{itemize}
-
-				\item \textbf{BRIDGE} - The name of the bridge to which this link is assigned, if any
-				\item \textbf{OVER} - The physical datalink(s) over which the datalink is operating
-				\item \textbf{STATE} - The link state of the datalink. The state can be up, down, or unknown
-				\item \textbf{MTU} - The maximum transmission unit size for the datalink being displayed
-				\item \textbf{CLASS} - The class of the datalink. dladm distinguishes between the following classes:
-
-					\begin{itemize}
-						\item \textbf{phys} - A physical datalink. 
-						\item \textbf{vnic} - A virtual network interface. 				
-					\end{itemize}			
-			\end{itemize}
-
-		\end{frame}
-
-		\begin{frame}{Etherstub and Link(Vnic, Nic) properties }
-
-			Editable properties:
-			
-			\begin{itemize}
-
-				\item MAXBW - The full duplex bandwidth specified as an integer with one of the scale suffixes (K, M, or G for Kbps, Mbps, and Gbps). The default is \textbf{no bandwidth limit}
-				\item LEARN\_LIMIT - Limits the number of new or changed MAC sources to be learned over a bridge link. The default is \textbf{1000}
-				\item CPUS - Names of processors that can perform operations for this link. The default is \textbf{no CPU binding}
-				\item PRIORITY - Relative priority for the link. Possible values are: \textbf{high}, \textbf{medium}, or \textbf{low}. The default is \textbf{high}
-			
-			\end{itemize}
-
-		\end{frame}
-
-		\begin{frame}{Etherstub and Link(Vnic, Nic) satistics }
-
-			Read-only statistics:
-			
-			\begin{itemize}
-
-				\item \textbf{IPACKETS} - Number of packets received on this link
-				\item \textbf{RBYTES} - Number of bytes received on this link
-				\item \textbf{IERRORS} - Number of input errors
-				\item \textbf{OPACKETS} - Number of packets sent on this link
-				\item \textbf{OBYTES} - Number of bytes sent on this link
-				\item \textbf{OERRORS} - Number of output errors
-			
-			\end{itemize}
-
-		\end{frame}
 
 \section{Technical issues}
 
