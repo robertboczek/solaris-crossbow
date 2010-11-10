@@ -7,6 +7,9 @@
 \usepackage{graphicx}
 \usepackage{multicol}
 \usepackage{tabularx}
+\usepackage{tikz}
+
+\usetikzlibrary{positioning}
 
 \mode<presentation>{\usetheme{Dresden}}
 \setbeamercovered{dynamic}
@@ -27,6 +30,30 @@
 \section{Domain}
 
 	\subsection{}
+
+		\begin{frame}{Crossbow components and their relationship}
+
+			\begin{tikzpicture}[node distance=0.1cm, block/.style={rectangle, minimum height=1cm, very thick, minimum width=1.2cm, draw=red, outer sep=0}]
+
+				\node(nic0)[block, minimum width=6.5cm, fill=orange]{nic0};
+
+				\node(flow0)[block, above=of nic0.north west, anchor=south west]{flow0};  \node(flow0ellipse)[block, right=of flow0]{\ldots};
+
+				\node(vnic0)[block, right=0.2cm of flow0ellipse, minimum width=2.5cm]{vnic0};  \node(vnic0ellipse)[block, right=of vnic0]{\ldots};
+
+				\node(vnic0flow0)[block, above=of vnic0.north west, anchor=south west]{flow0};  \node(vnic0flow0ellipse)[block, right=of vnic0flow0]{\ldots};
+
+
+				\node(etherstub0)[block, right=0.5cm of nic0, minimum width=3.8cm]{etherstub0};
+
+				\node(e0vnic0)[block, above=of etherstub0.north west, minimum width=2.5cm, anchor=south west]{vnic0};  \node(e0vnic0ellipse)[block, right=of e0vnic0]{\ldots};
+
+				\node(e0vnic0flow0)[block, above=of e0vnic0.north west, anchor=south west]{flow0};  \node(e0vnic0flow0ellipse)[block, right=of e0vnic0flow0]{\ldots};
+			
+			\end{tikzpicture}
+
+		\end{frame}
+
 
 		\begin{frame}{Crossbow components and their relationship}
 		
