@@ -1,0 +1,106 @@
+<project>
+
+	<parent>
+		<groupId>jims</groupId>
+		<artifactId>jims-crossbow</artifactId>
+		<version>1.0.0</version>
+	</parent>
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>jims</groupId>
+	<artifactId>jims-crossbow-native</artifactId>
+	<version>1.0.0</version>
+	<name>native</name>
+	<packaging>pom</packaging>
+
+	<modules>
+		<module>jims-crossbow-native-system-headers</module>
+		<module>jims-crossbow-native-mock</module>
+		<module>jims-crossbow-native-common</module>
+		<module>jims-crossbow-native-lib</module>
+	</modules>
+
+	<dependencies>
+		<dependency>
+			<groupId>jims</groupId>
+			<artifactId>jims-crossbow-native-system-headers</artifactId>
+			<version>1.0.0</version>
+			<type>nar</type>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-nar-plugin</artifactId>
+				<version>2.1-SNAPSHOT</version>
+				<extensions>true</extensions>
+
+				<configuration>
+					<linker>
+						<name>gcc</name>
+						<sysLibs>
+							<sysLib><name>cmockery</name></sysLib>
+						</sysLibs>
+					</linker>
+					<c>
+						<name>gcc</name>
+						<includes>
+							<include>**/*.c</include>
+						</includes>
+						<debug>true</debug>
+						<options>
+							<option>-fPIC</option>
+							<option>-std=c99</option>
+							<option>-Wall</option>
+							<option>-Wno-missing-braces</option>
+							<option>-pedantic</option>
+						</options>
+						<defines>
+							<define>__EXTENSIONS__</define>
+						</defines>
+					</c>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>coverage</id>
+
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-nar-plugin</artifactId>
+						<version>2.1-SNAPSHOT</version>
+						<extensions>true</extensions>
+
+						<configuration>
+							<linker>
+								<name>gcc</name>
+								<sysLibs combine.children="append">
+									<sysLib><name>gcov</name></sysLib>
+								</sysLibs>
+							</linker>
+							<c>
+								<options combine.children="append">
+									<option>-fprofile-arcs</option>
+									<option>-ftest-coverage</option>
+								</options>
+							</c>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+
+		</profile>
+	</profiles>
+
+</project>
+

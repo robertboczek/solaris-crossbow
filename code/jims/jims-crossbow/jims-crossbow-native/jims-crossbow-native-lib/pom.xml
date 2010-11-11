@@ -1,0 +1,81 @@
+<project>
+
+	<parent>
+		<groupId>jims</groupId>
+		<artifactId>jims-crossbow-native</artifactId>
+		<version>1.0.0</version>
+	</parent>
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>jims</groupId>
+	<artifactId>jims-crossbow-native-lib</artifactId>
+	<version>1.0.0</version>
+	<name>jims-crossbow-native-lib</name>
+	<packaging>pom</packaging>
+
+	<modules>
+		<module>jims-crossbow-native-lib-etherstub</module>
+		<module>jims-crossbow-native-lib-flow</module>
+		<module>jims-crossbow-native-lib-link</module>
+	</modules>
+
+	<dependencies>
+		<dependency>
+			<groupId>jims</groupId>
+			<artifactId>jims-crossbow-native-system-headers</artifactId>
+			<version>1.0.0</version>
+			<type>nar</type>
+		</dependency>
+		<dependency>
+			<groupId>jims</groupId>
+			<artifactId>jims-crossbow-native-common</artifactId>
+			<version>1.0.0</version>
+			<type>nar</type>
+		</dependency>
+
+		<!--
+		TODO: nar nie obsluguje linkowania tylko dla testow
+		<dependency>
+			<groupId>xbow-native</groupId>
+			<artifactId>mock</artifactId>
+			<version>1.0.0</version>
+			<type>nar</type>
+		</dependency>
+		-->
+	</dependencies>
+
+	<build>
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-nar-plugin</artifactId>
+				<version>2.1-SNAPSHOT</version>
+				<extensions>true</extensions>
+
+				<configuration>
+					<libraries>
+						<library>
+							<type>shared</type>
+						</library>
+					</libraries>
+					<linker>
+						<sysLibs combine.children="append">
+							<sysLib><name>dladm</name></sysLib>
+						</sysLibs>
+					</linker>
+					<tests>
+						<test>
+							<name>test</name>
+							<link>shared</link>
+						</test>
+					</tests>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
+
+</project>
+

@@ -1,12 +1,12 @@
 #!/bin/sh
 
-XBOW_NATIVE=xbow/xbow-native
-XBOW_NATIVE_LIB=$XBOW_NATIVE/xbow-native-lib
+XBOW_NATIVE=jims/jims-crossbow-native
+XBOW_NATIVE_LIB=$XBOW_NATIVE/jims-crossbow-native-lib
 
 LIBS="etherstub flow link"
 
 for LIB in $LIBS; do
-	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$XBOW_NATIVE_LIB/xbow-native-lib-$LIB/target/nar/$LIB-1.0.0-x86-SunOS-gcc-shared/lib/x86-SunOS-gcc/shared/
+	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$XBOW_NATIVE_LIB/jims-crossbow-native-lib-$LIB/target/nar/$LIB-1.0.0-x86-SunOS-gcc-shared/lib/x86-SunOS-gcc/shared/
 done
 
 echo $LD_LIBRARY_PATH
