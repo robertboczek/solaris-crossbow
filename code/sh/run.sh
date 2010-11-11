@@ -3,5 +3,5 @@
 . sh/set_lib_var
 
 java -cp \
-     xbow/xbow-mbean/target/xbow-base-1.0-SNAPSHOT-jar-with-dependencies.jar \
+     jims/jims-crossbow-mbean/target/xbow-base-1.0-SNAPSHOT-jar-with-dependencies.jar \
      org.jims.modules.crossbow.App

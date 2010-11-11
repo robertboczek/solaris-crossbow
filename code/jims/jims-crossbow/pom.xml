@@ -1,0 +1,28 @@
+<project>
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>jims</groupId>
+	<artifactId>jims-crossbow</artifactId>
+	<version>1.0.0</version>
+	<name>jims-crossbow</name>
+	<packaging>pom</packaging>
+
+	<modules>
+		<module>jims-crossbow-native</module>
+		<module>jims-crossbow-mbean</module>
+	</modules>
+
+	<developers>
+		<developer>
+			<id>robert</id>
+			<name>Robert Boczek</name>
+		</developer>
+		<developer>
+			<id>cieplik</id>
+			<name>Dawid Cieplinski</name>
+		</developer>
+	</developers>
+
+</project>
+
