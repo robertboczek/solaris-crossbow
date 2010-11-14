@@ -14,11 +14,8 @@ import javax.management.Notification;
 import javax.management.NotificationListener;
 
 import org.apache.log4j.Logger;
-import org.jims.modules.crossbow.jna.JNAVNicHelper;
-import org.jims.modules.crossbow.link.validators.LinkValidator;
-import org.jims.modules.crossbow.link.validators.RegexLinkValidator;
 import org.jims.modules.crossbow.manager.BaseManager;
-import org.jims.modules.crossbow.publisher.VNicMBeanPublisher;
+
 
 /**
  * Implementation of VNicManagerMBean, @see VNicManagerMBean
@@ -31,23 +28,6 @@ public class VNicManager extends BaseManager implements VNicManagerMBean, Notifi
     private static final Logger logger = Logger.getLogger(Nic.class);
     private Publisher publisher;
     private VNicHelper vnicHelper;
-
-    /** Default constructor */
-    public VNicManager() {
-
-        LinkValidator linkValidator = new RegexLinkValidator();
-        VNicHelper newVNicHelper = new JNAVNicHelper(linkValidator);
-
-        this.setVNicHelper(newVNicHelper);
-        this.setPublisher(new VNicMBeanPublisher(server));
-    }
-
-    /**
-     * Constructor for tests purposes
-     */
-    public VNicManager(boolean test) {
-        super(test);
-    }
 
     /**
      * Executes discover() in response to notification.

@@ -16,9 +16,8 @@ import java.util.Set;
 import javax.management.Notification;
 import javax.management.NotificationListener;
 import org.apache.log4j.Logger;
-import org.jims.modules.crossbow.jna.JNAFlowHelper;
 import org.jims.modules.crossbow.manager.BaseManager;
-import org.jims.modules.crossbow.publisher.FlowMBeanPublisher;
+
 
 /**
  * The class implements FlowManagerMBean functionality.
@@ -26,21 +25,6 @@ import org.jims.modules.crossbow.publisher.FlowMBeanPublisher;
  * @author cieplik
  */
 public class FlowManager extends BaseManager implements FlowManagerMBean, NotificationListener {
-
-    /** Default constructor */
-    public FlowManager() {
-
-        FlowHelper newFlowadm = new JNAFlowHelper();
-        this.setFlowadm( newFlowadm );
-        this.setPublisher( new FlowMBeanPublisher( server ) );
-    }
-
-    /**
-     * Constructor for tests purposes
-     */
-    public FlowManager(boolean test) {
-        super(test);
-    }
 
     /**
      * @see  FlowManagerMBean#getFlows()

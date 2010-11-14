@@ -10,11 +10,7 @@ import java.util.Set;
 import javax.management.Notification;
 import javax.management.NotificationListener;
 import org.apache.log4j.Logger;
-import org.jims.modules.crossbow.jna.JNANicHelper;
-import org.jims.modules.crossbow.link.validators.LinkValidator;
-import org.jims.modules.crossbow.link.validators.RegexLinkValidator;
 import org.jims.modules.crossbow.manager.BaseManager;
-import org.jims.modules.crossbow.publisher.NicMBeanPublisher;
 
 /**
  * The class implements NicManagerMBean functionality.
@@ -22,23 +18,6 @@ import org.jims.modules.crossbow.publisher.NicMBeanPublisher;
  * @author cieplik
  */
 public class NicManager extends BaseManager implements NicManagerMBean, NotificationListener {
-
-    /** Default constructor */
-    public NicManager() {
-
-        LinkValidator linkValidator = new RegexLinkValidator();
-        NicHelper newNicHelper = new JNANicHelper(linkValidator);
-
-        this.setNicHelper(newNicHelper);
-        this.setPublisher(new NicMBeanPublisher(server));
-    }
-
-    /**
-     * Constructor for tests purposes
-     */
-    public NicManager(boolean test) {
-        super(test);
-    }
 
     /**
      * @see  NicManagerMBean#getNicsList()

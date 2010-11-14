@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.jims.modules.crossbow.manager;
 
 import java.io.File;

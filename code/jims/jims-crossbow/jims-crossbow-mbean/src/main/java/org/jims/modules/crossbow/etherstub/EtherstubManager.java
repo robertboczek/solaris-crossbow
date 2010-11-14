@@ -33,22 +33,6 @@ public class EtherstubManager extends BaseManager implements EtherstubManagerMBe
     private EtherstubHelper etherstubHelper;
     private Publisher publisher;
 
-    /** Default constructor */
-    public EtherstubManager() {
-
-        EtherstubHelper etherstubadm = new JNAEtherstubHelper();
-
-        this.setEtherstHelper(etherstubHelper);
-        this.setPublisher(new EtherstubMBeanPublisher(server));
-    }
-
-    /**
-     * Constructor for tests purposes
-     */
-    public EtherstubManager(boolean test) {
-        super(test);
-    }
-
     /**
      * @see EtherstubManagerMBean#create(agh.msc.xbowbase.etherstub.EtherstubMBean) 
      */

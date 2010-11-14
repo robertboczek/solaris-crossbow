@@ -40,7 +40,7 @@ public class EtherstubMBeanPublisher extends MBeanPublisher {
     protected ObjectName createObjectName(Object object) throws MalformedObjectNameException {
         
         return new ObjectName(String.format(
-                "agh.msc.xbowbase:type=Etherstub,name=%s",
+                "Crossbow:type=Etherstub,name=%s",
                 ((EtherstubMBean) object).getName()));
     }
 

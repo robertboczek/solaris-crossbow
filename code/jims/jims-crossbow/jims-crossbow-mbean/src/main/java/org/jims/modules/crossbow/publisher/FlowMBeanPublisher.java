@@ -35,7 +35,7 @@ public class FlowMBeanPublisher extends MBeanPublisher {
 		FlowMBean flowMBean = ( FlowMBean ) object;
 
 		return new ObjectName( String.format(
-			"agh.msc.xbowbase:type=Flow,link=%s,name=%s",
+			"Crossbow:type=Flow,link=%s,name=%s",
 			flowMBean.getLink(), flowMBean.getName()
 		) );
 

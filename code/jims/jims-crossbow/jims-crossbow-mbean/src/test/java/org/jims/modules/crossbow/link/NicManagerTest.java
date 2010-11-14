@@ -21,7 +21,7 @@ public class NicManagerTest {
 
 		nicHelper = mock( NicHelper.class );
 
-		nicManager = new NicManager(true);
+		nicManager = new NicManager();
 		nicManager.setNicHelper( nicHelper );
 
 	}

@@ -33,7 +33,7 @@ public class FlowManagerTest {
 		helper = mock( FlowHelper.class );
 		publisher = mock( Publisher.class );
 
-		flowManager = new FlowManager(true);
+		flowManager = new FlowManager();
 		flowManager.setFlowadm( helper );
 		flowManager.setPublisher( publisher );
 

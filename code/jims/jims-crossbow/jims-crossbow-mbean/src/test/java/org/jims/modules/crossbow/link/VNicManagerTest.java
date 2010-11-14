@@ -1,8 +1,5 @@
 package org.jims.modules.crossbow.link;
 
-import org.jims.modules.crossbow.link.VNicMBean;
-import org.jims.modules.crossbow.link.VNicManager;
-import org.jims.modules.crossbow.link.VNic;
 import org.jims.modules.crossbow.exception.InvalidLinkNameException;
 import org.jims.modules.crossbow.exception.LinkException;
 import org.jims.modules.crossbow.exception.TooLongLinkNameException;
@@ -37,7 +34,7 @@ public class VNicManagerTest {
 
         vnicHelper = mock(VNicHelper.class);
         publisher = mock(Publisher.class);
-        vnicManager = new VNicManager(true);
+        vnicManager = new VNicManager();
         vnicManager.setVNicHelper(vnicHelper);
         vnicManager.setPublisher(publisher);
     }

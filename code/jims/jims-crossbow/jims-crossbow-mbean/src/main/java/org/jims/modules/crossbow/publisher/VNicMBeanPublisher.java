@@ -49,7 +49,7 @@ public class VNicMBeanPublisher extends MBeanPublisher {
 			}
 
 			return new ObjectName(String.format(
-				"agh.msc.xbowbase:type=VNic,parent=%s,name=%s", parent, vnic.getName()
+				"Crossbow:type=VNic,parent=%s,name=%s", parent, vnic.getName()
 			));
 
     }

@@ -39,7 +39,7 @@ public class NicMBeanPublisher extends MBeanPublisher {
 	protected ObjectName createObjectName( Object object ) throws MalformedObjectNameException {
 
 		return new ObjectName( String.format(
-			"agh.msc.xbowbase:type=Nic,name=%s",
+			"Crossbow:type=Nic,name=%s",
 			( ( NicMBean ) object ).getName()
 		) );
 

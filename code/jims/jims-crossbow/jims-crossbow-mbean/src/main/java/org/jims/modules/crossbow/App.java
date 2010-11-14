@@ -63,8 +63,18 @@ public class App {
 
         // Validators
 
+				LinkValidator linkValidator = new RegexLinkValidator();
 
         // Initialize flowadm wrapper.
+
+				FlowHelper flowadm = new JNAFlowHelper();
+				
+				NicHelper nicHelper = new JNANicHelper(linkValidator);
+				
+				VNicHelper vnicHelper = new JNAVNicHelper(linkValidator);
+				
+				EtherstubHelper etherstubHelper = new JNAEtherstubHelper();
+
 
         // Create FlowManager.
 

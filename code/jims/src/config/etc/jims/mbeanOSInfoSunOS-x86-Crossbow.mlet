@@ -1,28 +1,7 @@
 <mlet
-	code="org.jims.modules.crossbow.link.NicManager"
+	code="org.jims.modules.crossbow.CrossbowStarter"
 	archive="jims-crossbow-mbean-1.0-SNAPSHOT-jar-with-dependencies.jar"
-	name="org.jims.crossbow:type=NicManager"
-	version="1.0">
-</mlet>
-
-<mlet
-	code="org.jims.modules.crossbow.link.VNicManager"
-	archive="jims-crossbow-mbean-1.0-SNAPSHOT-jar-with-dependencies.jar"
-	name="org.jims.crossbow:type=VNicManager"
-	version="1.0">
-</mlet>
-
-<mlet
-	code="org.jims.modules.crossbow.flow.FlowManager"
-	archive="jims-crossbow-mbean-1.0-SNAPSHOT-jar-with-dependencies.jar"
-	name="org.jims.crossbow:type=FlowManager"
-	version="1.0">
-</mlet>
-
-<mlet
-	code="org.jims.modules.crossbow.etherstub.EtherstubManager"
-	archive="jims-crossbow-mbean-1.0-SNAPSHOT-jar-with-dependencies.jar"
-	name="org.jims.crossbow:type=EtherstubManager"
+	name="Crossbow:type=CrossbowStarter"
 	version="1.0">
 </mlet>
 

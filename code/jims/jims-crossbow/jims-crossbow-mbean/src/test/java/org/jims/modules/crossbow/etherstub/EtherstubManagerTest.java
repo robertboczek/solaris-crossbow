@@ -1,7 +1,5 @@
 package org.jims.modules.crossbow.etherstub;
 
-import org.jims.modules.crossbow.etherstub.EtherstubManager;
-import org.jims.modules.crossbow.etherstub.Etherstub;
 import org.jims.modules.crossbow.exception.EtherstubException;
 import org.jims.modules.crossbow.exception.InvalidEtherstubNameException;
 import org.jims.modules.crossbow.exception.TooLongEtherstubNameException;
@@ -36,7 +34,7 @@ public class EtherstubManagerTest {
 
             etherstubHelper = mock(EtherstubHelper.class);
             publisher = mock(Publisher.class);
-            etherstubManager = new EtherstubManager(true);
+            etherstubManager = new EtherstubManager();
             etherstubManager.setEtherstHelper(etherstubHelper);
             etherstubManager.setPublisher(publisher);
     }
