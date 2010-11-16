@@ -1,6 +1,6 @@
 <mlet
 	code="org.jims.modules.crossbow.CrossbowStarter"
-	archive="jims-crossbow-mbean-1.0-SNAPSHOT-jar-with-dependencies.jar"
+	archive="jims-crossbow-mbean-3.0.0.jar"
 	name="Crossbow:type=CrossbowStarter"
 	version="1.0">
 </mlet>

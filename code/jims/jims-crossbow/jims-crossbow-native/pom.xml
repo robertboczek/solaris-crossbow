@@ -3,14 +3,14 @@
 	<parent>
 		<groupId>jims</groupId>
 		<artifactId>jims-crossbow</artifactId>
-		<version>1.0.0</version>
+		<version>3.0.0</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>jims</groupId>
 	<artifactId>jims-crossbow-native</artifactId>
-	<version>1.0.0</version>
+	<version>3.0.0</version>
 	<name>native</name>
 	<packaging>pom</packaging>
 
