@@ -5,12 +5,12 @@
 	<parent>
 		<groupId>jims</groupId>
 		<artifactId>jims-crossbow-native</artifactId>
-		<version>1.0.0</version>
+		<version>3.0.0</version>
 	</parent>
 
 	<groupId>jims</groupId>
 	<artifactId>jims-crossbow-native-mock</artifactId>
-	<version>1.0.0</version>
+	<version>3.0.0</version>
 	<name>mock</name>
 	<packaging>nar</packaging>
 

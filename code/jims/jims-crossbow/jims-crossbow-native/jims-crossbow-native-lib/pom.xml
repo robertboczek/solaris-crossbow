@@ -3,14 +3,14 @@
 	<parent>
 		<groupId>jims</groupId>
 		<artifactId>jims-crossbow-native</artifactId>
-		<version>1.0.0</version>
+		<version>3.0.0</version>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>jims</groupId>
 	<artifactId>jims-crossbow-native-lib</artifactId>
-	<version>1.0.0</version>
+	<version>3.0.0</version>
 	<name>jims-crossbow-native-lib</name>
 	<packaging>pom</packaging>
 
@@ -24,13 +24,13 @@
 		<dependency>
 			<groupId>jims</groupId>
 			<artifactId>jims-crossbow-native-system-headers</artifactId>
-			<version>1.0.0</version>
+			<version>3.0.0</version>
 			<type>nar</type>
 		</dependency>
 		<dependency>
 			<groupId>jims</groupId>
 			<artifactId>jims-crossbow-native-common</artifactId>
-			<version>1.0.0</version>
+			<version>3.0.0</version>
 			<type>nar</type>
 		</dependency>
 

@@ -4,7 +4,7 @@
 
 	<groupId>jims</groupId>
 	<artifactId>jims-crossbow-native-system-headers</artifactId>
-	<version>1.0.0</version>
+	<version>3.0.0</version>
 	<name>system-headers</name>
 	<packaging>nar</packaging>
 
