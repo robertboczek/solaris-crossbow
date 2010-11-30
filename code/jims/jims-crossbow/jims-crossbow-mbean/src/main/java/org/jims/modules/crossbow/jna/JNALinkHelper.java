@@ -11,6 +11,7 @@ import org.jims.modules.crossbow.lib.LinkHelper;
 import org.jims.modules.crossbow.link.validators.LinkValidator;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import java.io.File;
 import org.apache.log4j.Logger;
 
 /**
@@ -22,7 +23,11 @@ import org.apache.log4j.Logger;
 public class JNALinkHelper implements LinkHelper {
 
     private LinkValidator linkValidator;
-    static final String LIB_NAME = "link-1.0.0";
+    public final static String JIMS_HOME_PROP = "jims_home";
+    public final static String JIMS_LIBDIR = "share" + File.separator
+				+ "java" + File.separator;
+    private final String LIB_NAME = "libjims-crossbow-native-lib-link-3.0.0.so";
+    
     protected LinkHandle handle = null;
     private static final Logger logger = Logger.getLogger(JNALinkHelper.class);
 
@@ -31,7 +36,8 @@ public class JNALinkHelper implements LinkHelper {
      */
     public JNALinkHelper() {
 
-        handle = (LinkHandle) Native.loadLibrary(LIB_NAME, LinkHandle.class);
+        String location = System.getProperty(JIMS_HOME_PROP) + File.separator + JIMS_LIBDIR + LIB_NAME;
+        handle = (LinkHandle) Native.loadLibrary(location, LinkHandle.class);
         handle.init();
 
     }
