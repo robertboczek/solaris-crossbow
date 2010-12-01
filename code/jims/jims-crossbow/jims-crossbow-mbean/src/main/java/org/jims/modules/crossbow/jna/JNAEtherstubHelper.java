@@ -11,6 +11,7 @@ import org.jims.modules.crossbow.lib.EtherstubHelper;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 
+import java.io.File;
 import org.apache.log4j.Logger;
 
 /**
@@ -23,8 +24,12 @@ public class JNAEtherstubHelper implements EtherstubHelper {
 
     /** Logger */
     private static final Logger logger = Logger.getLogger(JNAEtherstubHelper.class);
+    
+    public final static String JIMS_HOME_PROP = "jims_home";
+    public final static String JIMS_LIBDIR = "share" + File.separator
+				+ "java" + File.separator;
+    private final String LIBNAME = "libjims-crossbow-native-lib-etherstub-3.0.0.so";
 
-    private final String LIBNAME = "etherstub-1.0.0";
     private EtherstubHandle handle;
 
     /**
@@ -32,11 +37,13 @@ public class JNAEtherstubHelper implements EtherstubHelper {
      * Construtor of JNAEtherstubHelper - load etherstubadm native library
      */
     public JNAEtherstubHelper() {
-        handle = (EtherstubHandle) Native.loadLibrary(LIBNAME, EtherstubHandle.class);
+        String location = System.getProperty(JIMS_HOME_PROP) + File.separator
+				+ JIMS_LIBDIR + LIBNAME;
+        handle = (EtherstubHandle) Native.loadLibrary(location, EtherstubHandle.class);
         handle.init();
     }
 
-    public JNAEtherstubHelper(EtherstubHandle handle){
+    public JNAEtherstubHelper(EtherstubHandle handle) {
         this.handle = handle;
     }
 
@@ -56,15 +63,15 @@ public class JNAEtherstubHelper implements EtherstubHelper {
 
             throw new InvalidEtherstubNameException("Etherstub couldn't be removed as the name was incorrect");
 
-        }else if(rc != XbowStatus.XBOW_STATUS_OK.ordinal()){
-            
+        } else if (rc != XbowStatus.XBOW_STATUS_OK.ordinal()) {
+
             throw new EtherstubException("Etherstub deletion failed.");
         }
     }
 
     /**
      * @see EtherstubHelper#createEtherstub(java.lang.String, boolean)
-    **/
+     **/
     @Override
     public void createEtherstub(String name, boolean temporary) throws EtherstubException {
 
@@ -74,17 +81,15 @@ public class JNAEtherstubHelper implements EtherstubHelper {
 
         int rc = handle.create_etherstub(name, persitent_type);
 
-        if(rc == XbowStatus.XBOW_STATUS_TOO_LONG_NAME.ordinal()){
+        if (rc == XbowStatus.XBOW_STATUS_TOO_LONG_NAME.ordinal()) {
 
-            throw new  TooLongEtherstubNameException("Etherstub couldn't be created as the name was too long");
+            throw new TooLongEtherstubNameException("Etherstub couldn't be created as the name was too long");
 
-        }
-        else if(rc == XbowStatus.XBOW_STATUS_INVALID_NAME.ordinal()){
+        } else if (rc == XbowStatus.XBOW_STATUS_INVALID_NAME.ordinal()) {
 
-            throw new  InvalidEtherstubNameException("Etherstub couldn't be created as the name was incorrect");
+            throw new InvalidEtherstubNameException("Etherstub couldn't be created as the name was incorrect");
 
-        }
-        else if (rc != XbowStatus.XBOW_STATUS_OK.ordinal()) {
+        } else if (rc != XbowStatus.XBOW_STATUS_OK.ordinal()) {
 
             throw new EtherstubException("Etherstub creation failed.");
 
@@ -94,7 +99,7 @@ public class JNAEtherstubHelper implements EtherstubHelper {
 
     /**
      * @see EtherstubHelper#getEtherstubNames()
-    **/
+     **/
     @Override
     public String[] getEtherstubNames() throws EtherstubException {
 
@@ -102,19 +107,19 @@ public class JNAEtherstubHelper implements EtherstubHelper {
 
         Pointer pointer = handle.get_etherstub_names();
 
-        if(pointer != null){
-            
-            String []array = pointer.getStringArray(0);
+        if (pointer != null) {
+
+            String[] array = pointer.getStringArray(0);
             handle.free_char_array(pointer);
-            return (array != null)? array : new String[]{};
-        }else{
+            return (array != null) ? array : new String[]{};
+        } else {
             return new String[]{};
         }
     }
 
     /**
      * @see EtherstubHelper#getEtherstubParameter(java.lang.String, agh.msc.xbowbase.etherstub.enums.EtherstubParameters)
-    **/
+     **/
     @Override
     public String getEtherstubParameter(String name, LinkParameters parameter) throws EtherstubException {
 
@@ -144,15 +149,14 @@ public class JNAEtherstubHelper implements EtherstubHelper {
 
         logger.debug("Trying to set etherstub's : " + name + ", property : " + property + " value : " + value);
 
-        int returnValue = handle.set_etherstub_property( name, property.toString(), value);
+        int returnValue = handle.set_etherstub_property(name, property.toString(), value);
 
 
-        if(returnValue == XbowStatus.XBOW_STATUS_OK.ordinal()){
+        if (returnValue == XbowStatus.XBOW_STATUS_OK.ordinal()) {
 
             return;
 
-        }
-        else if (returnValue == XbowStatus.XBOW_STATUS_INVALID_NAME.ordinal()) {
+        } else if (returnValue == XbowStatus.XBOW_STATUS_INVALID_NAME.ordinal()) {
 
             throw new InvalidEtherstubNameException("Invalid etherstub name: " + name);
 
@@ -176,7 +180,7 @@ public class JNAEtherstubHelper implements EtherstubHelper {
 
         logger.debug("Trying to read etherstub's : " + name + ", property : " + property);
 
-        Pointer p = handle.get_etherstub_property( name, property.toString());
+        Pointer p = handle.get_etherstub_property(name, property.toString());
         return getStringFromPointer(p);
     }
 

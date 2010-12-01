@@ -238,6 +238,27 @@
 				<include>jims-crossbow-mbean-3.0.0.jar</include>
 			</includes>
 		</fileSet>
+		<fileSet>
+			<directory>jims-crossbow/jims-crossbow-native/jims-crossbow-native-lib/jims-crossbow-native-lib-etherstub/target/nar/jims-crossbow-native-lib-etherstub-3.0.0-x86-SunOS-gcc-shared/lib/x86-SunOS-gcc/shared</directory>
+			<outputDirectory>jims-gateway/share/java</outputDirectory>
+			<includes>
+				<include>libjims-crossbow-native-lib-etherstub-3.0.0.so</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>jims-crossbow/jims-crossbow-native/jims-crossbow-native-lib/jims-crossbow-native-lib-link/target/nar/jims-crossbow-native-lib-link-3.0.0-x86-SunOS-gcc-shared/lib/x86-SunOS-gcc/shared</directory>
+			<outputDirectory>jims-gateway/share/java</outputDirectory>
+			<includes>
+				<include>libjims-crossbow-native-lib-link-3.0.0.so</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>jims-crossbow/jims-crossbow-native/jims-crossbow-native-lib/jims-crossbow-native-lib-flow/target/nar/jims-crossbow-native-lib-flow-3.0.0-x86-SunOS-gcc-shared/lib/x86-SunOS-gcc/shared</directory>
+			<outputDirectory>jims-gateway/share/java</outputDirectory>
+			<includes>
+				<include>libjims-crossbow-native-lib-flow-3.0.0.so</include>
+			</includes>
+		</fileSet>
 	</fileSets>
 	
 	<dependencySets>
