@@ -19,6 +19,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
+import org.jims.common.JarExtractor;
+import org.jims.common.ManagementCommons;
 
 /**
  * Flow helper implementation based on Java Native Access.
@@ -27,13 +29,37 @@ import org.apache.log4j.Logger;
  */
 public class JNAFlowHelper implements FlowHelper {
 
+    private static final String LIB_NAME = "libjims-crossbow-native-lib-flow-3.0.0";
+    private static FlowHandle handle = null;
+    
+    private static final Logger logger = Logger.getLogger(JNAFlowHelper.class);
+
+    static {
+
+        try {
+            String resourceName = LIB_NAME + ".so";
+
+            String destFileName = ManagementCommons.getJimsTemporaryDir() +
+                    File.separator + resourceName;
+
+            JarExtractor.extractContentToDirectory("/" + resourceName, destFileName,
+                    JNALinkHelper.class);
+
+            //System.loadLibrary(LIB_NAME);
+            System.out.println("Loading Crossbow native library:" + destFileName);
+            handle = (FlowHandle) Native.loadLibrary(destFileName, FlowHandle.class);
+            System.out.println("Solaris native library loaded!");
+
+        } catch (Exception e) {
+            throw new RuntimeException(LIB_NAME + " couldn't be extracted:" + e.getMessage());
+        }
+    }
+
     /**
      * Creates the helper object and initializes underlying handler.
      */
     public JNAFlowHelper() {
 
-        String location = System.getProperty(JIMS_HOME_PROP) + File.separator + JIMS_LIBDIR + LIB_NAME;
-        handle = (FlowHandle) Native.loadLibrary(location, FlowHandle.class);
         handle.init();
 
     }
@@ -262,10 +288,5 @@ public class JNAFlowHelper implements FlowHelper {
 
         return res;
 
-    }
-    public final static String JIMS_HOME_PROP = "jims_home";
-    public final static String JIMS_LIBDIR = "share" + File.separator + "java" + File.separator;
-    private final String LIB_NAME = "libjims-crossbow-native-lib-flow-3.0.0.so";
-    FlowHandle handle = null;
-    private static final Logger logger = Logger.getLogger(JNAFlowHelper.class);
+    }    
 }

@@ -13,6 +13,8 @@ import com.sun.jna.Pointer;
 
 import java.io.File;
 import org.apache.log4j.Logger;
+import org.jims.common.JarExtractor;
+import org.jims.common.ManagementCommons;
 
 /**
  * @brief Helper class implementation based on JNA
@@ -24,22 +26,37 @@ public class JNAEtherstubHelper implements EtherstubHelper {
 
     /** Logger */
     private static final Logger logger = Logger.getLogger(JNAEtherstubHelper.class);
-    
-    public final static String JIMS_HOME_PROP = "jims_home";
-    public final static String JIMS_LIBDIR = "share" + File.separator
-				+ "java" + File.separator;
-    private final String LIBNAME = "libjims-crossbow-native-lib-etherstub-3.0.0.so";
 
-    private EtherstubHandle handle;
+    private static final String LIB_NAME = "libjims-crossbow-native-lib-etherstub-3.0.0";
+
+    static {
+
+        try {
+            String resourceName = LIB_NAME + ".so";
+
+            String destFileName = ManagementCommons.getJimsTemporaryDir() +
+                    File.separator + resourceName;
+
+            JarExtractor.extractContentToDirectory("/" + resourceName, destFileName,
+                    JNAEtherstubHelper.class);
+
+            //System.loadLibrary(LIB_NAME);
+            System.out.println("Loading Crossbow native library:" + destFileName);
+            handle = (EtherstubHandle) Native.loadLibrary(destFileName, EtherstubHandle.class);
+            System.out.println("Solaris native library loaded!");
+
+        } catch (Exception e) {
+            throw new RuntimeException(LIB_NAME + " couldn't be extracted:" + e.getMessage());
+        }
+    }
+
+    private static EtherstubHandle handle;
 
     /**
      * @brief
      * Construtor of JNAEtherstubHelper - load etherstubadm native library
      */
     public JNAEtherstubHelper() {
-        String location = System.getProperty(JIMS_HOME_PROP) + File.separator
-				+ JIMS_LIBDIR + LIBNAME;
-        handle = (EtherstubHandle) Native.loadLibrary(location, EtherstubHandle.class);
         handle.init();
     }
 

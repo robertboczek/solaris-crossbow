@@ -13,6 +13,8 @@ import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import java.io.File;
 import org.apache.log4j.Logger;
+import org.jims.common.JarExtractor;
+import org.jims.common.ManagementCommons;
 
 /**
  * @brief
@@ -22,22 +24,39 @@ import org.apache.log4j.Logger;
  */
 public class JNALinkHelper implements LinkHelper {
 
-    private LinkValidator linkValidator;
-    public final static String JIMS_HOME_PROP = "jims_home";
-    public final static String JIMS_LIBDIR = "share" + File.separator
-				+ "java" + File.separator;
-    private final String LIB_NAME = "libjims-crossbow-native-lib-link-3.0.0.so";
+    private LinkValidator linkValidator;    
     
-    protected LinkHandle handle = null;
+    protected static LinkHandle handle = null;
     private static final Logger logger = Logger.getLogger(JNALinkHelper.class);
+
+    private static final String LIB_NAME = "libjims-crossbow-native-lib-link-3.0.0";
+
+    static {
+
+        try {
+            String resourceName = LIB_NAME + ".so";
+
+            String destFileName = ManagementCommons.getJimsTemporaryDir() +
+                    File.separator + resourceName;
+
+            JarExtractor.extractContentToDirectory("/" + resourceName, destFileName,
+                    JNALinkHelper.class);
+
+            //System.loadLibrary(LIB_NAME);
+            System.out.println("Loading Crossbow native library:" + destFileName);
+            handle = (LinkHandle) Native.loadLibrary(destFileName, LinkHandle.class);
+            System.out.println("Solaris native library loaded!");
+
+        } catch (Exception e) {
+            throw new RuntimeException(LIB_NAME + " couldn't be extracted:" + e.getMessage());
+        }
+    }
 
     /**
      * Creates the helper object and initializes underlying handler.
      */
     public JNALinkHelper() {
 
-        String location = System.getProperty(JIMS_HOME_PROP) + File.separator + JIMS_LIBDIR + LIB_NAME;
-        handle = (LinkHandle) Native.loadLibrary(location, LinkHandle.class);
         handle.init();
 
     }
