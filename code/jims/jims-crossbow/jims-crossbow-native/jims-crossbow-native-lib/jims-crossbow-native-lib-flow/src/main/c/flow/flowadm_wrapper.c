@@ -360,7 +360,7 @@ key_value_pairs_t* get_properties( char* flow )
 }
 
 
-#if 0
+#if 1
 int enable_accounting()
 {
 	priv_set( PRIV_ON, PRIV_EFFECTIVE, PRIV_SYS_DL_CONFIG, NULL );
