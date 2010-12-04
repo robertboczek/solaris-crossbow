@@ -1,0 +1,117 @@
+<project>
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>jims</groupId>
+		<artifactId>jims-crossbow</artifactId>
+		<version>3.0.0</version>
+	</parent>
+
+	<groupId>jims</groupId>
+	<artifactId>jims-crossbow-package</artifactId>
+	<version>3.0.0</version>
+	<name>jims-crossbow-x86</name>
+	<packaging>jar</packaging>
+
+	<dependencies>
+		<dependency>
+			<groupId>jims</groupId>
+			<artifactId>jims-crossbow-native-lib-etherstub</artifactId>
+			<version>3.0.0</version>
+			<type>nar</type>
+		</dependency>
+		<dependency>
+			<groupId>jims</groupId>
+			<artifactId>jims-crossbow-native-lib-link</artifactId>
+			<version>3.0.0</version>
+			<type>nar</type>
+		</dependency>
+		<dependency>
+			<groupId>jims</groupId>
+			<artifactId>jims-crossbow-native-lib-flow</artifactId>
+			<version>3.0.0</version>
+			<type>nar</type>
+		</dependency>
+		<dependency>
+			<groupId>jims</groupId>
+			<artifactId>jims-crossbow-mbean</artifactId>
+			<version>3.0.0</version>
+			<type>jar</type>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>mbean</id>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>jims</groupId>
+									<artifactId>jims-crossbow-mbean</artifactId>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+									<outputDirectory>target/unpacked</outputDirectory>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-nar-plugin</artifactId>
+				<version>2.1-SNAPSHOT</version>
+				<extensions>true</extensions>
+
+				<configuration>
+					<libraries>
+						<library>
+							<type>shared</type>
+						</library>
+					</libraries>
+
+					<linker>
+						<name>gcc</name>
+					</linker>
+
+					<tests>
+						<test>
+							<name>test</name>
+							<link>shared</link>
+						</test>
+					</tests>
+				</configuration>
+
+				<executions>
+					<execution>
+						<goals>
+							<goal>nar-download</goal>
+							<goal>nar-unpack</goal>
+						</goals>
+					</execution>
+				</executions>
+
+			</plugin>
+		</plugins>
+
+		<resources>
+			<resource>
+				<directory>target/unpacked</directory>
+				<filtering>false</filtering>
+			</resource>
+		</resources>
+	</build>
+
+</project>
+
