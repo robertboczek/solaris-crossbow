@@ -1,5 +1,7 @@
 package org.jims.modules.crossbow;
 
+import java.io.File;
+import java.lang.reflect.Method;
 import org.jims.modules.crossbow.etherstub.EtherstubManager;
 import org.jims.modules.crossbow.publisher.FlowMBeanPublisher;
 import org.jims.modules.crossbow.flow.FlowManager;
@@ -19,6 +21,7 @@ import org.jims.modules.crossbow.publisher.EtherstubMBeanPublisher;
 import org.jims.modules.crossbow.publisher.NicMBeanPublisher;
 import org.jims.modules.crossbow.publisher.VNicMBeanPublisher;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import javax.management.MBeanServer;
@@ -26,6 +29,7 @@ import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
 import javax.management.timer.Timer;
 import org.apache.log4j.Logger;
+import org.jims.modules.crossbow.jna.JNALinkHelper;
 
 
 /**
@@ -74,10 +78,31 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 
 		// Initialize native wrappers.
 
-		FlowHelper flowadm = new JNAFlowHelper();
-		NicHelper nicHelper = new JNANicHelper( linkValidator );
-		VNicHelper vnicHelper = new JNAVNicHelper( linkValidator );
-		EtherstubHelper etherstubHelper = new JNAEtherstubHelper();
+		// TODO: v remove reflection
+
+		Class klass = Class.forName( "org.jims.common.ManagementCommons" );
+		String libraryPath = ( String ) klass.getMethod( "getJimsTemporaryDir" ).invoke( null );
+
+		Method extractContentToDirectory = Class.forName( "org.jims.common.JarExtractor" )
+			.getMethod( "extractContentToDirectory", String.class, String.class, Class.class );
+
+
+		for ( String lib : Arrays.asList( JNAEtherstubHelper.LIB_NAME,
+		                                  JNAFlowHelper.LIB_NAME,
+		                                  JNALinkHelper.LIB_NAME ) ) {
+
+			String destFileName = libraryPath + File.separator + lib;
+
+			extractContentToDirectory.invoke( null, "/" + lib,
+			                                        destFileName,
+			                                        JNAEtherstubHelper.class );
+
+		}
+
+		FlowHelper flowadm = new JNAFlowHelper( libraryPath );
+		NicHelper nicHelper = new JNANicHelper( libraryPath, linkValidator );
+		VNicHelper vnicHelper = new JNAVNicHelper( libraryPath, linkValidator );
+		EtherstubHelper etherstubHelper = new JNAEtherstubHelper( libraryPath );
 
 		// Create managers.
 

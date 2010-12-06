@@ -69,9 +69,9 @@ public class App {
 
 				FlowHelper flowadm = new JNAFlowHelper();
 				
-				NicHelper nicHelper = new JNANicHelper(linkValidator);
+				// NicHelper nicHelper = new JNANicHelper(linkValidator);
 				
-				VNicHelper vnicHelper = new JNAVNicHelper(linkValidator);
+				// VNicHelper vnicHelper = new JNAVNicHelper(linkValidator);
 				
 				EtherstubHelper etherstubHelper = new JNAEtherstubHelper();
 

@@ -17,6 +17,7 @@
 	<modules>
 		<module>jims-crossbow-native</module>
 		<module>jims-crossbow-mbean</module>
+		<module>jims-crossbow-package</module>
 	</modules>
 
 	<developers>

@@ -13,8 +13,7 @@ import com.sun.jna.Pointer;
 
 import java.io.File;
 import org.apache.log4j.Logger;
-import org.jims.common.JarExtractor;
-import org.jims.common.ManagementCommons;
+
 
 /**
  * @brief Helper class implementation based on JNA
@@ -27,38 +26,35 @@ public class JNAEtherstubHelper implements EtherstubHelper {
     /** Logger */
     private static final Logger logger = Logger.getLogger(JNAEtherstubHelper.class);
 
-    private static final String LIB_NAME = "libjims-crossbow-native-lib-etherstub-3.0.0";
+    public static final String LIB_NAME = "libjims-crossbow-native-lib-etherstub-3.0.0.so";
 
-    static {
-
-        try {
-            String resourceName = LIB_NAME + ".so";
-
-            String destFileName = ManagementCommons.getJimsTemporaryDir() +
-                    File.separator + resourceName;
-
-            JarExtractor.extractContentToDirectory("/" + resourceName, destFileName,
-                    JNAEtherstubHelper.class);
-
-            //System.loadLibrary(LIB_NAME);
-            System.out.println("Loading Crossbow native library:" + destFileName);
-            handle = (EtherstubHandle) Native.loadLibrary(destFileName, EtherstubHandle.class);
-            System.out.println("Solaris native library loaded!");
-
-        } catch (Exception e) {
-            throw new RuntimeException(LIB_NAME + " couldn't be extracted:" + e.getMessage());
-        }
-    }
-
-    private static EtherstubHandle handle;
+    private EtherstubHandle handle;
 
     /**
      * @brief
      * Construtor of JNAEtherstubHelper - load etherstubadm native library
      */
     public JNAEtherstubHelper() {
-        handle.init();
     }
+
+		/**
+		 *
+		 *
+		 *
+		 * @param libraryPath
+		 */
+		public JNAEtherstubHelper( String libraryPath ) {
+
+			String filePath= libraryPath + File.separator + LIB_NAME;
+
+			logger.info( "Loading Crossbow native library (" + filePath + ")" );
+			handle = ( EtherstubHandle ) Native.loadLibrary( filePath, EtherstubHandle.class );
+			logger.info( "Crossbow native library loaded!" );
+
+			handle.init();
+
+		}
+
 
     public JNAEtherstubHelper(EtherstubHandle handle) {
         this.handle = handle;

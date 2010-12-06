@@ -13,8 +13,7 @@ import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import java.io.File;
 import org.apache.log4j.Logger;
-import org.jims.common.JarExtractor;
-import org.jims.common.ManagementCommons;
+
 
 /**
  * @brief
@@ -24,41 +23,18 @@ import org.jims.common.ManagementCommons;
  */
 public class JNALinkHelper implements LinkHelper {
 
-    private LinkValidator linkValidator;    
+    private LinkValidator linkValidator;
     
-    protected static LinkHandle handle = null;
+    protected LinkHandle handle = null;
     private static final Logger logger = Logger.getLogger(JNALinkHelper.class);
 
-    private static final String LIB_NAME = "libjims-crossbow-native-lib-link-3.0.0";
+    public static final String LIB_NAME = "libjims-crossbow-native-lib-link-3.0.0.so";
 
-    static {
-
-        try {
-            String resourceName = LIB_NAME + ".so";
-
-            String destFileName = ManagementCommons.getJimsTemporaryDir() +
-                    File.separator + resourceName;
-
-            JarExtractor.extractContentToDirectory("/" + resourceName, destFileName,
-                    JNALinkHelper.class);
-
-            //System.loadLibrary(LIB_NAME);
-            System.out.println("Loading Crossbow native library:" + destFileName);
-            handle = (LinkHandle) Native.loadLibrary(destFileName, LinkHandle.class);
-            System.out.println("Solaris native library loaded!");
-
-        } catch (Exception e) {
-            throw new RuntimeException(LIB_NAME + " couldn't be extracted:" + e.getMessage());
-        }
-    }
 
     /**
      * Creates the helper object and initializes underlying handler.
      */
     public JNALinkHelper() {
-
-        handle.init();
-
     }
 
     /**
@@ -66,10 +42,19 @@ public class JNALinkHelper implements LinkHelper {
      *
      * @param linkValidator LinkValidator implementation
      */
-    public JNALinkHelper(LinkValidator linkValidator) {
+    public JNALinkHelper( String libraryPath, LinkValidator linkValidator ) {
 
-        this();
-        this.linkValidator = linkValidator;
+			this();
+
+			String filePath= libraryPath + File.separator + LIB_NAME;
+
+			logger.info( "Loading Crossbow native library (" + filePath + ")" );
+			handle = ( LinkHandle ) Native.loadLibrary( filePath, LinkHandle.class );
+			logger.info( "Crossbow native library loaded!" );
+
+			handle.init();
+
+			this.linkValidator = linkValidator;
 
     }
 

@@ -25,7 +25,7 @@
                     <source>1.6</source>
                     <target>1.6</target>
                 </configuration>
-            </plugin>	               
+            </plugin>
         </plugins>
     </build>
     <repositories>
@@ -63,30 +63,6 @@
             <artifactId>log4j</artifactId>
             <version>1.2.16</version>
         </dependency>
-		<dependency>
-		<groupId>jims</groupId>
-		<artifactId>jims-crossbow-native-lib-etherstub</artifactId>
-		<version>3.0.0</version>
-		<type>nar</type>
-	</dependency>
-	<dependency>
-		<groupId>jims</groupId>
-		<artifactId>jims-crossbow-native-lib-link</artifactId>
-		<version>3.0.0</version>
-		<type>nar</type>
-	</dependency>
-	<dependency>
-		<groupId>jims</groupId>
-		<artifactId>jims-crossbow-native-lib-flow</artifactId>
-		<version>3.0.0</version>
-		<type>nar</type>
-	</dependency>
-        <dependency>
-		<groupId>jims</groupId>
-		<artifactId>jims-common-base</artifactId>
-		<version>3.0.0</version>
-		<type>jar</type>
-	</dependency>
     </dependencies>
 
     <reporting>

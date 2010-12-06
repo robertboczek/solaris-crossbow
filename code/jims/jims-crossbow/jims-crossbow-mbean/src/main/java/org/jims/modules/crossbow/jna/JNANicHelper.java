@@ -33,8 +33,8 @@ public class JNANicHelper extends JNALinkHelper implements NicHelper {
      *
      * @param linkHandle Reference to LinkHandle object
      */
-    public JNANicHelper(LinkValidator linkValidator){
-        super(linkValidator);
+    public JNANicHelper( String libraryPath, LinkValidator linkValidator){
+        super( libraryPath, linkValidator );
     }
 
 
