@@ -31,6 +31,7 @@
     <task id="6" name="MBean worker odpowiedzialny za stworzenie odpowiedniej struktury na wezle wg wskazanego xml'a" note="tworzenie struktury + wprowadzanie ewentualnych zmian&#10;" work="28800" start="20110106T000000Z" end="20110106T170000Z" work-start="20110106T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
     <task id="7" name="Glashfish jako serwisy dzialajace na zonkach" note="" work="28800" start="20110106T000000Z" end="20110106T170000Z" work-start="20110106T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
     <task id="8" name="Skociorowe RCP" note="" work="28800" start="20110106T000000Z" end="20110106T170000Z" work-start="20110106T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+    <task id="9" name="maven-nar-plugin + cmockery" note="Poprawka w maven-nar-plugin (nielinkowanie cmockery do release) albo profil dla odpalania test&#xF3;w natywnych." work="28800" start="20110106T000000Z" end="20110106T170000Z" work-start="20110106T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
   </tasks>
   <resource-groups/>
   <resources/>
