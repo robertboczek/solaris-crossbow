@@ -27,6 +27,8 @@ import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
 import javax.management.timer.Timer;
+import org.jims.modules.crossbow.zones.ZoneCopier;
+import org.jims.modules.crossbow.zones.ZoneCopierMBean;
 
 /**
  * Hello world!
@@ -52,7 +54,7 @@ public class App {
                     server = testedServer;
                     break;
                 }
-            } catch (Exception ex) {               
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
@@ -63,17 +65,17 @@ public class App {
 
         // Validators
 
-				LinkValidator linkValidator = new RegexLinkValidator();
+        LinkValidator linkValidator = new RegexLinkValidator();
 
         // Initialize flowadm wrapper.
 
-				FlowHelper flowadm = new JNAFlowHelper();
-				
-				// NicHelper nicHelper = new JNANicHelper(linkValidator);
-				
-				// VNicHelper vnicHelper = new JNAVNicHelper(linkValidator);
-				
-				EtherstubHelper etherstubHelper = new JNAEtherstubHelper();
+        FlowHelper flowadm = new JNAFlowHelper();
+
+        // NicHelper nicHelper = new JNANicHelper(linkValidator);
+
+        // VNicHelper vnicHelper = new JNAVNicHelper(linkValidator);
+
+        EtherstubHelper etherstubHelper = new JNAEtherstubHelper();
 
 
         // Create FlowManager.
@@ -113,6 +115,14 @@ public class App {
         server.registerMBean(etherstubManager, new ObjectName("agh.msc.xbowbase:type=EtherstubManager"));
 
         server.registerMBean(timer, new ObjectName("agh.msc.xbowbase:type=Timer"));
+
+        // Create ZoneCopier MBean
+        ZoneCopierMBean zoneCopier = new ZoneCopier();
+
+
+        server.registerMBean(zoneCopier, new ObjectName("Crossbow:type=ZoneCopier"));
+
+
 
 
         /*     FLOW CREATION TEST     */
