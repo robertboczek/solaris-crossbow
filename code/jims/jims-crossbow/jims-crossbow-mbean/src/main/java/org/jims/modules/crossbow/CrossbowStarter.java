@@ -30,6 +30,8 @@ import javax.management.ObjectName;
 import javax.management.timer.Timer;
 import org.apache.log4j.Logger;
 import org.jims.modules.crossbow.jna.JNALinkHelper;
+import org.jims.modules.crossbow.zones.ZoneCopier;
+import org.jims.modules.crossbow.zones.ZoneCopierMBean;
 
 
 /**
@@ -136,6 +138,9 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 		timer.addNotificationListener(etherstubManager, null, null);
 		timer.start();
 
+                // Create ZoneCopier MBean
+                ZoneCopierMBean zoneCopier = new ZoneCopier();
+
 		// Register MBeans.
 
 		server.registerMBean(flowManager, new ObjectName("Crossbow:type=FlowManager"));
@@ -144,6 +149,7 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 		server.registerMBean(vNicManager, new ObjectName("Crossbow:type=VNicManager"));
 		server.registerMBean(etherstubManager, new ObjectName("Crossbow:type=EtherstubManager"));
 		server.registerMBean(timer, new ObjectName("Crossbow:type=Timer"));
+                server.registerMBean(zoneCopier, new ObjectName("Crossbow:type=ZoneCopier"));
 
 	}
 
