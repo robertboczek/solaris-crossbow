@@ -39,6 +39,18 @@
 			<version>3.0.0</version>
 			<type>jar</type>
 		</dependency>
+		<dependency>
+			<groupId>jims</groupId>
+			<artifactId>jims-crossbow-model</artifactId>
+			<version>3.0.0</version>
+			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>jims</groupId>
+			<artifactId>jims-crossbow-infrastructure</artifactId>
+			<version>3.0.0</version>
+			<type>jar</type>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -129,6 +141,20 @@
 								<artifactItem>
 									<groupId>jims</groupId>
 									<artifactId>jims-crossbow-mbean</artifactId>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+									<outputDirectory>target/unpacked</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>jims</groupId>
+									<artifactId>jims-crossbow-model</artifactId>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+									<outputDirectory>target/unpacked</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>jims</groupId>
+									<artifactId>jims-crossbow-infrastructure</artifactId>
 									<type>jar</type>
 									<overWrite>true</overWrite>
 									<outputDirectory>target/unpacked</outputDirectory>

@@ -9,9 +9,9 @@
 	</parent>-->
 
 	<groupId>jims</groupId>
-	<artifactId>jims-crossbow-object-model</artifactId>
+	<artifactId>jims-crossbow-model</artifactId>
 	<version>3.0.0</version>
-	<name>jims-object-model</name>
+	<name>jims-crossbow-model</name>
 	<packaging>jar</packaging>
 
 	<url>http://maven.apache.org</url>

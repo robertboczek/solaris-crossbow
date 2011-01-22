@@ -1,9 +1,9 @@
-
 package org.jims.modules.crossbow.objectmodel.resources;
 
 import org.jims.modules.crossbow.objectmodel.policy.Policy;
 import java.util.List;
 import org.jims.modules.crossbow.objectmodel.filters.address.IpAddress;
+
 
 /**
  * Port endpoint object
@@ -15,14 +15,18 @@ public class Port extends Endpoint{
     private List<Policy> policiesList;
     private List<Node> nodesList;
     private IpAddress ipAddress;
+		private Endpoint endpoint;
 
     public Port(String resourceId, String projectId) {
         super(resourceId, projectId);
     }
 
-    public Port(String resourceId, String projectId, List<Policy> policiesList, IpAddress ipAddress) {
+    public Port(String resourceId, String projectId,
+		            Endpoint endpoint,
+		            List<Policy> policiesList, IpAddress ipAddress) {
         this(resourceId, projectId);
         this.policiesList = policiesList;
+				this.endpoint = endpoint;
     }
 
     public List<Node> getNodesList() {
@@ -58,4 +62,19 @@ public class Port extends Endpoint{
     public IpAddress getIpAddress() {
         return ipAddress;
     }
+
+		public Endpoint getEndpoint() {
+			return endpoint;
+		}
+
+		public void setEndpoint(Endpoint endpoint) {
+			this.endpoint = endpoint;
+			endpoint.update( this );
+		}
+
+		@Override
+		public void update( Endpoint e ) {
+			this.endpoint = e;
+		}
+
 }

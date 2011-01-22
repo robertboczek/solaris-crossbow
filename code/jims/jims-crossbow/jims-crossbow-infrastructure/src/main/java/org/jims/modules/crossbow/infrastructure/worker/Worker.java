@@ -1,0 +1,112 @@
+package org.jims.modules.crossbow.infrastructure.worker;
+
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.jims.modules.crossbow.etherstub.Etherstub;
+import org.jims.modules.crossbow.etherstub.EtherstubManagerMBean;
+import org.jims.modules.crossbow.exception.EtherstubException;
+import org.jims.modules.crossbow.exception.LinkException;
+import org.jims.modules.crossbow.flow.FlowManagerMBean;
+import org.jims.modules.crossbow.link.VNic;
+import org.jims.modules.crossbow.link.VNicManagerMBean;
+import org.jims.modules.crossbow.objectmodel.Actions;
+import org.jims.modules.crossbow.objectmodel.Assignments;
+import org.jims.modules.crossbow.objectmodel.ObjectModel;
+import org.jims.modules.crossbow.objectmodel.resources.Port;
+import org.jims.modules.crossbow.objectmodel.resources.Switch;
+import org.jims.modules.crossbow.zones.ZoneCopierMBean;
+
+
+/**
+ *
+ * @author cieplik
+ */
+public class Worker implements WorkerMBean {
+
+	public Worker( VNicManagerMBean vNicManager, EtherstubManagerMBean etherstubManager,
+	               FlowManagerMBean flowManager, ZoneCopierMBean zoneCopier ) {
+
+		this.vNicManager = vNicManager;
+		this.etherstubManager = etherstubManager;
+		this.flowManager = flowManager;
+		this.zoneCopier = zoneCopier;
+
+	}
+
+
+	@Override
+	public void instantiate( ObjectModel model, Actions actions, Assignments assignments ) {
+
+		instantiateSwitches( model.getSwitches(), actions );
+		instantiatePorts( model.getPorts(), actions, assignments );
+
+	}
+
+
+	@Override
+	public void discover() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+
+	private void instantiateSwitches( List< Switch > switches, Actions actions ) {
+
+		for ( Switch s : switches ) {
+
+			if ( Actions.ACTION.ADD.equals( actions.get( s ) ) ) {
+
+				try {
+
+					etherstubManager.create(
+						new Etherstub( s.getProjectId() + SEP + s.getResourceId(), false )
+					);
+
+				} catch ( EtherstubException ex ) {
+					// TODO-DAWID what now?
+					Logger.getLogger(Worker.class.getName()).log(Level.SEVERE, null, ex);
+				}
+
+			}
+
+			// TODO pozostale akcje
+
+		}
+
+	}
+
+
+	private void instantiatePorts( List< Port > ports, Actions actions, Assignments assignments ) {
+
+		for ( Port p : ports ) {
+
+			if ( Actions.ACTION.ADD.equals( actions.get( p ) ) ) {
+
+				try {
+					vNicManager.create( new VNic( p.getProjectId() + SEP + p.getResourceId(), false, assignments.getAssignment( p ) ) );
+				} catch ( LinkException ex ) {
+
+					// TODO what now?
+					Logger.getLogger(Worker.class.getName()).log(Level.SEVERE, null, ex);
+				}
+
+			}
+
+			// TODO pozostale akcje
+
+		}
+
+	}
+
+
+	/**
+	 * The separator used in entities' names (e.g. MYPROJECT..SWITCH..0)
+	 */
+	public final static String SEP = "..";
+
+	private final VNicManagerMBean vNicManager;
+	private final EtherstubManagerMBean etherstubManager;
+	private final FlowManagerMBean flowManager;
+	private final ZoneCopierMBean zoneCopier;
+
+}

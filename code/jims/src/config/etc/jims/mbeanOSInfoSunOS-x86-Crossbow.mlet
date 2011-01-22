@@ -5,3 +5,10 @@
 	version="1.0">
 </mlet>
 
+<mlet
+	code="org.jims.modules.crossbow.infrastructure.CrossbowStarter"
+	archive="jims-crossbow-package-3.0.0.jar"
+	name="Crossbow:type=CrossbowInfrastructureStarter"
+	version="1.0">
+</mlet>
+
