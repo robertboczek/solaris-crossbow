@@ -31,20 +31,26 @@
         <version>2.7.1</version>
 
         <executions>
-        <execution>
-        <id>integration-test</id>
-        <phase>integration-test</phase>
-        <goals>
-        <goal>integration-test</goal>
-        </goals>
-        </execution>
-        <execution>
-        <id>verify</id>
-        <phase>verify</phase>
-        <goals>
-        <goal>verify</goal>
-        </goals>
-        </execution>
+
+					<execution>
+						<id>integration-test</id>
+						<phase>integration-test</phase>
+						<goals>
+							<goal>integration-test</goal>
+						</goals>
+						<configuration>
+							<runOrder>alphabetical</runOrder>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>verify</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+
         </executions>
 			</plugin>
 		</plugins>

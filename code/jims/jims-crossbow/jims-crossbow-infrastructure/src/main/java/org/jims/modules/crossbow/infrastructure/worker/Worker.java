@@ -54,7 +54,9 @@ public class Worker implements WorkerMBean {
 
 		for ( Switch s : switches ) {
 
-			if ( Actions.ACTION.ADD.equals( actions.get( s ) ) ) {
+			Actions.ACTION action = actions.get( s );
+
+			if ( Actions.ACTION.ADD.equals( action ) ) {
 
 				try {
 
@@ -66,6 +68,24 @@ public class Worker implements WorkerMBean {
 					// TODO-DAWID what now?
 					Logger.getLogger(Worker.class.getName()).log(Level.SEVERE, null, ex);
 				}
+
+			} else if ( Actions.ACTION.REM.equals( action ) ) {
+
+				try {
+
+					etherstubManager.delete( s.getProjectId() + SEP + s.getResourceId(), true );
+
+				} catch ( EtherstubException ex ) {
+
+				}
+
+			} else if ( Actions.ACTION.REMREC.equals( action ) ) {
+
+				// try {
+				//
+				// 	// TODO-DAWID prerequisites -> existing vnics;
+				//
+				// }
 
 			}
 
@@ -80,7 +100,9 @@ public class Worker implements WorkerMBean {
 
 		for ( Port p : ports ) {
 
-			if ( Actions.ACTION.ADD.equals( actions.get( p ) ) ) {
+			Actions.ACTION action = actions.get( p );
+
+			if ( Actions.ACTION.ADD.equals( action ) ) {
 
 				try {
 					vNicManager.create( new VNic( p.getProjectId() + SEP + p.getResourceId(), false, assignments.getAssignment( p ) ) );
@@ -88,6 +110,16 @@ public class Worker implements WorkerMBean {
 
 					// TODO what now?
 					Logger.getLogger(Worker.class.getName()).log(Level.SEVERE, null, ex);
+				}
+
+			} else if ( Actions.ACTION.REM.equals( action ) ) {
+
+				try {
+
+					vNicManager.delete( p.getProjectId() + SEP + p.getResourceId(), false );
+
+				} catch ( LinkException ex ) {
+
 				}
 
 			}
