@@ -1,12 +1,14 @@
-
 package org.jims.modules.crossbow.objectmodel.filters.address;
+
+import java.io.Serializable;
+
 
 /**
  * IpAddress class describing address
  *
  * @author robert boczek
  */
-public class IpAddress {
+public class IpAddress implements Serializable {
     
     private String address;
     private int netmask;

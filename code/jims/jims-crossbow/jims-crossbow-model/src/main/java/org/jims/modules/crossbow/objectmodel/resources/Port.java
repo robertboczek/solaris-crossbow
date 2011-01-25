@@ -1,5 +1,6 @@
 package org.jims.modules.crossbow.objectmodel.resources;
 
+import java.util.LinkedList;
 import org.jims.modules.crossbow.objectmodel.policy.Policy;
 import java.util.List;
 import org.jims.modules.crossbow.objectmodel.filters.address.IpAddress;
@@ -11,11 +12,6 @@ import org.jims.modules.crossbow.objectmodel.filters.address.IpAddress;
  * @author robert boczek
  */
 public class Port extends Endpoint{
-
-    private List<Policy> policiesList;
-    private List<Node> nodesList;
-    private IpAddress ipAddress;
-		private Endpoint endpoint;
 
     public Port(String resourceId, String projectId) {
         super(resourceId, projectId);
@@ -55,6 +51,13 @@ public class Port extends Endpoint{
         this.policiesList = policiesList;
     }
 
+
+		public void addPolicy( Policy policy ) {
+			policiesList.add( policy );
+			policy.setPort( this );
+		}
+
+
     public void setIpAddress(IpAddress ipAddress) {
         this.ipAddress = ipAddress;
     }
@@ -76,5 +79,11 @@ public class Port extends Endpoint{
 		public void update( Endpoint e ) {
 			this.endpoint = e;
 		}
+
+
+		private List< Policy  > policiesList = new LinkedList< Policy >();
+		private List<Node> nodesList;
+		private IpAddress ipAddress;
+		private Endpoint endpoint;
 
 }

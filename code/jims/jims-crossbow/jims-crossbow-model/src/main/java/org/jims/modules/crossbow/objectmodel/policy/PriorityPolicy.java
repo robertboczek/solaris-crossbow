@@ -1,24 +1,35 @@
 package org.jims.modules.crossbow.objectmodel.policy;
 
+import java.util.Arrays;
+import org.jims.modules.crossbow.objectmodel.filters.Filter;
+
 /**
  * Policy describing priority of traffic
  *
  * @author robert boczek
  */
-public class PriorityPolicy extends Policy{
+public class PriorityPolicy extends Policy {
 
-    protected PriorityPolicyEnum priority;
-
-    public PriorityPolicy(PriorityPolicyEnum priority) {
-        this.priority = priority;
+    public enum Priority {
+        LOW, HIGH, MEDIUM;
     }
+
+
+		public PriorityPolicy( Priority priority, Filter... filters ) {
+
+			super( Arrays.asList( filters ) );
+
+			this.priority = priority;
+
+		}
+
 
     /**
      * Get the value of priority
      *
      * @return the value of priority
      */
-    public PriorityPolicyEnum getPriority() {
+    public Priority getPriority() {
         return priority;
     }
 
@@ -27,12 +38,11 @@ public class PriorityPolicy extends Policy{
      *
      * @param priority new value of priority
      */
-    public void setPriority(PriorityPolicyEnum priority) {
+    public void setPriority(Priority priority) {
         this.priority = priority;
     }
 
-    public enum PriorityPolicyEnum{
-        LOW, HIGH, MEDIUM;
-    }
+
+    private Priority priority;
 
 }

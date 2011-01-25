@@ -1,4 +1,3 @@
-
 package org.jims.modules.crossbow.objectmodel.filters;
 
 import org.jims.modules.crossbow.objectmodel.filters.address.IpAddress;
@@ -9,11 +8,12 @@ import org.jims.modules.crossbow.objectmodel.filters.address.IpAddress;
  */
 public class IpFilter extends Filter{
 
-   
-    private String location;
-    private final IpAddress address;
+	public enum Location {
+		LOCAL,
+		REMOTE
+	}
 
-    public IpFilter(IpAddress address, String location) {
+    public IpFilter(IpAddress address, Location location) {
         this.address = address;
         this.location = location;
     }
@@ -23,7 +23,7 @@ public class IpFilter extends Filter{
      *
      * @return the value of location
      */
-    public String getLocation() {
+    public Location getLocation() {
         return location;
     }
 
@@ -32,11 +32,16 @@ public class IpFilter extends Filter{
      *
      * @param location new value of location
      */
-    public void setLocation(String location) {
+    public void setLocation(Location location) {
         this.location = location;
     }
 
     public IpAddress getAddress() {
         return address;
     }
+
+
+		private Location location;
+		private final IpAddress address;
+
 }

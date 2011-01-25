@@ -4,15 +4,14 @@ package org.jims.modules.crossbow.objectmodel.policy;
 import java.io.Serializable;
 import java.util.List;
 import org.jims.modules.crossbow.objectmodel.filters.Filter;
+import org.jims.modules.crossbow.objectmodel.resources.Port;
 
 /**
- * Class describing QOS policy
+ * Class describing QoS policy
  *
  * @author robert boczek
  */
 public abstract class Policy implements Serializable{
-
-    private List<Filter> filtersList;
 
     public Policy(List<Filter> filtersList) {
         this.filtersList = filtersList;
@@ -38,5 +37,18 @@ public abstract class Policy implements Serializable{
     public void setFiltersList(List<Filter> filtersList) {
         this.filtersList = filtersList;
     }
+
+
+		public void setPort( Port port ) {
+			this.port = port;
+		}
+
+		public Port getPort() {
+			return port;
+		}
+
+
+		private Port port;
+		private List<Filter> filtersList;
 
 }

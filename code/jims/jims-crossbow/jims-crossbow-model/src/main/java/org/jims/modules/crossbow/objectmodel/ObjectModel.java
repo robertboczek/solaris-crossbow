@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import org.jims.modules.crossbow.objectmodel.policy.Policy;
 import org.jims.modules.crossbow.objectmodel.resources.Machine;
 import org.jims.modules.crossbow.objectmodel.resources.Port;
 import org.jims.modules.crossbow.objectmodel.resources.Switch;
@@ -27,6 +28,10 @@ public class ObjectModel implements Serializable {
 		this.machines.addAll( Arrays.asList( machines ) );
 	}
 
+	public void addPolicies( Policy... policies ) {
+		this.policies.addAll( Arrays.asList( policies ) );
+	}
+
 	public List< Switch > getSwitches() {
 		return switches;
 	}
@@ -39,9 +44,14 @@ public class ObjectModel implements Serializable {
 		return machines;
 	}
 
+	public List< Policy > getPolicies() {
+		return policies;
+	}
+
 
 	List< Switch > switches = new LinkedList< Switch >();
 	List< Port > ports = new LinkedList< Port >();
 	List< Machine > machines = new LinkedList< Machine >();
+	List< Policy > policies = new LinkedList< Policy >();
 
 }
