@@ -1,5 +1,6 @@
 package org.jims.modules.crossbow.infrastructure.worker;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,7 +14,9 @@ import org.jims.modules.crossbow.link.VNicManagerMBean;
 import org.jims.modules.crossbow.objectmodel.Actions;
 import org.jims.modules.crossbow.objectmodel.Assignments;
 import org.jims.modules.crossbow.objectmodel.ObjectModel;
+import org.jims.modules.crossbow.objectmodel.resources.Endpoint;
 import org.jims.modules.crossbow.objectmodel.resources.Port;
+import org.jims.modules.crossbow.objectmodel.resources.Resource;
 import org.jims.modules.crossbow.objectmodel.resources.Switch;
 import org.jims.modules.crossbow.zones.ZoneCopierMBean;
 
@@ -38,8 +41,10 @@ public class Worker implements WorkerMBean {
 	@Override
 	public void instantiate( ObjectModel model, Actions actions, Assignments assignments ) {
 
-		instantiateSwitches( model.getSwitches(), actions );
-		instantiatePorts( model.getPorts(), actions, assignments );
+		List< Resource > invalid = new LinkedList< Resource >();  // TODO  invalidated ENTITIES instead of Resources only
+
+		instantiateSwitches( model.getSwitches(), actions, invalid );
+		instantiatePorts( model.getPorts(), actions, assignments, invalid );
 
 	}
 
@@ -50,9 +55,13 @@ public class Worker implements WorkerMBean {
 	}
 
 
-	private void instantiateSwitches( List< Switch > switches, Actions actions ) {
+	private void instantiateSwitches( List< Switch > switches, Actions actions, List< Resource > invalid ) {
 
 		for ( Switch s : switches ) {
+
+			if ( invalid.contains( s ) ) {
+				continue;
+			}
 
 			Actions.ACTION action = actions.get( s );
 
@@ -61,7 +70,7 @@ public class Worker implements WorkerMBean {
 				try {
 
 					etherstubManager.create(
-						new Etherstub( s.getProjectId() + SEP + s.getResourceId(), false )
+						new Etherstub( s.getProjectId() + SEP + s.getResourceId(), TEMPORARY )
 					);
 
 				} catch ( EtherstubException ex ) {
@@ -73,13 +82,15 @@ public class Worker implements WorkerMBean {
 
 				try {
 
-					etherstubManager.delete( s.getProjectId() + SEP + s.getResourceId(), true );
+					etherstubManager.delete( s.getProjectId() + SEP + s.getResourceId(), TEMPORARY );
 
 				} catch ( EtherstubException ex ) {
 
 				}
 
 			} else if ( Actions.ACTION.REMREC.equals( action ) ) {
+
+				removeRecursively( s, invalid );
 
 				// try {
 				//
@@ -89,6 +100,8 @@ public class Worker implements WorkerMBean {
 
 			}
 
+			invalid.add( s );
+
 			// TODO pozostale akcje
 
 		}
@@ -96,16 +109,52 @@ public class Worker implements WorkerMBean {
 	}
 
 
-	private void instantiatePorts( List< Port > ports, Actions actions, Assignments assignments ) {
+	private void removeRecursively( Switch s, List< Resource > invalid ) {
+
+		// TODO-DAWID  just remove vnics created over the etherstub?
+		// TODO-DAWID  switch nie zawsze mapuje sie na etherstub? (kilka vnikow nad nikiem)
+
+		for ( Endpoint e : s.getEndpoints() ) {
+
+			if ( e instanceof Port ) {
+
+				// TODO-DAWID  remove ports recursively here (flows may be defined on top)
+
+				try {
+					vNicManager.delete( e.getProjectId() + SEP + e.getResourceId(), TEMPORARY );
+				} catch (LinkException ex) {
+					Logger.getLogger(Worker.class.getName()).log(Level.SEVERE, null, ex);
+				}
+
+				invalid.add( e );
+
+			}
+
+		}
+
+		try {
+			etherstubManager.delete(s.getProjectId() + SEP + s.getResourceId(), TEMPORARY);
+		} catch (EtherstubException ex) {
+			Logger.getLogger(Worker.class.getName()).log(Level.SEVERE, null, ex);
+		}
+
+	}
+
+
+	private void instantiatePorts( List< Port > ports, Actions actions, Assignments assignments, List< Resource > invalid ) {
 
 		for ( Port p : ports ) {
+
+			if ( invalid.contains( p ) ) {
+				continue;
+			}
 
 			Actions.ACTION action = actions.get( p );
 
 			if ( Actions.ACTION.ADD.equals( action ) ) {
 
 				try {
-					vNicManager.create( new VNic( p.getProjectId() + SEP + p.getResourceId(), false, assignments.getAssignment( p ) ) );
+					vNicManager.create( new VNic( p.getProjectId() + SEP + p.getResourceId(), TEMPORARY, assignments.getAssignment( p ) ) );
 				} catch ( LinkException ex ) {
 
 					// TODO what now?
@@ -116,7 +165,7 @@ public class Worker implements WorkerMBean {
 
 				try {
 
-					vNicManager.delete( p.getProjectId() + SEP + p.getResourceId(), false );
+					vNicManager.delete( p.getProjectId() + SEP + p.getResourceId(), TEMPORARY );
 
 				} catch ( LinkException ex ) {
 
@@ -140,5 +189,7 @@ public class Worker implements WorkerMBean {
 	private final EtherstubManagerMBean etherstubManager;
 	private final FlowManagerMBean flowManager;
 	private final ZoneCopierMBean zoneCopier;
+
+	private final boolean TEMPORARY = false;
 
 }

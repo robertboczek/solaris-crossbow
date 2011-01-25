@@ -16,7 +16,8 @@ public class Actions implements Serializable {
 		ADD,
 		REM,
 		REMREC,  // recursive removal
-		UPD
+		UPD,
+		NOOP
 	}
 
 
