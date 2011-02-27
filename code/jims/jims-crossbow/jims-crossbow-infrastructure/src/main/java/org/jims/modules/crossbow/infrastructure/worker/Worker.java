@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.jims.modules.crossbow.etherstub.Etherstub;
 import org.jims.modules.crossbow.etherstub.EtherstubManagerMBean;
 import org.jims.modules.crossbow.exception.EtherstubException;
@@ -15,6 +13,8 @@ import org.jims.modules.crossbow.flow.Flow;
 import org.jims.modules.crossbow.flow.FlowManagerMBean;
 import org.jims.modules.crossbow.flow.enums.FlowAttribute;
 import org.jims.modules.crossbow.flow.enums.FlowProperty;
+import org.jims.modules.crossbow.infrastructure.worker.exception.ActionException;
+import org.jims.modules.crossbow.infrastructure.worker.exception.ModelInstantiationException;
 import org.jims.modules.crossbow.link.VNic;
 import org.jims.modules.crossbow.link.VNicManagerMBean;
 import org.jims.modules.crossbow.objectmodel.Actions;
@@ -22,12 +22,11 @@ import org.jims.modules.crossbow.objectmodel.Assignments;
 import org.jims.modules.crossbow.objectmodel.ObjectModel;
 import org.jims.modules.crossbow.objectmodel.filters.Filter;
 import org.jims.modules.crossbow.objectmodel.filters.IpFilter;
+import org.jims.modules.crossbow.objectmodel.filters.address.IpAddress;
 import org.jims.modules.crossbow.objectmodel.policy.BandwidthPolicy;
 import org.jims.modules.crossbow.objectmodel.policy.Policy;
 import org.jims.modules.crossbow.objectmodel.policy.PriorityPolicy;
-import org.jims.modules.crossbow.objectmodel.resources.Endpoint;
 import org.jims.modules.crossbow.objectmodel.resources.Port;
-import org.jims.modules.crossbow.objectmodel.resources.Resource;
 import org.jims.modules.crossbow.objectmodel.resources.Switch;
 import org.jims.modules.crossbow.zones.ZoneCopierMBean;
 
@@ -38,7 +37,7 @@ import org.jims.modules.crossbow.zones.ZoneCopierMBean;
  */
 public class Worker implements WorkerMBean {
 
-	// TODO  wyciagniecie walidacji akcji do osobnej klasy (np. dodanie policy + usuniecie vnika)
+	// TODO mechanizm wycofywania zmian w przypadku bledu
 
 	public Worker( VNicManagerMBean vNicManager, EtherstubManagerMBean etherstubManager,
 	               FlowManagerMBean flowManager, ZoneCopierMBean zoneCopier ) {
@@ -52,16 +51,87 @@ public class Worker implements WorkerMBean {
 
 
 	@Override
-	public void instantiate( ObjectModel model, Actions actions, Assignments assignments ) {
+	public void instantiate( ObjectModel model, Actions actions, Assignments assignments ) throws ModelInstantiationException {
 
-		List< Resource > invalid = new LinkedList< Resource >();  // TODO  invalidated ENTITIES instead of Resources only
+		Map< Object, Actions.ACTION > actionsMap = actions.getAll();
 
-		// TODO  posortowac to gowno topologicznie
+		try {
 
-		instantiateSwitches( model.getSwitches(), actions, invalid );
-		instantiatePorts( model.getPorts(), actions, assignments, invalid );
-		instantiatePolicies( model.getPolicies(), actions, invalid );
+			instantiateREM( extractByAction( actionsMap, Actions.ACTION.REM ) );
+			instantiateADD( extractByAction( actionsMap, Actions.ACTION.ADD ), assignments );
+			instantiateUPD( extractByAction( actionsMap, Actions.ACTION.UPD ) );
 
+		} catch ( ActionException ex ) {
+
+			throw new ModelInstantiationException();
+
+		}
+
+	}
+
+
+	private void instantiateREM( List< Object > resources ) throws ActionException {
+
+		// machinesREM( extractByType( resources, Machine.class ) );
+
+		policiesREM( extractByType( resources, Policy.class ) );
+		portsREM( extractByType( resources, Port.class ) );
+		switchesREM( extractByType( resources, Switch.class ) );
+
+	}
+
+
+	private void instantiateADD( List< Object > resources, Assignments assignments ) throws ActionException {
+
+		switchesADD( extractByType( resources, Switch.class ) );
+		portsADD( extractByType( resources, Port.class ), assignments );
+		policiesADD( extractByType( resources, Policy.class ) );
+
+		// machinesADD( extractByType( resources, Machine.class ) );
+
+	}
+
+
+	private void instantiateUPD( List< Object > resources ) {
+
+		// policiesUPD( extractByType( resources, Policy.class ) );
+		// portsUPD( extractByType( resources, Port.class ) );
+		// switchesUPD( extractByType( resources, Switch.class ) );
+
+		// machinesUPD( extractByType( resources, Machine.class ) );
+
+	}
+
+
+	private List< Object > extractByAction( Map< Object, Actions.ACTION > actionsMap, Actions.ACTION action ) {
+
+		List< Object > res = new LinkedList< Object >();
+
+		for ( Map.Entry< Object, Actions.ACTION > entry : actionsMap.entrySet() ) {
+
+			if ( action.equals( entry.getValue() ) ) {
+				res.add( entry.getKey() );
+			}
+
+		}
+
+		return res;
+
+	}
+
+
+	private < T > List< T > extractByType( List< Object > resources, Class< T > type ) {
+
+		List< T > res = new LinkedList< T >();
+
+		for ( Object resource : resources ) {
+			if ( type.isInstance( resource ) ) {
+				res.add( ( T ) resource );
+			}
+		}
+
+		return res;
+	
 	}
 
 
@@ -71,51 +141,73 @@ public class Worker implements WorkerMBean {
 	}
 
 
-	private void instantiatePolicies( List< Policy > policies, Actions actions, List< Resource > invalid ) {
+	private void policiesREM( List< Policy > policies ) throws ActionException {
+
+		for ( Policy policy : policies ) {
+
+			try {
+
+				flowManager.remove( policyName( policy ), TEMPORARY );
+
+			} catch ( XbowException ex ) {
+
+				throw new ActionException( "Policy REM error", ex );
+
+			}
+
+		}
+
+	}
+
+
+	private void policiesADD( List< Policy > policies ) throws ActionException {
 
 		for ( Policy p : policies ) {
 
-			Actions.ACTION action = actions.get( p );
+			Map< FlowAttribute, String > attrs = new HashMap< FlowAttribute, String >();
 
-			if ( Actions.ACTION.ADD.equals( action ) ) {
+			for ( Filter filter : p.getFiltersList() ) {
 
-				Map< FlowAttribute, String > attrs = new HashMap< FlowAttribute, String >();
+				if ( filter instanceof IpFilter ) {
 
-				for ( Filter filter : p.getFiltersList() ) {
+					IpFilter ipFilter = ( IpFilter ) filter;
 
-					if ( filter instanceof IpFilter ) {
+					if ( IpFilter.Location.LOCAL.equals( ipFilter.getLocation() ) ) {
 
-						IpFilter ipFilter = ( IpFilter ) filter;
+						IpAddress address = ipFilter.getAddress();
 
-						if ( IpFilter.Location.LOCAL.equals( ipFilter.getLocation() ) ) {
-							attrs.put( FlowAttribute.LOCAL_IP, ipFilter.getAddress().getAddress() );  // TODO-DAWID  netmask
-						}
+						attrs.put( FlowAttribute.LOCAL_IP,
+						           address.getAddress() + "/" + String.valueOf( address.getNetmask() ) );
 
 					}
 
 				}
 
-				Map< FlowProperty, String > props = new HashMap< FlowProperty, String >();
+			}
 
-				if ( p instanceof PriorityPolicy ) {
-					props.put( FlowProperty.PRIORITY, "high" );
-				} else if ( p instanceof BandwidthPolicy ) {
-					props.put( FlowProperty.MAXBW, String.valueOf( ( ( BandwidthPolicy ) p ).getLimit() ) );
-				}
+			Map< FlowProperty, String > props = new HashMap< FlowProperty, String >();
 
-				Flow flow = new Flow();
+			if ( p instanceof PriorityPolicy ) {
+				props.put( FlowProperty.PRIORITY, ( ( PriorityPolicy ) p ).getPriorityAsString() );
+			} else if ( p instanceof BandwidthPolicy ) {
+				props.put( FlowProperty.MAXBW, String.valueOf( ( ( BandwidthPolicy ) p ).getLimit() ) );
+			}
 
-				flow.setAttrs( attrs );
-				flow.setProps( props );
-				flow.setLink( portName( p.getPort() ) );  // TODO-DAWID  not only vnics?
-				flow.setName( policyName( p ) );  // TODO-DAWID  multiple flows
-				flow.setTemporary( TEMPORARY );
+			Flow flow = new Flow();
 
-				try {
-					flowManager.create( flow );
-				} catch (XbowException ex) {
-					Logger.getLogger(Worker.class.getName()).log(Level.SEVERE, null, ex);
-				}
+			flow.setAttrs( attrs );
+			flow.setProps( props );
+			flow.setLink( portName( p.getPort() ) );
+			flow.setName( policyName( p ) );
+			flow.setTemporary( TEMPORARY );
+
+			try {
+
+				flowManager.create( flow );
+
+			} catch ( XbowException ex ) {
+
+				throw new ActionException( "Policy ADD error", ex );
 
 			}
 
@@ -124,125 +216,76 @@ public class Worker implements WorkerMBean {
 	}
 
 
-	private void instantiateSwitches( List< Switch > switches, Actions actions, List< Resource > invalid ) {
+	private void switchesREM( List< Switch > switches ) {
 
 		for ( Switch s : switches ) {
 
-			if ( invalid.contains( s ) ) {
-				continue;
-			}
+			try {
 
-			Actions.ACTION action = actions.get( s );
+				etherstubManager.delete( switchName( s ), TEMPORARY );
 
-			if ( Actions.ACTION.ADD.equals( action ) ) {
-
-				try {
-
-					etherstubManager.create(
-						new Etherstub( switchName( s ), TEMPORARY )
-					);
-
-				} catch ( EtherstubException ex ) {
-					// TODO-DAWID what now?
-					Logger.getLogger(Worker.class.getName()).log(Level.SEVERE, null, ex);
-				}
-
-			} else if ( Actions.ACTION.REM.equals( action ) ) {
-
-				try {
-
-					etherstubManager.delete( switchName( s ), TEMPORARY );
-
-				} catch ( EtherstubException ex ) {
-
-				}
-
-			} else if ( Actions.ACTION.REMREC.equals( action ) ) {
-
-				removeRecursively( s, invalid );
-
-				// try {
-				//
-				// 	// TODO-DAWID prerequisites -> existing vnics;
-				//
-				// }
+			} catch ( EtherstubException ex ) {
 
 			}
-
-			invalid.add( s );
-
-			// TODO pozostale akcje
 
 		}
 
 	}
 
 
-	private void removeRecursively( Switch s, List< Resource > invalid ) {
+	private void switchesADD( List< Switch > switches ) throws ActionException {
 
-		// TODO-DAWID  just remove vnics created over the etherstub?
-		// TODO-DAWID  switch nie zawsze mapuje sie na etherstub? (kilka vnikow nad nikiem)
+		for ( Switch s : switches ) {
 
-		for ( Endpoint e : s.getEndpoints() ) {
+			try {
 
-			if ( e instanceof Port ) {
+				etherstubManager.create(
+					new Etherstub( switchName( s ), TEMPORARY )
+				);
 
-				// TODO-DAWID  remove ports recursively here (flows may be defined on top)
+			} catch ( EtherstubException ex ) {
 
-				try {
-					vNicManager.delete( portName( ( Port ) e ), TEMPORARY );
-				} catch (LinkException ex) {
-					Logger.getLogger(Worker.class.getName()).log(Level.SEVERE, null, ex);
-				}
-
-				invalid.add( e );
+				throw new ActionException( "Switch ADD error", ex );
 
 			}
 
 		}
 
-		try {
-			etherstubManager.delete( switchName( s ), TEMPORARY);
-		} catch (EtherstubException ex) {
-			Logger.getLogger(Worker.class.getName()).log(Level.SEVERE, null, ex);
-		}
-
 	}
 
 
-	private void instantiatePorts( List< Port > ports, Actions actions, Assignments assignments, List< Resource > invalid ) {
+	private void portsREM( List< Port > ports ) throws ActionException {
 
 		for ( Port p : ports ) {
 
-			if ( invalid.contains( p ) ) {
-				continue;
-			}
+			try {
 
-			Actions.ACTION action = actions.get( p );
+				vNicManager.delete( portName( p ), TEMPORARY );
 
-			if ( Actions.ACTION.ADD.equals( action ) ) {
+			} catch ( LinkException ex ) {
 
-				try {
-					vNicManager.create( new VNic( portName( p ), TEMPORARY, assignments.getAssignment( p ) ) );
-				} catch ( LinkException ex ) {
-
-					// TODO what now?
-					Logger.getLogger(Worker.class.getName()).log(Level.SEVERE, null, ex);
-				}
-
-			} else if ( Actions.ACTION.REM.equals( action ) ) {
-
-				try {
-
-					vNicManager.delete( portName( p ), TEMPORARY );
-
-				} catch ( LinkException ex ) {
-
-				}
+				throw new ActionException( "Port REM error", ex );
 
 			}
 
-			// TODO pozostale akcje
+		}
+
+	}
+
+
+	private void portsADD( List< Port > ports, Assignments assignments ) throws ActionException {
+
+		for ( Port p : ports ) {
+
+			try {
+
+				vNicManager.create( new VNic( portName( p ), TEMPORARY, assignments.getAssignment( p ) ) );
+
+			} catch ( LinkException ex ) {
+
+				throw new ActionException( "Port ADD error", ex );
+
+			}
 
 		}
 
@@ -258,7 +301,7 @@ public class Worker implements WorkerMBean {
 	}
 
 	private String policyName( Policy p ) {
-		return p.getPort().getResourceId() + SEP + "A.POLICY13";  // TODO-DAWID  change
+		return p.getPort().getProjectId() + SEP + p.getPort().getResourceId() + SEP + p.getName();
 	}
 
 

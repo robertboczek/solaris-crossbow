@@ -11,14 +11,15 @@ import org.jims.modules.crossbow.objectmodel.resources.Port;
  *
  * @author robert boczek
  */
-public abstract class Policy implements Serializable{
-
-    public Policy(List<Filter> filtersList) {
-        this.filtersList = filtersList;
-    }
+public abstract class Policy implements Serializable {
 
     public Policy() {
     }
+
+		public Policy( String name, List<Filter> filtersList ) {
+			this.name = name;
+			this.filtersList= filtersList;
+		}
 
     /**
      * Get the value of filtersList
@@ -47,7 +48,12 @@ public abstract class Policy implements Serializable{
 			return port;
 		}
 
+		public String getName() {
+			return name;
+		}
 
+
+		private String name;
 		private Port port;
 		private List<Filter> filtersList;
 

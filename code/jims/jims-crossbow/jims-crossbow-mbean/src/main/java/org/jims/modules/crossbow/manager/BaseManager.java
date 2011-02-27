@@ -1,13 +1,7 @@
 package org.jims.modules.crossbow.manager;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.logging.Level;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
-import javax.management.ObjectName;
 import org.apache.log4j.Logger;
 
 /**
@@ -26,13 +20,6 @@ public abstract class BaseManager {
      */
     public BaseManager() {
 
-        //zeby sprawdzic czy konstruktor jest odpalany
-        File f = new File("/export/home/robert/test.txt");
-        try {
-            f.createNewFile();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
         server = MBeanServerFactory.newMBeanServer();
 
         // get the JIMS MBean server

@@ -15,7 +15,6 @@ public class Actions implements Serializable {
 
 		ADD,
 		REM,
-		REMREC,  // recursive removal
 		UPD,
 		NOOP
 	}
@@ -23,6 +22,11 @@ public class Actions implements Serializable {
 
 	public void insert( Object o, ACTION a ) {
 		actions.put( o, a );
+	}
+
+
+	public Map< Object, ACTION > getAll() {
+		return actions;
 	}
 
 

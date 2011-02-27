@@ -1,6 +1,8 @@
 package org.jims.modules.crossbow.gui.data;
 
 import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Abstract class containing data typed in dialogs
@@ -15,23 +17,8 @@ public abstract class GraphNodeData implements Serializable{
 	 */
 	private static final long serialVersionUID = 4432277981205294737L;
 	
-	protected String ipAddress, netmask, repoId, resourceId;
-
-	public String getIpAddress() {
-		return ipAddress;
-	}
-
-	public void setIpAddress(String ipAddress) {
-		this.ipAddress = ipAddress;
-	}
-
-	public String getNetmask() {
-		return netmask;
-	}
-
-	public void setNetmask(String netmask) {
-		this.netmask = netmask;
-	}
+	protected String repoId, resourceId;
+	protected List<IpAddress> interfaces = new LinkedList<IpAddress>();
 
 	public String getRepoId() {
 		return repoId;
@@ -48,18 +35,46 @@ public abstract class GraphNodeData implements Serializable{
 	public void setResourceId(String resourceId) {
 		this.resourceId = resourceId;
 	}
+	
+	public void addNewIpAddress(){
+		this.interfaces.add(new IpAddress());
+	}
+
+	
+
+	public List<IpAddress> getInterfaces() {
+		return interfaces;
+	}
+	
+	public IpAddress findIpAddress(GraphConnectionData graphConnectionData){
+		for(IpAddress ipAddress : this.interfaces){
+			if(ipAddress.getGraphConnectionData() != null && ipAddress.getGraphConnectionData().equals(graphConnectionData)){
+				return ipAddress;
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * Removes graphConnectionData object as the connection between Nodes 
 	 * 
 	 * @param graphConnectionData
+	 * @return 
 	 */
-	public abstract void removeEndpoint(GraphConnectionData graphConnectionData);
+	public void removeEndpoint(GraphConnectionData graphConnectionData){
+		
+		IpAddress ipAddress = null;
+		while((ipAddress = findIpAddress(graphConnectionData)) != null){
+			ipAddress.setGraphConnectionData(null);
+		}
+	}
 	
 	/**
 	 * Adds graphConnectionData object as the connection between Nodes 
 	 * 
 	 * @param graphConnectionData
 	 */
-	public abstract void addEndpoing(GraphConnectionData graphConnectionData);
+	public void addEndpoint(GraphConnectionData graphConnectionData){
+		
+	}
 }

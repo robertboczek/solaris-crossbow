@@ -14,7 +14,7 @@ import org.junit.Test;
 public class Worker10SimpleQosModelAdditionIT extends WorkerITBase {
 
 	@Test
-	public void go() {
+	public void go() throws Exception {
 
 		ObjectModel model = ModelHelper.getSimpleQosModel( projectId, SEP );
 

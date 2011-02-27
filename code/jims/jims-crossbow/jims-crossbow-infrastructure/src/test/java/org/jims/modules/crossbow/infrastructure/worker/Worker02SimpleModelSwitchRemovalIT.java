@@ -14,7 +14,7 @@ import org.junit.Test;
 public class Worker02SimpleModelSwitchRemovalIT extends WorkerITBase {
 
 	@Test
-	public void go() {
+	public void go() throws Exception {
 
 		ObjectModel model = ModelHelper.getSimpleModel( projectId, SEP );
 		model.getPorts().clear();

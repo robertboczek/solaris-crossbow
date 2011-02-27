@@ -16,6 +16,15 @@ import org.jims.modules.crossbow.objectmodel.resources.Switch;
  */
 public class ModelHelper {
 
+	/**
+	 * Creates and returns simple model:
+	 *
+	 * M-P--S
+	 *
+	 * @param projectId
+	 * @param SEP
+	 * @return
+	 */
 	public static ObjectModel getSimpleModel( String projectId, String SEP ) {
 
 		String machineId = "MYSQL", portId = machineId + SEP + "LINK0", switchId = "SWITCH0";
@@ -45,11 +54,12 @@ public class ModelHelper {
 		// Add QoS parameters
 
 		model.getPorts().get( 0 ).addPolicy(
-			new PriorityPolicy( PriorityPolicy.Priority.HIGH,
+			new PriorityPolicy( "APOLICY0",
+			                    PriorityPolicy.Priority.HIGH,
 			                    new IpFilter( new IpAddress( "1.2.3.4", 24 ), IpFilter.Location.LOCAL ) )
 		);
 
-		model.addPolicies( model.getPorts().get( 0 ).getPoliciesList().toArray( new Policy[ 1 ] ) );
+		model.addPolicies( model.getPorts().get( 0 ).getPoliciesList().get( 0 ) );
 
 		return model;
 

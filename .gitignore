@@ -8,5 +8,6 @@ nbactions.xml
 *.swo
 *~
 *.gch
+*.class
 tags
 .lvimrc

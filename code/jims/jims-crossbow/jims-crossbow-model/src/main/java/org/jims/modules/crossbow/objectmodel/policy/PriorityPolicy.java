@@ -15,9 +15,9 @@ public class PriorityPolicy extends Policy {
     }
 
 
-		public PriorityPolicy( Priority priority, Filter... filters ) {
+		public PriorityPolicy( String name, Priority priority, Filter... filters ) {
 
-			super( Arrays.asList( filters ) );
+			super( name, Arrays.asList( filters ) );
 
 			this.priority = priority;
 
@@ -32,6 +32,16 @@ public class PriorityPolicy extends Policy {
     public Priority getPriority() {
         return priority;
     }
+
+		public String getPriorityAsString() {
+
+			switch ( priority ) {
+				case HIGH: return "high";
+				case LOW:  return "low";
+				default:   return "medium";
+			}
+
+		}
 
     /**
      * Set the value of priority

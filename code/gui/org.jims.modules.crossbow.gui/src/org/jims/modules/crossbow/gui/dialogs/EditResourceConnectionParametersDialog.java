@@ -1,10 +1,11 @@
 package org.jims.modules.crossbow.gui.dialogs;
 
 import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -17,10 +18,12 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.jims.modules.crossbow.gui.data.GraphConnectionData;
+import org.jims.modules.crossbow.gui.data.IpAddress;
 
 
 /**
  * Dialog allowing user to specify network connection properties 
+ * 
  * @author robert
  *
  */
@@ -28,8 +31,10 @@ public class EditResourceConnectionParametersDialog extends TitleAreaDialog{
 	
 	private Text bandwidth;
 	private Combo priority;
-	private Button addFlowButton;
 	private GraphConnectionData graphConnectionData;
+	private Combo leftEndpointAddress, rightEndpointAddress;
+	
+	private IpAddress oldIpAddress1, oldIpAddress2;
 
 	public EditResourceConnectionParametersDialog(Shell parentShell, GraphConnectionData graphConnectionData) {
 		super(parentShell);
@@ -49,9 +54,12 @@ public class EditResourceConnectionParametersDialog extends TitleAreaDialog{
 	@Override
 	public void create() {
 		super.create();
-		setTitle("Edit resource properties");
-		setMessage("Provide resource details", IMessageProvider.INFORMATION);
+		setTitle("Edit resource properties");		
 
+	}
+	
+	private void setInformation(){
+		setMessage("Provide resource details", IMessageProvider.INFORMATION);
 	}
 
 	@Override
@@ -72,6 +80,24 @@ public class EditResourceConnectionParametersDialog extends TitleAreaDialog{
 		bandwidth.setLayoutData(gridData);
 		bandwidth.setSize(100, 13);
 		
+		bandwidth.addFocusListener(new FocusListener(){
+
+			@Override
+			public void focusGained(FocusEvent arg0) {
+			}
+
+			@Override
+			public void focusLost(FocusEvent arg0) {
+				String errorMessage = validateBandwidth();
+				if(errorMessage.equals("")){
+					setInformation();
+				}else{
+					setMessage(errorMessage, IMessageProvider.ERROR);
+				}
+			}
+			
+		});
+		
 		Label label2 = new Label(parent, SWT.NONE);
 		label2.setText("Priority:");
 
@@ -79,13 +105,50 @@ public class EditResourceConnectionParametersDialog extends TitleAreaDialog{
 		priority.setLayoutData(gridData);
 		priority.setItems(new String[]{"low", "medium", "high"});
 		
-		new Label(parent, SWT.NONE);new Label(parent, SWT.NONE);	
+		Label label3 = new Label(parent, SWT.NONE);
+		label3.setText("Left interface endpoint:");
+
+		leftEndpointAddress = new Combo(parent, SWT.DROP_DOWN);
+		leftEndpointAddress.setLayoutData(gridData);		
 		
-		new Label(parent, SWT.NONE);
-		addFlowButton = new Button(parent, SWT.PUSH);
-		addFlowButton.setText("Add flow");
-		addFlowButton.setFont(JFaceResources.getDialogFont());
-		setButtonLayoutData(addFlowButton);
+		Label label4 = new Label(parent, SWT.NONE);
+		label4.setText("Right interface endpoint:");
+
+		rightEndpointAddress = new Combo(parent, SWT.DROP_DOWN);
+		rightEndpointAddress.setLayoutData(gridData);
+				
+		for(IpAddress ipAddress : graphConnectionData.getLeftNode().getInterfaces()){
+			if(ipAddress.getGraphConnectionData() == null || ipAddress.getGraphConnectionData() == graphConnectionData){
+				leftEndpointAddress.add(ipAddress.toString());
+				leftEndpointAddress.setData(ipAddress.toString(), ipAddress);				
+			}			
+		}
+		
+		
+		for(IpAddress ipAddress : graphConnectionData.getRightNode().getInterfaces()){
+			if(ipAddress.getGraphConnectionData() == null || ipAddress.getGraphConnectionData() == graphConnectionData){
+				rightEndpointAddress.add(ipAddress.toString());
+				rightEndpointAddress.setData(ipAddress.toString(), ipAddress);
+			}
+		}	
+		
+		for(int i = 0; i<leftEndpointAddress.getItemCount(); i++){
+			IpAddress ipAddress = (IpAddress) leftEndpointAddress.getData(leftEndpointAddress.getItem(i));
+			if(ipAddress.equals(graphConnectionData.getLeftNode().findIpAddress(graphConnectionData))){
+				leftEndpointAddress.select(i);
+				oldIpAddress1 = ipAddress;
+			}
+		}
+		
+		for(int i = 0; i<rightEndpointAddress.getItemCount(); i++){
+			IpAddress ipAddress = (IpAddress) rightEndpointAddress.getData(rightEndpointAddress.getItem(i));
+			if(ipAddress.equals(graphConnectionData.getRightNode().findIpAddress(graphConnectionData))){
+				rightEndpointAddress.select(i);
+				oldIpAddress2 = ipAddress;
+			}
+		}
+		
+		new Label(parent, SWT.NONE);new Label(parent, SWT.NONE);
 		
 		setControlsValues();
 		
@@ -143,23 +206,30 @@ public class EditResourceConnectionParametersDialog extends TitleAreaDialog{
 	private boolean isValidInput() {
 		
 		boolean valid = true;
-		String errorMessage = "";
-
-		try{
-			Integer i = Integer.parseInt(this.bandwidth.getText());
-		}catch(NumberFormatException e){
-			errorMessage += "Bandwidth must be integer \n";
-			valid = false;
-		}
+		String errorMessage = validateBandwidth();
 		
-		if(this.priority.getText().equals("")){
+		/* W sumie nie musimy wymagac podania priorytetu
+		 * if(this.priority.getText().equals("")){
 			errorMessage += "You must select priority\n";
+		}*/
+		if(errorMessage.equals("") == false){
+			setMessage(errorMessage, IMessageProvider.ERROR);
 			valid = false;
 		}
-		if(errorMessage.equals("") == false)
-			MessageDialog.openError(null, "Error", errorMessage);
 		
 		return valid;
+	}
+
+	private String validateBandwidth() {
+		String errorMessage = "";
+		if(this.bandwidth.getText().equals("") == false){
+			try{
+				Integer i = Integer.parseInt(this.bandwidth.getText());
+			}catch(NumberFormatException e){
+				errorMessage += "Bandwidth must be integer \n";
+			}
+		}		
+		return errorMessage;
 	}
 
 	@Override
@@ -176,6 +246,16 @@ public class EditResourceConnectionParametersDialog extends TitleAreaDialog{
 	private void saveInput() {
 		this.graphConnectionData.setBandwidth(this.bandwidth.getText());
 		this.graphConnectionData.setPriority(this.priority.getText());
+		
+		oldIpAddress1.setGraphConnectionData(null);
+		
+		IpAddress ipAddress = (IpAddress) leftEndpointAddress.getData(leftEndpointAddress.getItem(leftEndpointAddress.getSelectionIndex()));
+		ipAddress.setGraphConnectionData(graphConnectionData);
+		
+		oldIpAddress2.setGraphConnectionData(null);
+		
+		ipAddress = (IpAddress) rightEndpointAddress.getData(rightEndpointAddress.getItem(rightEndpointAddress.getSelectionIndex()));
+		ipAddress.setGraphConnectionData(graphConnectionData);
 		
 	}
 }

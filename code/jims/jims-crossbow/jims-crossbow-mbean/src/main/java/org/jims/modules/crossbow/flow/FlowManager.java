@@ -115,15 +115,15 @@ public class FlowManager extends BaseManager implements FlowManagerMBean, Notifi
 
         // Publish, if publisher set.
 
-        if (publisher != null) {
+        // if (publisher != null) {
 
-            synchronized (publisher) {
-                publisher.publish(flow);
-            }
+        //     synchronized (publisher) {
+        //         publisher.publish(flow);
+        //     }
 
-            logger.info(flow.getName() + " flow published.");
+        //     logger.info(flow.getName() + " flow published.");
 
-        }
+        // }
 
     }
 

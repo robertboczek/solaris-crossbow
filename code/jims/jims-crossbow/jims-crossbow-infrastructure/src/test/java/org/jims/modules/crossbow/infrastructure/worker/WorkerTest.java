@@ -64,10 +64,14 @@ public class WorkerTest {
 		model.addMachines( m );
 
 		Assignments assignments = new Assignments();
-
 		assignments.setAssignment( p, etherstubId );
 
-		worker.instantiate( model, new Actions(), assignments );
+		Actions actions = new Actions();
+		actions.insert( m, Actions.ACTION.ADD );
+		actions.insert( p, Actions.ACTION.ADD );
+		actions.insert( s, Actions.ACTION.ADD );
+
+		worker.instantiate( model, actions, assignments );
 
 		// Verify
 
