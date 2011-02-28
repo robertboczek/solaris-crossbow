@@ -2,6 +2,9 @@ target/
 code/xbow/xbow-native/xbow-native-lib/xbow-native-lib-*/src/test/c/mock
 code/xbow/xbow-native/xbow-native-lib/xbow-native-lib-*/src/test/include/mock
 code/sync.sh
+tex/thesis/*.acn
+tex/thesis/*.glo
+tex/thesis/*.ist
 nbactions.xml
 *.dia~
 *.swp

@@ -1,0 +1,140 @@
+\documentclass[11pt]{book}
+\usepackage[top=3cm, bottom=4cm]{geometry}
+\usepackage[usenames,dvipsnames]{color}
+
+
+% \usepackage[polish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{fullpage}
+\usepackage[pdfborder={0 0 0}]{hyperref}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{scrtime}
+\usepackage{tabularx}
+\usepackage{listings} 
+\usepackage{caption}
+\usepackage{color}
+% \usepackage[toc,acronym]{glossaries}
+
+\newcommand{\code}[1]{\begin{tt}{#1}\end{tt}}
+
+\newcommand{\reqlabel}[1]{{\textcolor{Red}{\textbf{#1}}\label{#1}}}
+\newcommand{\reqref}[1]{\hyperref[#1]{{\textcolor{Red}{\textbf{#1}}}}}
+
+\newcommand{\tasklabel}[1]{{\textcolor{Blue}{\textbf{#1}}\label{#1}}}
+\newcommand{\taskref}[1]{\hyperref[#1]{{\textcolor{Blue}{\textbf{#1}}}}}
+
+
+\title{Component-based system for management of multilevel virtualization of networking resources}
+\author{Robert Boczek \and Dawid Ciepliński}
+
+\begin{document}
+
+  \maketitle
+    
+  \tableofcontents
+	
+
+  \chapter{Introduction}
+
+
+  \chapter{Infrastructure as a Service}
+
+    \section{Benefits}
+
+    \section{IaaS applications}
+
+    \section{Requirements}
+
+
+  \chapter{Virtualization}
+
+    \section{Operating system-level virtualization}
+
+
+    \section{Virtualization of networking resources}
+
+
+  \chapter{Virtual infrastructure construction and deployment}
+
+    \section{Possible approaches}
+
+      \section{Heterogeneous environment}
+
+
+      \section{Homogeneous environment}
+
+        \subsection{Single node}
+
+
+        \subsection{Multi-node}
+
+
+    \section{Problems}
+
+      \subsection{Quality of Service}
+
+
+      \subsection{Load balancing / Deployment}
+
+
+      \subsection{Isolation}
+
+
+      \subsection{Broadcast domain preservation}
+
+
+  \chapter{Existing virtualization solutions}
+
+
+  \chapter{Solaris OS as a resource virtualization environment}
+
+    \section{General information}
+
+
+    \section{Solaris Containers}
+
+
+    \section{Crossbow}
+
+
+  \chapter{Component-based software design}
+
+
+  \chapter{The system overview}
+
+    \section{The JMX-based Infrastructure Monitoring System}
+
+
+    \subsection{Enabling rich functionality thanks to JIMS integration}
+
+
+    \section{Architecture}
+
+      \subsection{Main components and their responsibility}
+
+
+      \subsection{Low-level function access with layer-based design}
+
+        \subsubsection{Benefits}
+
+
+  \chapter{Case Study}
+
+
+  \chapter{Implementation details}
+
+    % TODO czy to sie znajdzie?
+
+
+  \begin{thebibliography}{some-label}
+
+    \bibitem[asd]{dsd} ala123
+
+  \end{thebibliography}
+
+
+\end{document}
+
+% vim: et : spelllang=en_us : spell :
