@@ -59,9 +59,9 @@ public class WorkerTest {
 
 		ObjectModel model = new ObjectModel();
 
-		model.addPorts( p );
-		model.addSwitches( s );
-		model.addMachines( m );
+		model.register( p );
+		model.register( s );
+		model.register( m );
 
 		Assignments assignments = new Assignments();
 		assignments.setAssignment( p, etherstubId );

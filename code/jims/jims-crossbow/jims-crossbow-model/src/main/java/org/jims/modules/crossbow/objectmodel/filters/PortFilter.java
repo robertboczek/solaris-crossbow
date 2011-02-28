@@ -18,7 +18,7 @@ public class PortFilter extends Filter{
     }
 
     public enum Protocol{
-        TCP, UDP;
+        TCP, UDP, SCTP;
     }
 
     /**
@@ -47,6 +47,19 @@ public class PortFilter extends Filter{
     public int getPort() {
         return port;
     }
+
+
+		public String getProtocolAsString() {
+
+			switch ( protocol ) {
+
+				case SCTP: return "sctp";
+				case TCP:  return "tcp";
+				default:   return "udp";
+
+			}
+
+		}
 
     /**
      * Set the value of port

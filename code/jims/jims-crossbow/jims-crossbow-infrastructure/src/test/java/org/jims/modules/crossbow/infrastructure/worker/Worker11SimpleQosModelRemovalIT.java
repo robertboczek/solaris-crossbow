@@ -11,7 +11,7 @@ import org.junit.Test;
  *
  * @author cieplik
  */
-public class Worker10SimpleQosModelAdditionIT extends WorkerITBase {
+public class Worker11SimpleQosModelRemovalIT extends WorkerITBase {
 
 	@Test
 	public void go() throws Exception {
@@ -22,14 +22,14 @@ public class Worker10SimpleQosModelAdditionIT extends WorkerITBase {
 
 		Actions actions = new Actions();
 
-		actions.insert( model.getSwitches().get( 0 ), Actions.ACTION.ADD );
-		actions.insert( model.getPorts().get( 0 ), Actions.ACTION.ADD );
-		actions.insert( model.getPolicies().get( 0 ), Actions.ACTION.ADD );
+		actions.insert( model.getSwitches().get( 0 ), Actions.ACTION.REM );
+		actions.insert( model.getPorts().get( 0 ), Actions.ACTION.REM );
+		actions.insert( model.getPolicies().get( 0 ), Actions.ACTION.REM );
 
-		Assignments assignments = new Assignments();
-		assignments.setAssignment( model.getPorts().get( 0 ), etherstubId );
+		// Assignments assignments = new Assignments();
+		// assignments.setAssignment( model.getPorts().get( 0 ), etherstubId );
 
-		worker.instantiate( model, actions, assignments );
+		worker.instantiate( model, actions, new Assignments() );
 
 	}
 

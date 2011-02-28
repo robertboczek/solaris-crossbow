@@ -16,20 +16,24 @@ import org.jims.modules.crossbow.objectmodel.resources.Switch;
  */
 public class ObjectModel implements Serializable {
 
-	public void addSwitches( Switch... switches ) {
-		this.switches.addAll( Arrays.asList( switches ) );
+	public Switch register( Switch entity ) {
+		this.switches.add( entity );
+		return entity;
 	}
 
-	public void addPorts( Port... ports ) {
-		this.ports.addAll( Arrays.asList( ports ) );
+	public Port register( Port entity ) {
+		this.ports.add( entity );
+		return entity;
 	}
 
-	public void addMachines( Machine... machines ) {
-		this.machines.addAll( Arrays.asList( machines ) );
+	public Machine register( Machine entity ) {
+		this.machines.add( entity );
+		return entity;
 	}
 
-	public void addPolicies( Policy... policies ) {
-		this.policies.addAll( Arrays.asList( policies ) );
+	public Policy register( Policy entity ) {
+		this.policies.add( entity );
+		return entity;
 	}
 
 	public List< Switch > getSwitches() {

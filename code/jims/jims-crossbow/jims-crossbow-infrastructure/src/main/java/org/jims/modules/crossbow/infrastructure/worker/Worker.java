@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import org.jims.modules.crossbow.enums.LinkProperties;
 import org.jims.modules.crossbow.etherstub.Etherstub;
 import org.jims.modules.crossbow.etherstub.EtherstubManagerMBean;
 import org.jims.modules.crossbow.exception.EtherstubException;
@@ -16,12 +17,16 @@ import org.jims.modules.crossbow.flow.enums.FlowProperty;
 import org.jims.modules.crossbow.infrastructure.worker.exception.ActionException;
 import org.jims.modules.crossbow.infrastructure.worker.exception.ModelInstantiationException;
 import org.jims.modules.crossbow.link.VNic;
+import org.jims.modules.crossbow.link.VNicMBean;
 import org.jims.modules.crossbow.link.VNicManagerMBean;
 import org.jims.modules.crossbow.objectmodel.Actions;
 import org.jims.modules.crossbow.objectmodel.Assignments;
 import org.jims.modules.crossbow.objectmodel.ObjectModel;
+import org.jims.modules.crossbow.objectmodel.filters.AnyFilter;
 import org.jims.modules.crossbow.objectmodel.filters.Filter;
 import org.jims.modules.crossbow.objectmodel.filters.IpFilter;
+import org.jims.modules.crossbow.objectmodel.filters.PortFilter;
+import org.jims.modules.crossbow.objectmodel.filters.TransportFilter;
 import org.jims.modules.crossbow.objectmodel.filters.address.IpAddress;
 import org.jims.modules.crossbow.objectmodel.policy.BandwidthPolicy;
 import org.jims.modules.crossbow.objectmodel.policy.Policy;
@@ -38,6 +43,7 @@ import org.jims.modules.crossbow.zones.ZoneCopierMBean;
 public class Worker implements WorkerMBean {
 
 	// TODO mechanizm wycofywania zmian w przypadku bledu
+	// TODO logowanie
 
 	public Worker( VNicManagerMBean vNicManager, EtherstubManagerMBean etherstubManager,
 	               FlowManagerMBean flowManager, ZoneCopierMBean zoneCopier ) {
@@ -63,7 +69,7 @@ public class Worker implements WorkerMBean {
 
 		} catch ( ActionException ex ) {
 
-			throw new ModelInstantiationException();
+			throw new ModelInstantiationException( ex );
 
 		}
 
@@ -145,13 +151,39 @@ public class Worker implements WorkerMBean {
 
 		for ( Policy policy : policies ) {
 
-			try {
+			if ( policy.getFilter() instanceof AnyFilter ) {
 
-				flowManager.remove( policyName( policy ), TEMPORARY );
+				// Modify underlying VNIC.
 
-			} catch ( XbowException ex ) {
+				try {
 
-				throw new ActionException( "Policy REM error", ex );
+					VNicMBean vnic = vNicManager.getByName( portName( policy.getPort() ) );
+
+					LinkProperties property = null;
+
+					if ( policy instanceof PriorityPolicy ) {
+						property = LinkProperties.PRIORITY;
+					} else if ( policy instanceof BandwidthPolicy ) {
+						property = LinkProperties.MAXBW;
+					}
+
+					assert ( null != property ) : "Unknown Policy type";
+
+					vnic.resetProperty( property );
+
+				} catch ( LinkException ex ) {
+
+					throw new ActionException( "Policy REM error", ex );
+
+				}
+
+			} else {
+
+				try {
+					flowManager.remove( policyName( policy ), TEMPORARY );
+				} catch ( XbowException ex ) {
+					throw new ActionException( "Policy REM error", ex );
+				}
 
 			}
 
@@ -164,50 +196,73 @@ public class Worker implements WorkerMBean {
 
 		for ( Policy p : policies ) {
 
-			Map< FlowAttribute, String > attrs = new HashMap< FlowAttribute, String >();
+			Filter filter = p.getFilter();
 
-			for ( Filter filter : p.getFiltersList() ) {
+			if ( filter instanceof AnyFilter ) {
+
+				// We apply the policy directly to the Port.
+
+				try {
+
+					VNicMBean vnic = vNicManager.getByName( portName( p.getPort() ) );
+
+					if ( p instanceof PriorityPolicy ) {
+						vnic.setProperty( LinkProperties.PRIORITY, ( ( PriorityPolicy ) p ).getPriorityAsString() );
+					} else if ( p instanceof BandwidthPolicy ) {
+						vnic.setProperty( LinkProperties.MAXBW, String.valueOf( ( ( BandwidthPolicy ) p ).getLimit() ) );
+					}
+
+				} catch ( LinkException e ) {
+
+					throw new ActionException( "Policy ADD error", e );
+
+				}
+
+			} else {
+
+				Map< FlowAttribute, String > attrs = new HashMap< FlowAttribute, String >();
 
 				if ( filter instanceof IpFilter ) {
 
 					IpFilter ipFilter = ( IpFilter ) filter;
 
-					if ( IpFilter.Location.LOCAL.equals( ipFilter.getLocation() ) ) {
+					FlowAttribute flowAttribute = IpFilter.Location.LOCAL.equals( ipFilter.getLocation() )
+					                              ? FlowAttribute.LOCAL_IP : FlowAttribute.REMOTE_IP;
 
-						IpAddress address = ipFilter.getAddress();
+					IpAddress address = ipFilter.getAddress();
 
-						attrs.put( FlowAttribute.LOCAL_IP,
-						           address.getAddress() + "/" + String.valueOf( address.getNetmask() ) );
+					attrs.put( flowAttribute,
+					           address.getAddress() + "/" + String.valueOf( address.getNetmask() ) );
 
-					}
+				} else if ( filter instanceof TransportFilter ) {
+
+					attrs.put( FlowAttribute.TRANSPORT, ( ( TransportFilter ) filter ).getProtocol() );
+
+				} else if ( filter instanceof PortFilter ) {
+
+					PortFilter portFilter= ( PortFilter ) filter;
+
+					FlowAttribute flowAttribute = PortFilter.Location.LOCAL.equals( portFilter.getLocation() )
+					                              ? FlowAttribute.LOCAL_PORT : FlowAttribute.REMOTE_PORT;
+
+					attrs.put( FlowAttribute.TRANSPORT, portFilter.getProtocolAsString() );
+					attrs.put( flowAttribute, String.valueOf( portFilter.getPort() ) );
 
 				}
 
-			}
+				Map< FlowProperty, String > props = new HashMap< FlowProperty, String >();
 
-			Map< FlowProperty, String > props = new HashMap< FlowProperty, String >();
+				if ( p instanceof PriorityPolicy ) {
+					props.put( FlowProperty.PRIORITY, ( ( PriorityPolicy ) p ).getPriorityAsString() );
+				} else if ( p instanceof BandwidthPolicy ) {
+					props.put( FlowProperty.MAXBW, String.valueOf( ( ( BandwidthPolicy ) p ).getLimit() ) );
+				}
 
-			if ( p instanceof PriorityPolicy ) {
-				props.put( FlowProperty.PRIORITY, ( ( PriorityPolicy ) p ).getPriorityAsString() );
-			} else if ( p instanceof BandwidthPolicy ) {
-				props.put( FlowProperty.MAXBW, String.valueOf( ( ( BandwidthPolicy ) p ).getLimit() ) );
-			}
-
-			Flow flow = new Flow();
-
-			flow.setAttrs( attrs );
-			flow.setProps( props );
-			flow.setLink( portName( p.getPort() ) );
-			flow.setName( policyName( p ) );
-			flow.setTemporary( TEMPORARY );
-
-			try {
-
-				flowManager.create( flow );
-
-			} catch ( XbowException ex ) {
-
-				throw new ActionException( "Policy ADD error", ex );
+				try {
+					flowManager.create( new Flow( policyName( p ), attrs, props, portName( p.getPort() ), TEMPORARY ) );
+				} catch ( XbowException ex ) {
+					throw new ActionException( "Policy ADD error", ex );
+				}
 
 			}
 

@@ -16,9 +16,9 @@ public abstract class Policy implements Serializable {
     public Policy() {
     }
 
-		public Policy( String name, List<Filter> filtersList ) {
+		public Policy( String name, Filter filter ) {
 			this.name = name;
-			this.filtersList= filtersList;
+			this.filter = filter;
 		}
 
     /**
@@ -26,8 +26,8 @@ public abstract class Policy implements Serializable {
      *
      * @return the value of filtersList
      */
-    public List<Filter> getFiltersList() {
-        return filtersList;
+    public Filter getFilter() {
+        return filter;
     }
 
     /**
@@ -35,8 +35,8 @@ public abstract class Policy implements Serializable {
      *
      * @param filtersList new value of filtersList
      */
-    public void setFiltersList(List<Filter> filtersList) {
-        this.filtersList = filtersList;
+    public void setFilter( Filter filter ) {
+        this.filter = filter;
     }
 
 
@@ -55,6 +55,6 @@ public abstract class Policy implements Serializable {
 
 		private String name;
 		private Port port;
-		private List<Filter> filtersList;
+		private Filter filter;
 
 }

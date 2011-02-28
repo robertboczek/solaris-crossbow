@@ -32,6 +32,15 @@ public interface LinkMBean {
 	public Map<LinkProperties, String> getProperties() throws LinkException;
 
 	/**
+	 * Resets the link's property.
+	 *
+	 * @param  property  property to reset
+	 *
+	 * @throws  LinkException  on error
+	 */
+	public void resetProperty( LinkProperties property ) throws LinkException;
+
+	/**
 	 * Sets requested property value specified by the user
 	 *
 	 * @param property Type of property to be set

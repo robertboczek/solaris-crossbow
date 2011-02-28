@@ -33,6 +33,15 @@ public interface VNicManagerMBean {
      */
     List<String> getVNicsNames() throws LinkException;
 
+		/**
+		 * Returns MBean object representing VNIC with name equal to `name'.
+		 *
+		 * @return  MBean object
+		 *
+		 * @throws  LinkException if no VNIC found
+		 */
+		VNicMBean getByName( String name ) throws LinkException;
+
     /**
      * Removes unexisting beans and registers new ones
      * @throws LinkException Exeption thrown in case of errors

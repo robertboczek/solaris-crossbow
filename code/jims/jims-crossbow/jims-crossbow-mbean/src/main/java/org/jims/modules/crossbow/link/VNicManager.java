@@ -104,6 +104,34 @@ public class VNicManager extends BaseManager implements VNicManagerMBean, Notifi
         return Arrays.asList(this.vnicHelper.getLinkNames(true));
     }
 
+
+		/**
+		 * @see VNicManagerMBean#getByName(java.lang.String)
+		 */
+		@Override
+		public VNicMBean getByName( String name ) throws LinkException {
+
+			if ( null != publisher ) {
+
+				for ( Object o : publisher.getPublished() ) {
+
+					VNicMBean vNicMBean = ( VNicMBean ) o;
+
+					if ( name.equals( vNicMBean.getName() ) ) {
+						return vNicMBean;
+					}
+
+				}
+
+				throw new LinkException( "No VNIC named " + name + "found." );
+
+			}
+
+			throw new LinkException( "No publisher set." );
+
+		}
+
+
     /**
      * @see  VNicManagerMBean#discover()
      */

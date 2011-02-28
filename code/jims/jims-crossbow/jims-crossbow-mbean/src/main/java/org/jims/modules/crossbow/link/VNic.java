@@ -93,4 +93,5 @@ public class VNic extends Link implements VNicMBean {
         this.vNicHelper = vNicHelper;
         super.linkHelper = vNicHelper;
     }
+
 }

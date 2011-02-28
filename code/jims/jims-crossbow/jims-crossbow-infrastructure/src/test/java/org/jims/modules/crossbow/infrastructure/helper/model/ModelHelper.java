@@ -1,9 +1,9 @@
 package org.jims.modules.crossbow.infrastructure.helper.model;
 
 import org.jims.modules.crossbow.objectmodel.ObjectModel;
+import org.jims.modules.crossbow.objectmodel.filters.AnyFilter;
 import org.jims.modules.crossbow.objectmodel.filters.IpFilter;
 import org.jims.modules.crossbow.objectmodel.filters.address.IpAddress;
-import org.jims.modules.crossbow.objectmodel.policy.Policy;
 import org.jims.modules.crossbow.objectmodel.policy.PriorityPolicy;
 import org.jims.modules.crossbow.objectmodel.resources.Machine;
 import org.jims.modules.crossbow.objectmodel.resources.Port;
@@ -38,9 +38,9 @@ public class ModelHelper {
 
 		ObjectModel model = new ObjectModel();
 
-		model.addPorts( p );
-		model.addSwitches( s );
-		model.addMachines( m );
+		model.register( p );
+		model.register( s );
+		model.register( m );
 
 		return model;
 
@@ -53,13 +53,24 @@ public class ModelHelper {
 
 		// Add QoS parameters
 
-		model.getPorts().get( 0 ).addPolicy(
+		model.getPorts().get( 0 ).addPolicy( model.register(
 			new PriorityPolicy( "APOLICY0",
 			                    PriorityPolicy.Priority.HIGH,
 			                    new IpFilter( new IpAddress( "1.2.3.4", 24 ), IpFilter.Location.LOCAL ) )
-		);
+		) );
 
-		model.addPolicies( model.getPorts().get( 0 ).getPoliciesList().get( 0 ) );
+		return model;
+
+	}
+
+
+	public static ObjectModel getSimpleQoSAnyFilter( String projectId, String SEP ) {
+
+		ObjectModel model = getSimpleModel( projectId, SEP );
+
+		model.getPorts().get( 0 ).addPolicy( model.register(
+			new PriorityPolicy( "somepolicy13", PriorityPolicy.Priority.LOW, new AnyFilter() )
+		) );
 
 		return model;
 

@@ -87,6 +87,15 @@ public abstract class Link implements LinkMBean {
         }
     }
 
+		/**
+		 * @see LinkMBean#resetProperty(org.jims.modules.crossbow.enums.LinkProperties)
+		 */
+		@Override
+		public void resetProperty( LinkProperties property ) throws LinkException {
+			// TODO implement
+			throw new UnsupportedOperationException("Not supported yet.");
+		}
+
     /**
      * @see VNicMBean#setProperty(agh.msc.xbowbase.enums.LinkProperties, java.lang.String)
      */

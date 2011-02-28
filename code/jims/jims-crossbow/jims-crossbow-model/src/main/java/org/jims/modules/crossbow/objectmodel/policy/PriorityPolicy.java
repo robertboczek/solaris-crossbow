@@ -1,7 +1,7 @@
 package org.jims.modules.crossbow.objectmodel.policy;
 
-import java.util.Arrays;
 import org.jims.modules.crossbow.objectmodel.filters.Filter;
+
 
 /**
  * Policy describing priority of traffic
@@ -15,9 +15,9 @@ public class PriorityPolicy extends Policy {
     }
 
 
-		public PriorityPolicy( String name, Priority priority, Filter... filters ) {
+		public PriorityPolicy( String name, Priority priority, Filter filter ) {
 
-			super( name, Arrays.asList( filters ) );
+			super( name, filter );
 
 			this.priority = priority;
 

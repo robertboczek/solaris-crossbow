@@ -20,6 +20,21 @@ import org.apache.log4j.Logger;
  */
 public class Flow implements FlowMBean {
 
+	public Flow() {}
+
+
+	public Flow( String name, Map< FlowAttribute, String > attrs, Map< FlowProperty, String > props,
+	             String link, boolean temporary ) {
+
+		this.name = name;
+		this.attrs = attrs;
+		this.props = props;
+		this.link = link;
+		this.temporary = temporary;
+
+	}
+
+
 	/**
 	 * @see  FlowMBean#getName()
 	 */
