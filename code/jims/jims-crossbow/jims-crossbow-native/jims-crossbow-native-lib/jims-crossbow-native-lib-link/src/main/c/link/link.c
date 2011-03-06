@@ -350,8 +350,14 @@ int set_link_property( char *name, char* property, char *value)
 		return XBOW_STATUS_INVALID_NAME;
 
 	
-	status = dladm_set_linkprop(handle, linkid,
+	if(value != NULL)
+	{
+		status = dladm_set_linkprop(handle, linkid,
 			    property, &value, maxpropertycnt, flags);
+	} else {
+		status = dladm_set_linkprop(handle, linkid,
+			    property, NULL, 0, flags);
+	}
 
 	if (status != DLADM_STATUS_OK)
 		return XBOW_STATUS_OPERATION_FAILURE;
@@ -382,5 +388,11 @@ char* get_link_property( char *name, char* property )
 	}
 
 	return value;
+}
+
+int reset_prop( char *name, char* property)
+{
+
+	return set_link_property(name, property, NULL);
 }
 

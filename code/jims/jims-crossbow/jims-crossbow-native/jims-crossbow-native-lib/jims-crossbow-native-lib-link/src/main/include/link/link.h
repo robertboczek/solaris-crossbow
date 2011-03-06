@@ -130,5 +130,17 @@ int set_link_property( char *name, char* property, char *value );
 */
 char* get_link_property( char *name, char* property);
 
+/**
+ * \brief  Creates an vnic.
+ *
+ * \param  name	        vnic name
+ * \param  property	type of property to reset
+ *
+ * \return  XBOW_STATUS_OK on success
+ * \return  XBOW_STATUS_OPERATION_FAILURE when operation failed
+ *
+*/
+int reset_prop( char *name, char* property);
+
 #endif
 
