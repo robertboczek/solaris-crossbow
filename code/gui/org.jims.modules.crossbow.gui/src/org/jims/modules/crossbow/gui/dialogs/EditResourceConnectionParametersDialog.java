@@ -18,35 +18,32 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.jims.modules.crossbow.gui.data.GraphConnectionData;
-import org.jims.modules.crossbow.gui.data.IpAddress;
-
 
 /**
- * Dialog allowing user to specify network connection properties 
+ * Dialog allowing user to specify network connection properties
  * 
  * @author robert
- *
+ * 
  */
-public class EditResourceConnectionParametersDialog extends TitleAreaDialog{
-	
+public class EditResourceConnectionParametersDialog extends TitleAreaDialog {
+
 	private Text bandwidth;
 	private Combo priority;
 	private GraphConnectionData graphConnectionData;
 	private Combo leftEndpointAddress, rightEndpointAddress;
-	
-	private IpAddress oldIpAddress1, oldIpAddress2;
 
-	public EditResourceConnectionParametersDialog(Shell parentShell, GraphConnectionData graphConnectionData) {
+	public EditResourceConnectionParametersDialog(Shell parentShell,
+			GraphConnectionData graphConnectionData) {
 		super(parentShell);
-		
+
 		this.graphConnectionData = graphConnectionData;
 	}
-	
+
 	private void setControlsValues() {
-		this.bandwidth.setText(prepareData(graphConnectionData.getBandwidth()));
-		this.priority.setText(prepareData(graphConnectionData.getPriority()));		
+		//this.bandwidth.setText(prepareData(graphConnectionData.getBandwidth()));
+		//this.priority.setText(prepareData(graphConnectionData.getPriority()));
 	}
-	
+
 	private String prepareData(String string) {
 		return string == null ? "" : string;
 	}
@@ -54,11 +51,11 @@ public class EditResourceConnectionParametersDialog extends TitleAreaDialog{
 	@Override
 	public void create() {
 		super.create();
-		setTitle("Edit resource properties");		
+		setTitle("Edit resource properties");
 
 	}
-	
-	private void setInformation(){
+
+	private void setInformation() {
 		setMessage("Provide resource details", IMessageProvider.INFORMATION);
 	}
 
@@ -71,7 +68,7 @@ public class EditResourceConnectionParametersDialog extends TitleAreaDialog{
 		GridData gridData = new GridData();
 		gridData.grabExcessHorizontalSpace = true;
 		gridData.horizontalAlignment = GridData.FILL;
-		gridData.minimumWidth = 200;		
+		gridData.minimumWidth = 200;
 
 		Label label1 = new Label(parent, SWT.NONE);
 		label1.setText("Bandwidth:");
@@ -79,8 +76,8 @@ public class EditResourceConnectionParametersDialog extends TitleAreaDialog{
 		bandwidth = new Text(parent, SWT.NONE);
 		bandwidth.setLayoutData(gridData);
 		bandwidth.setSize(100, 13);
-		
-		bandwidth.addFocusListener(new FocusListener(){
+
+		bandwidth.addFocusListener(new FocusListener() {
 
 			@Override
 			public void focusGained(FocusEvent arg0) {
@@ -89,69 +86,39 @@ public class EditResourceConnectionParametersDialog extends TitleAreaDialog{
 			@Override
 			public void focusLost(FocusEvent arg0) {
 				String errorMessage = validateBandwidth();
-				if(errorMessage.equals("")){
+				if (errorMessage.equals("")) {
 					setInformation();
-				}else{
+				} else {
 					setMessage(errorMessage, IMessageProvider.ERROR);
 				}
 			}
-			
+
 		});
-		
+
 		Label label2 = new Label(parent, SWT.NONE);
 		label2.setText("Priority:");
 
 		priority = new Combo(parent, SWT.DROP_DOWN);
 		priority.setLayoutData(gridData);
-		priority.setItems(new String[]{"low", "medium", "high"});
-		
+		priority.setItems(new String[] { "low", "medium", "high" });
+
 		Label label3 = new Label(parent, SWT.NONE);
 		label3.setText("Left interface endpoint:");
 
 		leftEndpointAddress = new Combo(parent, SWT.DROP_DOWN);
-		leftEndpointAddress.setLayoutData(gridData);		
-		
+		leftEndpointAddress.setLayoutData(gridData);
+
 		Label label4 = new Label(parent, SWT.NONE);
 		label4.setText("Right interface endpoint:");
 
 		rightEndpointAddress = new Combo(parent, SWT.DROP_DOWN);
 		rightEndpointAddress.setLayoutData(gridData);
-				
-		for(IpAddress ipAddress : graphConnectionData.getLeftNode().getInterfaces()){
-			if(ipAddress.getGraphConnectionData() == null || ipAddress.getGraphConnectionData() == graphConnectionData){
-				leftEndpointAddress.add(ipAddress.toString());
-				leftEndpointAddress.setData(ipAddress.toString(), ipAddress);				
-			}			
-		}
-		
-		
-		for(IpAddress ipAddress : graphConnectionData.getRightNode().getInterfaces()){
-			if(ipAddress.getGraphConnectionData() == null || ipAddress.getGraphConnectionData() == graphConnectionData){
-				rightEndpointAddress.add(ipAddress.toString());
-				rightEndpointAddress.setData(ipAddress.toString(), ipAddress);
-			}
-		}	
-		
-		for(int i = 0; i<leftEndpointAddress.getItemCount(); i++){
-			IpAddress ipAddress = (IpAddress) leftEndpointAddress.getData(leftEndpointAddress.getItem(i));
-			if(ipAddress.equals(graphConnectionData.getLeftNode().findIpAddress(graphConnectionData))){
-				leftEndpointAddress.select(i);
-				oldIpAddress1 = ipAddress;
-			}
-		}
-		
-		for(int i = 0; i<rightEndpointAddress.getItemCount(); i++){
-			IpAddress ipAddress = (IpAddress) rightEndpointAddress.getData(rightEndpointAddress.getItem(i));
-			if(ipAddress.equals(graphConnectionData.getRightNode().findIpAddress(graphConnectionData))){
-				rightEndpointAddress.select(i);
-				oldIpAddress2 = ipAddress;
-			}
-		}
-		
-		new Label(parent, SWT.NONE);new Label(parent, SWT.NONE);
-		
+
+		new Label(parent, SWT.NONE);
+		new Label(parent, SWT.NONE);
+
 		setControlsValues();
-		
+
 		return parent;
 	}
 
@@ -166,7 +133,7 @@ public class EditResourceConnectionParametersDialog extends TitleAreaDialog{
 
 		parent.setLayoutData(gridData);
 		createOkButton(parent, OK, "Save", true);
-		
+
 		Button cancelButton = createButton(parent, CANCEL, "Cancel", false);
 		// Add a SelectionListener
 		cancelButton.addSelectionListener(new SelectionAdapter() {
@@ -178,8 +145,8 @@ public class EditResourceConnectionParametersDialog extends TitleAreaDialog{
 	}
 
 	protected Button createOkButton(Composite parent, int id, String label,
-			boolean defaultButton) {			
-		
+			boolean defaultButton) {
+
 		// increment the number of columns in the button bar
 		((GridLayout) parent.getLayout()).numColumns++;
 		Button button = new Button(parent, SWT.PUSH);
@@ -204,31 +171,32 @@ public class EditResourceConnectionParametersDialog extends TitleAreaDialog{
 	}
 
 	private boolean isValidInput() {
-		
+
 		boolean valid = true;
 		String errorMessage = validateBandwidth();
-		
-		/* W sumie nie musimy wymagac podania priorytetu
-		 * if(this.priority.getText().equals("")){
-			errorMessage += "You must select priority\n";
-		}*/
-		if(errorMessage.equals("") == false){
+
+		/*
+		 * W sumie nie musimy wymagac podania priorytetu
+		 * if(this.priority.getText().equals("")){ errorMessage +=
+		 * "You must select priority\n"; }
+		 */
+		if (errorMessage.equals("") == false) {
 			setMessage(errorMessage, IMessageProvider.ERROR);
 			valid = false;
 		}
-		
+
 		return valid;
 	}
 
 	private String validateBandwidth() {
 		String errorMessage = "";
-		if(this.bandwidth.getText().equals("") == false){
-			try{
+		if (this.bandwidth.getText().equals("") == false) {
+			try {
 				Integer i = Integer.parseInt(this.bandwidth.getText());
-			}catch(NumberFormatException e){
+			} catch (NumberFormatException e) {
 				errorMessage += "Bandwidth must be integer \n";
 			}
-		}		
+		}
 		return errorMessage;
 	}
 
@@ -242,22 +210,30 @@ public class EditResourceConnectionParametersDialog extends TitleAreaDialog{
 		saveInput();
 		super.okPressed();
 	}
-	
+
 	private void saveInput() {
-		this.graphConnectionData.setBandwidth(this.bandwidth.getText());
+		/*this.graphConnectionData.setBandwidth(this.bandwidth.getText());
 		this.graphConnectionData.setPriority(this.priority.getText());
-		
-		oldIpAddress1.setGraphConnectionData(null);
-		
-		IpAddress ipAddress = (IpAddress) leftEndpointAddress.getData(leftEndpointAddress.getItem(leftEndpointAddress.getSelectionIndex()));
-		ipAddress.setGraphConnectionData(graphConnectionData);
-		
-		oldIpAddress2.setGraphConnectionData(null);
-		
-		ipAddress = (IpAddress) rightEndpointAddress.getData(rightEndpointAddress.getItem(rightEndpointAddress.getSelectionIndex()));
-		ipAddress.setGraphConnectionData(graphConnectionData);
-		
+
+		if(oldIpAddress1 != null)
+			oldIpAddress1.setGraphConnectionData(null);
+
+		if(leftEndpointAddress.isVisible()){
+			IpAddress ipAddress = (IpAddress) leftEndpointAddress
+				.getData(leftEndpointAddress.getItem(leftEndpointAddress
+						.getSelectionIndex()));
+			ipAddress.setGraphConnectionData(graphConnectionData);
+		}
+
+		if(oldIpAddress2 != null)
+			oldIpAddress2.setGraphConnectionData(null);
+
+		if(rightEndpointAddress.isVisible()){
+			IpAddress ipAddress = (IpAddress) rightEndpointAddress
+				.getData(rightEndpointAddress.getItem(rightEndpointAddress
+						.getSelectionIndex()));
+			ipAddress.setGraphConnectionData(graphConnectionData);
+		}*/
+
 	}
 }
-
-

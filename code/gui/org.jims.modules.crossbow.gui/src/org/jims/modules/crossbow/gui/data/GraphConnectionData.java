@@ -15,52 +15,35 @@ public class GraphConnectionData implements Serializable {
 	 */
 	private static final long serialVersionUID = -2646151015857279432L;
 	
-	protected String bandwidth, priority;
-	private GraphNodeData leftNode;
-	private GraphNodeData rightNode;
+	private Object leftNode;
+	private Object rightNode;
 
-	public GraphConnectionData(GraphNodeData graphNodeData,
-			GraphNodeData graphNodeData2) {
-		leftNode = graphNodeData;
-		rightNode = graphNodeData2;
-	}
-
-	public GraphNodeData getLeftNode() {
-		return leftNode;
-	}
-
-	public void setLeftNode(GraphNodeData leftNode) {
+	public GraphConnectionData(Object leftNode,
+			Object rightNode) {
 		this.leftNode = leftNode;
-	}
-
-	public GraphNodeData getRightNode() {
-		return rightNode;
-	}
-
-	public void setRightNode(GraphNodeData rightNode) {
 		this.rightNode = rightNode;
 	}
 
-	public String getBandwidth() {
-		return bandwidth;
+	public Object getLeftNode() {
+		return leftNode;
 	}
 
-	public void setBandwidth(String bandwidth) {
-		this.bandwidth = bandwidth;
+	public void setLeftNode(Object leftNode) {
+		this.leftNode = leftNode;
 	}
 
-	public String getPriority() {
-		return priority;
+	public Object getRightNode() {
+		return rightNode;
 	}
 
-	public void setPriority(String priority) {
-		this.priority = priority;
+	public void setRightNode(Object rightNode) {
+		this.rightNode = rightNode;
 	}
 	
-	public GraphNodeData getSecondEndpoint(GraphNodeData graphNodeData){
-		if(graphNodeData == rightNode)
+	public Object getSecondEndpoint(Object object){
+		if(object == rightNode)
 			return leftNode;
-		else if(graphNodeData == leftNode)
+		else if(object == leftNode)
 			return rightNode;
 		return null;
 	}

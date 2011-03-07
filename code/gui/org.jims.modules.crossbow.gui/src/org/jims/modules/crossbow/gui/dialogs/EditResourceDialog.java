@@ -1,6 +1,5 @@
 package org.jims.modules.crossbow.gui.dialogs;
 
-
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -23,38 +22,63 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.jims.modules.crossbow.gui.data.GraphNodeData;
-import org.jims.modules.crossbow.gui.data.IpAddress;
-
+import org.jims.modules.crossbow.objectmodel.filters.address.IpAddress;
+import org.jims.modules.crossbow.objectmodel.resources.Appliance;
+import org.jims.modules.crossbow.objectmodel.resources.ApplianceType;
+import org.jims.modules.crossbow.objectmodel.resources.Interface;
+import org.jims.modules.crossbow.objectmodel.resources.Switch;
 
 /**
  * Dialog allowing user to specify resource properties
  * 
  * @author robert
- *
+ * 
  */
-public class EditResourceDialog extends TitleAreaDialog{
-		
+public class EditResourceDialog extends TitleAreaDialog {
+
 	private Text repoId;
 	private Text resourceId;
 	private Combo interfaces;
-	
-	private GraphNodeData graphNodeData;
-	private Button addInterfaceButton;
 
-	public EditResourceDialog(Shell parentShell, GraphNodeData graphNodeData) {
+	private Object object;
+	private Button addInterfaceButton;
+	private boolean isAddressable;
+	private boolean hasAMachine;
+	private Label label5;
+
+	public EditResourceDialog(Shell parentShell, Object object) {
 		super(parentShell);
-		
-		this.graphNodeData = graphNodeData;
+
+		this.object = object;
+
+		hasAMachine = (object instanceof Appliance) && (((Appliance)object).getType().equals(ApplianceType.MACHINE));
+		isAddressable = (object instanceof Appliance);
+
 	}
-	
-	private void setControlsValues() {		
-		for(IpAddress ipAddress : graphNodeData.getInterfaces()){
-			interfaces.add(ipAddress.toString());
-			interfaces.setData(ipAddress.toString(), ipAddress);
+
+	private void setControlsValues() {
+
+		if (isAddressable) {
+			for (Interface interfac : ((Appliance) object).getInterfaces()) {
+				IpAddress ipAddress = interfac.getIpAddress();
+				interfaces.add(ipAddress.toString());
+				interfaces.setData(ipAddress.toString(), interfac);
+			}
+			resourceId.setText(prepareData(((Appliance) object).getResourceId()));
+		} else {
+			resourceId.setText(prepareData(((Switch) object).getResourceId()));
 		}
-		repoId.setText(prepareData(graphNodeData.getRepoId()));
-		resourceId.setText(prepareData(graphNodeData.getResourceId()));		
+		
+
+		if (!isAddressable) {
+			interfaces.setVisible(false);
+			label5.setVisible(false);
+			addInterfaceButton.setVisible(false);
+		}
+
+		if (hasAMachine) {
+			repoId.setText(prepareData(((Appliance)object).getRepoId()));
+		}
 	}
 
 	private String prepareData(String string) {
@@ -68,8 +92,8 @@ public class EditResourceDialog extends TitleAreaDialog{
 		setInformation();
 	}
 
-	private void setInformation() {		
-		setMessage("Provide resource details", IMessageProvider.INFORMATION);		
+	private void setInformation() {
+		setMessage("Provide resource details", IMessageProvider.INFORMATION);
 	}
 
 	@Override
@@ -81,34 +105,38 @@ public class EditResourceDialog extends TitleAreaDialog{
 		GridData gridData = new GridData();
 		gridData.grabExcessHorizontalSpace = true;
 		gridData.horizontalAlignment = GridData.FILL;
-		
-		Label label3 = new Label(parent, SWT.NONE);
-		label3.setText("Repo Id:");
 
-		repoId = new Text(parent, SWT.NONE);
-		repoId.setLayoutData(gridData);
-		repoId.addFocusListener(new FocusListener(){
+		if (hasAMachine) {
+			Label label3 = new Label(parent, SWT.NONE);
+			label3.setText("Repo Id:");
 
-			@Override
-			public void focusGained(FocusEvent arg0) {
-			}
+			repoId = new Text(parent, SWT.NONE);
+			repoId.setLayoutData(gridData);
+			repoId.addFocusListener(new FocusListener() {
 
-			@Override
-			public void focusLost(FocusEvent arg0) {
-				if(!repoId.getText().equals("")){
-					setInformation();
-				}else{
-					setMessage("Repo id can't be empty", IMessageProvider.ERROR);
+				@Override
+				public void focusGained(FocusEvent arg0) {
 				}
-			}			
-		});		
-		
+
+				@Override
+				public void focusLost(FocusEvent arg0) {
+					if (!repoId.getText().equals("")) {
+						setInformation();
+					} else {
+						setMessage("Repo id can't be empty",
+								IMessageProvider.ERROR);
+					}
+				}
+			});
+
+		}
+
 		Label label4 = new Label(parent, SWT.NONE);
 		label4.setText("Resource Id:");
 
 		resourceId = new Text(parent, SWT.NONE);
 		resourceId.setLayoutData(gridData);
-		resourceId.addFocusListener(new FocusListener(){
+		resourceId.addFocusListener(new FocusListener() {
 
 			@Override
 			public void focusGained(FocusEvent arg0) {
@@ -116,71 +144,71 @@ public class EditResourceDialog extends TitleAreaDialog{
 
 			@Override
 			public void focusLost(FocusEvent arg0) {
-				if(!resourceId.getText().equals("")){
+				if (!resourceId.getText().equals("")) {
 					setInformation();
-				}else{
-					setMessage("Resource id can't be empty", IMessageProvider.ERROR);
+				} else {
+					setMessage("Resource id can't be empty",
+							IMessageProvider.ERROR);
 				}
-			}			
+			}
 		});
-		
-		Label label5 = new Label(parent, SWT.NONE);
+
+		label5 = new Label(parent, SWT.NONE);
 		label5.setText("Select interface:");
 
 		interfaces = new Combo(parent, SWT.NONE);
-		interfaces.addSelectionListener(new SelectionListener(){
+		interfaces.addSelectionListener(new SelectionListener() {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent arg0) {
-				
+
 			}
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 
-				IpAddress ipAddress = (IpAddress) interfaces.getData(interfaces.getText());
-				IpAddressDialog f = new IpAddressDialog(null, ipAddress);
+				Interface interfac = (Interface) interfaces.getData(interfaces
+						.getText());
+				IpAddressDialog f = new IpAddressDialog(null, interfac);
 				f.create();
-				if(f.open() == Window.OK){
-					int index = interfaces.getSelectionIndex();
-					interfaces.remove(index);
-					
-					if(f.getReturnCode() == IpAddressDialog.DELETE_CODE){
-						graphNodeData.getInterfaces().remove(ipAddress);
-					}else{
-						interfaces.add(ipAddress.toString(), index);
-						interfaces.setData(ipAddress.toString(), ipAddress);						
-					}
+				int index = interfaces.getSelectionIndex();
+				interfaces.remove(index);
+				
+				if (f.open() == Window.OK) {
 				}
+				
+				interfaces.add(interfac.getIpAddress().toString());
+				interfaces.setData(interfac.getIpAddress().toString(), interfac);
 				interfaces.setText("");
-			}			
+			}
 		});
-		
+
 		new Label(parent, SWT.NONE);
 
 		addInterfaceButton = new Button(parent, SWT.PUSH);
 		addInterfaceButton.setText("Add interface");
-		addInterfaceButton.addListener(SWT.MouseDown, new Listener(){
+		addInterfaceButton.addListener(SWT.MouseDown, new Listener() {
 
 			@Override
 			public void handleEvent(Event arg0) {
-				
-				IpAddress ipAddress = new IpAddress();
-				IpAddressDialog f = new IpAddressDialog(null, ipAddress);
+
+				Interface interfac = new Interface(((Appliance) object).getResourceId(), ((Appliance) object).getRepoId());
+				IpAddress ipAddress = new IpAddress("0.0.0.0", 24);
+				interfac.setIpAddress(ipAddress);
+				IpAddressDialog f = new IpAddressDialog(null, interfac);
 				f.create();
-				if(f.open() == Window.OK){					
+				if (f.open() == Window.OK) {
 					interfaces.add(ipAddress.toString());
-					interfaces.setData(ipAddress.toString(), ipAddress);
-					graphNodeData.getInterfaces().add(ipAddress);
+					interfaces.setData(ipAddress.toString(), interfac);
+					((Appliance) object).addInterface(interfac);
 				}
 			}
-			
-		});	
-		
+
+		});
+
 		new Label(parent, SWT.NONE);
-		
 		setControlsValues();
-		
+
 		return parent;
 	}
 
@@ -195,7 +223,7 @@ public class EditResourceDialog extends TitleAreaDialog{
 
 		parent.setLayoutData(gridData);
 		createOkButton(parent, OK, "Save", true);
-		
+
 		Button cancelButton = createButton(parent, CANCEL, "Cancel", false);
 		// Add a SelectionListener
 		cancelButton.addSelectionListener(new SelectionAdapter() {
@@ -233,22 +261,22 @@ public class EditResourceDialog extends TitleAreaDialog{
 
 	private boolean isValidInput() {
 		boolean valid = true;
-		
+
 		String errorMessage = "";
-		
-		if(repoId.getText().equals("")){
+
+		if (hasAMachine && repoId.getText().equals("")) {
 			valid = false;
 			errorMessage += "RepoId can't be empty \n";
 		}
-		
-		if(resourceId.getText().equals("")){
+
+		if (resourceId.getText().equals("")) {
 			valid = false;
 			errorMessage += "ResourceId can't be empty \n";
 		}
-		
-		if(errorMessage.equals("") == false)
+
+		if (errorMessage.equals("") == false)
 			MessageDialog.openError(null, "Error", errorMessage);
-		
+
 		return valid;
 	}
 
@@ -263,9 +291,14 @@ public class EditResourceDialog extends TitleAreaDialog{
 		super.okPressed();
 	}
 
-	private void saveInput() {		
-		graphNodeData.setRepoId(repoId.getText());
-		graphNodeData.setResourceId(resourceId.getText());		
+	private void saveInput() {
+		if(hasAMachine) {
+			((Appliance)object).setRepoId(repoId.getText());
+		}
+		if(isAddressable) {
+			((Appliance)object).setResourceId(resourceId.getText());
+		} else {
+			((Switch)object).setResourceId(resourceId.getText());
+		}
 	}
 }
-

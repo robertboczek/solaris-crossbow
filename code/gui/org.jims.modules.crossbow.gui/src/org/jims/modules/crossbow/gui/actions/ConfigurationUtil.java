@@ -34,18 +34,21 @@ public class ConfigurationUtil extends AbstractHandler{
 	 * @param selected Selected file path
 	 * @param graphNodesDataList Items to be saved
 	 */
-	public static void saveNetwork(String selected, List<GraphNodeData> graphNodesDataList) {
+	public static void saveNetwork(String selected, List<Object> list) {
 		
+		ObjectOutputStream output = null;
 		try {
-			ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(new File(selected)));
-			output.writeInt(graphNodesDataList.size());
-			for(GraphNodeData graphNodeData : graphNodesDataList){
-				output.writeObject(graphNodeData);
-			}
+			output = new ObjectOutputStream(new FileOutputStream(new File(selected)));
+			output.writeObject(list);
 			output.flush();
-			output.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+		}finally {
+			try {
+				output.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}		
 	}
 
@@ -53,23 +56,28 @@ public class ConfigurationUtil extends AbstractHandler{
 	 * Loads network from selected file
 	 * 
 	 * @param selected Selected file path
-	 * @param graphNodesDataList Items where to read
 	 */
-	public static void loadNetwork(String selected, List<GraphNodeData> graphNodesDataList) {
+	public static List<Object> loadNetwork(String selected) {
+		
+		ObjectInputStream input = null;
+		List<Object> list = null;
 		try {
-			ObjectInputStream input = new ObjectInputStream(new FileInputStream(new File(selected)));
-			int i = input.readInt();
-			System.out.println(i);
-			for(int j = 0; j<i; j++)
-				graphNodesDataList.add((GraphNodeData)input.readObject());
+			input = new ObjectInputStream(new FileInputStream(new File(selected)));
+			list = (List<Object>) input.readObject();
 			
-			input.close();
-		} catch (EOFException e) {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				input.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
+		
+		return list;
 	}
 
 }
