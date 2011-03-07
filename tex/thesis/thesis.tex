@@ -69,97 +69,173 @@
 
   \chapter{Introduction}
 
-
-  \chapter{Infrastructure as a Service}
-
-    \section{Benefits}
-
-    \section{IaaS applications}
-
-    \section{Requirements}
+    % QoS, rezerwacja zasobów, izolacja we współczesnych systemach informatycznych
 
 
-  \chapter{Virtualization}
+  \chapter{Context}  % TODO ładniej
 
-    \section{Operating system-level virtualization}
-
-
-    \section{Virtualization of networking resources}
+    \section{Chapter overview}
 
 
-  \chapter{Virtual infrastructure construction and deployment}
-
-    \section{Possible approaches}
-
-      \section{Heterogeneous environment}
+    \section{QoS-aware networking}
 
 
-      \section{Homogeneous environment}
-
-        \subsection{Single node}
+    \section{Resource virtualization approaches}
 
 
-        \subsection{Multi-node}
+    \section{Multilevel network virtualization}
+
+      \subsection{Virtual network resources}
+
+      \subsection{Fine-grained QoS control}
+
+      \subsection{Virtual appliances}
+
+      \subsection{,,Network in a box'' concept}
 
 
-    \section{Problems}
+    \section{Applications and benefits of virtual infrastructures}
 
-      \subsection{Quality of Service}
+      \subsection{Testing and simulations}
 
+      \subsection{Improving server-side infrastructure scalability}
+
+      \subsection{Infrastructure as a service}
+
+      \subsection{The role of resource virtualization in the SOA stack}
+
+
+    \section{Summary}
+
+
+  \chapter{Requirements analysis}
+    
+    \section{Chapter overview}
+
+    \section{Functional requirements}
+
+      \subsection{Instantiation}
+
+      \subsection{Discovery}
+
+      \subsection{Accounting}
+
+
+    \section{Non-functional requirements}
+
+    \section{Underlying environment characteristics}
+
+    \section{General approach and problems it imposes}
 
       \subsection{Load balancing / Deployment}
 
-
       \subsection{Isolation}
-
 
       \subsection{Broadcast domain preservation}
 
+      \subsection{Constraints}
 
-  \chapter{Existing virtualization solutions}
+
+    \section{Summary}
 
 
   \chapter{Solaris OS as a resource virtualization environment}
 
+    \section{Chapter overview}
+
     \section{General information}
 
+    \section{Lightweight OS-level virtualization with Solaris Containers}  % czy to na pewno w porzadku?
 
-    \section{Solaris Containers}
+    \section{Crossbow - network virtualization technology}
 
+    \section{Resource access control}
 
-    \section{Crossbow}
-
-
-  \chapter{Component-based software design}
-
-
-  \chapter{The system overview}
-
-    \section{The JMX-based Infrastructure Monitoring System}
+    \section{Summary}
 
 
-    \subsection{Enabling rich functionality thanks to JIMS integration}
+  \chapter{The system architecture}
+
+    \section{Chapter overview}
+
+      % tutaj tez kilka slow i JIMSie i integracji + co to daje
 
 
-    \section{Architecture}
-
-      \subsection{Main components and their responsibility}
+    \section{High-level design}
 
 
-      \subsection{Low-level function access with layer-based design}
+    \section{System components and their responsibilities}
 
-        \subsubsection{Benefits}
+      \subsection{Assigner}
+
+      \subsection{Supervisor}
+
+      \subsection{Worker}
+
+
+    \section{Crossbow resources instrumentation}
+
+
+    \section{Domain model and data flows}
+
+
+    \section{Summary}
+
+
+  \chapter{Implementation}
+
+    \section{Implementation environment}
+
+
+    \section{Model transformation details}
+
+
+    \section{Low-level Crossbow functions access}
+
+
+    \section{Building and running the platform}
+
+
+    \section{Summary}
 
 
   \chapter{Case Study}
 
+    \section{Chapter overview}
 
-  \chapter{Implementation details}
+    \section{Clustered GlassFish}
 
-    % TODO czy to sie znajdzie?
+      \subsection{Scenario description}
+
+      \subsection{Integration with GlassFish load balancer}  % ???
+
+
+    \section{Multimedia server}
+
+      \subsection{Scenario description}
+
+      \subsection{Resource access requirements}
+
+      \subsection{Providing tunable and scalable virtual infrastructure}
+
+
+    \section{Summary}
+
+
+  \chapter{Summary}
+
+    \section{Chapter overview}
+
+    \section{Conclusions}
+
+    \section{Achieved goals}
+
+    \section{Further work}
 
 
   \begin{thebibliography}{some-label}
+
+    % TODO bibtex
     
     \bibitem[1]{} Crossbow: From Hardware Virtualized NICS To Virtualized Networks, http://conferences.sigcomm.org/sigcomm/2009/workshops/visa/papers/p53.pdf
     \bibitem[2]{} Virtual switching in Solaris, http://hub.opensolaris.org/bin/download/Project+crossbow/Docs/virtualswitch.pdf
