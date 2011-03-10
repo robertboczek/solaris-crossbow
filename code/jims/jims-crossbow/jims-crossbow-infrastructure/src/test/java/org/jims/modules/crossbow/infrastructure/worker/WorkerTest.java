@@ -13,7 +13,6 @@ import org.jims.modules.crossbow.objectmodel.resources.Appliance;
 import org.jims.modules.crossbow.objectmodel.resources.ApplianceType;
 import org.jims.modules.crossbow.objectmodel.resources.Interface;
 import org.jims.modules.crossbow.objectmodel.resources.Switch;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -64,15 +63,12 @@ public class WorkerTest {
 		model.register( s );
 		model.register( m );
 
-		Assignments assignments = new Assignments();
-		assignments.setAssignment( p, etherstubId );
-
 		Actions actions = new Actions();
 		actions.insert( m, Actions.ACTION.ADD );
 		actions.insert( p, Actions.ACTION.ADD );
 		actions.insert( s, Actions.ACTION.ADD );
 
-		worker.instantiate( model, actions, assignments );
+		worker.instantiate( model, actions, new Assignments() );
 
 		// Verify
 

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import org.apache.log4j.Logger;
 import org.jims.modules.crossbow.enums.LinkProperties;
 import org.jims.modules.crossbow.etherstub.Etherstub;
 import org.jims.modules.crossbow.etherstub.EtherstubManagerMBean;
@@ -90,7 +91,7 @@ public class Worker implements WorkerMBean {
 	private void instantiateADD( List< Object > resources, Assignments assignments ) throws ActionException {
 
 		switchesADD( extractByType( resources, Switch.class ) );
-		portsADD( extractByType( resources, Interface.class ), assignments );
+		portsADD( extractByType( resources, Interface.class ) );
 		policiesADD( extractByType( resources, Policy.class ) );
 
 		// machinesADD( extractByType( resources, Machine.class ) );
@@ -328,13 +329,17 @@ public class Worker implements WorkerMBean {
 	}
 
 
-	private void portsADD( List< Interface > ports, Assignments assignments ) throws ActionException {
+	private void portsADD( List< Interface > ports ) throws ActionException {
 
 		for ( Interface p : ports ) {
 
 			try {
 
-				vNicManager.create( new VNic( portName( p ), TEMPORARY, assignments.getAssignment( p ) ) );
+				if ( p.getEndpoint() instanceof Switch ) {
+					vNicManager.create( new VNic( portName( p ), TEMPORARY, switchName( ( Switch ) p.getEndpoint() ) ) );
+				} else {
+					// TODO what to do now?
+				}
 
 			} catch ( LinkException ex ) {
 
@@ -371,5 +376,7 @@ public class Worker implements WorkerMBean {
 	private final ZoneCopierMBean zoneCopier;
 
 	private final boolean TEMPORARY = false;
+
+	private static final Logger logger = Logger.getLogger( Worker.class );
 
 }

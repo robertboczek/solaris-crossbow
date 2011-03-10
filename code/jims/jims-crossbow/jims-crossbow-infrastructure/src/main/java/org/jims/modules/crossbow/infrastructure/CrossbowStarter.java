@@ -9,6 +9,9 @@ import javax.management.ObjectName;
 import org.apache.log4j.Logger;
 import org.jims.modules.crossbow.etherstub.EtherstubManagerMBean;
 import org.jims.modules.crossbow.flow.FlowManagerMBean;
+import org.jims.modules.crossbow.infrastructure.assigner.Assigner;
+import org.jims.modules.crossbow.infrastructure.supervisor.Supervisor;
+import org.jims.modules.crossbow.infrastructure.supervisor.SupervisorMBean;
 import org.jims.modules.crossbow.infrastructure.worker.Worker;
 import org.jims.modules.crossbow.link.VNicManagerMBean;
 import org.jims.modules.crossbow.zones.ZoneCopierMBean;
@@ -77,6 +80,18 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 		Worker worker = new Worker( vnicManager, etherstubManager, flowManager, zoneCopier );
 
 		server.registerMBean( worker, new ObjectName( "Crossbow:type=XBowWorker" ) );
+
+
+		// Supervisor MBean
+
+		Assigner assigner = new Assigner();
+
+		Supervisor supervisor = new Supervisor();
+
+		supervisor.addWorker( "", worker );
+		supervisor.setAssigner( assigner );
+
+		server.registerMBean( supervisor, new ObjectName( "Crossbow:type=Supervisor" ) );
 
 	}
 

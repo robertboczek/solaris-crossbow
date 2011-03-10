@@ -26,9 +26,6 @@ public class Worker11SimpleQosModelRemovalIT extends WorkerITBase {
 		actions.insert( model.getPorts().get( 0 ), Actions.ACTION.REM );
 		actions.insert( model.getPolicies().get( 0 ), Actions.ACTION.REM );
 
-		// Assignments assignments = new Assignments();
-		// assignments.setAssignment( model.getPorts().get( 0 ), etherstubId );
-
 		worker.instantiate( model, actions, new Assignments() );
 
 	}

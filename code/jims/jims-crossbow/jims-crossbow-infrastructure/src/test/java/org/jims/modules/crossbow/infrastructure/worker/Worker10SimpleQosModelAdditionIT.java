@@ -26,10 +26,7 @@ public class Worker10SimpleQosModelAdditionIT extends WorkerITBase {
 		actions.insert( model.getPorts().get( 0 ), Actions.ACTION.ADD );
 		actions.insert( model.getPolicies().get( 0 ), Actions.ACTION.ADD );
 
-		Assignments assignments = new Assignments();
-		assignments.setAssignment( model.getPorts().get( 0 ), etherstubId );
-
-		worker.instantiate( model, actions, assignments );
+		worker.instantiate( model, actions, new Assignments() );
 
 	}
 

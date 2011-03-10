@@ -24,12 +24,7 @@ public class Worker00SimpleModelAdditionIT extends WorkerITBase {
 		actions.insert( model.getPorts().get( 0 ), Actions.ACTION.ADD );
 		actions.insert( model.getSwitches().get( 0 ), Actions.ACTION.ADD );
 
-		String etherstubId = projectId + SEP + model.getSwitches().get( 0 ).getResourceId();
-
-		Assignments assignments = new Assignments();
-		assignments.setAssignment( model.getPorts().get( 0 ), etherstubId );
-
-		worker.instantiate( model, actions, assignments );
+		worker.instantiate( model, actions, new Assignments() );
 
 	}
 

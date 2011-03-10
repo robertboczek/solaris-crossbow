@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="" company="" manager="" phase="" project-start="20110111T000000Z" mrproject-version="2" calendar="1">
+<project name="" company="" manager="" phase="" project-start="20110111T000000Z" mrproject-version="2" calendar="2">
   <properties/>
   <phases/>
   <calendars>
@@ -8,21 +8,21 @@
       <day-type id="1" name="Nonworking" description="Domy&#x15B;lny dzie&#x144; wolny"/>
       <day-type id="2" name="U&#x17C;ycie podstawy" description="Use day from base calendar"/>
     </day-types>
-    <calendar id="1" name="Domy&#x15B;lny">
+    <calendar id="1" name="8/7">
+      <default-week mon="0" tue="0" wed="0" thu="0" fri="0" sat="0" sun="0"/>
+      <overridden-day-types>
+        <overridden-day-type id="0">
+          <interval start="0800" end="1700"/>
+        </overridden-day-type>
+      </overridden-day-types>
+      <days/>
+    </calendar>
+    <calendar id="2" name="Domy&#x15B;lny">
       <default-week mon="0" tue="0" wed="0" thu="0" fri="0" sat="1" sun="1"/>
       <overridden-day-types>
         <overridden-day-type id="0">
           <interval start="0800" end="1200"/>
           <interval start="1300" end="1700"/>
-        </overridden-day-type>
-      </overridden-day-types>
-      <days/>
-    </calendar>
-    <calendar id="2" name="8/7">
-      <default-week mon="0" tue="0" wed="0" thu="0" fri="0" sat="0" sun="0"/>
-      <overridden-day-types>
-        <overridden-day-type id="0">
-          <interval start="0800" end="1700"/>
         </overridden-day-type>
       </overridden-day-types>
       <days/>
@@ -36,7 +36,7 @@
       <task id="5" name="Zony + NFS" note="wto 11 sty 2011, 01:10&#10;Tworzenie, Uruchamianie, Od&#x142;&#x105;czanie zonek + sk&#x142;adowanie i odzyskiwanie ich z serwera NFS" work="28800" start="20110111T000000Z" end="20110111T170000Z" work-start="20110111T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
         <task id="6" name="ZoneCopierMBean" note="wto 11 sty 2011, 01:11&#10;Dodanie MBean'a kopiuj&#x105;cego zonke z lokalnie podmontowanego serwera NFS do puli zonek." work="28800" start="20110111T000000Z" end="20110111T170000Z" work-start="20110111T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
       </task>
-      <task id="7" name="Opracowanie modelu obiektowego" note="wto 11 sty 2011, 01:00&#10;Model obiektowy opisuj&#x105;cy struktur&#x119; na w&#x119;&#x17A;le i akcje (ADD, REM, UPD).&#10;" work="57600" start="20110111T000000Z" end="20110111T170000Z" work-start="20110111T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+      <task id="7" name="Opracowanie modelu obiektowego" note="wto 11 sty 2011, 01:00&#10;Model obiektowy opisuj&#x105;cy struktur&#x119; na w&#x119;&#x17A;le i akcje (ADD, REM, UPD).&#10;" work="57600" start="20110111T000000Z" end="20110111T170000Z" work-start="20110111T080000Z" percent-complete="80" priority="0" type="normal" scheduling="fixed-work"/>
       <task id="8" name="Implementacja XBowMapper" note="" work="86400" start="20110111T170000Z" end="20110114T170000Z" work-start="20110112T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
         <predecessors>
           <predecessor id="1" predecessor-id="4" type="SS"/>
@@ -77,13 +77,13 @@
   </tasks>
   <resource-groups/>
   <resources>
-    <resource id="1" name="Dawid" short-name="" type="1" units="0" email="" note="" std-rate="0"/>
-    <resource id="2" name="Robert" short-name="" type="1" units="0" email="" note="" std-rate="0"/>
+    <resource id="1" name="Robert" short-name="" type="1" units="0" email="" note="" std-rate="0"/>
+    <resource id="2" name="Dawid" short-name="" type="1" units="0" email="" note="" std-rate="0"/>
   </resources>
   <allocations>
     <allocation task-id="7" resource-id="1" units="100"/>
-    <allocation task-id="4" resource-id="1" units="100"/>
+    <allocation task-id="6" resource-id="1" units="100"/>
     <allocation task-id="7" resource-id="2" units="100"/>
-    <allocation task-id="6" resource-id="2" units="100"/>
+    <allocation task-id="4" resource-id="2" units="100"/>
   </allocations>
 </project>
