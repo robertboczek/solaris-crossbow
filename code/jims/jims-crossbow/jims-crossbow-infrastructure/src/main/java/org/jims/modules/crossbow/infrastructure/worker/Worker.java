@@ -82,7 +82,7 @@ public class Worker implements WorkerMBean {
 		// machinesREM( extractByType( resources, Machine.class ) );
 
 		policiesREM( extractByType( resources, Policy.class ) );
-		portsREM( extractByType( resources, Interface.class ) );
+		interfacesREM( extractByType( resources, Interface.class ) );
 		switchesREM( extractByType( resources, Switch.class ) );
 
 	}
@@ -91,7 +91,7 @@ public class Worker implements WorkerMBean {
 	private void instantiateADD( List< Object > resources, Assignments assignments ) throws ActionException {
 
 		switchesADD( extractByType( resources, Switch.class ) );
-		portsADD( extractByType( resources, Interface.class ) );
+		interfacesADD( extractByType( resources, Interface.class ) );
 		policiesADD( extractByType( resources, Policy.class ) );
 
 		// machinesADD( extractByType( resources, Machine.class ) );
@@ -158,7 +158,7 @@ public class Worker implements WorkerMBean {
 
 				try {
 
-					VNicMBean vnic = vNicManager.getByName( portName( policy.getPort() ) );
+					VNicMBean vnic = vNicManager.getByName( interfaceName( policy.getInterface() ) );
 
 					LinkProperties property = null;
 
@@ -205,7 +205,7 @@ public class Worker implements WorkerMBean {
 
 				try {
 
-					VNicMBean vnic = vNicManager.getByName( portName( p.getPort() ) );
+					VNicMBean vnic = vNicManager.getByName( interfaceName( p.getInterface() ) );
 
 					if ( p instanceof PriorityPolicy ) {
 						vnic.setProperty( LinkProperties.PRIORITY, ( ( PriorityPolicy ) p ).getPriorityAsString() );
@@ -260,7 +260,7 @@ public class Worker implements WorkerMBean {
 				}
 
 				try {
-					flowManager.create( new Flow( policyName( p ), attrs, props, portName( p.getPort() ), TEMPORARY ) );
+					flowManager.create( new Flow( policyName( p ), attrs, props, interfaceName( p.getInterface() ), TEMPORARY ) );
 				} catch ( XbowException ex ) {
 					throw new ActionException( "Policy ADD error", ex );
 				}
@@ -310,17 +310,17 @@ public class Worker implements WorkerMBean {
 	}
 
 
-	private void portsREM( List< Interface > ports ) throws ActionException {
+	private void interfacesREM( List< Interface > ports ) throws ActionException {
 
 		for ( Interface p : ports ) {
 
 			try {
 
-				vNicManager.delete( portName( p ), TEMPORARY );
+				vNicManager.delete( interfaceName( p ), TEMPORARY );
 
 			} catch ( LinkException ex ) {
 
-				throw new ActionException( "Port REM error", ex );
+				throw new ActionException( "Interface REM error", ex );
 
 			}
 
@@ -329,21 +329,21 @@ public class Worker implements WorkerMBean {
 	}
 
 
-	private void portsADD( List< Interface > ports ) throws ActionException {
+	private void interfacesADD( List< Interface > ports ) throws ActionException {
 
 		for ( Interface p : ports ) {
 
 			try {
 
 				if ( p.getEndpoint() instanceof Switch ) {
-					vNicManager.create( new VNic( portName( p ), TEMPORARY, switchName( ( Switch ) p.getEndpoint() ) ) );
+					vNicManager.create( new VNic( interfaceName( p ), TEMPORARY, switchName( ( Switch ) p.getEndpoint() ) ) );
 				} else {
 					// TODO what to do now?
 				}
 
 			} catch ( LinkException ex ) {
 
-				throw new ActionException( "Port ADD error", ex );
+				throw new ActionException( "Interface ADD error", ex );
 
 			}
 
@@ -356,12 +356,12 @@ public class Worker implements WorkerMBean {
 		return s.getProjectId() + SEP + s.getResourceId();
 	}
 
-	private String portName( Interface p ) {
+	private String interfaceName( Interface p ) {
 		return p.getProjectId() + SEP + p.getResourceId();
 	}
 
 	private String policyName( Policy p ) {
-		return p.getPort().getProjectId() + SEP + p.getPort().getResourceId() + SEP + p.getName();
+		return p.getInterface().getProjectId() + SEP + p.getInterface().getResourceId() + SEP + p.getName();
 	}
 
 

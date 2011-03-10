@@ -47,7 +47,7 @@ public class Interface extends Endpoint{
 
 		public void addPolicy( Policy policy ) {
 			policiesList.add( policy );
-			policy.setPort( this );
+			policy.setInterface( this );
 		}
 
 

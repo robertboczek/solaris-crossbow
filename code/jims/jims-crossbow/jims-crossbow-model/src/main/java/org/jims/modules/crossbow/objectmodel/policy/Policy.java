@@ -2,7 +2,6 @@
 package org.jims.modules.crossbow.objectmodel.policy;
 
 import java.io.Serializable;
-import java.util.List;
 import org.jims.modules.crossbow.objectmodel.filters.Filter;
 import org.jims.modules.crossbow.objectmodel.resources.Interface;
 
@@ -40,12 +39,12 @@ public abstract class Policy implements Serializable {
     }
 
 
-		public void setPort( Interface port ) {
-			this.port = port;
+		public void setInterface( Interface iface ) {
+			this.iface = iface;
 		}
 
-		public Interface getPort() {
-			return port;
+		public Interface getInterface() {
+			return iface;
 		}
 
 		public String getName() {
@@ -54,7 +53,7 @@ public abstract class Policy implements Serializable {
 
 
 		private String name;
-		private Interface port;
+		private Interface iface;
 		private Filter filter;
 
 }
