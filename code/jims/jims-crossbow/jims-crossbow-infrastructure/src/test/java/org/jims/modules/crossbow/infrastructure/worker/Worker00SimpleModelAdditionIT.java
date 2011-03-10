@@ -20,7 +20,7 @@ public class Worker00SimpleModelAdditionIT extends WorkerITBase {
 
 		Actions actions = new Actions();
 
-		actions.insert( model.getMachines().get( 0 ), Actions.ACTION.ADD );
+		actions.insert( model.getAppliances().get( 0 ), Actions.ACTION.ADD );
 		actions.insert( model.getPorts().get( 0 ), Actions.ACTION.ADD );
 		actions.insert( model.getSwitches().get( 0 ), Actions.ACTION.ADD );
 

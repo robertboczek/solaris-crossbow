@@ -7,17 +7,17 @@ import org.jims.modules.crossbow.objectmodel.filters.address.IpAddress;
 
 
 /**
- * Port endpoint object
+ * Interface endpoint object
  * 
  * @author robert boczek
  */
-public class Port extends Endpoint{
+public class Interface extends Endpoint{
 
-    public Port(String resourceId, String projectId) {
+    public Interface(String resourceId, String projectId) {
         super(resourceId, projectId);
     }
 
-    public Port(String resourceId, String projectId,
+    public Interface(String resourceId, String projectId,
 		            Endpoint endpoint,
 		            List<Policy> policiesList, IpAddress ipAddress) {
         this(resourceId, projectId);
@@ -25,13 +25,6 @@ public class Port extends Endpoint{
 				this.endpoint = endpoint;
     }
 
-    public List<Node> getNodesList() {
-        return nodesList;
-    }
-
-    public void setNodesList(List<Node> nodesList) {
-        this.nodesList = nodesList;
-    }
 
     /**
      * Get the value of policiesList
@@ -82,7 +75,6 @@ public class Port extends Endpoint{
 
 
 		private List< Policy  > policiesList = new LinkedList< Policy >();
-		private List<Node> nodesList;
 		private IpAddress ipAddress;
 		private Endpoint endpoint;
 

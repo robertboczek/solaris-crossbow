@@ -9,8 +9,9 @@ import org.jims.modules.crossbow.link.VNicManagerMBean;
 import org.jims.modules.crossbow.objectmodel.Actions;
 import org.jims.modules.crossbow.objectmodel.Assignments;
 import org.jims.modules.crossbow.objectmodel.ObjectModel;
-import org.jims.modules.crossbow.objectmodel.resources.Machine;
-import org.jims.modules.crossbow.objectmodel.resources.Port;
+import org.jims.modules.crossbow.objectmodel.resources.Appliance;
+import org.jims.modules.crossbow.objectmodel.resources.ApplianceType;
+import org.jims.modules.crossbow.objectmodel.resources.Interface;
 import org.jims.modules.crossbow.objectmodel.resources.Switch;
 import org.junit.After;
 import org.junit.Before;
@@ -50,11 +51,11 @@ public class WorkerTest {
 		String machineId = "MYSQL", portId = machineId + SEP + "LINK0", switchId = "SWITCH";
 		String etherstubId = projectId + SEP + switchId;
 
-		Machine m = new Machine( machineId, projectId );
-		Port p = new Port( portId, projectId );
+		Appliance m = new Appliance( machineId, projectId, ApplianceType.MACHINE );
+		Interface p = new Interface( portId, projectId );
 		Switch s = new Switch( switchId, projectId );
 
-		m.addPort( p );
+		m.addInterface( p );
 		p.setEndpoint( s );
 
 		ObjectModel model = new ObjectModel();

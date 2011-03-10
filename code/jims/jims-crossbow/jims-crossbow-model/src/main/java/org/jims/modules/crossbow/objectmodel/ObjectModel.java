@@ -1,12 +1,11 @@
 package org.jims.modules.crossbow.objectmodel;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import org.jims.modules.crossbow.objectmodel.policy.Policy;
-import org.jims.modules.crossbow.objectmodel.resources.Machine;
-import org.jims.modules.crossbow.objectmodel.resources.Port;
+import org.jims.modules.crossbow.objectmodel.resources.Appliance;
+import org.jims.modules.crossbow.objectmodel.resources.Interface;
 import org.jims.modules.crossbow.objectmodel.resources.Switch;
 
 
@@ -21,13 +20,13 @@ public class ObjectModel implements Serializable {
 		return entity;
 	}
 
-	public Port register( Port entity ) {
+	public Interface register( Interface entity ) {
 		this.ports.add( entity );
 		return entity;
 	}
 
-	public Machine register( Machine entity ) {
-		this.machines.add( entity );
+	public Appliance register( Appliance entity ) {
+		this.appliances.add( entity );
 		return entity;
 	}
 
@@ -40,12 +39,12 @@ public class ObjectModel implements Serializable {
 		return switches;
 	}
 
-	public List< Port > getPorts() {
+	public List< Interface > getPorts() {
 		return ports;
 	}
 
-	public List< Machine > getMachines() {
-		return machines;
+	public List< Appliance > getAppliances() {
+		return appliances;
 	}
 
 	public List< Policy > getPolicies() {
@@ -54,8 +53,8 @@ public class ObjectModel implements Serializable {
 
 
 	List< Switch > switches = new LinkedList< Switch >();
-	List< Port > ports = new LinkedList< Port >();
-	List< Machine > machines = new LinkedList< Machine >();
+	List< Interface > ports = new LinkedList< Interface >();
+	List< Appliance > appliances = new LinkedList< Appliance >();
 	List< Policy > policies = new LinkedList< Policy >();
 
 }

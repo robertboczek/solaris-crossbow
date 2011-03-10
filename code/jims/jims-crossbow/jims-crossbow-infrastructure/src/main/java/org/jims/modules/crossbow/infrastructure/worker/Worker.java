@@ -31,7 +31,7 @@ import org.jims.modules.crossbow.objectmodel.filters.address.IpAddress;
 import org.jims.modules.crossbow.objectmodel.policy.BandwidthPolicy;
 import org.jims.modules.crossbow.objectmodel.policy.Policy;
 import org.jims.modules.crossbow.objectmodel.policy.PriorityPolicy;
-import org.jims.modules.crossbow.objectmodel.resources.Port;
+import org.jims.modules.crossbow.objectmodel.resources.Interface;
 import org.jims.modules.crossbow.objectmodel.resources.Switch;
 import org.jims.modules.crossbow.zones.ZoneCopierMBean;
 
@@ -81,7 +81,7 @@ public class Worker implements WorkerMBean {
 		// machinesREM( extractByType( resources, Machine.class ) );
 
 		policiesREM( extractByType( resources, Policy.class ) );
-		portsREM( extractByType( resources, Port.class ) );
+		portsREM( extractByType( resources, Interface.class ) );
 		switchesREM( extractByType( resources, Switch.class ) );
 
 	}
@@ -90,7 +90,7 @@ public class Worker implements WorkerMBean {
 	private void instantiateADD( List< Object > resources, Assignments assignments ) throws ActionException {
 
 		switchesADD( extractByType( resources, Switch.class ) );
-		portsADD( extractByType( resources, Port.class ), assignments );
+		portsADD( extractByType( resources, Interface.class ), assignments );
 		policiesADD( extractByType( resources, Policy.class ) );
 
 		// machinesADD( extractByType( resources, Machine.class ) );
@@ -101,7 +101,7 @@ public class Worker implements WorkerMBean {
 	private void instantiateUPD( List< Object > resources ) {
 
 		// policiesUPD( extractByType( resources, Policy.class ) );
-		// portsUPD( extractByType( resources, Port.class ) );
+		// portsUPD( extractByType( resources, Interface.class ) );
 		// switchesUPD( extractByType( resources, Switch.class ) );
 
 		// machinesUPD( extractByType( resources, Machine.class ) );
@@ -200,7 +200,7 @@ public class Worker implements WorkerMBean {
 
 			if ( filter instanceof AnyFilter ) {
 
-				// We apply the policy directly to the Port.
+				// We apply the policy directly to the Interface.
 
 				try {
 
@@ -309,9 +309,9 @@ public class Worker implements WorkerMBean {
 	}
 
 
-	private void portsREM( List< Port > ports ) throws ActionException {
+	private void portsREM( List< Interface > ports ) throws ActionException {
 
-		for ( Port p : ports ) {
+		for ( Interface p : ports ) {
 
 			try {
 
@@ -328,9 +328,9 @@ public class Worker implements WorkerMBean {
 	}
 
 
-	private void portsADD( List< Port > ports, Assignments assignments ) throws ActionException {
+	private void portsADD( List< Interface > ports, Assignments assignments ) throws ActionException {
 
-		for ( Port p : ports ) {
+		for ( Interface p : ports ) {
 
 			try {
 
@@ -351,7 +351,7 @@ public class Worker implements WorkerMBean {
 		return s.getProjectId() + SEP + s.getResourceId();
 	}
 
-	private String portName( Port p ) {
+	private String portName( Interface p ) {
 		return p.getProjectId() + SEP + p.getResourceId();
 	}
 

@@ -5,8 +5,9 @@ import org.jims.modules.crossbow.objectmodel.filters.AnyFilter;
 import org.jims.modules.crossbow.objectmodel.filters.IpFilter;
 import org.jims.modules.crossbow.objectmodel.filters.address.IpAddress;
 import org.jims.modules.crossbow.objectmodel.policy.PriorityPolicy;
-import org.jims.modules.crossbow.objectmodel.resources.Machine;
-import org.jims.modules.crossbow.objectmodel.resources.Port;
+import org.jims.modules.crossbow.objectmodel.resources.Appliance;
+import org.jims.modules.crossbow.objectmodel.resources.ApplianceType;
+import org.jims.modules.crossbow.objectmodel.resources.Interface;
 import org.jims.modules.crossbow.objectmodel.resources.Switch;
 
 
@@ -29,11 +30,11 @@ public class ModelHelper {
 
 		String machineId = "MYSQL", portId = machineId + SEP + "LINK0", switchId = "SWITCH0";
 
-		Machine m = new Machine( machineId, projectId );
-		Port p = new Port( portId, projectId );
+		Appliance m = new Appliance( machineId, projectId, ApplianceType.MACHINE );
+		Interface p = new Interface( portId, projectId );
 		Switch s = new Switch( switchId, projectId );
 
-		m.addPort( p );
+		m.addInterface( p );
 		p.setEndpoint( s );
 
 		ObjectModel model = new ObjectModel();

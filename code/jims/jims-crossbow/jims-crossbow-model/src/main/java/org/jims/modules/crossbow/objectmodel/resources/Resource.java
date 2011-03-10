@@ -4,11 +4,11 @@ package org.jims.modules.crossbow.objectmodel.resources;
 import java.io.Serializable;
 
 /**
- * Abstract Resouce describing Node or Endpoint
+ * Abstract Resouce describing Appliance or Endpoint
  *
  * @author robert boczek
  */
-public abstract class Resource implements Serializable{
+public abstract class Resource implements Serializable {
     
     private String resourceId;
     private String projectId;

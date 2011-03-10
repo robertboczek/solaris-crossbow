@@ -4,7 +4,7 @@ package org.jims.modules.crossbow.objectmodel.policy;
 import java.io.Serializable;
 import java.util.List;
 import org.jims.modules.crossbow.objectmodel.filters.Filter;
-import org.jims.modules.crossbow.objectmodel.resources.Port;
+import org.jims.modules.crossbow.objectmodel.resources.Interface;
 
 /**
  * Class describing QoS policy
@@ -40,11 +40,11 @@ public abstract class Policy implements Serializable {
     }
 
 
-		public void setPort( Port port ) {
+		public void setPort( Interface port ) {
 			this.port = port;
 		}
 
-		public Port getPort() {
+		public Interface getPort() {
 			return port;
 		}
 
@@ -54,7 +54,7 @@ public abstract class Policy implements Serializable {
 
 
 		private String name;
-		private Port port;
+		private Interface port;
 		private Filter filter;
 
 }

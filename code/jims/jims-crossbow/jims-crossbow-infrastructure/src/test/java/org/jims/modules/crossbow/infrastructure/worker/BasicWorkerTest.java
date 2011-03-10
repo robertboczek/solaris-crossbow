@@ -45,7 +45,7 @@ public class BasicWorkerTest {
 
 		actions.insert( model.getPorts().get( 0 ), Actions.ACTION.REM );
 		actions.insert( model.getSwitches().get( 0 ), Actions.ACTION.ADD );
-		actions.insert( model.getMachines().get( 0 ), Actions.ACTION.ADD );
+		actions.insert( model.getAppliances().get( 0 ), Actions.ACTION.ADD );
 
 		ActionException actionException = new ActionException( "" );
 		EtherstubException etherstubException = new EtherstubException( "" );
