@@ -114,6 +114,15 @@ public interface FlowHandle extends Library {
 		public boolean temporary;
 	}
 
+	public class FlowStatsStruct extends Structure {
+
+		public long ipackets;
+		public long rbytes;
+		public long opackets;
+		public long obytes;
+
+	}
+
 	/*
 	 * Functions
 	 */
@@ -127,7 +136,10 @@ public interface FlowHandle extends Library {
 	public int reset_property( String flow, String key, boolean temporary );
 	public KeyValuePairsStruct get_properties( String flow );
 
+	public FlowStatsStruct get_statistics( String flow, String startTime );
+
 	public void free_key_value_pairs( KeyValuePairsStruct kvp );
 	public void free_flow_infos( FlowInfosStruct fis );
+	public void free_flow_stats( FlowStatsStruct fs );
 
 }

@@ -112,3 +112,15 @@ void free_flow_info( flow_info_t* flow_info )
 	free( flow_info );
 }
 
+
+flow_statistics_t* malloc_flow_stats()
+{
+	return malloc( sizeof( flow_statistics_t ) );
+}
+
+
+void free_flow_stats( flow_statistics_t* flow_stats )
+{
+	free( flow_stats );
+}
+

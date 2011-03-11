@@ -2,6 +2,7 @@ package org.jims.modules.crossbow.flow;
 
 import java.util.Date;
 import java.util.List;
+import org.jims.modules.crossbow.lib.FlowHelper;
 
 
 /**
@@ -26,7 +27,7 @@ public class FlowAccounting implements FlowAccountingMBean {
 	}
 
 	@Override
-	public FlowUsage getUsage(String flowName) {
+	public FlowUsage getUsage( String flowName ) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
@@ -36,6 +37,17 @@ public class FlowAccounting implements FlowAccountingMBean {
 	}
 
 
+	/**
+	 * @brief  Flow helper setter method.
+	 *
+	 * @param  flowadm  flow helper
+	 */
+	public void setFlowadm( FlowHelper flowadm ) {
+		this.flowadm = flowadm;
+	}
+
+
 	private boolean accountingEnabled;
+	private FlowHelper flowadm;
 
 }

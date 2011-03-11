@@ -112,5 +112,7 @@ int enable_accounting();
 int disable_accounting();
 #endif
 
+flow_statistics_t* get_statistics( char* flow, char* stime );
+
 #endif
 

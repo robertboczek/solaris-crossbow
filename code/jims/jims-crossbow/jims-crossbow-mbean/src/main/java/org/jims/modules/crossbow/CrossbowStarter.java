@@ -29,6 +29,7 @@ import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
 import javax.management.timer.Timer;
 import org.apache.log4j.Logger;
+import org.jims.modules.crossbow.flow.FlowAccounting;
 import org.jims.modules.crossbow.jna.JNALinkHelper;
 import org.jims.modules.crossbow.zones.ZoneCopier;
 import org.jims.modules.crossbow.zones.ZoneCopierMBean;
@@ -126,7 +127,8 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 
 		// Create FlowAccounting.
 
-		//FlowAccounting flowAccounting = new FlowAccounting();
+		FlowAccounting flowAccounting = new FlowAccounting();
+		flowAccounting.setFlowadm( flowadm );
 
 		// Create Timer.
 
@@ -144,7 +146,7 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 		// Register MBeans.
 
 		server.registerMBean(flowManager, new ObjectName("Crossbow:type=FlowManager"));
-		// mbs.registerMBean( flowAccounting, new ObjectName( "Crossbow:type=FlowAccounting" ) );
+		server.registerMBean( flowAccounting, new ObjectName( "Crossbow:type=FlowAccounting" ) );
 		server.registerMBean(nicManager, new ObjectName("Crossbow:type=NicManager"));
 		server.registerMBean(vNicManager, new ObjectName("Crossbow:type=VNicManager"));
 		server.registerMBean(etherstubManager, new ObjectName("Crossbow:type=EtherstubManager"));

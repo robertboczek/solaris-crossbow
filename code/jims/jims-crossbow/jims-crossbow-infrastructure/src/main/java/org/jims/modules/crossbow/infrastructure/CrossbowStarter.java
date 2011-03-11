@@ -11,7 +11,6 @@ import org.jims.modules.crossbow.etherstub.EtherstubManagerMBean;
 import org.jims.modules.crossbow.flow.FlowManagerMBean;
 import org.jims.modules.crossbow.infrastructure.assigner.Assigner;
 import org.jims.modules.crossbow.infrastructure.supervisor.Supervisor;
-import org.jims.modules.crossbow.infrastructure.supervisor.SupervisorMBean;
 import org.jims.modules.crossbow.infrastructure.worker.Worker;
 import org.jims.modules.crossbow.link.VNicManagerMBean;
 import org.jims.modules.crossbow.zones.ZoneCopierMBean;

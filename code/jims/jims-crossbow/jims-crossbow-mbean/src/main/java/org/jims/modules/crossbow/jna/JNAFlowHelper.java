@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
+import org.jims.modules.crossbow.flow.enums.FlowStatistics;
 
 
 /**
@@ -276,5 +277,24 @@ public class JNAFlowHelper implements FlowHelper {
 
         return res;
 
-    }    
+    }
+
+
+	@Override
+	public Map< FlowStatistics, Long > getUsage( String flowName, String startTime ) {
+
+		Map< FlowStatistics, Long > res = new HashMap< FlowStatistics, Long >();
+
+		FlowHandle.FlowStatsStruct stats = handle.get_statistics( flowName, startTime );
+
+		res.put( FlowStatistics.RBYTES, stats.rbytes );
+		res.put( FlowStatistics.IPACKETS, stats.ipackets );
+		res.put( FlowStatistics.OBYTES, stats.obytes );
+		res.put( FlowStatistics.OPACKETS, stats.opackets );
+
+		handle.free_flow_stats( stats );
+
+		return res;
+	}
+
 }

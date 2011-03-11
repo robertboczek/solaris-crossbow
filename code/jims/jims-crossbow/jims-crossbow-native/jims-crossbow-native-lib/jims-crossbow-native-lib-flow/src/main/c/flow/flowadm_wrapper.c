@@ -366,8 +366,7 @@ int enable_accounting()
 	priv_set( PRIV_ON, PRIV_EFFECTIVE, PRIV_SYS_DL_CONFIG, NULL );
 
 	printf( "%d\n",
-	dladm_start_usagelog( handle,
-	                      DLADM_LOGTYPE_FLOW, 20 ) );
+	dladm_start_usagelog( handle, DLADM_LOGTYPE_FLOW, 20 ) );
 
 	priv_set( PRIV_OFF, PRIV_EFFECTIVE, PRIV_SYS_DL_CONFIG, NULL );
 
@@ -387,4 +386,20 @@ int disable_accounting()
 	return 0;
 }
 #endif
+
+
+flow_statistics_t* get_statistics( char* flow, char* stime )
+{
+	flow_statistics_t stats_zero = { 0 };
+	flow_statistics_t* stats = malloc_flow_stats();
+
+	// Initialize all fields with zeros.
+
+	*stats = stats_zero;
+
+	dladm_walk_usage_res( &get_usage, DLADM_LOGTYPE_FLOW, "/tmp/net_acc",  // TODO-DAWID  custom acct. file
+	                      flow, stime, NULL /* etime */, stats );
+
+	return stats;
+}
 

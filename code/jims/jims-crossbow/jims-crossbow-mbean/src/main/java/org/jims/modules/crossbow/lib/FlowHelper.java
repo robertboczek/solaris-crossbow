@@ -9,6 +9,7 @@ import org.jims.modules.crossbow.flow.enums.FlowAttribute;
 import org.jims.modules.crossbow.flow.enums.FlowProperty;
 import java.util.List;
 import java.util.Map;
+import org.jims.modules.crossbow.flow.enums.FlowStatistics;
 
 
 /**
@@ -116,5 +117,8 @@ public interface FlowHelper {
 	void resetProperties( String flowName, List< FlowProperty > properties, boolean temporary )
 		throws NoSuchFlowException,
 		       ValidationException;
+
+
+	Map< FlowStatistics, Long > getUsage( String flowName, String startTime );
 
 }

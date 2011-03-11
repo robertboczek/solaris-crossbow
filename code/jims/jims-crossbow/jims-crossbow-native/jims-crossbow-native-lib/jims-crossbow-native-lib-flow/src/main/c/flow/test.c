@@ -20,7 +20,6 @@ int main( int agrc, char** argv )
 			++names;
 		}
 	}
-	#endif
 
 	{
 		char prop[] = "maxbw";
@@ -72,6 +71,11 @@ int main( int agrc, char** argv )
 
 	{
 		get_flows_info( NULL );
+	}
+	#endif
+
+	{
+		get_statistics( "esshflow" );
 	}
 
 	return 0;

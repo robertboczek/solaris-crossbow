@@ -16,5 +16,8 @@ void free_flow_infos( flow_infos_t* flow_infos );
 flow_info_t* malloc_flow_info();
 void free_flow_info( flow_info_t* flow_info );
 
+flow_statistics_t* malloc_flow_stats();
+void free_flow_stats( flow_statistics_t* flow_stats );
+
 #endif
 

@@ -6,6 +6,7 @@ import org.jims.modules.crossbow.flow.enums.FlowAttribute;
 import org.jims.modules.crossbow.flow.enums.FlowProperty;
 import java.util.List;
 import java.util.Map;
+import org.jims.modules.crossbow.flow.enums.FlowStatistics;
 
 
 /**
@@ -84,6 +85,14 @@ public interface FlowMBean {
 	public boolean isTemporary();
 
 
+	/**
+	 * @brief Returns the flow's usage statistics.
+	 *
+	 * @return  flow statistics map
+	 */
+	public Map< FlowStatistics, Long > getStatistics();
+
+
 	/*
 	 * jconsole only
 	 */
@@ -97,5 +106,7 @@ public interface FlowMBean {
 
 	public void _resetProperty( String name, boolean temporary ) throws NoSuchFlowException,
 	                                                                    ValidationException;
+
+	public Map< String, String > get_Statistics();
 
 }

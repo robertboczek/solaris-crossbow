@@ -44,5 +44,24 @@ typedef struct
 }
 flow_infos_t;
 
+
+typedef struct
+{
+	#if 0
+	long long	stime;
+	long long	etime;
+	#endif
+
+	long long	ipackets;
+	long long	rbytes;
+	long long	opackets;
+	long long	obytes;
+
+	#if 0
+	long long	bandwidth;
+	#endif
+}
+flow_statistics_t;
+
 #endif
 

@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
+import org.jims.modules.crossbow.flow.enums.FlowStatistics;
 
 
 /**
@@ -205,6 +206,18 @@ public class Flow implements FlowMBean {
 	}
 
 
+	@Override
+	public Map< FlowStatistics, Long > getStatistics() {
+
+		// Gather stats since the beginning of the Epoch.
+
+		logger.info( "Gathering statistics for " + name + " since 1970." );
+
+		return flowadm.getUsage( name, "1970" );
+
+	}
+
+
 	/**
 	 * @see  FlowMBean#isTemporary()
 	 */
@@ -333,13 +346,27 @@ public class Flow implements FlowMBean {
 	}
 
 
+	@Override
+	public Map< String, String > get_Statistics() {
+
+		Map< String, String > res = new HashMap< String, String >();
+
+		for ( Map.Entry< FlowStatistics, Long > entry : getStatistics().entrySet() ) {
+			res.put( entry.getKey().toString(), entry.getValue().toString() );
+		}
+
+		return res;
+
+	}
+
+
 	protected String name;
 	protected String link;
 	protected Map< FlowAttribute, String > attrs = new HashMap< FlowAttribute, String >();
 	protected Map< FlowProperty, String > props = new HashMap< FlowProperty, String >();
 	protected boolean temporary;
 
-	private FlowHelper flowadm = null;
+	private FlowHelper flowadm;
 
 	private static final Logger logger = Logger.getLogger( Flow.class );
 

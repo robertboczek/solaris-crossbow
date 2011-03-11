@@ -84,5 +84,8 @@ int collect_link_names( dladm_handle_t handle,
 int count_links( dladm_handle_t handle,
                  datalink_id_t link_id, void* counter );
 
+
+int get_usage( dladm_usage_t* usage, void* arg );
+
 #endif
 

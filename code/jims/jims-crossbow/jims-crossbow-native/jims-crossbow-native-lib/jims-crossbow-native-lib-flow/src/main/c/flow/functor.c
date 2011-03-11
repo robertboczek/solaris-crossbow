@@ -101,3 +101,23 @@ int count_links( dladm_handle_t handle,
 	return DLADM_WALK_CONTINUE;
 }
 
+
+/*
+ * dladm_walk_usage_res functors
+ */
+
+int get_usage( dladm_usage_t* usage, void* arg )
+{
+	flow_statistics_t* stats = arg;
+
+	#if 0
+	stats->ipackets += usage->du_ipackets;
+	stats->opackets += usage->du_opackets;
+	#endif
+
+	stats->rbytes   += usage->du_rbytes;
+	stats->obytes   += usage->du_obytes;
+
+	return DLADM_STATUS_OK;
+}
+
