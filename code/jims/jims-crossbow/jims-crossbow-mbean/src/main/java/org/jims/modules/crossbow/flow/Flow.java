@@ -213,7 +213,7 @@ public class Flow implements FlowMBean {
 
 		logger.info( "Gathering statistics for " + name + " since 1970." );
 
-		return flowadm.getUsage( name, "1970" );
+		return flowadm.getUsage( name, "1970", "now" );
 
 	}
 

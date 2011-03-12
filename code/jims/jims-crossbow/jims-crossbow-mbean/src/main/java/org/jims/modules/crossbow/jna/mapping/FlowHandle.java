@@ -136,7 +136,7 @@ public interface FlowHandle extends Library {
 	public int reset_property( String flow, String key, boolean temporary );
 	public KeyValuePairsStruct get_properties( String flow );
 
-	public FlowStatsStruct get_statistics( String flow, String startTime );
+	public FlowStatsStruct get_statistics( String flow, String startTime, String endTime );
 
 	public void free_key_value_pairs( KeyValuePairsStruct kvp );
 	public void free_flow_infos( FlowInfosStruct fis );

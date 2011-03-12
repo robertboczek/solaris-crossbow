@@ -2,6 +2,7 @@
 #include <libdladm.h>
 #include <libdllink.h>
 #include <priv.h>
+#include <sys/acctctl.h>
 
 #include <string.h>
 #include <stdio.h>
@@ -388,7 +389,7 @@ int disable_accounting()
 #endif
 
 
-flow_statistics_t* get_statistics( char* flow, char* stime )
+flow_statistics_t* get_statistics( char* flow, char* stime, char* etime )
 {
 	flow_statistics_t stats_zero = { 0 };
 	flow_statistics_t* stats = malloc_flow_stats();
@@ -397,8 +398,32 @@ flow_statistics_t* get_statistics( char* flow, char* stime )
 
 	*stats = stats_zero;
 
-	dladm_walk_usage_res( &get_usage, DLADM_LOGTYPE_FLOW, "/tmp/net_acc",  // TODO-DAWID  custom acct. file
-	                      flow, stime, NULL /* etime */, stats );
+	// Check if net accounting is activated.
+
+	int state;
+	char file[ MAXPATHLEN ] = { 0 };
+
+	if ( ( -1 == acctctl( AC_NET | AC_STATE_GET, &state, sizeof( state ) ) ) || ( AC_ON != state ) )
+	{
+	
+	}
+	else
+	{
+		// Accounting is enabled. Get the filename.
+	
+		if ( -1 == acctctl( AC_NET | AC_FILE_GET, file, sizeof( file ) ) )
+		{
+		
+		}
+		else
+		{
+			const char* etime = "now";
+			char* end_time = ( 0 == strcmp( "now", etime ) ) ? NULL : etime;
+
+			dladm_walk_usage_res( &get_usage, DLADM_LOGTYPE_FLOW, file,
+			                      flow, stime, end_time, stats );
+		}
+	}
 
 	return stats;
 }

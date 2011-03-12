@@ -281,11 +281,11 @@ public class JNAFlowHelper implements FlowHelper {
 
 
 	@Override
-	public Map< FlowStatistics, Long > getUsage( String flowName, String startTime ) {
+	public Map< FlowStatistics, Long > getUsage( String flowName, String startTime, String endTime ) {
 
 		Map< FlowStatistics, Long > res = new HashMap< FlowStatistics, Long >();
 
-		FlowHandle.FlowStatsStruct stats = handle.get_statistics( flowName, startTime );
+		FlowHandle.FlowStatsStruct stats = handle.get_statistics( flowName, startTime, endTime );
 
 		res.put( FlowStatistics.RBYTES, stats.rbytes );
 		res.put( FlowStatistics.IPACKETS, stats.ipackets );

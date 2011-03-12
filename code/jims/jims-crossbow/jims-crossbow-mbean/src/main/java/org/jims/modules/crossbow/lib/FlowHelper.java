@@ -119,6 +119,6 @@ public interface FlowHelper {
 		       ValidationException;
 
 
-	Map< FlowStatistics, Long > getUsage( String flowName, String startTime );
+	Map< FlowStatistics, Long > getUsage( String flowName, String startTime, String endTime );
 
 }

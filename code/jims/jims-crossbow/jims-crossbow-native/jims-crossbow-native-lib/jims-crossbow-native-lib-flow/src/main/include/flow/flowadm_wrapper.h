@@ -112,7 +112,20 @@ int enable_accounting();
 int disable_accounting();
 #endif
 
-flow_statistics_t* get_statistics( char* flow, char* stime );
+/**
+ * \brief  Returns statistics.
+ *
+ * \param  flow   flow name
+ * \param  stime  start time, see flowadm manual for details
+ * \param  etime  end time, see flowadm for details;
+ *                set to "now" to ignore
+ *
+ * \return  a pointer to flow_statistics_t
+ *
+ * \warning  The caller is responsible for freeing returned pointer
+ *           with free_flow_stats function.
+ */
+flow_statistics_t* get_statistics( char* flow, char* stime, char* etime );
 
 #endif
 
