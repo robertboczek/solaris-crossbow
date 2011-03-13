@@ -45,6 +45,27 @@ public class FlowManager extends BaseManager implements FlowManagerMBean, Notifi
 
     }
 
+		/**
+		 * @see  FlowManagerMBean#getByName(java.lang.String)
+		 */
+		@Override
+		public FlowMBean getByName( String name ) {
+
+			FlowMBean res = null;
+
+			for ( Object o : publisher.getPublished() ) {
+
+				if ( name.equals( ( ( FlowMBean ) o ).getName() ) ) {
+					res = ( FlowMBean ) o;
+					break;
+				}
+
+			}
+
+			return res;
+
+		}
+
     /**
      * Discovers flows present in the system and, if a publisher has been set,
      * publishes each discovered flow.

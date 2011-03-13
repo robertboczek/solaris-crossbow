@@ -14,6 +14,9 @@ public interface WorkerMBean {
 
 	public void instantiate( ObjectModel model, Actions actions, Assignments assignments ) throws ModelInstantiationException;
 
-	public void discover();
+	public ObjectModel discover();
+
+
+	public void _discover();
 
 }

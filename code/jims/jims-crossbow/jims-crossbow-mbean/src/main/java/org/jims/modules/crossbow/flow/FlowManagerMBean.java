@@ -21,6 +21,15 @@ public interface FlowManagerMBean {
 	public List< String > getFlows();
 
 	/**
+	 * @brief  Returns MBean object for flow identified with name.
+	 *
+	 * @param  name  of the flow
+	 *
+	 * @return  MBean object
+	 */
+	public FlowMBean getByName( String name );
+
+	/**
 	 * @brief  Discovers flows present in the system.
 	 *
 	 * Discovered flow processing is implementation-specific.

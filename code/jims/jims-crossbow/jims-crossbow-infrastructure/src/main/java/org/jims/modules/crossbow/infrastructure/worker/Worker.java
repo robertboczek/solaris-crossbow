@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 import org.jims.modules.crossbow.enums.LinkProperties;
 import org.jims.modules.crossbow.etherstub.Etherstub;
@@ -44,7 +46,6 @@ import org.jims.modules.crossbow.zones.ZoneCopierMBean;
 public class Worker implements WorkerMBean {
 
 	// TODO mechanizm wycofywania zmian w przypadku bledu
-	// TODO logowanie
 
 	public Worker( VNicManagerMBean vNicManager, EtherstubManagerMBean etherstubManager,
 	               FlowManagerMBean flowManager, ZoneCopierMBean zoneCopier ) {
@@ -143,8 +144,100 @@ public class Worker implements WorkerMBean {
 
 
 	@Override
-	public void discover() {
-		throw new UnsupportedOperationException("Not supported yet.");
+	public ObjectModel discover() {
+
+		ObjectModel om = new ObjectModel();
+		Map< String, Object > ids = new HashMap< String, Object >();
+
+		discoverSwitches( om, ids );
+		discoverInterfaces( om, ids );
+
+		return om;
+
+	}
+
+
+	private void discoverSwitches( ObjectModel om, Map< String, Object > ids ) {
+
+		List< Switch > switches = new LinkedList< Switch >();
+
+		try {
+
+			for ( Matcher m : filterNames( etherstubManager.getEtherstubsNames(), REG_SWITCH_NAME ) ) {
+
+				logger.info( "Found a switch (name: " + m.group( 2 ) + ", project: " + m.group( 1 ) + ")" );
+
+				Switch s = new Switch( m.group( 2 ), m.group( 1 ) );
+				switches.add( s );
+				ids.put( m.group(), s );
+
+			}
+
+		} catch ( EtherstubException e ) {
+		}
+
+
+		logger.info( "Adding " + switches.size() + " matching switch(es) to the model." );
+
+		for ( Switch s : switches ) {
+			om.register( s );
+		}
+
+	}
+
+
+	private void discoverInterfaces( ObjectModel om, Map< String, Object > ids ) {
+
+		List< Interface > interfaces = new LinkedList< Interface >();
+
+		try {
+
+			for ( Matcher m : filterNames( vNicManager.getVNicsNames(), REG_INTERFACE_NAME ) ) {
+
+				// Basic setup.
+
+				Interface iface = new Interface( m.group( 2 ), m.group( 1 ) );
+
+				// Discover details.
+
+				VNicMBean vnic = vNicManager.getByName( m.group() );
+
+				iface.setEndpoint( ( Switch ) ids.get( vnic.getParent() ) );
+				
+				interfaces.add( iface );
+				ids.put( m.group(), iface );
+
+			}
+
+		} catch ( LinkException ex ) {
+		}
+
+		logger.info( "Adding " + interfaces.size() + " interface(s) to the model." );
+
+		for ( Interface iface : interfaces ) {
+			om.register( iface );
+		}
+
+	}
+
+
+	private List< Matcher > filterNames( List< String > names, String regexp ) {
+
+		List< Matcher > res = new LinkedList< Matcher >();
+		Pattern p = Pattern.compile( regexp );
+
+		for ( String name : names ) {
+
+			Matcher m = p.matcher( name );
+
+			if ( m.matches() ) {
+				res.add( m );
+			}
+
+		}
+
+		return res;
+
 	}
 
 
@@ -310,13 +403,13 @@ public class Worker implements WorkerMBean {
 	}
 
 
-	private void interfacesREM( List< Interface > ports ) throws ActionException {
+	private void interfacesREM( List< Interface > interfaces ) throws ActionException {
 
-		for ( Interface p : ports ) {
+		for ( Interface i : interfaces ) {
 
 			try {
 
-				vNicManager.delete( interfaceName( p ), TEMPORARY );
+				vNicManager.delete( interfaceName( i ), TEMPORARY );
 
 			} catch ( LinkException ex ) {
 
@@ -329,14 +422,14 @@ public class Worker implements WorkerMBean {
 	}
 
 
-	private void interfacesADD( List< Interface > ports ) throws ActionException {
+	private void interfacesADD( List< Interface > interfaces ) throws ActionException {
 
-		for ( Interface p : ports ) {
+		for ( Interface i : interfaces ) {
 
 			try {
 
-				if ( p.getEndpoint() instanceof Switch ) {
-					vNicManager.create( new VNic( interfaceName( p ), TEMPORARY, switchName( ( Switch ) p.getEndpoint() ) ) );
+				if ( i.getEndpoint() instanceof Switch ) {
+					vNicManager.create( new VNic( interfaceName( i ), TEMPORARY, switchName( ( Switch ) i.getEndpoint() ) ) );
 				} else {
 					// TODO what to do now?
 				}
@@ -356,8 +449,9 @@ public class Worker implements WorkerMBean {
 		return s.getProjectId() + SEP + s.getResourceId();
 	}
 
-	private String interfaceName( Interface p ) {
-		return p.getProjectId() + SEP + p.getResourceId();
+	// TODO-DAWID: v add ApplianceId
+	private String interfaceName( Interface iface ) {
+		return iface.getProjectId() + SEP + iface.getResourceId();
 	}
 
 	private String policyName( Policy p ) {
@@ -365,10 +459,28 @@ public class Worker implements WorkerMBean {
 	}
 
 
+	/*
+	 * JConsole only
+	 */
+
+	@Override
+	public void _discover() {
+		discover();
+	}
+
+
 	/**
 	 * The separator used in entities' names (e.g. MYPROJECT..SWITCH..0)
 	 */
 	public final static String SEP = "..";
+
+	private final static String REG_SEP = "\\.\\.";
+	private final static String REG_PROJECT_ID = "[a-zA-Z](?:(?:\\.[a-zA-Z])|(?:[a-zA-Z]))*";  // TODO
+	private final static String REG_RESOURCE_ID = "[a-zA-Z]+[0-9]+";  // TODO
+
+	private final static String REG_SWITCH_NAME = "(" + REG_PROJECT_ID + ")" + REG_SEP + "(" + REG_RESOURCE_ID + ")";
+	private final static String REG_INTERFACE_NAME =
+		"(" + REG_PROJECT_ID + ")" + REG_SEP + "[a-zA-Z]+" + REG_SEP + "(" + REG_RESOURCE_ID + ")";
 
 	private final VNicManagerMBean vNicManager;
 	private final EtherstubManagerMBean etherstubManager;

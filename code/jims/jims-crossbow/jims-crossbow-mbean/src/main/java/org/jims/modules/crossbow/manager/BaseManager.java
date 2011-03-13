@@ -44,10 +44,4 @@ public abstract class BaseManager {
         
     }
 
-     /**
-     * Constructor for tests purposes
-     */
-    public BaseManager(boolean test) {
-        
-    }
 }
