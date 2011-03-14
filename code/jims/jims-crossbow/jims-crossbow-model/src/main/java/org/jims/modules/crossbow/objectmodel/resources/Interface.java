@@ -59,14 +59,15 @@ public class Interface extends Endpoint{
         return ipAddress;
     }
 
-		public Endpoint getEndpoint() {
-			return endpoint;
-		}
+	public Endpoint getEndpoint() {
+		return endpoint;
+	}
 
-		public void setEndpoint(Endpoint endpoint) {
-			this.endpoint = endpoint;
+	public void setEndpoint(Endpoint endpoint) {
+		this.endpoint = endpoint;
+		if(endpoint != null)
 			endpoint.update( this );
-		}
+	}
 
 		@Override
 		public void update( Endpoint e ) {

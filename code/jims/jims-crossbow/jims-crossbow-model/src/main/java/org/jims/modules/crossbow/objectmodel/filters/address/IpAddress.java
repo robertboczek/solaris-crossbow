@@ -55,4 +55,13 @@ public class IpAddress implements Serializable {
         this.address = address;
     }
 
+    /**
+     * Returns String representation of address
+     *
+     * @return String representation of address
+     */
+    public String toString() {
+	return address + "/" + netmask;
+    }
+
 }

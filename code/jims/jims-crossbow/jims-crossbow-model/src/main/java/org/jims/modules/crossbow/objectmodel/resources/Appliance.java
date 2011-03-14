@@ -3,6 +3,7 @@ package org.jims.modules.crossbow.objectmodel.resources;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Appliance Node
@@ -61,9 +62,18 @@ public class Appliance extends Resource {
 		return type;
 	}
 
+	public void setInterfaces(List< Interface > interfaces) {
+		this.interfaces = interfaces;
+	}
+
+	public UUID getUUID(){
+		return this.uuid;
+	}
+
 
 	private ApplianceType type;
 	private String repoId;
 	private List< Interface > interfaces = new LinkedList< Interface >();
+	private UUID uuid = UUID.randomUUID();
 
 }

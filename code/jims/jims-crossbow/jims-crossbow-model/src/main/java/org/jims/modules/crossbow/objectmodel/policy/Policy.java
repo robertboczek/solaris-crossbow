@@ -2,6 +2,7 @@
 package org.jims.modules.crossbow.objectmodel.policy;
 
 import java.io.Serializable;
+import java.util.UUID;
 import org.jims.modules.crossbow.objectmodel.filters.Filter;
 import org.jims.modules.crossbow.objectmodel.resources.Interface;
 
@@ -51,9 +52,18 @@ public abstract class Policy implements Serializable {
 			return name;
 		}
 
+		public UUID getUUID() {
+			return uuid;
+		}
+
+		public String toString() {
+			return this.name;
+		}
+
 
 		private String name;
 		private Interface iface;
 		private Filter filter;
+		private UUID uuid = UUID.randomUUID();
 
 }
