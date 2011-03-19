@@ -14,6 +14,7 @@ import org.jims.modules.crossbow.infrastructure.supervisor.Supervisor;
 import org.jims.modules.crossbow.infrastructure.worker.Worker;
 import org.jims.modules.crossbow.link.VNicManagerMBean;
 import org.jims.modules.crossbow.zones.ZoneCopierMBean;
+import org.jims.modules.solaris.commands.SolarisCommandFactory;
 
 
 /**
@@ -76,7 +77,8 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 
 		// Register MBeans.
 
-		Worker worker = new Worker( vnicManager, etherstubManager, flowManager, zoneCopier );
+		Worker worker = new Worker( vnicManager, etherstubManager, flowManager,
+		                            zoneCopier, SolarisCommandFactory.getFactory( SolarisCommandFactory.SOLARIS10 ) );
 
 		server.registerMBean( worker, new ObjectName( "Crossbow:type=XBowWorker" ) );
 

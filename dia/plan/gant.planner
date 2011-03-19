@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="" company="" manager="" phase="" project-start="20110111T000000Z" mrproject-version="2" calendar="2">
+<project name="" company="" manager="" phase="" project-start="20110301T000000Z" mrproject-version="2" calendar="1">
   <properties/>
   <phases/>
   <calendars>
@@ -8,16 +8,7 @@
       <day-type id="1" name="Nonworking" description="Domy&#x15B;lny dzie&#x144; wolny"/>
       <day-type id="2" name="U&#x17C;ycie podstawy" description="Use day from base calendar"/>
     </day-types>
-    <calendar id="1" name="8/7">
-      <default-week mon="0" tue="0" wed="0" thu="0" fri="0" sat="0" sun="0"/>
-      <overridden-day-types>
-        <overridden-day-type id="0">
-          <interval start="0800" end="1700"/>
-        </overridden-day-type>
-      </overridden-day-types>
-      <days/>
-    </calendar>
-    <calendar id="2" name="Domy&#x15B;lny">
+    <calendar id="1" name="Domy&#x15B;lny">
       <default-week mon="0" tue="0" wed="0" thu="0" fri="0" sat="1" sun="1"/>
       <overridden-day-types>
         <overridden-day-type id="0">
@@ -27,63 +18,68 @@
       </overridden-day-types>
       <days/>
     </calendar>
+    <calendar id="2" name="8/7">
+      <default-week mon="0" tue="0" wed="0" thu="0" fri="0" sat="0" sun="0"/>
+      <overridden-day-types>
+        <overridden-day-type id="0">
+          <interval start="0800" end="1700"/>
+        </overridden-day-type>
+      </overridden-day-types>
+      <days/>
+    </calendar>
   </calendars>
   <tasks>
-    <task id="1" name="Koncepcja dzia&#x142;ania mappera - jak wprowadza&#x107; zmiany w strukturze" note="" work="28800" start="20110111T000000Z" end="20110111T170000Z" work-start="20110111T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
-    <task id="2" name="SupervisorMBean" note="" work="57600" start="20110111T000000Z" end="20110112T170000Z" work-start="20110111T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
-    <task id="3" name="WorkerMBean" note="tworzenie struktury + wprowadzanie ewentualnych zmian" work="259200" start="20110111T000000Z" end="20110117T170000Z" work-start="20110111T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
-      <task id="4" name="Architektura i szkielet implementacji" note="" work="57600" start="20110111T000000Z" end="20110112T170000Z" work-start="20110111T080000Z" percent-complete="70" priority="0" type="normal" scheduling="fixed-work"/>
-      <task id="5" name="Zony + NFS" note="wto 11 sty 2011, 01:10&#10;Tworzenie, Uruchamianie, Od&#x142;&#x105;czanie zonek + sk&#x142;adowanie i odzyskiwanie ich z serwera NFS" work="28800" start="20110111T000000Z" end="20110111T170000Z" work-start="20110111T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
-        <task id="6" name="ZoneCopierMBean" note="wto 11 sty 2011, 01:11&#10;Dodanie MBean'a kopiuj&#x105;cego zonke z lokalnie podmontowanego serwera NFS do puli zonek." work="28800" start="20110111T000000Z" end="20110111T170000Z" work-start="20110111T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+    <task id="1" name="Koncepcja dzia&#x142;ania mappera - jak wprowadza&#x107; zmiany w strukturze" note="" work="28800" start="20110301T000000Z" end="20110301T120000Z" work-start="20110301T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+    <task id="2" name="SupervisorMBean" note="" work="57600" start="20110301T000000Z" end="20110302T170000Z" work-start="20110301T080000Z" percent-complete="40" priority="0" type="normal" scheduling="fixed-work"/>
+    <task id="3" name="AssignerMBean" note="" work="28800" start="20110301T000000Z" end="20110301T170000Z" work-start="20110301T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+    <task id="4" name="WorkerMBean" note="tworzenie struktury + wprowadzanie ewentualnych zmian" work="172800" start="20110301T000000Z" end="20110302T170000Z" work-start="20110301T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <task id="5" name="Architektura i szkielet implementacji" note="" work="57600" start="20110301T000000Z" end="20110302T170000Z" work-start="20110301T080000Z" percent-complete="80" priority="0" type="normal" scheduling="fixed-work"/>
+      <task id="6" name="Zony + NFS" note="wto 11 sty 2011, 01:10&#10;Tworzenie, Uruchamianie, Od&#x142;&#x105;czanie zonek + sk&#x142;adowanie i odzyskiwanie ich z serwera NFS" work="28800" start="20110301T000000Z" end="20110301T170000Z" work-start="20110301T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+        <task id="7" name="ZoneCopierMBean" note="wto 11 sty 2011, 01:11&#10;Dodanie MBean'a kopiuj&#x105;cego zonke z lokalnie podmontowanego serwera NFS do puli zonek." work="28800" start="20110301T000000Z" end="20110301T170000Z" work-start="20110301T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
       </task>
-      <task id="7" name="Opracowanie modelu obiektowego" note="wto 11 sty 2011, 01:00&#10;Model obiektowy opisuj&#x105;cy struktur&#x119; na w&#x119;&#x17A;le i akcje (ADD, REM, UPD).&#10;" work="57600" start="20110111T000000Z" end="20110111T170000Z" work-start="20110111T080000Z" percent-complete="80" priority="0" type="normal" scheduling="fixed-work"/>
-      <task id="8" name="Implementacja XBowMapper" note="" work="86400" start="20110111T170000Z" end="20110114T170000Z" work-start="20110112T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
-        <predecessors>
-          <predecessor id="1" predecessor-id="4" type="SS"/>
-          <predecessor id="1" predecessor-id="7" type="FS"/>
-        </predecessors>
-      </task>
-      <task id="9" name="Implementacja XBowWorker" note="" work="28800" start="20110114T170000Z" end="20110117T170000Z" work-start="20110117T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <task id="8" name="Opracowanie modelu obiektowego" note="wto 11 sty 2011, 01:00&#10;Model obiektowy opisuj&#x105;cy struktur&#x119; na w&#x119;&#x17A;le i akcje (ADD, REM, UPD).&#10;" work="57600" start="20110301T000000Z" end="20110301T170000Z" work-start="20110301T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work"/>
+      <task id="9" name="Implementacja XBowWorker" note="" work="28800" start="20110301T170000Z" end="20110302T170000Z" work-start="20110302T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
         <predecessors>
           <predecessor id="1" predecessor-id="8" type="FS"/>
         </predecessors>
       </task>
     </task>
-    <task id="10" name="Prezentacja 1." note="&#x15B;ro 12 sty 2011, 02:06&#10;Nakarmienie Workera modelem obiektowym i stworzenie&#10;struktury na pojedynczym w&#x119;&#x17A;le." work="0" start="20110117T170000Z" end="20110117T170000Z" work-start="20110117T170000Z" percent-complete="0" priority="0" type="milestone" scheduling="fixed-work">
+    <task id="10" name="Prezentacja 1." note="&#x15B;ro 12 sty 2011, 02:06&#10;Nakarmienie Workera modelem obiektowym i stworzenie&#10;struktury na pojedynczym w&#x119;&#x17A;le." work="0" start="20110302T170000Z" end="20110302T170000Z" work-start="20110302T170000Z" percent-complete="0" priority="0" type="milestone" scheduling="fixed-work">
       <predecessors>
         <predecessor id="1" predecessor-id="9" type="FS"/>
-        <predecessor id="1" predecessor-id="6" type="FS"/>
+        <predecessor id="1" predecessor-id="7" type="FS"/>
       </predecessors>
     </task>
-    <task id="11" name="GUI" note="" work="230400" start="20110111T000000Z" end="20110117T170000Z" work-start="20110111T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
-      <task id="12" name="Zapoznanie z Eclipse RCP" note="" work="144000" start="20110111T000000Z" end="20110117T170000Z" work-start="20110111T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
-      <task id="13" name="Skociorowe RCP" note="wto 11 sty 2011, 01:25&#10;Czy mo&#x17C;emy co&#x15B; stamt&#x105;d wyci&#x105;gn&#x105;&#x107;." work="28800" start="20110111T000000Z" end="20110111T170000Z" work-start="20110111T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
-      <task id="14" name="RCP GUI" note="" work="57600" start="20110111T170000Z" end="20110113T170000Z" work-start="20110112T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
-        <predecessors>
-          <predecessor id="1" predecessor-id="13" type="FS"/>
-        </predecessors>
-        <task id="15" name="Projekt (papier)" note="" work="57600" start="20110111T170000Z" end="20110113T170000Z" work-start="20110112T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
-      </task>
+    <task id="11" name="GUI" note="" work="57600" start="20110301T000000Z" end="20110302T170000Z" work-start="20110301T080000Z" percent-complete="60" priority="0" type="normal" scheduling="fixed-work"/>
+    <task id="12" name="Spi&#x119;cie GUI i Supervisora" note="" work="28800" start="20110301T000000Z" end="20110301T170000Z" work-start="20110301T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <predecessors>
+        <predecessor id="1" predecessor-id="11" type="SS"/>
+        <predecessor id="1" predecessor-id="2" type="SS"/>
+      </predecessors>
     </task>
-    <task id="16" name="Virtual Appliance Repo" note="" work="28800" start="20110111T000000Z" end="20110111T170000Z" work-start="20110111T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
-      <task id="17" name="Zestawienie - serwer + klienty" note="" work="28800" start="20110111T000000Z" end="20110111T170000Z" work-start="20110111T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+    <task id="13" name="Virtual Appliance Repo" note="" work="28800" start="20110301T000000Z" end="20110301T170000Z" work-start="20110301T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <task id="14" name="Zestawienie - serwer + klienty" note="" work="28800" start="20110301T000000Z" end="20110301T170000Z" work-start="20110301T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
     </task>
-    <task id="18" name="Instalacja jims'a na dostarczonych maszynach z solarisem 11" note="" work="57600" start="20110112T000000Z" end="20110113T170000Z" work-start="20110112T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+    <task id="15" name="Instalacja jims'a na dostarczonych maszynach z solarisem 11" note="" work="57600" start="20110301T000000Z" end="20110302T170000Z" work-start="20110301T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
       <constraint type="start-no-earlier-than" time="20110112T000000Z"/>
     </task>
-    <task id="19" name="Case Study Candidate: Glashfish" note="jako serwisy dzialajace na zonkach" work="28800" start="20110111T000000Z" end="20110111T170000Z" work-start="20110111T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
-    <task id="20" name="Case Study Candidate: 2 (or 3)-phase computation" note="&#x15B;ro 12 sty 2011, 02:13&#10;Z cz&#x119;&#x15B;ciow&#x105; rekonfiguracj&#x105; infrastruktury pomi&#x119;dzy fazami." work="28800" start="20110111T000000Z" end="20110111T170000Z" work-start="20110111T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
-    <task id="21" name="maven-nar-plugin + cmockery" note="Poprawka w maven-nar-plugin (nielinkowanie cmockery do release) albo profil dla odpalania test&#xF3;w natywnych." work="28800" start="20110111T000000Z" end="20110111T170000Z" work-start="20110111T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+    <task id="16" name="Case Study Candidate: Glashfish" note="jako serwisy dzialajace na zonkach" work="28800" start="20110301T000000Z" end="20110301T170000Z" work-start="20110301T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+    <task id="17" name="Case Study Candidate: 2 (or 3)-phase computation" note="&#x15B;ro 12 sty 2011, 02:13&#10;Z cz&#x119;&#x15B;ciow&#x105; rekonfiguracj&#x105; infrastruktury pomi&#x119;dzy fazami." work="28800" start="20110301T000000Z" end="20110301T170000Z" work-start="20110301T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+    <task id="18" name="Case Study Candidate: Multimedia server" note="" work="28800" start="20110301T000000Z" end="20110301T170000Z" work-start="20110301T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
+    <task id="19" name="maven-nar-plugin + cmockery" note="Poprawka w maven-nar-plugin (nielinkowanie cmockery do release) albo profil dla odpalania test&#xF3;w natywnych." work="28800" start="20110301T000000Z" end="20110301T170000Z" work-start="20110301T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
   </tasks>
   <resource-groups/>
   <resources>
-    <resource id="1" name="Robert" short-name="" type="1" units="0" email="" note="" std-rate="0"/>
-    <resource id="2" name="Dawid" short-name="" type="1" units="0" email="" note="" std-rate="0"/>
+    <resource id="1" name="Dawid" short-name="" type="1" units="0" email="" note="" std-rate="0"/>
+    <resource id="2" name="Robert" short-name="" type="1" units="0" email="" note="" std-rate="0"/>
   </resources>
   <allocations>
-    <allocation task-id="7" resource-id="1" units="100"/>
-    <allocation task-id="6" resource-id="1" units="100"/>
+    <allocation task-id="1" resource-id="1" units="100"/>
+    <allocation task-id="8" resource-id="1" units="100"/>
+    <allocation task-id="5" resource-id="1" units="100"/>
+    <allocation task-id="1" resource-id="2" units="100"/>
+    <allocation task-id="11" resource-id="2" units="100"/>
+    <allocation task-id="8" resource-id="2" units="100"/>
     <allocation task-id="7" resource-id="2" units="100"/>
-    <allocation task-id="4" resource-id="2" units="100"/>
   </allocations>
 </project>

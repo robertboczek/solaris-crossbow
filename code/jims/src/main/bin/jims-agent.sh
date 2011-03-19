@@ -434,6 +434,8 @@ fi
 if [ $JIMS_REGISTRY -gt 1 ]
 then
 	JAR_LIST="$JAR_LIST saaj-api-2.1.3.jar saaj-impl-2.1.3.jar jmxws-ea3.0.0.jar xercesImpl-2.8.1.jar activation-2.1.3.jar http-2.1.3.jar jaxb-impl-2.1.3.jar jaxws-api-2.1.3.jar jaxws-tools-2.1.3.jar jsr181-api-2.1.3.jar resolver-2.1.3.jar FastInfoset-2.1.3.jar jaxb-api-2.1.3.jar jaxb-xjc-2.1.3.jar jaxws-rt-2.1.3.jar jsr173_api-2.1.3.jar jsr250-api-2.1.3.jar sjsxp-2.1.3.jar wiseman-core-1.0.0.jar streambuffer-2.1.3.jar stax-ex-2.1.3.jar jna-3.2.7.jar"
+
+	JAR_LIST="$JAR_LIST jims-solaris-base-3.0.0.jar jims-solaris-model-3.0.0.jar"
 fi
 
 amount=0

@@ -1,5 +1,6 @@
 package org.jims.modules.crossbow.infrastructure.worker;
 
+import org.junit.Ignore;
 import org.jims.modules.crossbow.enums.LinkProperties;
 import org.jims.modules.crossbow.etherstub.EtherstubMBean;
 import org.jims.modules.crossbow.etherstub.EtherstubManagerMBean;
@@ -14,6 +15,7 @@ import org.jims.modules.crossbow.link.VNicManagerMBean;
 import org.jims.modules.crossbow.objectmodel.Assignments;
 import org.jims.modules.crossbow.objectmodel.ObjectModel;
 import org.jims.modules.crossbow.objectmodel.policy.PriorityPolicy;
+import org.jims.modules.solaris.commands.SolarisCommandFactory;
 import org.junit.Before;
 import org.junit.Test;
 import static org.mockito.Mockito.*;
@@ -34,8 +36,9 @@ public class BasicWorkerTest {
 		etherstubManager = mock( EtherstubManagerMBean.class );
 		vNicManager = mock( VNicManagerMBean.class );
 		flowManager = mock( FlowManagerMBean.class );
+		commandFactory = mock( SolarisCommandFactory.class );
 
-		worker = new Worker( vNicManager, etherstubManager, null, null );
+		worker = new Worker( vNicManager, etherstubManager, null, null, commandFactory );
 
 	}
 
@@ -94,5 +97,6 @@ public class BasicWorkerTest {
 	private EtherstubManagerMBean etherstubManager;
 	private VNicManagerMBean vNicManager;
 	private FlowManagerMBean flowManager;
+	private SolarisCommandFactory commandFactory;
 
 }

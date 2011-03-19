@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
+import org.jims.agent.exception.CommandException;
+import org.jims.model.solaris.solaris10.ZoneInfo;
 import org.jims.modules.crossbow.enums.LinkProperties;
 import org.jims.modules.crossbow.etherstub.Etherstub;
 import org.jims.modules.crossbow.etherstub.EtherstubManagerMBean;
@@ -34,9 +36,13 @@ import org.jims.modules.crossbow.objectmodel.filters.address.IpAddress;
 import org.jims.modules.crossbow.objectmodel.policy.BandwidthPolicy;
 import org.jims.modules.crossbow.objectmodel.policy.Policy;
 import org.jims.modules.crossbow.objectmodel.policy.PriorityPolicy;
+import org.jims.modules.crossbow.objectmodel.resources.Appliance;
+import org.jims.modules.crossbow.objectmodel.resources.ApplianceType;
 import org.jims.modules.crossbow.objectmodel.resources.Interface;
 import org.jims.modules.crossbow.objectmodel.resources.Switch;
 import org.jims.modules.crossbow.zones.ZoneCopierMBean;
+import org.jims.modules.solaris.commands.CreateZoneFromSnapshotCommand;
+import org.jims.modules.solaris.commands.SolarisCommandFactory;
 
 
 /**
@@ -48,12 +54,14 @@ public class Worker implements WorkerMBean {
 	// TODO mechanizm wycofywania zmian w przypadku bledu
 
 	public Worker( VNicManagerMBean vNicManager, EtherstubManagerMBean etherstubManager,
-	               FlowManagerMBean flowManager, ZoneCopierMBean zoneCopier ) {
+	               FlowManagerMBean flowManager, ZoneCopierMBean zoneCopier, SolarisCommandFactory commandFactory ) {
 
 		this.vNicManager = vNicManager;
 		this.etherstubManager = etherstubManager;
 		this.flowManager = flowManager;
 		this.zoneCopier = zoneCopier;
+
+		this.commandFactory = commandFactory;
 
 	}
 
@@ -95,7 +103,7 @@ public class Worker implements WorkerMBean {
 		interfacesADD( extractByType( resources, Interface.class ) );
 		policiesADD( extractByType( resources, Policy.class ) );
 
-		// machinesADD( extractByType( resources, Machine.class ) );
+		appliancesADD( extractByType( resources, Appliance.class ) );
 
 	}
 
@@ -445,6 +453,46 @@ public class Worker implements WorkerMBean {
 	}
 
 
+	private void appliancesADD( List< Appliance > appliances ) throws ActionException {
+
+		CreateZoneFromSnapshotCommand cmd = null;
+
+		try {
+			cmd = commandFactory.getCreateZoneFromSnapshotCommand();
+		} catch ( CommandException ex ) {
+			throw new ActionException( "Appliance ADD error", ex );
+		}
+
+		for ( Appliance app : appliances ) {
+
+			if ( ApplianceType.MACHINE.equals( app.getType() ) ) {
+
+				try {
+
+					ZoneInfo zoneInfo = new ZoneInfo();
+
+					zoneInfo.setName( machineName( app ) );
+					zoneInfo.setAddress( "192.168.13.13" );  // TODO-DAWID
+					zoneInfo.setPhysical( "e1000g0" );       //   --||--
+					zoneInfo.setAutoboot( false );
+					zoneInfo.setZfsPool( "rpool/Appliances" );
+					zoneInfo.setPool( null );
+
+					cmd.createZone( zoneInfo, "/appliance/" + app.getRepoId() );
+
+				} catch ( CommandException ex ) {
+
+					throw new ActionException( "Appliance ADD error", ex );
+
+				}
+
+			}
+
+		}
+
+	}
+
+
 	private String switchName( Switch s ) {
 		return s.getProjectId() + SEP + s.getResourceId();
 	}
@@ -456,6 +504,10 @@ public class Worker implements WorkerMBean {
 
 	private String policyName( Policy p ) {
 		return p.getInterface().getProjectId() + SEP + p.getInterface().getResourceId() + SEP + p.getName();
+	}
+
+	private String machineName( Appliance a ) {
+		return a.getProjectId() + SEP + a.getResourceId();
 	}
 
 
@@ -486,6 +538,8 @@ public class Worker implements WorkerMBean {
 	private final EtherstubManagerMBean etherstubManager;
 	private final FlowManagerMBean flowManager;
 	private final ZoneCopierMBean zoneCopier;
+
+	private final SolarisCommandFactory commandFactory;
 
 	private final boolean TEMPORARY = false;
 

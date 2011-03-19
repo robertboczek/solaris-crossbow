@@ -1,5 +1,7 @@
 package org.jims.modules.crossbow.infrastructure.worker;
 
+import org.jims.model.solaris.solaris10.ZoneInfo;
+import org.junit.Ignore;
 import org.jims.modules.crossbow.etherstub.EtherstubMBean;
 import org.jims.modules.crossbow.zones.ZoneCopierMBean;
 import org.jims.modules.crossbow.flow.FlowManagerMBean;
@@ -13,6 +15,8 @@ import org.jims.modules.crossbow.objectmodel.resources.Appliance;
 import org.jims.modules.crossbow.objectmodel.resources.ApplianceType;
 import org.jims.modules.crossbow.objectmodel.resources.Interface;
 import org.jims.modules.crossbow.objectmodel.resources.Switch;
+import org.jims.modules.solaris.commands.CreateZoneFromSnapshotCommand;
+import org.jims.modules.solaris.commands.SolarisCommandFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -34,14 +38,19 @@ public class WorkerTest {
 		etherstubManager = mock( EtherstubManagerMBean.class );
 		flowManager = mock( FlowManagerMBean.class );
 		ZoneCopierMBean zoneCopier = mock( ZoneCopierMBean.class );
+		commandFactory = mock( SolarisCommandFactory.class );
 
-		worker = new Worker( vNicManager, etherstubManager, flowManager, zoneCopier );
+		worker = new Worker( vNicManager, etherstubManager, flowManager, zoneCopier, commandFactory );
 
 	}
 
 
 	@Test
 	public void testSimpleModelInstantiation() throws Exception {
+
+		CreateZoneFromSnapshotCommand cmd = mock( CreateZoneFromSnapshotCommand.class );
+
+		when( commandFactory.getCreateZoneFromSnapshotCommand() ).thenReturn( cmd );
 
 		/*
 		 * M -- S
@@ -77,6 +86,7 @@ public class WorkerTest {
 
 		verify( etherstubManager ).create( etherstub.capture() );
 		verify( vNicManager ).create( vnic.capture() );
+		verify( cmd ).createZone( ( ZoneInfo ) anyObject(), anyString() );
 
 		assertEquals( etherstubId, etherstub.getValue().getName() );
 		assertEquals( etherstubId, vnic.getValue().getParent() );
@@ -88,6 +98,7 @@ public class WorkerTest {
 	private VNicManagerMBean vNicManager;
 	private EtherstubManagerMBean etherstubManager;
 	private FlowManagerMBean flowManager;
+	private SolarisCommandFactory commandFactory;
 
 	private String projectId = "MYPROJECT";
 	private Worker worker;

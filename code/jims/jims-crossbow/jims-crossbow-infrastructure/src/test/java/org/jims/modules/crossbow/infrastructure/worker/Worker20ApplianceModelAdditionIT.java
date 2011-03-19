@@ -11,18 +11,15 @@ import org.junit.Test;
  *
  * @author cieplik
  */
-public class Worker10SimpleQosModelAdditionIT extends WorkerITBase {
+public class Worker20ApplianceModelAdditionIT extends WorkerITBase {
 
 	@Test
 	public void go() throws Exception {
 
-		ObjectModel model = ModelHelper.getSimpleQosModel( projectId, SEP );
+		ObjectModel model = ModelHelper.getApplianceModel( projectId, SEP );
 
 		Actions actions = new Actions();
-
-		actions.insert( model.getSwitches().get( 0 ), Actions.ACTION.ADD );
-		actions.insert( model.getPorts().get( 0 ), Actions.ACTION.ADD );
-		actions.insert( model.getPolicies().get( 0 ), Actions.ACTION.ADD );
+		actions.insert( model.getAppliances().get( 0 ), Actions.ACTION.ADD );
 
 		worker.instantiate( model, actions, new Assignments() );
 

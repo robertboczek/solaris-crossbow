@@ -77,4 +77,17 @@ public class ModelHelper {
 
 	}
 
+
+	public static ObjectModel getApplianceModel( String projectId, String SEP ) {
+
+		Appliance app = new Appliance( "MY.SERVER", projectId, ApplianceType.MACHINE );
+		app.setRepoId( "dummy" );
+
+		ObjectModel model = new ObjectModel();
+		model.register( app );
+
+		return model;
+
+	}
+
 }

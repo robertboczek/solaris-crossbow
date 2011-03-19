@@ -60,6 +60,12 @@
 
 		<dependency>
 			<groupId>jims</groupId>
+			<artifactId>jims-solaris-base</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>jims</groupId>
 			<artifactId>jims-crossbow-model</artifactId>
 			<version>3.0.0</version>
 		</dependency>
