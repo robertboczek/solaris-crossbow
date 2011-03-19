@@ -7,8 +7,17 @@
 
 <mlet
 	code="org.jims.modules.crossbow.infrastructure.CrossbowStarter"
-	archive="jims-crossbow-package-3.0.0.jar"
+	archive="jims-crossbow-package-3.0.0.jar, jims-solaris-base-3.0.0.jar, jims-solaris-model-3.0.0.jar"
 	name="Crossbow:type=CrossbowInfrastructureStarter"
+	version="1.0">
+</mlet>
+
+<mlet
+	code="org.jims.modules.solaris.solaris10.mbeans.ZoneAgent"
+	archive="jims-sunos-x86-3.0.0.jar, jims-common-solaris-x86-3.0.0.jar, 
+	         jims-solaris-persistence-3.0.0.jar, jims-solaris-persistence-model-3.0.0.jar,
+	         commons-collections-3.1.jar, dom4j-1.6.1.jar,antlr-2.7.7.jar"
+	name="Management:class=Solaris10Management"
 	version="1.0">
 </mlet>
 

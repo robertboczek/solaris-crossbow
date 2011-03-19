@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
@@ -42,6 +43,7 @@ import org.jims.modules.crossbow.objectmodel.resources.Interface;
 import org.jims.modules.crossbow.objectmodel.resources.Switch;
 import org.jims.modules.crossbow.zones.ZoneCopierMBean;
 import org.jims.modules.solaris.commands.CreateZoneFromSnapshotCommand;
+import org.jims.modules.solaris.commands.RemoveZoneCommand;
 import org.jims.modules.solaris.commands.SolarisCommandFactory;
 
 
@@ -88,7 +90,7 @@ public class Worker implements WorkerMBean {
 
 	private void instantiateREM( List< Object > resources ) throws ActionException {
 
-		// machinesREM( extractByType( resources, Machine.class ) );
+		appliancesREM( extractByType( resources, Appliance.class ) );
 
 		policiesREM( extractByType( resources, Policy.class ) );
 		interfacesREM( extractByType( resources, Interface.class ) );
@@ -446,6 +448,29 @@ public class Worker implements WorkerMBean {
 
 				throw new ActionException( "Interface ADD error", ex );
 
+			}
+
+		}
+
+	}
+
+
+	private void appliancesREM( List< Appliance > appliances ) throws ActionException {
+
+		RemoveZoneCommand cmd = null;
+
+		try {
+			cmd = commandFactory.getRemoveZoneCommand();
+		} catch ( CommandException ex ) {
+			throw new ActionException( "Appliance REM error", ex );
+		}
+
+		for ( Appliance app : appliances ) {
+
+			try {
+				cmd.removeZone( new ZoneInfo( machineName( app ) ) );
+			} catch ( CommandException ex ) {
+				throw new ActionException( "Appliance REM error", ex );
 			}
 
 		}
