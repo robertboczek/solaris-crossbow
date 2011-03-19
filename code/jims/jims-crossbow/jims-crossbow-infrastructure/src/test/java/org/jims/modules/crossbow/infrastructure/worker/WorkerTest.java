@@ -1,7 +1,6 @@
 package org.jims.modules.crossbow.infrastructure.worker;
 
 import org.jims.model.solaris.solaris10.ZoneInfo;
-import org.junit.Ignore;
 import org.jims.modules.crossbow.etherstub.EtherstubMBean;
 import org.jims.modules.crossbow.zones.ZoneCopierMBean;
 import org.jims.modules.crossbow.flow.FlowManagerMBean;
@@ -56,7 +55,7 @@ public class WorkerTest {
 		 * M -- S
 		 */
 
-		String machineId = "MYSQL", portId = machineId + SEP + "LINK0", switchId = "SWITCH";
+		String machineId = "MYSQL", portId = "LINK0", switchId = "SWITCH";
 		String etherstubId = projectId + SEP + switchId;
 
 		Appliance m = new Appliance( machineId, projectId, ApplianceType.MACHINE );
@@ -90,7 +89,7 @@ public class WorkerTest {
 
 		assertEquals( etherstubId, etherstub.getValue().getName() );
 		assertEquals( etherstubId, vnic.getValue().getParent() );
-		assertEquals( projectId + SEP + portId, vnic.getValue().getName() );
+		assertEquals( projectId + SEP + machineId + SEP + portId, vnic.getValue().getName() );
 
 	}
 

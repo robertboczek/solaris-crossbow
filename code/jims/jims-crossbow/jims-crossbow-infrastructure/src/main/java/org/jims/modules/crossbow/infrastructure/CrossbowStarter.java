@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import org.jims.modules.crossbow.etherstub.EtherstubManagerMBean;
 import org.jims.modules.crossbow.flow.FlowManagerMBean;
 import org.jims.modules.crossbow.infrastructure.assigner.Assigner;
+import org.jims.modules.crossbow.infrastructure.gatherer.StatisticsGatherer;
 import org.jims.modules.crossbow.infrastructure.supervisor.Supervisor;
 import org.jims.modules.crossbow.infrastructure.worker.Worker;
 import org.jims.modules.crossbow.link.VNicManagerMBean;
@@ -82,6 +83,12 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 
 		server.registerMBean( worker, new ObjectName( "Crossbow:type=XBowWorker" ) );
 
+		// StatisticsGatherer MBean
+
+		StatisticsGatherer gatherer = new StatisticsGatherer();
+		gatherer.setvNicManager( vnicManager );
+
+		server.registerMBean( gatherer, new ObjectName( "Crossbow:type=StatisticsGatherer" ) );
 
 		// Supervisor MBean
 

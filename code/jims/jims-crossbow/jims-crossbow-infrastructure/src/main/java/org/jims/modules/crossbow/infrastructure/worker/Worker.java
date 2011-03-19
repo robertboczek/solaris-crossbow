@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
@@ -261,7 +260,7 @@ public class Worker implements WorkerMBean {
 
 				try {
 
-					VNicMBean vnic = vNicManager.getByName( interfaceName( policy.getInterface() ) );
+					VNicMBean vnic = vNicManager.getByName( NameHelper.interfaceName( policy.getInterface() ) );
 
 					LinkProperties property = null;
 
@@ -284,7 +283,7 @@ public class Worker implements WorkerMBean {
 			} else {
 
 				try {
-					flowManager.remove( policyName( policy ), TEMPORARY );
+					flowManager.remove( NameHelper.policyName( policy ), TEMPORARY );
 				} catch ( XbowException ex ) {
 					throw new ActionException( "Policy REM error", ex );
 				}
@@ -308,7 +307,7 @@ public class Worker implements WorkerMBean {
 
 				try {
 
-					VNicMBean vnic = vNicManager.getByName( interfaceName( p.getInterface() ) );
+					VNicMBean vnic = vNicManager.getByName( NameHelper.interfaceName( p.getInterface() ) );
 
 					if ( p instanceof PriorityPolicy ) {
 						vnic.setProperty( LinkProperties.PRIORITY, ( ( PriorityPolicy ) p ).getPriorityAsString() );
@@ -363,7 +362,7 @@ public class Worker implements WorkerMBean {
 				}
 
 				try {
-					flowManager.create( new Flow( policyName( p ), attrs, props, interfaceName( p.getInterface() ), TEMPORARY ) );
+					flowManager.create( new Flow( NameHelper.policyName( p ), attrs, props, NameHelper.interfaceName( p.getInterface() ), TEMPORARY ) );
 				} catch ( XbowException ex ) {
 					throw new ActionException( "Policy ADD error", ex );
 				}
@@ -419,7 +418,7 @@ public class Worker implements WorkerMBean {
 
 			try {
 
-				vNicManager.delete( interfaceName( i ), TEMPORARY );
+				vNicManager.delete( NameHelper.interfaceName( i ), TEMPORARY );
 
 			} catch ( LinkException ex ) {
 
@@ -439,7 +438,7 @@ public class Worker implements WorkerMBean {
 			try {
 
 				if ( i.getEndpoint() instanceof Switch ) {
-					vNicManager.create( new VNic( interfaceName( i ), TEMPORARY, switchName( ( Switch ) i.getEndpoint() ) ) );
+					vNicManager.create( new VNic( NameHelper.interfaceName( i ), TEMPORARY, switchName( ( Switch ) i.getEndpoint() ) ) );
 				} else {
 					// TODO what to do now?
 				}
@@ -520,15 +519,6 @@ public class Worker implements WorkerMBean {
 
 	private String switchName( Switch s ) {
 		return s.getProjectId() + SEP + s.getResourceId();
-	}
-
-	// TODO-DAWID: v add ApplianceId
-	private String interfaceName( Interface iface ) {
-		return iface.getProjectId() + SEP + iface.getResourceId();
-	}
-
-	private String policyName( Policy p ) {
-		return p.getInterface().getProjectId() + SEP + p.getInterface().getResourceId() + SEP + p.getName();
 	}
 
 	private String machineName( Appliance a ) {

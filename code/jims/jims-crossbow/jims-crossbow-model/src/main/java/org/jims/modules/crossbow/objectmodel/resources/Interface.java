@@ -11,7 +11,7 @@ import org.jims.modules.crossbow.objectmodel.filters.address.IpAddress;
  * 
  * @author robert boczek
  */
-public class Interface extends Endpoint{
+public class Interface extends Endpoint {
 
     public Interface(String resourceId, String projectId) {
         super(resourceId, projectId);
@@ -69,6 +69,22 @@ public class Interface extends Endpoint{
 			endpoint.update( this );
 	}
 
+	public Appliance getAppliance() {
+		return appliance;
+	}
+
+	public void setAppliance( Appliance appliance ) {
+
+		this.appliance = appliance;
+
+		// TODO-DAWID v uncomment
+
+		// if ( ( null != appliance ) && ( ! appliance.getInterfaces().contains( this ) ) ) {
+		// 	appliance.addInterface( this );
+		// }
+
+	}
+
 		@Override
 		public void update( Endpoint e ) {
 			this.endpoint = e;
@@ -78,5 +94,6 @@ public class Interface extends Endpoint{
 		private List< Policy  > policiesList = new LinkedList< Policy >();
 		private IpAddress ipAddress;
 		private Endpoint endpoint;
+		private Appliance appliance;
 
 }

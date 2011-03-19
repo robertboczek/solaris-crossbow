@@ -28,7 +28,14 @@ public class Appliance extends Resource {
 
 
 	public void addInterface( Interface p ) {
+
 		interfaces.add( p );
+
+		if ( ( null == p.getAppliance() )
+		     || ( ! this.getUUID().equals( p.getAppliance().getUUID() ) ) ) {
+			p.setAppliance( this );
+		}
+
 	}
 
 	public Interface getInterface( int i ) {

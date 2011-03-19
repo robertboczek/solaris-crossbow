@@ -28,11 +28,9 @@ public class ModelHelper {
 	 */
 	public static ObjectModel getSimpleModel( String projectId, String SEP ) {
 
-		String machineId = "MYSQL", portId = machineId + SEP + "LINK0", switchId = "SWITCH0";
-
-		Appliance m = new Appliance( machineId, projectId, ApplianceType.MACHINE );
-		Interface p = new Interface( portId, projectId );
-		Switch s = new Switch( switchId, projectId );
+		Appliance m = new Appliance( "MYSQL", projectId, ApplianceType.MACHINE );
+		Interface p = new Interface( "LINK0", projectId );
+		Switch s = new Switch( "SWITCH0", projectId );
 
 		m.addInterface( p );
 		p.setEndpoint( s );
