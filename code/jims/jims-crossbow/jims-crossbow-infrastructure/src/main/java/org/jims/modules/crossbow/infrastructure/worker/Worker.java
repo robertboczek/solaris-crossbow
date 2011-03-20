@@ -339,7 +339,7 @@ public class Worker implements WorkerMBean {
 
 				} else if ( filter instanceof TransportFilter ) {
 
-					attrs.put( FlowAttribute.TRANSPORT, ( ( TransportFilter ) filter ).getProtocol() );
+					attrs.put( FlowAttribute.TRANSPORT, ( ( TransportFilter ) filter ).getTransport().toString().toLowerCase() );
 
 				} else if ( filter instanceof PortFilter ) {
 
@@ -479,10 +479,14 @@ public class Worker implements WorkerMBean {
 
 	private void appliancesADD( List< Appliance > appliances ) throws ActionException {
 
-		CreateZoneFromSnapshotCommand cmd = null;
+		CreateZoneFromSnapshotCommand createCmd = null;
+		AttachInterfacesCommand attachCmd = null;
+		ConfigureInterfaceCommand configCmd = null;
 
 		try {
-			cmd = commandFactory.getCreateZoneFromSnapshotCommand();
+			createCmd = commandFactory.getCreateZoneFromSnapshotCommand();
+			attachCmd = commandFactory.getAttachInterfacesCommand();
+			configCmd = commandFactory.getConfigureInterfacesCommand();
 		} catch ( CommandException ex ) {
 			throw new ActionException( "Appliance ADD error", ex );
 		}
@@ -502,7 +506,22 @@ public class Worker implements WorkerMBean {
 					zoneInfo.setZfsPool( "rpool/Appliances" );
 					zoneInfo.setPool( null );
 
-					cmd.createZone( zoneInfo, "/appliance/" + app.getRepoId() );
+					createCmd.createZone( zoneInfo, "/appliance/" + app.getRepoId() );
+
+					// All the interfaces have been instantiated before, collect the names
+					// and attach them to the appliance.
+
+					List< String > ifaces = new LinkedList< String >();
+					for ( Interface iface : app.getInterfaces() ) {
+						ifaces.add( NameHelper.interfaceName( iface ) );
+					}
+
+					attachCmd.attach( machineName( app ), ifaces );
+
+					bootCmd.boot( machineName( app ) );
+
+					configCmd.config( machineName( app ),  );
+
 
 				} catch ( CommandException ex ) {
 
