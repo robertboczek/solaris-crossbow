@@ -9,15 +9,24 @@ package org.jims.modules.crossbow.objectmodel.filters;
  */
 public class TransportFilter extends Filter {
 
-	public TransportFilter( String protocol ) {
-		this.protocol = protocol;
+	public enum Transport {
+		TCP,
+		UDP,
+		SCTP,
+		ICMP,
+		ICMPV6
 	}
 
-	public String getProtocol() {
-		return protocol;
+
+	public TransportFilter( Transport transport ) {
+		this.transport = transport;
+	}
+
+	public Transport getTransport() {
+		return transport;
 	}
 
 
-	private String protocol;
+	private Transport transport;
 
 }
