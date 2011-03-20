@@ -339,7 +339,7 @@ public class Worker implements WorkerMBean {
 
 				} else if ( filter instanceof TransportFilter ) {
 
-					attrs.put( FlowAttribute.TRANSPORT, ( ( TransportFilter ) filter ).getProtocol() );
+					attrs.put( FlowAttribute.TRANSPORT, ( ( TransportFilter ) filter ).getTransport().toString().toLowerCase() );
 
 				} else if ( filter instanceof PortFilter ) {
 
