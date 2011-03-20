@@ -2,11 +2,11 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<!--<parent>
+	<parent>
 		<groupId>jims</groupId>
 		<artifactId>jims-crossbow</artifactId>
 		<version>3.0.0</version>
-	</parent>-->
+	</parent>
 
 	<groupId>jims</groupId>
 	<artifactId>jims-crossbow-model</artifactId>
