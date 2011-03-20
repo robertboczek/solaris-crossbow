@@ -2,6 +2,7 @@ package org.jims.modules.crossbow.infrastructure.supervisor;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.io.File;
 import org.jims.modules.crossbow.infrastructure.assigner.AssignerMBean;
 import org.jims.modules.crossbow.infrastructure.worker.WorkerMBean;
 import org.jims.modules.crossbow.infrastructure.worker.exception.ModelInstantiationException;
@@ -19,10 +20,12 @@ public class Supervisor implements SupervisorMBean {
 	@Override
 	public void instantiate( ObjectModel model, Actions actions ) throws ModelInstantiationException {
 
-		Assignments assignments = assigner.assign( model );
+		File f = new File("/export/home/robert/hura.txt");
+		f.createNewFile();
+		/*Assignments assignments = assigner.assign( model );
 		WorkerMBean worker = workers.values().iterator().next();
 
-		worker.instantiate( model, actions, assignments );
+		worker.instantiate( model, actions, assignments );*/
 
 	}
 
