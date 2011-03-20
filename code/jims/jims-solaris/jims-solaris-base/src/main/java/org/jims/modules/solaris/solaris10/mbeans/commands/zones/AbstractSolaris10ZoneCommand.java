@@ -1,6 +1,7 @@
 package org.jims.modules.solaris.solaris10.mbeans.commands.zones;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.jims.model.solaris.solaris10.ZoneInfo;
@@ -17,6 +18,8 @@ public abstract class AbstractSolaris10ZoneCommand extends AbstractSolarisComman
 	public final static String CREATE_ZONE_FROM_SNAPSHOT = "zone/jims_zcreate_from_clone.sh";
 	public final static String CREATE_ZONE = "zone/jims_zcreate.sh";
 	public final static String DELETE_ZONE = "zone/jims_zdelete.sh";
+	public final static String ATTACH_INTERFACES = "zone/jims_zattach_ifaces.sh";
+	public final static String CONFIGURE_INTERFACES = "zone/jims_zconfig_ifaces.sh";
 	
 	public AbstractSolaris10ZoneCommand() 
 	{
@@ -144,6 +147,46 @@ public abstract class AbstractSolaris10ZoneCommand extends AbstractSolarisComman
 
 		cmdtokenslist.add( scriptPath );
 		cmdtokenslist.add( zoneName );
+
+		return cmdtokenslist.toArray( new String[]{} );
+
+	}
+
+	public String[] createAttachInterfacesCommand( String zoneName, List< String > ifaces ) {
+
+		List< String > cmdtokenslist = new ArrayList< String >();
+
+		String scriptPath = prepareJimsScriptPath( ATTACH_INTERFACES );
+
+		cmdtokenslist.add( scriptPath );
+		cmdtokenslist.add( "-z" );
+		cmdtokenslist.add( zoneName );
+
+		for ( String i : ifaces ) {
+			cmdtokenslist.add( "-i" );
+			cmdtokenslist.add( i );
+		}
+
+		return cmdtokenslist.toArray( new String[]{} );
+
+	}
+
+	public String[] createConfigureInterfacesCommand( String zoneName, List< String > ifaces, List< String > addresses ) {
+
+		List< String > cmdtokenslist = new ArrayList< String >();
+
+		String scriptPath = prepareJimsScriptPath( CONFIGURE_INTERFACES );
+
+		cmdtokenslist.add( scriptPath );
+		cmdtokenslist.add( "-z" );
+		cmdtokenslist.add( zoneName );
+
+		Iterator< String > ifaceIt = ifaces.iterator(), addressIt = addresses.iterator();
+
+		while ( ifaceIt.hasNext() ) {
+			cmdtokenslist.add( "-c" );
+			cmdtokenslist.add( ifaceIt.next() + ":" + addressIt.next() );
+		}
 
 		return cmdtokenslist.toArray( new String[]{} );
 

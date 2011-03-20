@@ -55,9 +55,9 @@ _EOF
 if [ -n "$ZONE_CPU_POOL" ] ; then
  echo "set pool=$ZONE_CPU_POOL" >> ${zfile}
 fi
-if [ "$ZONE_NETS" ] ; then
-  echo "$ZONE_NETS" | awk 'BEGIN {RS=" "; FS=","} {if (length($0)!=0) {printf "add net\nset address=%s\nset physical=%s\nend\n", $1, $2 }}' >> ${zfile}
-fi
+# if [ "$ZONE_NETS" ] ; then
+#   echo "$ZONE_NETS" | awk 'BEGIN {RS=" "; FS=","} {if (length($0)!=0) {printf "add net\nset address=%s\nset physical=%s\nend\n", $1, $2 }}' >> ${zfile}
+# fi
 if [ "$ZONE_RCTLS" ] ; then
   ZONE_RCTLS="$ZONE_RCTLS "
   echo "$ZONE_RCTLS" | awk ' BEGIN {RS=" "} {if (length($0)>1) {name=substr($0, 0, index($0,"=") - 1); value=substr($0, index($0,"=") + 1);printf "add rctl\nset name=%s\nadd value %s\nend\n", name, value; }}' >> ${zfile}
@@ -149,11 +149,12 @@ fi
 ZONE_AUTOBOOT=${ZONE_AUTOBOOT:-false}
 
 DIR_NAME=$(/usr/bin/dirname $CMD_FULL)
-ZONE_NAME=$($DIR_NAME/jims_zmatch.sh $HOST_NAME)
-if [ $? != 0 ]; then
-  echo "$ZONE_NAME"
-  exit 1
-fi
+ZONE_NAME="$HOST_NAME"
+# ZONE_NAME=$($DIR_NAME/jims_zmatch.sh $HOST_NAME)
+# if [ $? != 0 ]; then
+#   echo "$ZONE_NAME"
+#   exit 1
+# fi
 
 #
 # Check if for a currently active zone.

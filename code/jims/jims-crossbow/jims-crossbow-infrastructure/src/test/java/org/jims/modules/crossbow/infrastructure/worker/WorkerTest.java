@@ -10,11 +10,13 @@ import org.jims.modules.crossbow.link.VNicManagerMBean;
 import org.jims.modules.crossbow.objectmodel.Actions;
 import org.jims.modules.crossbow.objectmodel.Assignments;
 import org.jims.modules.crossbow.objectmodel.ObjectModel;
+import org.jims.modules.crossbow.objectmodel.filters.address.IpAddress;
 import org.jims.modules.crossbow.objectmodel.resources.Appliance;
 import org.jims.modules.crossbow.objectmodel.resources.ApplianceType;
 import org.jims.modules.crossbow.objectmodel.resources.Interface;
 import org.jims.modules.crossbow.objectmodel.resources.Switch;
 import org.jims.modules.solaris.commands.CreateZoneFromSnapshotCommand;
+import org.jims.modules.solaris.commands.ModifyZoneCommand;
 import org.jims.modules.solaris.commands.SolarisCommandFactory;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,8 +50,10 @@ public class WorkerTest {
 	public void testSimpleModelInstantiation() throws Exception {
 
 		CreateZoneFromSnapshotCommand cmd = mock( CreateZoneFromSnapshotCommand.class );
+		ModifyZoneCommand modifyCmd = mock( ModifyZoneCommand.class );
 
 		when( commandFactory.getCreateZoneFromSnapshotCommand() ).thenReturn( cmd );
+		when( commandFactory.getModifyZoneCommand() ).thenReturn( modifyCmd );
 
 		/*
 		 * M -- S
@@ -59,7 +63,10 @@ public class WorkerTest {
 		String etherstubId = projectId + SEP + switchId;
 
 		Appliance m = new Appliance( machineId, projectId, ApplianceType.MACHINE );
+
 		Interface p = new Interface( portId, projectId );
+		p.setIpAddress( new IpAddress( "1.2.3.4", 23 ) );
+
 		Switch s = new Switch( switchId, projectId );
 
 		m.addInterface( p );
@@ -86,6 +93,15 @@ public class WorkerTest {
 		verify( etherstubManager ).create( etherstub.capture() );
 		verify( vNicManager ).create( vnic.capture() );
 		verify( cmd ).createZone( ( ZoneInfo ) anyObject(), anyString() );
+
+		// Interface attachment.
+		verify( modifyCmd ).attachInterfaces( eq( NameHelper.machineName( m ) ), anyList() );
+
+		// Boot.
+		verify( modifyCmd ).bootZone( NameHelper.machineName( m ) );
+
+		// IP setup.
+		verify( modifyCmd ).configureInterfaces( eq( NameHelper.machineName( m ) ), anyList(), anyList() );
 
 		assertEquals( etherstubId, etherstub.getValue().getName() );
 		assertEquals( etherstubId, vnic.getValue().getParent() );

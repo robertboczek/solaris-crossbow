@@ -1,9 +1,12 @@
 package org.jims.modules.crossbow.infrastructure.helper.model;
 
+import java.util.Arrays;
+import java.util.LinkedList;
 import org.jims.modules.crossbow.objectmodel.ObjectModel;
 import org.jims.modules.crossbow.objectmodel.filters.AnyFilter;
 import org.jims.modules.crossbow.objectmodel.filters.IpFilter;
 import org.jims.modules.crossbow.objectmodel.filters.address.IpAddress;
+import org.jims.modules.crossbow.objectmodel.policy.Policy;
 import org.jims.modules.crossbow.objectmodel.policy.PriorityPolicy;
 import org.jims.modules.crossbow.objectmodel.resources.Appliance;
 import org.jims.modules.crossbow.objectmodel.resources.ApplianceType;
@@ -29,15 +32,17 @@ public class ModelHelper {
 	public static ObjectModel getSimpleModel( String projectId, String SEP ) {
 
 		Appliance m = new Appliance( "MYSQL", projectId, ApplianceType.MACHINE );
-		Interface p = new Interface( "LINK0", projectId );
+		Interface i = new Interface( "LINK0", projectId );
 		Switch s = new Switch( "SWITCH0", projectId );
 
-		m.addInterface( p );
-		p.setEndpoint( s );
+		m.setRepoId( "dummy" );
+		m.addInterface( i );
+		i.setIpAddress( new IpAddress( "192.168.13.13", 24 ) );
+		i.setEndpoint( s );
 
 		ObjectModel model = new ObjectModel();
 
-		model.register( p );
+		model.register( i );
 		model.register( s );
 		model.register( m );
 
@@ -83,6 +88,36 @@ public class ModelHelper {
 
 		ObjectModel model = new ObjectModel();
 		model.register( app );
+
+		return model;
+
+	}
+
+
+	public static ObjectModel getSimpleSwitchAndPolicyModel( String projectId ) {
+
+		Switch s = new Switch( "SWITCH13", projectId );
+
+		Policy p = new PriorityPolicy( "TEST.POLICY", PriorityPolicy.Priority.LOW,
+		                               new IpFilter( new IpAddress( "192.169.18.2", 24 ), IpFilter.Location.REMOTE ) );
+		Interface firstIface = new Interface( "IFACE0", projectId, s, new LinkedList< Policy >(), new IpAddress( "192.168.18.1", 24 ) );
+		firstIface.addPolicy( p );
+
+		Appliance app1 = new Appliance( "FIRST", projectId, ApplianceType.MACHINE, "dummy" );
+		app1.addInterface( firstIface );
+
+		Interface secondIface = new Interface( "IFACE0", projectId, s, new LinkedList< Policy >(), new IpAddress( "192.168.18.2", 24 ) );
+
+		Appliance app2 = new Appliance( "SECOND", projectId, ApplianceType.MACHINE, "dummy" );
+		app2.addInterface( secondIface );
+
+		ObjectModel model = new ObjectModel();
+		model.register( s );
+		model.register( p );
+		model.register( firstIface );
+		model.register( app1 );
+		model.register( secondIface );
+		model.register( app2 );
 
 		return model;
 
