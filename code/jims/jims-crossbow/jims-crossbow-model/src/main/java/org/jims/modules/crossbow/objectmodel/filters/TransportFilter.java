@@ -26,6 +26,10 @@ public class TransportFilter extends Filter {
 		return transport;
 	}
 
+	public void setTransport( Transport transport ) {
+		this.transport = transport;
+	}
+
 
 	private Transport transport;
 

@@ -364,8 +364,8 @@ public class FlowDialog extends TitleAreaDialog{
 		} else if(policy.getFilter() instanceof TransportFilter) {
 			
 			TransportFilter transportFilter = (TransportFilter) policy.getFilter();
-
-			//@todo dorobic settera do setTransport :)
+			transportFilter.setTransport((org.jims.modules.crossbow.objectmodel.filters.TransportFilter.Transport)
+				protocol.getData(protocol.getText()));
 			
 		} else if(policy.getFilter() instanceof IpFilter) {
 			

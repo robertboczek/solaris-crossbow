@@ -34,7 +34,7 @@ public class ProgressShell extends Shell {
 		progressBar.setSize(200, 30);
 		
 		Label logLabel = new Label(this, SWT.NONE);
-		logLabel.setText("Szczegó³y: ");
+		logLabel.setText("Details: ");
 		logLabel.setLocation(30, 95);
 		logLabel.setSize(50, 15);
 		
