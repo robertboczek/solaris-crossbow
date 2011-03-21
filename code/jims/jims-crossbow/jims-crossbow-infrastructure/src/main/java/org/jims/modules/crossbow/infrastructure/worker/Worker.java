@@ -42,6 +42,7 @@ import org.jims.modules.crossbow.objectmodel.resources.Interface;
 import org.jims.modules.crossbow.objectmodel.resources.Switch;
 import org.jims.modules.crossbow.zones.ZoneCopierMBean;
 import org.jims.modules.solaris.commands.CreateZoneFromSnapshotCommand;
+import org.jims.modules.solaris.commands.ModifyZoneCommand;
 import org.jims.modules.solaris.commands.RemoveZoneCommand;
 import org.jims.modules.solaris.commands.SolarisCommandFactory;
 
@@ -380,7 +381,7 @@ public class Worker implements WorkerMBean {
 
 			try {
 
-				etherstubManager.delete( switchName( s ), TEMPORARY );
+				etherstubManager.delete( NameHelper.switchName( s ), TEMPORARY );
 
 			} catch ( EtherstubException ex ) {
 
@@ -398,7 +399,7 @@ public class Worker implements WorkerMBean {
 			try {
 
 				etherstubManager.create(
-					new Etherstub( switchName( s ), TEMPORARY )
+					new Etherstub( NameHelper.switchName( s ), TEMPORARY )
 				);
 
 			} catch ( EtherstubException ex ) {
@@ -438,7 +439,7 @@ public class Worker implements WorkerMBean {
 			try {
 
 				if ( i.getEndpoint() instanceof Switch ) {
-					vNicManager.create( new VNic( NameHelper.interfaceName( i ), TEMPORARY, switchName( ( Switch ) i.getEndpoint() ) ) );
+					vNicManager.create( new VNic( NameHelper.interfaceName( i ), TEMPORARY, NameHelper.switchName( ( Switch ) i.getEndpoint() ) ) );
 				} else {
 					// TODO what to do now?
 				}
@@ -467,7 +468,7 @@ public class Worker implements WorkerMBean {
 		for ( Appliance app : appliances ) {
 
 			try {
-				cmd.removeZone( new ZoneInfo( machineName( app ) ) );
+				cmd.removeZone( new ZoneInfo( NameHelper.machineName( app ) ) );
 			} catch ( CommandException ex ) {
 				throw new ActionException( "Appliance REM error", ex );
 			}
@@ -479,10 +480,12 @@ public class Worker implements WorkerMBean {
 
 	private void appliancesADD( List< Appliance > appliances ) throws ActionException {
 
-		CreateZoneFromSnapshotCommand cmd = null;
+		CreateZoneFromSnapshotCommand createCmd = null;
+		ModifyZoneCommand modifyCmd = null;
 
 		try {
-			cmd = commandFactory.getCreateZoneFromSnapshotCommand();
+			createCmd = commandFactory.getCreateZoneFromSnapshotCommand();
+			modifyCmd = commandFactory.getModifyZoneCommand();
 		} catch ( CommandException ex ) {
 			throw new ActionException( "Appliance ADD error", ex );
 		}
@@ -493,16 +496,41 @@ public class Worker implements WorkerMBean {
 
 				try {
 
+					String name = NameHelper.machineName( app );
+
 					ZoneInfo zoneInfo = new ZoneInfo();
 
-					zoneInfo.setName( machineName( app ) );
+					zoneInfo.setName( name );
 					zoneInfo.setAddress( "192.168.13.13" );  // TODO-DAWID
 					zoneInfo.setPhysical( "e1000g0" );       //   --||--
 					zoneInfo.setAutoboot( false );
 					zoneInfo.setZfsPool( "rpool/Appliances" );
 					zoneInfo.setPool( null );
 
-					cmd.createZone( zoneInfo, "/appliance/" + app.getRepoId() );
+					createCmd.createZone( zoneInfo, "/appliance/" + app.getRepoId() );
+
+					// All the interfaces have been instantiated before, collect the names
+					// and attach them to the appliance.
+
+					List< String > ifaces = new LinkedList< String >();
+					for ( Interface iface : app.getInterfaces() ) {
+						ifaces.add( NameHelper.interfaceName( iface ) );
+					}
+
+					modifyCmd.attachInterfaces( name, ifaces );
+
+					// Boot the appliance.
+
+					modifyCmd.bootZone( name );
+
+					// Setup IP stack and address the interfaces.
+
+					List< String > addresses = new LinkedList< String >();
+					for ( Interface i : app.getInterfaces() ) {
+						addresses.add( i.getIpAddress().toString() );
+					}
+
+					modifyCmd.configureInterfaces( name, ifaces, addresses );
 
 				} catch ( CommandException ex ) {
 
@@ -514,15 +542,6 @@ public class Worker implements WorkerMBean {
 
 		}
 
-	}
-
-
-	private String switchName( Switch s ) {
-		return s.getProjectId() + SEP + s.getResourceId();
-	}
-
-	private String machineName( Appliance a ) {
-		return a.getProjectId() + SEP + a.getResourceId();
 	}
 
 

@@ -23,6 +23,7 @@ public class Interface extends Endpoint {
         this(resourceId, projectId);
         this.policiesList = policiesList;
 				this.endpoint = endpoint;
+				this.ipAddress = ipAddress;
     }
 
 
