@@ -71,6 +71,8 @@ public class Worker implements WorkerMBean {
 	@Override
 	public void instantiate( ObjectModel model, Actions actions, Assignments assignments ) throws ModelInstantiationException {
 
+		logger.info( "Instantiating new model." );
+
 		Map< Object, Actions.ACTION > actionsMap = actions.getAll();
 
 		try {
@@ -85,10 +87,14 @@ public class Worker implements WorkerMBean {
 
 		}
 
+		logger.info( "Instantiation completed successfully." );
+
 	}
 
 
 	private void instantiateREM( List< Object > resources ) throws ActionException {
+
+		logger.info( "Removing (REM) resources." );
 
 		appliancesREM( extractByType( resources, Appliance.class ) );
 
@@ -96,16 +102,22 @@ public class Worker implements WorkerMBean {
 		interfacesREM( extractByType( resources, Interface.class ) );
 		switchesREM( extractByType( resources, Switch.class ) );
 
+		logger.info( "Resources removal (REM) finished." );
+
 	}
 
 
 	private void instantiateADD( List< Object > resources, Assignments assignments ) throws ActionException {
+
+		logger.info( "Creating (ADD) resources." );
 
 		switchesADD( extractByType( resources, Switch.class ) );
 		interfacesADD( extractByType( resources, Interface.class ) );
 		policiesADD( extractByType( resources, Policy.class ) );
 
 		appliancesADD( extractByType( resources, Appliance.class ) );
+
+		logger.info( "Resources creation (ADD) finished." );
 
 	}
 
@@ -255,6 +267,8 @@ public class Worker implements WorkerMBean {
 
 		for ( Policy policy : policies ) {
 
+			logger.info( "Removing (REM) policy (name: " + policy.getName() + ")." );
+
 			if ( policy.getFilter() instanceof AnyFilter ) {
 
 				// Modify underlying VNIC.
@@ -299,6 +313,8 @@ public class Worker implements WorkerMBean {
 	private void policiesADD( List< Policy > policies ) throws ActionException {
 
 		for ( Policy p : policies ) {
+
+			logger.info( "Creating (ADD) policy (name: " + p.getName() + ")." );
 
 			Filter filter = p.getFilter();
 
@@ -379,6 +395,8 @@ public class Worker implements WorkerMBean {
 
 		for ( Switch s : switches ) {
 
+			logger.info( "Removing (REM) switch (name: " + s.getResourceId() + ")." );
+
 			try {
 
 				etherstubManager.delete( NameHelper.switchName( s ), TEMPORARY );
@@ -395,6 +413,8 @@ public class Worker implements WorkerMBean {
 	private void switchesADD( List< Switch > switches ) throws ActionException {
 
 		for ( Switch s : switches ) {
+
+			logger.info( "Creating (ADD) switch (name:" + s.getResourceId() + ")" );
 
 			try {
 
@@ -417,6 +437,8 @@ public class Worker implements WorkerMBean {
 
 		for ( Interface i : interfaces ) {
 
+			logger.info( "Removing (REM) interface (name: " + i.getResourceId() + ")." );
+
 			try {
 
 				vNicManager.delete( NameHelper.interfaceName( i ), TEMPORARY );
@@ -435,6 +457,8 @@ public class Worker implements WorkerMBean {
 	private void interfacesADD( List< Interface > interfaces ) throws ActionException {
 
 		for ( Interface i : interfaces ) {
+
+			logger.info( "Creating (ADD) interface (name: " + i.getResourceId() + ")." );
 
 			try {
 
@@ -467,6 +491,9 @@ public class Worker implements WorkerMBean {
 
 		for ( Appliance app : appliances ) {
 
+			logger.info( "Removing (REM) appliance (name: " + app.getResourceId()
+			             + ", repoId: " + app.getRepoId() + ")" );
+
 			try {
 				cmd.removeZone( new ZoneInfo( NameHelper.machineName( app ) ) );
 			} catch ( CommandException ex ) {
@@ -491,6 +518,9 @@ public class Worker implements WorkerMBean {
 		}
 
 		for ( Appliance app : appliances ) {
+
+			logger.info( "Creating (ADD) appliance (name: " + app.getResourceId()
+			             + ", repoId: " + app.getRepoId() + ")." );
 
 			if ( ApplianceType.MACHINE.equals( app.getType() ) ) {
 

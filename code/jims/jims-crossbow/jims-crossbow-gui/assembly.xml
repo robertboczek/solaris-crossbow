@@ -14,7 +14,7 @@
         <include>log4j:log4j</include>
 		<include>org.eclipse:jface</include>
 		<include>org.eclipse:swt</include>
-		<include>org.eclipse:swt-win32</include>
+		<include>org.eclipse:swt-solaris</include>
 		<include>org.eclipse:ui</include>
 		<include>org.eclipse:ui-workbench</include>
 		<include>org.eclipse:zest-layout</include>
@@ -26,7 +26,7 @@
 		<include>org.eclipse:equinox-registry</include>
 		<include>jims:jims-crossbow-model</include>
 		<include>jims:jims-crossbow-mbean</include>
-		<include>jims:jims-crossbow-infrastucture</include>
+		<include>jims:jims-crossbow-infrastructure</include>
       </includes>
     </dependencySet>
   </dependencySets>

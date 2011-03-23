@@ -479,7 +479,6 @@ public class Gui extends Shell {
 
 	protected void registerObjects(ObjectModel objectModel, List<Object> objects) {
 
-		objects.clear();
 		for (Object obj : objects) {
 			if (obj instanceof Switch) {
 				Switch swit = (Switch) obj;
@@ -487,11 +486,16 @@ public class Gui extends Shell {
 			} else if (obj instanceof Appliance) {
 				Appliance app = (Appliance) obj;
 				objectModel.register(app);
+				
+				int ifaceNo = 0;
 				for (Interface interf : app.getInterfaces()) {
+					interf.setResourceId( "IFACE" + String.valueOf( ifaceNo ) );
 					objectModel.register(interf);
 					for (Policy policy : interf.getPoliciesList()) {
 						objectModel.register(policy);
 					}
+					
+					++ifaceNo;
 				}
 			}
 		}

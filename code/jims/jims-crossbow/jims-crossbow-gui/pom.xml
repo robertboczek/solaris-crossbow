@@ -90,7 +90,7 @@
         </dependency>
 		<dependency>
             <groupId>org.eclipse</groupId>
-            <artifactId>swt-win32</artifactId>
+            <artifactId>swt-solaris</artifactId>
             <version>3.5.2</version>
         </dependency>
 		<dependency>
