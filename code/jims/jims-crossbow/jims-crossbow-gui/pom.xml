@@ -2,11 +2,11 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<!--<parent>
-		<groupId>jims</groupId>
-		<artifactId>jims-crossbow</artifactId>
-		<version>3.0.0</version>
-	</parent>-->
+	<!--
+		<parent> <groupId>jims</groupId>
+		<artifactId>jims-crossbow</artifactId> <version>3.0.0</version>
+		</parent>
+	-->
 
 	<groupId>jims</groupId>
 	<artifactId>jims-crossbow-gui</artifactId>
@@ -16,17 +16,17 @@
 
 	<url>http://maven.apache.org</url>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.0.2</version>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.0.2</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
@@ -38,108 +38,159 @@
 					</archive>
 				</configuration>
 			</plugin>
-        </plugins>
-    </build>
-    <repositories>
-        <repository>
-            <id>maven2-repository.dev.java.net</id>
-            <name>Java.net Repository for Maven</name>
-            <url>http://download.java.net/maven/2/</url>
-        </repository>
-        <repository>
-            <id>repo1-repository.maven.org</id>
-            <name>repo1 Repository for Maven</name>
-            <url>http://repo1.maven.org/maven2/</url>
-        </repository>
+		</plugins>
+	</build>
+	<repositories>
 		<repository>
-            <id>private repo</id>
-            <name>private Repository for Maven</name>
-            <url>http://kucowka.pl/repository/</url>
-        </repository>
-    </repositories>
-    <dependencies>
+			<id>maven2-repository.dev.java.net</id>
+			<name>Java.net Repository for Maven</name>
+			<url>http://download.java.net/maven/2/</url>
+		</repository>
+		<repository>
+			<id>repo1-repository.maven.org</id>
+			<name>repo1 Repository for Maven</name>
+			<url>http://repo1.maven.org/maven2/</url>
+		</repository>
+		<repository>
+			<id>private repo</id>
+			<name>private Repository for Maven</name>
+			<url>http://kucowka.pl/repository/</url>
+		</repository>
+	</repositories>
+	<dependencies>
 		<dependency>
 			<groupId>jims</groupId>
 			<artifactId>jims-crossbow-model</artifactId>
-			<version>3.0.0</version>
+			<version>${version}</version>
 		</dependency>
 		<dependency>
 			<groupId>jims</groupId>
 			<artifactId>jims-crossbow-mbean</artifactId>
-			<version>3.0.0</version>
+			<version>${version}</version>
 		</dependency>
-	    <dependency>
+		<dependency>
 			<groupId>jims</groupId>
 			<artifactId>jims-crossbow-infrastructure</artifactId>
-			<version>3.0.0</version>
+			<version>${version}</version>
 		</dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.16</version>
-        </dependency>
 		<dependency>
-            <groupId>org.eclipse</groupId>
-            <artifactId>jface</artifactId>
-            <version>3.5.2</version>
-        </dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.16</version>
+		</dependency>
 		<dependency>
-            <groupId>org.eclipse</groupId>
-            <artifactId>swt</artifactId>
-            <version>3.5.2</version>
-        </dependency>
+			<groupId>org.eclipse</groupId>
+			<artifactId>jface</artifactId>
+			<version>3.5.2</version>
+		</dependency>
 		<dependency>
-            <groupId>org.eclipse</groupId>
-            <artifactId>swt-solaris</artifactId>
-            <version>3.5.2</version>
-        </dependency>
+			<groupId>org.eclipse</groupId>
+			<artifactId>swt</artifactId>
+			<version>3.5.2</version>
+		</dependency>
 		<dependency>
-            <groupId>org.eclipse</groupId>
-            <artifactId>ui</artifactId>
-            <version>3.5.2</version>
-        </dependency>
+			<groupId>org.eclipse</groupId>
+			<artifactId>ui</artifactId>
+			<version>3.5.2</version>
+		</dependency>
 		<dependency>
-            <groupId>org.eclipse</groupId>
-            <artifactId>ui-workbench</artifactId>
-            <version>3.5.2</version>
-        </dependency>
+			<groupId>org.eclipse</groupId>
+			<artifactId>ui-workbench</artifactId>
+			<version>3.5.2</version>
+		</dependency>
 		<dependency>
-            <groupId>org.eclipse</groupId>
-            <artifactId>core-runtime</artifactId>
-            <version>3.5.0</version>
-        </dependency>
+			<groupId>org.eclipse</groupId>
+			<artifactId>core-runtime</artifactId>
+			<version>3.5.0</version>
+		</dependency>
 		<dependency>
-            <groupId>org.eclipse</groupId>
-            <artifactId>core-commands</artifactId>
-            <version>3.5.0</version>
-        </dependency>
+			<groupId>org.eclipse</groupId>
+			<artifactId>core-commands</artifactId>
+			<version>3.5.0</version>
+		</dependency>
 		<dependency>
-            <groupId>org.eclipse</groupId>
-            <artifactId>equinox-common</artifactId>
-            <version>3.5.0</version>
-        </dependency>
+			<groupId>org.eclipse</groupId>
+			<artifactId>equinox-common</artifactId>
+			<version>3.5.0</version>
+		</dependency>
 		<dependency>
-            <groupId>org.eclipse</groupId>
-            <artifactId>equinox-registry</artifactId>
-            <version>3.5.0</version>
-        </dependency>
+			<groupId>org.eclipse</groupId>
+			<artifactId>equinox-registry</artifactId>
+			<version>3.5.0</version>
+		</dependency>
 		<dependency>
-            <groupId>org.eclipse</groupId>
-            <artifactId>zest-core</artifactId>
-            <version>1.1.0</version>
-        </dependency>
+			<groupId>org.eclipse</groupId>
+			<artifactId>zest-core</artifactId>
+			<version>1.1.0</version>
+		</dependency>
 		<dependency>
-            <groupId>org.eclipse</groupId>
-            <artifactId>zest-layout</artifactId>
-            <version>1.1.0</version>
-        </dependency>
+			<groupId>org.eclipse</groupId>
+			<artifactId>zest-layout</artifactId>
+			<version>1.1.0</version>
+		</dependency>
 		<dependency>
-            <groupId>org.eclipse</groupId>
-            <artifactId>draw2d</artifactId>
-            <version>3.5.2</version>
-        </dependency>
-		
-    </dependencies>
+			<groupId>org.eclipse</groupId>
+			<artifactId>draw2d</artifactId>
+			<version>3.5.2</version>
+		</dependency>
+
+	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>win</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+				<os>
+					<family>Windows</family>
+					<arch>x86</arch>
+				</os>
+			</activation>
+			
+			<dependencies>
+				<dependency>
+					<groupId>org.eclipse</groupId>
+					<artifactId>swt-win32</artifactId>
+					<version>3.5.2</version>
+				</dependency>
+			</dependencies>
+
+			<repositories>
+				<repository>
+					<id>private repo</id>
+					<name>private Repository for Maven</name>
+					<url>http://kucowka.pl/repository/</url>
+				</repository>
+			</repositories>
+		</profile>
+
+		<profile>
+			<id>linux</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+				<os>
+					<family>Unix</family>
+					<arch>x86</arch>
+				</os>
+
+			</activation>
+			<dependencies>
+				<dependency>
+					<groupId>org.eclipse</groupId>
+					<artifactId>swt-linux32</artifactId>
+					<version>3.5.2</version>
+				</dependency>
+			</dependencies>
+
+			<repositories>
+				<repository>
+					<id>private repo</id>
+					<name>private Repository for Maven</name>
+					<url>http://kucowka.pl/repository/</url>
+				</repository>
+			</repositories>
+		</profile>
+	</profiles>
 
 	<developers>
 		<developer>
