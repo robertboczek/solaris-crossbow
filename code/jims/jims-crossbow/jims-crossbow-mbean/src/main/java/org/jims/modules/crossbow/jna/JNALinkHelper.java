@@ -84,7 +84,7 @@ public class JNALinkHelper implements LinkHelper {
     @Override
     public String[] getLinkNames(boolean isVNic) throws LinkException {
 
-        logger.info("Trying to read names of links");
+        logger.debug("Trying to read names of links");
         int typeOfLink = isVNic ? 0 : 1;
         Pointer pointer = handle.get_link_names(typeOfLink);
 

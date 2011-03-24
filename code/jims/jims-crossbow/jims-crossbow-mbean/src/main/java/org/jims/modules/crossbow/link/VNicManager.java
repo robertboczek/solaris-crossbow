@@ -25,7 +25,7 @@ import org.jims.modules.crossbow.manager.BaseManager;
 public class VNicManager extends BaseManager implements VNicManagerMBean, NotificationListener {
 
     /** Logger */
-    private static final Logger logger = Logger.getLogger(Nic.class);
+    private static final Logger logger = Logger.getLogger(VNicManager.class);
     private Publisher publisher;
     private VNicHelper vnicHelper;
 
@@ -137,7 +137,7 @@ public class VNicManager extends BaseManager implements VNicManagerMBean, Notifi
      */
     @Override
     public void discover() throws LinkException {
-        logger.info("VNicManager.discover()... searching for new vnic's and ones that don't exist any more");
+        logger.debug("Searching for new vnic's and ones that don't exist any more");
 
         Set<VNicMBean> currentMBeans = convertToSet(vnicHelper.getLinkNames(true));
 

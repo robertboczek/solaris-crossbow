@@ -90,7 +90,7 @@ public class EtherstubManager extends BaseManager implements EtherstubManagerMBe
      */
     @Override
     public void discover() throws EtherstubException {
-        logger.info("EtherstubManager.discover()... searching for new etherstubs's and ones that don't exist any more");
+        logger.debug("Searching for new etherstubs's and ones that don't exist any more");
 
         
         if(publisher != null){
