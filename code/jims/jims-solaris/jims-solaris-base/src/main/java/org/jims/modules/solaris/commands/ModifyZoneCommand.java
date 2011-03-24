@@ -20,5 +20,6 @@ public interface ModifyZoneCommand
 
 	public void attachInterfaces( String zoneName, List< String > ifaces ) throws CommandException;
 	public void configureInterfaces( String zoneName, List< String > ifaces, List< String > addresses ) throws CommandException;
+	public void setupForwarding( String zoneName, boolean enabled ) throws CommandException;
 
 }

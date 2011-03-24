@@ -522,51 +522,53 @@ public class Worker implements WorkerMBean {
 			logger.info( "Creating (ADD) appliance (name: " + app.getResourceId()
 			             + ", repoId: " + app.getRepoId() + ")." );
 
-			if ( ApplianceType.MACHINE.equals( app.getType() ) ) {
+			try {
 
-				try {
+				String name = NameHelper.machineName( app );
 
-					String name = NameHelper.machineName( app );
+				ZoneInfo zoneInfo = new ZoneInfo();
 
-					ZoneInfo zoneInfo = new ZoneInfo();
+				zoneInfo.setName( name );
+				zoneInfo.setAddress( "192.168.13.13" );  // TODO-DAWID
+				zoneInfo.setPhysical( "e1000g0" );       //   --||--
+				zoneInfo.setAutoboot( false );
+				zoneInfo.setZfsPool( "rpool/Appliances" );
+				zoneInfo.setPool( null );
 
-					zoneInfo.setName( name );
-					zoneInfo.setAddress( "192.168.13.13" );  // TODO-DAWID
-					zoneInfo.setPhysical( "e1000g0" );       //   --||--
-					zoneInfo.setAutoboot( false );
-					zoneInfo.setZfsPool( "rpool/Appliances" );
-					zoneInfo.setPool( null );
+				createCmd.createZone( zoneInfo, "/appliance/" + app.getRepoId() );
 
-					createCmd.createZone( zoneInfo, "/appliance/" + app.getRepoId() );
+				// All the interfaces have been instantiated before, collect the names
+				// and attach them to the appliance.
 
-					// All the interfaces have been instantiated before, collect the names
-					// and attach them to the appliance.
-
-					List< String > ifaces = new LinkedList< String >();
-					for ( Interface iface : app.getInterfaces() ) {
-						ifaces.add( NameHelper.interfaceName( iface ) );
-					}
-
-					modifyCmd.attachInterfaces( name, ifaces );
-
-					// Boot the appliance.
-
-					modifyCmd.bootZone( name );
-
-					// Setup IP stack and address the interfaces.
-
-					List< String > addresses = new LinkedList< String >();
-					for ( Interface i : app.getInterfaces() ) {
-						addresses.add( i.getIpAddress().toString() );
-					}
-
-					modifyCmd.configureInterfaces( name, ifaces, addresses );
-
-				} catch ( CommandException ex ) {
-
-					throw new ActionException( "Appliance ADD error", ex );
-
+				List< String > ifaces = new LinkedList< String >();
+				for ( Interface iface : app.getInterfaces() ) {
+					ifaces.add( NameHelper.interfaceName( iface ) );
 				}
+
+				modifyCmd.attachInterfaces( name, ifaces );
+
+				// Boot the appliance.
+
+				modifyCmd.bootZone( name );
+
+				// Setup IP stack and address the interfaces.
+
+				List< String > addresses = new LinkedList< String >();
+				for ( Interface i : app.getInterfaces() ) {
+					addresses.add( i.getIpAddress().toString() );
+				}
+
+				modifyCmd.configureInterfaces( name, ifaces, addresses );
+
+				// For ROUTER appliance only, enable IP forwarding.
+
+				if ( ApplianceType.ROUTER.equals( app.getType() ) ) {
+					modifyCmd.setupForwarding( name, true );
+				}
+
+			} catch ( CommandException ex ) {
+
+				throw new ActionException( "Appliance ADD error", ex );
 
 			}
 

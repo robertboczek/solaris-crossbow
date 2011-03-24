@@ -26,6 +26,10 @@ public class Interface extends Endpoint {
 				this.ipAddress = ipAddress;
     }
 
+	public Interface( String resourceId, String projectId, Endpoint endpoint, IpAddress ipAddress ) {
+		this( resourceId, projectId, endpoint, new LinkedList< Policy >(), ipAddress );
+	}
+
 
     /**
      * Get the value of policiesList

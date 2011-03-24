@@ -20,6 +20,7 @@ public abstract class AbstractSolaris10ZoneCommand extends AbstractSolarisComman
 	public final static String DELETE_ZONE = "zone/jims_zdelete.sh";
 	public final static String ATTACH_INTERFACES = "zone/jims_zattach_ifaces.sh";
 	public final static String CONFIGURE_INTERFACES = "zone/jims_zconfig_ifaces.sh";
+	public final static String SETUP_FORWARDING = "zone/jims_zsetup_forwarding.sh";
 	
 	public AbstractSolaris10ZoneCommand() 
 	{
@@ -187,6 +188,21 @@ public abstract class AbstractSolaris10ZoneCommand extends AbstractSolarisComman
 			cmdtokenslist.add( "-c" );
 			cmdtokenslist.add( ifaceIt.next() + ":" + addressIt.next() );
 		}
+
+		return cmdtokenslist.toArray( new String[]{} );
+
+	}
+
+	public String[] createSetupForwardingCommand( String zoneName, boolean enabled ) {
+
+		List< String > cmdtokenslist = new ArrayList< String >();
+
+		String scriptPath = prepareJimsScriptPath( SETUP_FORWARDING );
+
+		cmdtokenslist.add( scriptPath );
+		cmdtokenslist.add( "-z" );
+		cmdtokenslist.add( zoneName );
+		cmdtokenslist.add( enabled ? "up" : "down" );
 
 		return cmdtokenslist.toArray( new String[]{} );
 

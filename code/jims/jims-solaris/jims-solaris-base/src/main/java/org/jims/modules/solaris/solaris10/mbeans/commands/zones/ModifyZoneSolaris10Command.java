@@ -64,4 +64,12 @@ public class ModifyZoneSolaris10Command extends AbstractSolaris10ZoneCommand
 
 	}
 
+	@Override
+	public void setupForwarding( String zoneName, boolean enabled ) throws CommandException {
+
+		String[] cmdarray = this.createSetupForwardingCommand( zoneName, enabled );
+		this.invokeOsCommand( cmdarray );
+
+	}
+
 }

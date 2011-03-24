@@ -123,4 +123,42 @@ public class ModelHelper {
 
 	}
 
+
+	public static ObjectModel getSimpleRouterModel( String projectId ) {
+
+		Switch s0 = new Switch( "SWITCH0", projectId );
+		Switch s1 = new Switch( "SWITCH1", projectId );
+
+		Interface firstIface = new Interface( "IFACE0", projectId, s0, new IpAddress( "192.168.18.2", 24 ) );
+
+		Interface routerFirstIface = new Interface( "IFACE0", projectId, s0, new IpAddress( "192.168.18.1", 24 ) );
+		Interface routerSecondIface = new Interface( "IFACE1", projectId, s1, new IpAddress( "192.168.19.1", 24 ) );
+
+		Interface secondIface = new Interface( "IFACE0", projectId, s1, new IpAddress( "192.168.19.2", 24 ) );
+
+		Appliance first = new Appliance( "FIRST", projectId, ApplianceType.MACHINE, "dummy" );
+		first.addInterface( firstIface );
+
+		Appliance second = new Appliance( "SECOND", projectId, ApplianceType.MACHINE, "dummy" );
+		second.addInterface( secondIface );
+
+		Appliance router = new Appliance( "ROUTER", projectId, ApplianceType.ROUTER, "dummy" );
+		router.addInterface( routerFirstIface );
+		router.addInterface( routerSecondIface );
+
+		ObjectModel model = new ObjectModel();
+		model.register( s0 );
+		model.register( s1 );
+		model.register( firstIface );
+		model.register( secondIface );
+		model.register( routerFirstIface );
+		model.register( routerSecondIface );
+		model.register( first );
+		model.register( second );
+		model.register( router );
+
+		return model;
+
+	}
+
 }
