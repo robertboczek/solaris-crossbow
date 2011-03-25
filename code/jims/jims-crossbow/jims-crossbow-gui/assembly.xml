@@ -15,6 +15,7 @@
 		<include>org.eclipse:jface</include>
 		<include>org.eclipse:swt</include>
 		<include>org.eclipse:swt-solaris</include>
+		<include>org.eclipse:swt-linux32</include>
 		<include>org.eclipse:ui</include>
 		<include>org.eclipse:ui-workbench</include>
 		<include>org.eclipse:zest-layout</include>

@@ -118,6 +118,6 @@ public class WorkerTest {
 	private String projectId = "MYPROJECT";
 	private Worker worker;
 
-	private final String SEP = Worker.SEP;
+	private final String SEP = NameHelper.SEP;
 
 }

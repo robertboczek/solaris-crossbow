@@ -185,7 +185,7 @@ public class Worker implements WorkerMBean {
 
 		try {
 
-			for ( Matcher m : filterNames( etherstubManager.getEtherstubsNames(), REG_SWITCH_NAME ) ) {
+			for ( Matcher m : filterNames( etherstubManager.getEtherstubsNames(), NameHelper.REG_SWITCH_NAME ) ) {
 
 				logger.info( "Found a switch (name: " + m.group( 2 ) + ", project: " + m.group( 1 ) + ")" );
 
@@ -214,7 +214,7 @@ public class Worker implements WorkerMBean {
 
 		try {
 
-			for ( Matcher m : filterNames( vNicManager.getVNicsNames(), REG_INTERFACE_NAME ) ) {
+			for ( Matcher m : filterNames( vNicManager.getVNicsNames(), NameHelper.REG_INTERFACE_NAME ) ) {
 
 				// Basic setup.
 
@@ -495,7 +495,9 @@ public class Worker implements WorkerMBean {
 			             + ", repoId: " + app.getRepoId() + ")" );
 
 			try {
-				cmd.removeZone( new ZoneInfo( NameHelper.machineName( app ) ) );
+				cmd.removeZone( new ZoneInfo( ApplianceType.MACHINE.equals( app.getType() )
+				                              ? NameHelper.machineName( app )
+				                              : NameHelper.routerName( app ) ) );
 			} catch ( CommandException ex ) {
 				throw new ActionException( "Appliance REM error", ex );
 			}
@@ -524,13 +526,14 @@ public class Worker implements WorkerMBean {
 
 			try {
 
-				String name = NameHelper.machineName( app );
+				String name = ApplianceType.MACHINE.equals( app.getType() )
+				              ? NameHelper.machineName( app )
+				              : NameHelper.routerName( app );
 
 				ZoneInfo zoneInfo = new ZoneInfo();
 
 				zoneInfo.setName( name );
-				zoneInfo.setAddress( "192.168.13.13" );  // TODO-DAWID
-				zoneInfo.setPhysical( "e1000g0" );       //   --||--
+				zoneInfo.setPhysical( null );  // Don't set up any interfaces now.
 				zoneInfo.setAutoboot( false );
 				zoneInfo.setZfsPool( "rpool/Appliances" );
 				zoneInfo.setPool( null );
@@ -586,19 +589,6 @@ public class Worker implements WorkerMBean {
 		discover();
 	}
 
-
-	/**
-	 * The separator used in entities' names (e.g. MYPROJECT..SWITCH..0)
-	 */
-	public final static String SEP = "..";
-
-	private final static String REG_SEP = "\\.\\.";
-	private final static String REG_PROJECT_ID = "[a-zA-Z](?:(?:\\.[a-zA-Z])|(?:[a-zA-Z]))*";  // TODO
-	private final static String REG_RESOURCE_ID = "[a-zA-Z]+[0-9]+";  // TODO
-
-	private final static String REG_SWITCH_NAME = "(" + REG_PROJECT_ID + ")" + REG_SEP + "(" + REG_RESOURCE_ID + ")";
-	private final static String REG_INTERFACE_NAME =
-		"(" + REG_PROJECT_ID + ")" + REG_SEP + "[a-zA-Z]+" + REG_SEP + "(" + REG_RESOURCE_ID + ")";
 
 	private final VNicManagerMBean vNicManager;
 	private final EtherstubManagerMBean etherstubManager;

@@ -38,8 +38,12 @@ public abstract class AbstractSolaris10ZoneCommand extends AbstractSolarisComman
         cmdtokenslist.add( zone.getName() );
         cmdtokenslist.add( "-p" );
         cmdtokenslist.add( zone.getZonepath() );
-        cmdtokenslist.add( "-n" );
-        cmdtokenslist.add( zone.getAddress() + "," + zone.getPhysical() );
+
+        if ( null != zone.getPhysical() ) {
+            cmdtokenslist.add( "-n" );
+            cmdtokenslist.add( zone.getAddress() + "," + zone.getPhysical() );
+        }
+
         cmdtokenslist.add( "-a" );
         cmdtokenslist.add( Boolean.toString( zone.isAutoboot() ) );
         //TO DO - Rctls
