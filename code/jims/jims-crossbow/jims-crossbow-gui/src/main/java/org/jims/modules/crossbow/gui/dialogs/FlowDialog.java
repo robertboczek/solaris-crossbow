@@ -40,7 +40,6 @@ public class FlowDialog extends TitleAreaDialog{
 	public static final int DELETE_CODE = 0x855374;
 
 	private Policy policy;		
-
 	private Text bandwidth;
 	private Combo priority;
 	private Text port;
@@ -83,9 +82,6 @@ public class FlowDialog extends TitleAreaDialog{
 		GridData gridData = new GridData();
 		gridData.grabExcessHorizontalSpace = true;
 		gridData.horizontalAlignment = GridData.FILL;
-		
-		Label label3 = new Label(parent, SWT.NONE);
-		label3.setText("Flow name:");
 		
 		if(policy.getFilter() instanceof PortFilter) {
 			PortFilter portFilter = (PortFilter) policy.getFilter();
@@ -352,7 +348,7 @@ public class FlowDialog extends TitleAreaDialog{
 		super.okPressed();
 	}
 
-	private void saveInput() {	
+	private void saveInput() {
 		
 		if(policy.getFilter() instanceof PortFilter) {
 			PortFilter portFilter = (PortFilter) policy.getFilter();

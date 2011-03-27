@@ -331,9 +331,7 @@ public class Gui extends Shell {
 
 		if (jmxConnector != null) {
 			try {
-				this.setText("Connected to "
-						+ jmxConnector.getUrl() + "\n"
-						+ jmxConnector.getMBeanServerConnectionDetails());
+				this.setText(jmxConnector.getMBeanServerConnectionDetails());
 			} catch (IOException e) {
 				e.printStackTrace();
 				resetConnectionDetailsLabel();
@@ -410,11 +408,52 @@ public class Gui extends Shell {
 
 				projectId.setEnabled(false);
 
-				SupervisorMBean supervisor = null;
-
 				try {
-					supervisor = JMX.newMBeanProxy(mbsc, new ObjectName(
-							"Crossbow:type=Supervisor"), SupervisorMBean.class);
+					final SupervisorMBean supervisor = JMX.newMBeanProxy(mbsc,
+							new ObjectName("Crossbow:type=Supervisor"),
+							SupervisorMBean.class);
+
+					final ObjectModel objectModel = new ObjectModel();
+
+					registerObjects(objectModel, modelObjects);
+
+					new Thread() {
+
+						public void run() {
+							try {
+								Actions actions = new Actions();
+
+								for (Appliance app : objectModel
+										.getAppliances()) {
+									actions.insert(app, Actions.ACTION.ADD);
+								}
+								for (Interface interf : objectModel.getPorts()) {
+									actions.insert(interf, Actions.ACTION.ADD);
+								}
+								for (Switch swit : objectModel.getSwitches()) {
+									actions.insert(swit, Actions.ACTION.ADD);
+								}
+								for (Policy policy : objectModel.getPolicies()) {
+									actions.insert(policy, Actions.ACTION.ADD);
+								}
+
+								supervisor.instantiate(objectModel, actions);
+
+							} catch (ModelInstantiationException e) {
+								e.printStackTrace();
+
+								MessageDialog
+										.openError(
+												null,
+												"Problem with sending network structure",
+												"Network structure couldn't be sent");
+
+								e.printStackTrace();
+								return;
+							}
+						}
+					}.start();
+
 				} catch (Exception e) {
 					MessageDialog.openError(null, "Connection problem",
 							"Couldn't get Supervisor.class");
@@ -423,41 +462,9 @@ public class Gui extends Shell {
 					return;
 				}
 
-				ObjectModel objectModel = new ObjectModel();
-
-				registerObjects(objectModel, modelObjects);
-
-				try {
-					Actions actions = new Actions();
-
-					for (Appliance app : objectModel.getAppliances()) {
-						actions.insert(app, Actions.ACTION.ADD);
-					}
-					for (Interface interf : objectModel.getPorts()) {
-						actions.insert(interf, Actions.ACTION.ADD);
-					}
-					for (Switch swit : objectModel.getSwitches()) {
-						actions.insert(swit, Actions.ACTION.ADD);
-					}
-					for (Policy policy : objectModel.getPolicies()) {
-						actions.insert(policy, Actions.ACTION.ADD);
-					}
-
-					supervisor.instantiate(objectModel, actions);
-
-				} catch (ModelInstantiationException e) {
-					e.printStackTrace();
-
-					MessageDialog.openError(null,
-							"Problem with sending network structure",
-							"Network structure couldn't be sent");
-
-					e.printStackTrace();
-					return;
-				}
-
 				Display display = Display.getDefault();
-				Shell dlgShell = new ProgressShell(Gui.this.getDisplay());
+				Shell dlgShell = new ProgressShell(Gui.this.getDisplay(),
+						jmxConnector);
 				dlgShell.setSize(300, 250);
 				dlgShell.setLocation(200, 200);
 				dlgShell.open();
@@ -486,15 +493,15 @@ public class Gui extends Shell {
 			} else if (obj instanceof Appliance) {
 				Appliance app = (Appliance) obj;
 				objectModel.register(app);
-				
+
 				int ifaceNo = 0;
 				for (Interface interf : app.getInterfaces()) {
-					interf.setResourceId( "IFACE" + String.valueOf( ifaceNo ) );
+					interf.setResourceId("IFACE" + String.valueOf(ifaceNo));
 					objectModel.register(interf);
 					for (Policy policy : interf.getPoliciesList()) {
 						objectModel.register(policy);
 					}
-					
+
 					++ifaceNo;
 				}
 			}
@@ -920,7 +927,7 @@ public class Gui extends Shell {
 		supervisorPort.setLayoutData(fd_projectId2);
 		supervisorPort.setText("");
 		supervisorPort.pack();
-		
+
 		resetConnectionDetailsLabel();
 
 		this.addKeyListener(keyListener);
@@ -1262,6 +1269,7 @@ public class Gui extends Shell {
 				}
 
 			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 
 		}

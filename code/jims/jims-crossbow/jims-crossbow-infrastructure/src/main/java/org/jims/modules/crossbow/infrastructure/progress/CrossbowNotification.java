@@ -4,12 +4,18 @@ import java.util.List;
 
 import javax.management.ListenerNotFoundException;
 import javax.management.MBeanNotificationInfo;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import javax.management.Notification;
 import javax.management.NotificationFilter;
 import javax.management.NotificationListener;
 
 import org.jims.modules.crossbow.infrastructure.progress.notification.ProgressNotification;
 import org.jims.modules.crossbow.infrastructure.progress.notification.TaskCompletedNotification;
+import org.jims.modules.crossbow.infrastructure.JimsMBeanServer;
+
+import org.apache.log4j.Logger;
+
 
 public class CrossbowNotification implements CrossbowNotificationMBean {
 
@@ -18,6 +24,8 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 	private int index;
 
 	private int sequenceNumber = 0;
+
+	private Logger log = Logger.getLogger( CrossbowNotification.class );
 
 	public CrossbowNotification(int totalTasks) {
 		this.index = 0;
@@ -33,8 +41,22 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 
 	private List<NotificationListener> listeners;
 
-	//@todo dopisac rejestrowanie we wszystkich WorkerProgressMBEan'ach
+	//@todo dopisac rejestrowanie we wszystkich WorkerProgressMBEan'ach - narazie jest tylko jeden
 	private void registerNotificationListener() {
+
+		log.debug("Registering worker progress listener");
+
+		MBeanServer server = JimsMBeanServer.findJimsMBeanServer();
+		if(server != null) {
+			try{
+				server.addNotificationListener(new ObjectName( "Crossbow:type=WorkerProgress" ), this,
+					null, null);
+				log.debug("Worker progress listener successfully registered");
+			}catch(Exception e) {
+				log.error("Couldn't register WorkerProgress Listener");
+			}
+
+		}
 
 	}
 

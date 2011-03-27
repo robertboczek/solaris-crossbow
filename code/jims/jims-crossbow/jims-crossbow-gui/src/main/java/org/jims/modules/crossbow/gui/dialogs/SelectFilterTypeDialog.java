@@ -15,11 +15,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 public class SelectFilterTypeDialog extends TitleAreaDialog{
 	
 	private Combo flowType;
 	private Combo bandwidthOrPriority;
+	
+	private Text flowName;
 	
 	private IpAddressDialog ipAddressDialog;
 
@@ -68,7 +71,14 @@ public class SelectFilterTypeDialog extends TitleAreaDialog{
 		bandwidthOrPriority = new Combo(parent, SWT.NONE);
 		bandwidthOrPriority.add("Priority");
 		bandwidthOrPriority.add("Bandwidth");
-
+		
+		Label label3 = new Label(parent, SWT.NONE);
+		label3.setText("Flow name:");
+		
+		flowName = new Text(parent, SWT.NONE);
+		flowName.setLayoutData(gridData);
+		flowName.setText("");		
+		
 		setControlsValues();
 
 		return parent;
@@ -125,11 +135,16 @@ public class SelectFilterTypeDialog extends TitleAreaDialog{
 		boolean valid = true;
 
 		String errorMessage = "";
+		
+		if(flowName.getText() == null || flowName.getText().equals("")) {
+			errorMessage = "Flow name can't be empty";
+			valid= false;
+		}
 
 		try {
 			
 
-			if (flowType.getSelectionIndex() == -1 || bandwidthOrPriority.getSelectionIndex() == -1)
+			if (valid && flowType.getSelectionIndex() == -1 || bandwidthOrPriority.getSelectionIndex() == -1)
 			{
 				throw new Exception();
 			}
@@ -154,6 +169,7 @@ public class SelectFilterTypeDialog extends TitleAreaDialog{
 	protected void okPressed() {
 		ipAddressDialog.setSelectedFlowType(flowType.getText());
 		ipAddressDialog.setBandwidthOrPriority(bandwidthOrPriority.getText());
+		ipAddressDialog.setFlowNameText(flowName.getText());
 		super.okPressed();
 	}
 }
