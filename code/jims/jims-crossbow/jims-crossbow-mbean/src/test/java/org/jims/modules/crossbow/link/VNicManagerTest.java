@@ -60,22 +60,10 @@ public class VNicManagerTest {
 
         when(vnicHelper.getLinkNames(anyBoolean())).thenReturn(new String[]{});
 
-        Publisher spyPublisher = spy(new VNicMBeanPublisher(null) {
+        Publisher spyPublisher = mock( VNicMBeanPublisher.class );
 
-            @Override
-            public void publish(Object object) {
-            }
-
-            @Override
-            public void unpublish(Object object) throws NotPublishedException {
-            }
-
-            @Override
-            public List<Object> getPublished() {
-
-                return new LinkedList<Object>();
-            }
-        });
+				when( spyPublisher.getPublished() )
+					.thenReturn( new LinkedList<Object>() );
 
         vnicManager.setPublisher(spyPublisher);
 
@@ -122,22 +110,10 @@ public class VNicManagerTest {
 
         when(vnicHelper.getLinkNames(true)).thenReturn(new String[]{"vnic1"});
 
-        Publisher spyPublisher = spy(new VNicMBeanPublisher(null) {
+        Publisher spyPublisher = mock( VNicMBeanPublisher.class );
 
-            @Override
-            public void publish(Object object) {
-            }
-
-            @Override
-            public void unpublish(Object object) throws NotPublishedException {
-            }
-
-            @Override
-            public List<Object> getPublished() {
-
-                return new LinkedList<Object>();
-            }
-        });
+				when( spyPublisher.getPublished() )
+					.thenReturn( new LinkedList<Object>() );
 
         vnicManager.setPublisher(spyPublisher);
 
@@ -176,23 +152,10 @@ public class VNicManagerTest {
 
         when(vnicHelper.getLinkNames(anyBoolean())).thenReturn(new String[]{"vnic1", "vnic3"});
 
-        Publisher spyPublisher = spy(new VNicMBeanPublisher(null) {
+        Publisher spyPublisher = mock( VNicMBeanPublisher.class );
 
-            @Override
-            public void publish(Object object) {
-            }
-
-            @Override
-            public void unpublish(Object object) throws NotPublishedException {
-            }
-
-            @Override
-            public List<Object> getPublished() {
-
-                return Arrays.asList(new Object[]{vnic1,
-                            vnic5});
-            }
-        });
+				when( spyPublisher.getPublished() )
+					.thenReturn( Arrays.asList( new Object[] { vnic1, vnic5 } ) );
 
         vnicManager.setPublisher(spyPublisher);
 

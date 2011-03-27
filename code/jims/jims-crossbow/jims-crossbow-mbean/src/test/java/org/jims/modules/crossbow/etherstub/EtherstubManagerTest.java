@@ -127,25 +127,10 @@ public class EtherstubManagerTest {
 
         when(etherstubHelper.getEtherstubNames()).thenReturn(new String[]{"ether1"});
 
-        Publisher spyPublisher = spy(new EtherstubMBeanPublisher(null){
+        Publisher spyPublisher = mock( EtherstubMBeanPublisher.class );
 
-            @Override
-            public void publish( Object object ){
-
-            }
-
-            @Override
-            public void unpublish( Object object ) throws NotPublishedException{
-
-            }
-
-            @Override
-            public List< Object > getPublished(){
-
-                return new LinkedList<Object>();
-            }
-
-        });
+				when( spyPublisher.getPublished() )
+					.thenReturn( new LinkedList< Object >() );
 
         etherstubManager.setPublisher(spyPublisher);
 
@@ -172,26 +157,11 @@ public class EtherstubManagerTest {
 
         when(etherstubHelper.getEtherstubNames()).thenReturn(new String[]{"ether1", "ether3"});
 
-        Publisher spyPublisher = spy(new EtherstubMBeanPublisher(null){
+        Publisher spyPublisher = mock( EtherstubMBeanPublisher.class );
 
-            @Override
-            public void publish( Object object ){
-
-            }
-
-            @Override
-            public void unpublish( Object object ) throws NotPublishedException{
-
-            }
-
-            @Override
-            public List< Object > getPublished(){
-
-                return Arrays.asList(new Object[]{new Etherstub("ether5", false),
-                    new Etherstub("ether3", false)});
-            }
-
-        });
+				when( spyPublisher.getPublished() )
+					.thenReturn( Arrays.asList( new Object[] { new Etherstub("ether5", false),
+					                                           new Etherstub("ether3", false) } ) );
         
         etherstubManager.setPublisher(spyPublisher);
 

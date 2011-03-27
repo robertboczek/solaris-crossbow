@@ -2,13 +2,22 @@
 package org.jims.modules.crossbow.objectmodel.policy;
 
 /**
- * Policy specifing bandwidth
+ * Policy specifying bandwidth
  *
  * @author robert boczek
  */
-public class BandwidthPolicy extends Policy{
+public class BandwidthPolicy extends Policy {
 
     private int limit;
+
+		public BandwidthPolicy( String name ) {
+			super( name, null );
+		}
+
+		public BandwidthPolicy( String name, int limit ) {
+			super( name, null );
+			this.limit = limit;
+		}
 
     public BandwidthPolicy(int limit) {
         this.limit = limit;

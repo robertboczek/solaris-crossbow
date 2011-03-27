@@ -1,7 +1,6 @@
 package org.jims.modules.crossbow.infrastructure.worker;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -184,9 +183,10 @@ public class Worker implements WorkerMBean {
 		Map< String, List< Interface > > ifaces = discoverInterfaces( ids );
 
 		Set< String > projects = new HashSet< String >();
-		projects.addAll( apps.keySet() );
-		projects.addAll( switches.keySet() );
-		projects.addAll( ifaces.keySet() );
+
+		for ( Set s : new Set[] { apps.keySet(), switches.keySet(), ifaces.keySet() } ) {
+			projects.addAll( s );
+		}
 
 		for ( String project : projects ) {
 
@@ -196,14 +196,14 @@ public class Worker implements WorkerMBean {
 
 			List entities = new LinkedList();
 
-			if ( null != apps.get( project ) ) {
-				entities.addAll( apps.get( project ) );
-			}
-			if ( null != switches.get( project ) ) {
-				entities.addAll( switches.get( project ) );
-			}
-			if ( null != ifaces.get( project ) ) {
-				entities.addAll( ifaces.get( project ) );
+			for ( List l : new List[] { apps.get( project ),
+			                            switches.get( project ),
+			                            ifaces.get( project ) } ) {
+
+				if ( null != l ) {
+					entities.addAll( l );
+				}
+
 			}
 
 			for ( Object entity : entities ) {
