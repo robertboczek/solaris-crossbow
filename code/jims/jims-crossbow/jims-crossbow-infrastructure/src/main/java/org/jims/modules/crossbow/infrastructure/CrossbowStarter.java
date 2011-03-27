@@ -15,6 +15,10 @@ import org.jims.modules.crossbow.flow.FlowManagerMBean;
 import org.jims.modules.crossbow.infrastructure.assigner.Assigner;
 import org.jims.modules.crossbow.infrastructure.gatherer.StatisticsGatherer;
 import org.jims.modules.crossbow.infrastructure.supervisor.Supervisor;
+import org.jims.modules.crossbow.infrastructure.progress.CrossbowNotificationMBean;
+import org.jims.modules.crossbow.infrastructure.progress.CrossbowNotification;
+import org.jims.modules.crossbow.infrastructure.progress.WorkerProgressMBean;
+import org.jims.modules.crossbow.infrastructure.progress.WorkerProgress;
 import org.jims.modules.crossbow.infrastructure.worker.Worker;
 import org.jims.modules.crossbow.link.VNicManagerMBean;
 import org.jims.modules.crossbow.zones.ZoneCopierMBean;
@@ -100,8 +104,17 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 
 		server.registerMBean( gatherer, new ObjectName( "Crossbow:type=StatisticsGatherer" ) );
 
-		// Supervisor MBean
+		// Crossbow notification MBean - @todo crossbowNotification musi sie 
+		//zarejestrowac u kazdego WorkerProgressMBean'a
+		CrossbowNotificationMBean crossbowNotification = new CrossbowNotification(3); //3 etapy (usuniecie, instlacja, update ) * ilosc workerwow - narazie 1
+		server.registerMBean(crossbowNotification, new ObjectName( "Crossbow:type=CrossbowNotification" ) );
 
+
+		// Crossbow notification MBean
+		WorkerProgressMBean workerProgress = new WorkerProgress();
+		server.registerMBean(workerProgress, new ObjectName( "Crossbow:type=WorkerProgress" ) );
+
+		// Supervisor MBean
 		Assigner assigner = new Assigner();
 
 		Supervisor supervisor = new Supervisor();
