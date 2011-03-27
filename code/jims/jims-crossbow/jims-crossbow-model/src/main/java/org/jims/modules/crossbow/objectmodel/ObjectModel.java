@@ -35,6 +35,25 @@ public class ObjectModel implements Serializable {
 		return entity;
 	}
 
+	/*
+	 * Just for convenience.
+	 */
+	public Object register( Object entity ) {
+
+		if ( entity instanceof Switch ) {
+			return register( ( Switch ) entity );
+		} else if ( entity instanceof Interface ) {
+			return register( ( Interface ) entity );
+		} else if ( entity instanceof Appliance ) {
+			return register( ( Appliance ) entity );
+		} else if ( entity instanceof Policy ) {
+			return register( ( Policy ) entity );
+		}
+
+		throw new RuntimeException( "Unsupported entity class (class: " + entity.getClass().toString() + ")" );
+
+	}
+
 	public List< Switch > getSwitches() {
 		return switches;
 	}

@@ -2,7 +2,6 @@ package org.jims.modules.crossbow.infrastructure.worker;
 
 import org.jims.model.solaris.solaris10.ZoneInfo;
 import org.jims.modules.crossbow.etherstub.EtherstubMBean;
-import org.jims.modules.crossbow.zones.ZoneCopierMBean;
 import org.jims.modules.crossbow.flow.FlowManagerMBean;
 import org.jims.modules.crossbow.etherstub.EtherstubManagerMBean;
 import org.jims.modules.crossbow.link.VNicMBean;
@@ -18,6 +17,7 @@ import org.jims.modules.crossbow.objectmodel.resources.Switch;
 import org.jims.modules.solaris.commands.CreateZoneFromSnapshotCommand;
 import org.jims.modules.solaris.commands.ModifyZoneCommand;
 import org.jims.modules.solaris.commands.SolarisCommandFactory;
+import org.jims.modules.solaris.solaris10.mbeans.GlobalZoneManagementMBean;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -38,10 +38,10 @@ public class WorkerTest {
 		vNicManager = mock( VNicManagerMBean.class );
 		etherstubManager = mock( EtherstubManagerMBean.class );
 		flowManager = mock( FlowManagerMBean.class );
-		ZoneCopierMBean zoneCopier = mock( ZoneCopierMBean.class );
+		zoneManagement = mock( GlobalZoneManagementMBean.class );
 		commandFactory = mock( SolarisCommandFactory.class );
 
-		worker = new Worker( vNicManager, etherstubManager, flowManager, zoneCopier, commandFactory );
+		worker = new Worker( vNicManager, etherstubManager, flowManager, zoneManagement, commandFactory );
 
 	}
 
@@ -60,7 +60,7 @@ public class WorkerTest {
 		 */
 
 		String machineId = "MYSQL", portId = "LINK0", switchId = "SWITCH";
-		String etherstubId = projectId + SEP + switchId;
+		String etherstubId = projectId + SEP + "S" + switchId;
 
 		Appliance m = new Appliance( machineId, projectId, ApplianceType.MACHINE );
 
@@ -105,7 +105,7 @@ public class WorkerTest {
 
 		assertEquals( etherstubId, etherstub.getValue().getName() );
 		assertEquals( etherstubId, vnic.getValue().getParent() );
-		assertEquals( projectId + SEP + machineId + SEP + portId, vnic.getValue().getName() );
+		assertEquals( projectId + SEP + "M" + machineId + SEP + portId, vnic.getValue().getName() );
 
 	}
 
@@ -114,6 +114,7 @@ public class WorkerTest {
 	private EtherstubManagerMBean etherstubManager;
 	private FlowManagerMBean flowManager;
 	private SolarisCommandFactory commandFactory;
+	private GlobalZoneManagementMBean zoneManagement;
 
 	private String projectId = "MYPROJECT";
 	private Worker worker;

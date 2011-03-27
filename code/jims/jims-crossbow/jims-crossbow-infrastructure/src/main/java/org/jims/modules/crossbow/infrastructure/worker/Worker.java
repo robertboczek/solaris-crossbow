@@ -1,9 +1,13 @@
 package org.jims.modules.crossbow.infrastructure.worker;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
@@ -40,11 +44,11 @@ import org.jims.modules.crossbow.objectmodel.resources.Appliance;
 import org.jims.modules.crossbow.objectmodel.resources.ApplianceType;
 import org.jims.modules.crossbow.objectmodel.resources.Interface;
 import org.jims.modules.crossbow.objectmodel.resources.Switch;
-import org.jims.modules.crossbow.zones.ZoneCopierMBean;
 import org.jims.modules.solaris.commands.CreateZoneFromSnapshotCommand;
 import org.jims.modules.solaris.commands.ModifyZoneCommand;
 import org.jims.modules.solaris.commands.RemoveZoneCommand;
 import org.jims.modules.solaris.commands.SolarisCommandFactory;
+import org.jims.modules.solaris.solaris10.mbeans.GlobalZoneManagementMBean;
 
 
 /**
@@ -56,12 +60,13 @@ public class Worker implements WorkerMBean {
 	// TODO mechanizm wycofywania zmian w przypadku bledu
 
 	public Worker( VNicManagerMBean vNicManager, EtherstubManagerMBean etherstubManager,
-	               FlowManagerMBean flowManager, ZoneCopierMBean zoneCopier, SolarisCommandFactory commandFactory ) {
+	               FlowManagerMBean flowManager, GlobalZoneManagementMBean globalZoneManagement,
+	               SolarisCommandFactory commandFactory ) {
 
 		this.vNicManager = vNicManager;
 		this.etherstubManager = etherstubManager;
 		this.flowManager = flowManager;
-		this.zoneCopier = zoneCopier;
+		this.globalZoneManagement = globalZoneManagement;
 
 		this.commandFactory = commandFactory;
 
@@ -166,31 +171,104 @@ public class Worker implements WorkerMBean {
 
 
 	@Override
-	public ObjectModel discover() {
+	public Map< String, ObjectModel > discover() {
 
-		ObjectModel om = new ObjectModel();
+		logger.info( "Discovering instantiated projects." );
+
+		Map< String, ObjectModel > res = new HashMap< String, ObjectModel >();
+
 		Map< String, Object > ids = new HashMap< String, Object >();
 
-		discoverSwitches( om, ids );
-		discoverInterfaces( om, ids );
+		Map< String, List< Appliance > > apps = discoverAppliances( ids );
+		Map< String, List< Switch > > switches = discoverSwitches( ids );
+		Map< String, List< Interface > > ifaces = discoverInterfaces( ids );
 
-		return om;
+		Set< String > projects = new HashSet< String >();
+		projects.addAll( apps.keySet() );
+		projects.addAll( switches.keySet() );
+		projects.addAll( ifaces.keySet() );
+
+		for ( String project : projects ) {
+
+			ObjectModel om = new ObjectModel();
+
+			res.put( project, om );
+
+			List entities = new LinkedList();
+
+			if ( null != apps.get( project ) ) {
+				entities.addAll( apps.get( project ) );
+			}
+			if ( null != switches.get( project ) ) {
+				entities.addAll( switches.get( project ) );
+			}
+			if ( null != ifaces.get( project ) ) {
+				entities.addAll( ifaces.get( project ) );
+			}
+
+			for ( Object entity : entities ) {
+				om.register( entity );
+			}
+
+		}
+
+		logger.info( "Discovered " + projects.size() + " project(s)." );
+
+		return res;
 
 	}
 
 
-	private void discoverSwitches( ObjectModel om, Map< String, Object > ids ) {
+	private Map< String, List< Appliance > > discoverAppliances( Map< String, Object > ids ) {
 
-		List< Switch > switches = new LinkedList< Switch >();
+		Map< String, List< Appliance > > res = new HashMap< String, List< Appliance > >();
+		List< String > zones = globalZoneManagement.getZones();
+
+		for ( Matcher m : filterNames( zones, NameHelper.REG_MACHINE_NAME_CG ) ) {
+
+			String project = m.group( 1 ), type = m.group( 2 ), name = m.group( 3 );
+
+			ApplianceType appType = NameHelper.ROUTER.equals( type ) ? ApplianceType.ROUTER : ApplianceType.MACHINE;
+
+			logger.info( "Found a " + appType + " (name: " + name + ", project: " + project + ")" );
+
+			// TODO-DAWID  repo id!
+
+			Appliance app = new Appliance( name, project, appType );
+
+			if ( ! res.containsKey( project ) ) {
+				res.put( project, new LinkedList< Appliance >() );
+			}
+
+			res.get( project ).add( app );
+			ids.put( m.group(), app );
+
+		}
+
+		return res;
+
+	}
+
+
+	private Map< String, List< Switch > > discoverSwitches( Map< String, Object > ids ) {
+
+		Map< String, List< Switch > > res = new HashMap< String, List< Switch > >();
 
 		try {
 
-			for ( Matcher m : filterNames( etherstubManager.getEtherstubsNames(), NameHelper.REG_SWITCH_NAME ) ) {
+			for ( Matcher m : filterNames( etherstubManager.getEtherstubsNames(), NameHelper.REG_SWITCH_NAME_CG ) ) {
 
-				logger.info( "Found a switch (name: " + m.group( 2 ) + ", project: " + m.group( 1 ) + ")" );
+				String project = m.group( 1 ), name = m.group( 2 );
 
-				Switch s = new Switch( m.group( 2 ), m.group( 1 ) );
-				switches.add( s );
+				logger.info( "Found a switch (name: " + name + ", project: " + project + ")" );
+
+				Switch s = new Switch( name, project );
+
+				if ( ! res.containsKey( project ) ) {
+					res.put( project, new LinkedList< Switch >() );
+				}
+
+				res.get( project ).add( s );
 				ids.put( m.group(), s );
 
 			}
@@ -198,27 +276,26 @@ public class Worker implements WorkerMBean {
 		} catch ( EtherstubException e ) {
 		}
 
-
-		logger.info( "Adding " + switches.size() + " matching switch(es) to the model." );
-
-		for ( Switch s : switches ) {
-			om.register( s );
-		}
+		return res;
 
 	}
 
 
-	private void discoverInterfaces( ObjectModel om, Map< String, Object > ids ) {
+	private Map< String, List< Interface > > discoverInterfaces( Map< String, Object > ids ) {
 
-		List< Interface > interfaces = new LinkedList< Interface >();
+		Map< String, List< Interface > > res = new HashMap< String, List< Interface > >();
 
 		try {
 
-			for ( Matcher m : filterNames( vNicManager.getVNicsNames(), NameHelper.REG_INTERFACE_NAME ) ) {
+			for ( Matcher m : filterNames( vNicManager.getVNicsNames(), NameHelper.REG_INTERFACE_NAME_CG ) ) {
+
+				String project = m.group( 1 );
+
+				logger.info( "Found an interface (name: " + m.group( 4 ) + ", project: " + project + ")" );
 
 				// Basic setup.
 
-				Interface iface = new Interface( m.group( 2 ), m.group( 1 ) );
+				Interface iface = new Interface( m.group( 4 ), m.group( 1 ) );
 
 				// Discover details.
 
@@ -226,24 +303,36 @@ public class Worker implements WorkerMBean {
 
 				iface.setEndpoint( ( Switch ) ids.get( vnic.getParent() ) );
 				
-				interfaces.add( iface );
-				ids.put( m.group(), iface );
+				Appliance app = ( Appliance ) ids.get( NameHelper.extractAppliance( m.group() ) );
+
+				if ( null != app ) {
+
+					if ( ! res.containsKey( project ) ) {
+						res.put( project, new LinkedList< Interface >() );
+					}
+
+					res.get( project ).add( iface );
+					ids.put( m.group(), iface );
+
+					// Attach the interface to an appliance.
+
+					app.addInterface( iface );
+
+				} else {
+					logger.warn( "Ignoring dangling interface (name: " + m.group() + ")." );
+				}
 
 			}
 
 		} catch ( LinkException ex ) {
 		}
 
-		logger.info( "Adding " + interfaces.size() + " interface(s) to the model." );
-
-		for ( Interface iface : interfaces ) {
-			om.register( iface );
-		}
+		return res;
 
 	}
 
 
-	private List< Matcher > filterNames( List< String > names, String regexp ) {
+	private List< Matcher > filterNames( Collection< String > names, String regexp ) {
 
 		List< Matcher > res = new LinkedList< Matcher >();
 		Pattern p = Pattern.compile( regexp );
@@ -593,7 +682,7 @@ public class Worker implements WorkerMBean {
 	private final VNicManagerMBean vNicManager;
 	private final EtherstubManagerMBean etherstubManager;
 	private final FlowManagerMBean flowManager;
-	private final ZoneCopierMBean zoneCopier;
+	private final GlobalZoneManagementMBean globalZoneManagement;
 
 	private final SolarisCommandFactory commandFactory;
 

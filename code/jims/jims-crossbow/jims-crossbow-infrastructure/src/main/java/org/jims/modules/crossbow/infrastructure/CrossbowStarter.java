@@ -2,9 +2,12 @@ package org.jims.modules.crossbow.infrastructure;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Set;
 import javax.management.JMX;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
+import javax.management.MBeanServerInvocationHandler;
+import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 import org.apache.log4j.Logger;
 import org.jims.modules.crossbow.etherstub.EtherstubManagerMBean;
@@ -16,6 +19,7 @@ import org.jims.modules.crossbow.infrastructure.worker.Worker;
 import org.jims.modules.crossbow.link.VNicManagerMBean;
 import org.jims.modules.crossbow.zones.ZoneCopierMBean;
 import org.jims.modules.solaris.commands.SolarisCommandFactory;
+import org.jims.modules.solaris.solaris10.mbeans.GlobalZoneManagementMBean;
 
 
 /**
@@ -58,6 +62,12 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 
 		}
 
+		GlobalZoneManagementMBean globalZoneManagement = MBeanServerInvocationHandler.newProxyInstance(
+			server,
+			new ObjectName( "solaris10.management.global:type=ZoneManager,role=management" ),
+			GlobalZoneManagementMBean.class,
+			false
+		);
 
 		FlowManagerMBean flowManager = JMX.newMBeanProxy(
 			server, new ObjectName( "Crossbow:type=FlowManager" ), FlowManagerMBean.class
@@ -79,7 +89,7 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 		// Register MBeans.
 
 		Worker worker = new Worker( vnicManager, etherstubManager, flowManager,
-		                            zoneCopier, SolarisCommandFactory.getFactory( SolarisCommandFactory.SOLARIS10 ) );
+		                            globalZoneManagement, SolarisCommandFactory.getFactory( SolarisCommandFactory.SOLARIS10 ) );
 
 		server.registerMBean( worker, new ObjectName( "Crossbow:type=XBowWorker" ) );
 
