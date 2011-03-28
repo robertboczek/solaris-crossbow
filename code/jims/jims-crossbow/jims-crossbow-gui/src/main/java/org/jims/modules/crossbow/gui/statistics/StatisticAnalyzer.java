@@ -123,22 +123,22 @@ public class StatisticAnalyzer {
 					+ interfac);
 			try {
 				while (!stop) {
-					
+
 					MBeanServerConnection mbsc = null;
 					try {
 						mbsc = jmxConnector.getMBeanServerConnection();
 					} catch (Exception e) {
-						
+
 						e.printStackTrace();
 						Thread.sleep(REFRESH_TIME);
 						continue;
 					}
-					
+
 					StatisticsGathererMBean statisticGatherer = null;
 
 					try {
 						statisticGatherer = JMX.newMBeanProxy(mbsc,
-								new ObjectName("Crossbow:type=Supervisor"),
+								new ObjectName("Crossbow:type=StatisticsGatherer"),
 								StatisticsGathererMBean.class);
 					} catch (Exception e) {
 
@@ -147,10 +147,10 @@ public class StatisticAnalyzer {
 						continue;
 					}
 
-					if(statisticGatherer != null) {
-					Map<LinkStatistics, Long> statistics =
-					 statisticGatherer.getInterfaceStatistics(interfac);
-					updateStatistics(statistics);
+					if (statisticGatherer != null) {
+						Map<LinkStatistics, Long> statistics = statisticGatherer
+								.getInterfaceStatistics(interfac);
+						updateStatistics(statistics);
 					}
 					Thread.sleep(REFRESH_TIME);
 

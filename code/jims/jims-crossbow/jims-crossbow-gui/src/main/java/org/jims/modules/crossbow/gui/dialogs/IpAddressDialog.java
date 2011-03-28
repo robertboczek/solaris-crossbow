@@ -50,6 +50,8 @@ public class IpAddressDialog extends TitleAreaDialog {
 
 	private String bandwidthOrPriority;
 
+	private String flowName;
+
 	public IpAddressDialog(Shell parentShell, Interface interfac) {
 		super(parentShell);
 
@@ -242,9 +244,9 @@ public class IpAddressDialog extends TitleAreaDialog {
 					}
 
 					if (bandwidthOrPriority.equals("Bandwidth")) {
-						policy = new BandwidthPolicy(10000);
+						policy = new BandwidthPolicy(flowName, 10000);
 					} else if (bandwidthOrPriority.equals("Priority")) {
-						policy = new PriorityPolicy("", null, filter);
+						policy = new PriorityPolicy(flowName, null, filter);
 					}
 				}
 
@@ -464,6 +466,11 @@ public class IpAddressDialog extends TitleAreaDialog {
 
 	public void setBandwidthOrPriority(String text) {
 		this.bandwidthOrPriority = text;
+	}
+
+	public void setFlowNameText(String flowName) {
+		this.flowName = flowName;
+
 	}
 
 }
