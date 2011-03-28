@@ -1,3 +1,0 @@
-mvn assembly:assembly
-
-java -jar target/jims-crossbow-gui-3.0.0-exe.jar
