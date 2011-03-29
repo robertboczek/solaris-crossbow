@@ -1,6 +1,7 @@
 package org.jims.modules.crossbow.infrastructure.progress;
 
 import java.util.List;
+import java.util.LinkedList;
 
 import javax.management.ListenerNotFoundException;
 import javax.management.MBeanNotificationInfo;
@@ -39,7 +40,7 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 	 */
 	private static final long serialVersionUID = 4845007778991652486L;
 
-	private List<NotificationListener> listeners;
+	private List<NotificationListener> listeners = new LinkedList<NotificationListener>();
 
 	//@todo dopisac rejestrowanie we wszystkich WorkerProgressMBEan'ach - narazie jest tylko jeden
 	private void registerNotificationListener() {
