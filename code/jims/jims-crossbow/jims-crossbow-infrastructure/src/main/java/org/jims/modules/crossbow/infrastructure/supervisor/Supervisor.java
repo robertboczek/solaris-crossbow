@@ -20,12 +20,7 @@ public class Supervisor implements SupervisorMBean {
 	@Override
 	public void instantiate( ObjectModel model, Actions actions ) throws ModelInstantiationException {
 
-		/*
-		File f = new File("/export/home/robert/hura.txt");
-		f.createNewFile();
-		*/
-
-		 Assignments assignments = assigner.assign( model );
+		Assignments assignments = assigner.assign( model );
 		WorkerMBean worker = workers.values().iterator().next();
 
 		worker.instantiate( model, actions, assignments );
@@ -38,8 +33,12 @@ public class Supervisor implements SupervisorMBean {
 	}
 
 	@Override
-	public ObjectModel discover() {
-		throw new UnsupportedOperationException("Not supported yet.");
+	public Map< String, ObjectModel > discover() {
+
+		WorkerMBean worker = workers.values().iterator().next();
+
+		return worker.discover();
+
 	}
 
 

@@ -41,7 +41,11 @@ import org.eclipse.zest.layouts.LayoutStyles;
 import org.eclipse.zest.layouts.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.zest.layouts.algorithms.TreeLayoutAlgorithm;
 import org.jims.modules.crossbow.enums.LinkStatistics;
+import org.jims.modules.crossbow.gui.actions.ComponentProxyFactory;
 import org.jims.modules.crossbow.gui.actions.ConfigurationUtil;
+import org.jims.modules.crossbow.gui.actions.DiscoveryHandler;
+import org.jims.modules.crossbow.gui.actions.ModelToGraphTranslator;
+import org.jims.modules.crossbow.gui.actions.SupervisorProxyFactory;
 import org.jims.modules.crossbow.gui.data.GraphConnectionData;
 import org.jims.modules.crossbow.gui.dialogs.EditResourceDialog;
 import org.jims.modules.crossbow.gui.dialogs.InterfaceStatisticsDetailsDialog;
@@ -60,6 +64,11 @@ import org.jims.modules.crossbow.objectmodel.resources.ApplianceType;
 import org.jims.modules.crossbow.objectmodel.resources.Endpoint;
 import org.jims.modules.crossbow.objectmodel.resources.Interface;
 import org.jims.modules.crossbow.objectmodel.resources.Switch;
+import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.core.databinding.beans.PojoObservables;
+import org.eclipse.core.databinding.observable.Realm;
 
 /**
  * Main view in our GUI allows creating network structure with certain QoS
@@ -68,8 +77,11 @@ import org.jims.modules.crossbow.objectmodel.resources.Switch;
  * 
  */
 public class Gui extends Shell {
+	private DataBindingContext m_bindingContext;
 
 	public static final int REFRESH_TIME = 10000;// 10seconds
+
+	private static ComponentProxyFactory componentProxyFactory;
 
 	private Graph graph;
 	private int layout = 1;
@@ -94,6 +106,8 @@ public class Gui extends Shell {
 	private List<Object> modelObjects = new LinkedList<Object>();
 
 	private JmxConnector jmxConnector;
+	
+	private DiscoveryHandler discoveryHandler;
 
 	/**
 	 * Launch the application.
@@ -101,22 +115,52 @@ public class Gui extends Shell {
 	 * @param args
 	 */
 	public static void main(String args[]) {
-		try {
-			Display display = Display.getDefault();
-			Gui shell = new Gui(display);
-			shell.open();
-			shell.layout();
-			while (!shell.isDisposed()) {
-				shell.updateGraphConnections();
-				if (!display.readAndDispatch()) {
-					display.sleep();
+		Display display = Display.getDefault();
+		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			public void run() {
+				try {
+					Display display = Display.getDefault();
+					
+					componentProxyFactory = new ComponentProxyFactory();
+					
+					ModelToGraphTranslator translator = new ModelToGraphTranslator();
+					
+					Gui shell = new Gui( display, new DiscoveryHandler( new SupervisorProxyFactory() {
+						
+						@Override
+						public SupervisorMBean createSupervisor() {
+							return componentProxyFactory.createSupervisor();
+						}
+						
+					}, translator ) );
+					
+					// Set the graph's style.
+					
+					translator.setColor(
+						ModelToGraphTranslator.Element.GRAPH_EDGE,
+						shell.getDisplay().getSystemColor( SWT.COLOR_BLACK )
+					);
+					
+					translator.setColor(
+						ModelToGraphTranslator.Element.GRAPH_NODE,
+						shell.getDisplay().getSystemColor( SWT.COLOR_WHITE )
+					);
+					
+					shell.open();
+					shell.layout();
+					while (!shell.isDisposed()) {
+						shell.updateGraphConnections();
+						if (!display.readAndDispatch()) {
+							display.sleep();
+						}
+					}
+
+					shell.stop();
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
-
-			shell.stop();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		});
 	}
 
 	/**
@@ -124,9 +168,11 @@ public class Gui extends Shell {
 	 * 
 	 * @param display
 	 */
-	public Gui(Display display) {
+	public Gui( Display display, DiscoveryHandler discoveryHandler ) {
 		super(display, SWT.SHELL_TRIM);
-
+		
+		this.discoveryHandler = discoveryHandler;
+		
 		Menu menu = new Menu(this, SWT.BAR);
 		setMenuBar(menu);
 
@@ -927,6 +973,26 @@ public class Gui extends Shell {
 		supervisorPort.setLayoutData(fd_projectId2);
 		supervisorPort.setText("");
 		supervisorPort.pack();
+		
+		Button discoverBtn = new Button(buttonGroup, SWT.PUSH);
+		FormData fd_discoverBtn = new FormData();
+		
+		fd_discoverBtn.bottom = new FormAttachment(0, 277);
+		fd_discoverBtn.right = new FormAttachment(100, -28);
+		fd_discoverBtn.top = new FormAttachment(deployButton, 0, SWT.TOP);
+		fd_discoverBtn.left = new FormAttachment(addSwitchButton, 0, SWT.LEFT);
+		discoverBtn.setLayoutData(fd_discoverBtn);
+		discoverBtn.setToolTipText("Discover");
+		discoverBtn.setImage(loadImage("icons/discover.jpg"));
+		
+		discoverBtn.addListener( SWT.MouseUp, new Listener() {
+			
+			@Override
+			public void handleEvent( Event event ) {
+				discoveryHandler.handle( graph );
+			}
+			
+		} );
 
 		resetConnectionDetailsLabel();
 
@@ -936,6 +1002,7 @@ public class Gui extends Shell {
 
 		connectionLabelUpdater = new GraphConnectionLabelUpdater();
 		connectionLabelUpdater.start();
+		m_bindingContext = initDataBindings();
 
 	}
 
@@ -1274,5 +1341,18 @@ public class Gui extends Shell {
 
 		}
 
+	}
+	protected DataBindingContext initDataBindings() {
+		DataBindingContext bindingContext = new DataBindingContext();
+		//
+		IObservableValue supervisorsAddressObserveTextObserveWidget = SWTObservables.observeText(supervisorsAddress, SWT.Modify);
+		IObservableValue componentProxyFactoryMbServerObserveValue = PojoObservables.observeValue(componentProxyFactory, "mbServer");
+		bindingContext.bindValue(supervisorsAddressObserveTextObserveWidget, componentProxyFactoryMbServerObserveValue, null, null);
+		//
+		IObservableValue supervisorPortObserveTextObserveWidget = SWTObservables.observeText(supervisorPort, SWT.Modify);
+		IObservableValue componentProxyFactoryMbPortObserveValue = PojoObservables.observeValue(componentProxyFactory, "mbPort");
+		bindingContext.bindValue(supervisorPortObserveTextObserveWidget, componentProxyFactoryMbPortObserveValue, null, null);
+		//
+		return bindingContext;
 	}
 }
