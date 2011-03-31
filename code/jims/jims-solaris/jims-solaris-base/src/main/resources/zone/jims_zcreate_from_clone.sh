@@ -31,18 +31,25 @@ function zone_create_from_zfs_snapshot
 	# ZFS create and receive from snapshot
 	ZFS_ZONE_FS=$ZONE_ZPOOL/${ZONE_NAME}
 
-	/usr/sbin/zfs receive $ZFS_ZONE_FS < $ZONE_SRC_SNAPSHOT.SNAP
-	/usr/sbin/zfs receive $ZFS_ZONE_FS/ROOT < $ZONE_SRC_SNAPSHOT.ROOT.SNAP
-	/usr/sbin/zfs receive $ZFS_ZONE_FS/ROOT/zbe < $ZONE_SRC_SNAPSHOT.ROOT.zbe.SNAP
+	SNAP_MAIN=$ZONE_SRC_SNAPSHOT.SNAP
+	SNAP_ROOT=$ZONE_SRC_SNAPSHOT.ROOT.SNAP
+	SNAP_ZBE=$ZONE_SRC_SNAPSHOT.ROOT.zbe.SNAP
+
+	/usr/sbin/zfs receive $ZFS_ZONE_FS < SNAP_MAIN
 
 	typeset zfile=/tmp/.zone_create.$$
 	typeset ret=0;
 
-	# Mounted ZFS with imported zone's dir structure
-	ZONE_PATH=`zfs get -H -o value mountpoint $ZFS_ZONE_FS`
-	
-	zfs set mountpoint=legacy $ZFS_ZONE_FS/ROOT
-	zfs set mountpoint=legacy $ZFS_ZONE_FS/ROOT/zbe
+	if [ -e $SNAP_ROOT ]; then
+		/usr/sbin/zfs receive $ZFS_ZONE_FS/ROOT < SNAP_ROOT
+		/usr/sbin/zfs receive $ZFS_ZONE_FS/ROOT/zbe < SNAP_ZBE
+
+		# Mounted ZFS with imported zone's dir structure
+		ZONE_PATH=`zfs get -H -o value mountpoint $ZFS_ZONE_FS`
+		
+		zfs set mountpoint=legacy $ZFS_ZONE_FS/ROOT
+		zfs set mountpoint=legacy $ZFS_ZONE_FS/ROOT/zbe
+	fi
 
 
 cat > ${zfile} <<_EOF

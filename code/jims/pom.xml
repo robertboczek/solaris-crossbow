@@ -36,10 +36,10 @@
 	</properties>
 
 	<repositories>
-		<repository>
+		<!-- <repository>
 			<id>jims-dsrg-repository</id>
 			<url>http://iris.ics.agh.edu.pl/jims/maven2/</url>
-		</repository>
+		</repository> -->
 		<repository>
 			<id>jboss-repository</id>
 			<url>http://repository.jboss.com/maven2/</url>
@@ -274,7 +274,7 @@
 		<!-- WS connector dependencies - end -->
 
 		<!--  OCMG dependencies -->
-		<dependency>
+		<!-- <dependency>
 			<groupId>ocmg</groupId>
 			<artifactId>jims-ocmg</artifactId>
 			<version>1.0.1</version>
@@ -283,7 +283,7 @@
 			<groupId>ocmg</groupId>
 			<artifactId>ocmgjapi</artifactId>
 			<version>1.0.0</version>
-		</dependency>
+		</dependency> -->
 		<!--  OCMG dependencies - end -->
 
 		<!-- AMT dependencies -->
@@ -386,7 +386,6 @@
 			<version>4.0</version>
 			<scope>test</scope>
 		</dependency>
-		<!--
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
@@ -394,7 +393,6 @@
 			<scope>test</scope>
 			<classifier>jdk15</classifier>
 		</dependency>
-		-->
 	</dependencies>
 	<build>
 		<plugins>
