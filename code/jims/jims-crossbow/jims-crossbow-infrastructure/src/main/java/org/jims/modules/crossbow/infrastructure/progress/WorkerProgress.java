@@ -3,6 +3,7 @@ package org.jims.modules.crossbow.infrastructure.progress;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
+import java.util.LinkedList;
 
 import javax.management.ListenerNotFoundException;
 import javax.management.MBeanNotificationInfo;
@@ -20,7 +21,7 @@ public class WorkerProgress implements WorkerProgressMBean {
 	 */
 	private static final long serialVersionUID = -6571063858607854845L;
 
-	private List<NotificationListener> listeners;
+	private List<NotificationListener> listeners = new LinkedList<NotificationListener>();
 	
 	private int sequenceNumber = 0;
 
