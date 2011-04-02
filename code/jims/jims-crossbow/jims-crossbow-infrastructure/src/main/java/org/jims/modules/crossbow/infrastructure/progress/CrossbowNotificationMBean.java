@@ -19,4 +19,6 @@ public interface CrossbowNotificationMBean extends Serializable, NotificationLis
 
 	public String getNewLogs();
 
+	public void reset();
+
 }

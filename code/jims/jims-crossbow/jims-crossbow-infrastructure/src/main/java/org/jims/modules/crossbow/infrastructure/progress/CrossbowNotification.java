@@ -97,4 +97,12 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 			sb.append("\n");
 		}
 	}
+
+	@Override
+	public void reset() {
+
+		index = 0;
+		sb = new StringBuilder();
+
+	}
 }
