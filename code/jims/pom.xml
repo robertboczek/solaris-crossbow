@@ -386,13 +386,13 @@
 			<version>4.0</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
 			<version>5.7</version>
 			<scope>test</scope>
 			<classifier>jdk15</classifier>
-		</dependency>
+		</dependency> -->
 	</dependencies>
 	<build>
 		<plugins>

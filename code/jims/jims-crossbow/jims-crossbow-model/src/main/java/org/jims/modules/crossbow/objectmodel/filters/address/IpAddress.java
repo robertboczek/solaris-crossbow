@@ -1,6 +1,8 @@
 package org.jims.modules.crossbow.objectmodel.filters.address;
 
 import java.io.Serializable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -9,7 +11,7 @@ import java.io.Serializable;
  * @author robert boczek
  */
 public class IpAddress implements Serializable {
-    
+
     private String address;
     private int netmask;
 
@@ -17,6 +19,19 @@ public class IpAddress implements Serializable {
         this.address = address;
         this.netmask = netmask;
     }
+
+		public static IpAddress fromString( String s ) {
+
+			Pattern p = Pattern.compile( "((?:\\d{1,3}\\.){3}\\d{1,3})(?:/(\\d{1,2}))?" );
+			Matcher m = p.matcher( s );
+
+			if ( m.matches() ) {
+				return new IpAddress( m.group( 1 ), Integer.parseInt( m.group( 2 ) ) );
+			}
+
+			return null;
+
+		}
 
 
     /**
