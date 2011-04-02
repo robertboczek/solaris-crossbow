@@ -102,6 +102,8 @@ public class Gui extends Shell {
 	private Text supervisorsAddress;
 	private Text supervisorPort;
 
+	private ProgressShell progressShell;
+
 	private boolean updateGraphConnection = false;
 	private List<Object> modelObjects = new LinkedList<Object>();
 
@@ -377,10 +379,18 @@ public class Gui extends Shell {
 
 		if (jmxConnector != null) {
 			try {
-				this.setText(jmxConnector.getMBeanServerConnectionDetails());
+				jmxConnector.getMBeanServerConnectionDetails();
+				this.setText("Connected");
 			} catch (IOException e) {
-				e.printStackTrace();
 				resetConnectionDetailsLabel();
+			}
+		}
+
+		if (progressShell != null) {
+			if (!progressShell.isRunning()) {
+				progressShell = null;
+			} else {
+				progressShell.update();
 			}
 		}
 	}
@@ -463,6 +473,11 @@ public class Gui extends Shell {
 
 					registerObjects(objectModel, modelObjects);
 
+					progressShell = new ProgressShell(Gui.this, jmxConnector);
+					progressShell.create();
+					if (progressShell.open() == Window.OK) {
+					}
+
 					new Thread() {
 
 						public void run() {
@@ -493,8 +508,6 @@ public class Gui extends Shell {
 												null,
 												"Problem with sending network structure",
 												"Network structure couldn't be sent");
-
-								e.printStackTrace();
 								return;
 							}
 						}
@@ -506,19 +519,6 @@ public class Gui extends Shell {
 
 					e.printStackTrace();
 					return;
-				}
-
-				Display display = Display.getDefault();
-				Shell dlgShell = new ProgressShell(Gui.this.getDisplay(),
-						jmxConnector);
-				dlgShell.setSize(300, 250);
-				dlgShell.setLocation(200, 200);
-				dlgShell.open();
-				dlgShell.layout();
-				while (!dlgShell.isDisposed()) {
-					if (!display.readAndDispatch()) {
-						display.sleep();
-					}
 				}
 
 				statisticAnalyzer = new StatisticAnalyzer(
