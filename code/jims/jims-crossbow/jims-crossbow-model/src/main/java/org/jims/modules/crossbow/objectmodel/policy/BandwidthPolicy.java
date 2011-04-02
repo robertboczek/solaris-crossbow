@@ -1,6 +1,8 @@
 
 package org.jims.modules.crossbow.objectmodel.policy;
 
+import org.jims.modules.crossbow.objectmodel.filters.Filter;
+
 /**
  * Policy specifying bandwidth
  *
@@ -15,7 +17,11 @@ public class BandwidthPolicy extends Policy {
 		}
 
 		public BandwidthPolicy( String name, int limit ) {
-			super( name, null );
+			this( name, limit, null );
+		}
+
+		public BandwidthPolicy( String name, int limit, Filter filter ) {
+			super( name, filter );
 			this.limit = limit;
 		}
 

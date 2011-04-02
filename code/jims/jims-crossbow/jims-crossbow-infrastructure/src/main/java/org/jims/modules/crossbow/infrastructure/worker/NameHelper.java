@@ -53,6 +53,18 @@ public class NameHelper {
 	}
 
 
+	public static Object extractInterface( String s ) {
+
+		logger.debug( "Extracting interface (input string: " + s + ")" );
+
+		Pattern p = Pattern.compile( capgroup( REG_INTERFACE_NAME ) + REG_SEP + REG_ANY );
+		Matcher m = p.matcher( s );
+
+		return ( m.matches() ? m.group( 1 ) : "" );
+
+	}
+
+
 	private static String capgroup( String s ) {
 		return "(" + s + ")";
 	}
@@ -95,8 +107,11 @@ public class NameHelper {
 	public final static String REG_INTERFACE_NAME
 		= group( REG_APPLIANCE_NAME + REG_SEP + REG_RESOURCE_ID );
 	public final static String REG_INTERFACE_NAME_CG
-		= group( capgroup( REG_PROJECT_ID ) +REG_SEP + capgroup( ROUTER + "|" + MACHINE )
+		= group( capgroup( REG_PROJECT_ID ) + REG_SEP + capgroup( ROUTER + "|" + MACHINE )
 		  + capgroup( REG_PROJECT_ID ) + REG_SEP + capgroup( REG_RESOURCE_ID ) );
+
+	public final static String REG_POLICY_NAME_CG
+		= group( REG_INTERFACE_NAME_CG + REG_SEP + capgroup( REG_PROJECT_ID ) );
 
 
 	private static final Logger logger = Logger.getLogger( NameHelper.class );

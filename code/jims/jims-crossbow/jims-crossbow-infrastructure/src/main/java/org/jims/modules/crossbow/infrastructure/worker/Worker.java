@@ -1,4 +1,4 @@
-package org.jims.modules.crossbow.infrastructure.worker;
+ package org.jims.modules.crossbow.infrastructure.worker;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -17,8 +17,10 @@ import org.jims.modules.crossbow.etherstub.Etherstub;
 import org.jims.modules.crossbow.etherstub.EtherstubManagerMBean;
 import org.jims.modules.crossbow.exception.EtherstubException;
 import org.jims.modules.crossbow.exception.LinkException;
+import org.jims.modules.crossbow.exception.NoSuchFlowException;
 import org.jims.modules.crossbow.exception.XbowException;
 import org.jims.modules.crossbow.flow.Flow;
+import org.jims.modules.crossbow.flow.FlowMBean;
 import org.jims.modules.crossbow.flow.FlowManagerMBean;
 import org.jims.modules.crossbow.flow.enums.FlowAttribute;
 import org.jims.modules.crossbow.flow.enums.FlowProperty;
@@ -181,6 +183,7 @@ public class Worker implements WorkerMBean {
 		Map< String, List< Appliance > > apps = discoverAppliances( ids );
 		Map< String, List< Switch > > switches = discoverSwitches( ids );
 		Map< String, List< Interface > > ifaces = discoverInterfaces( ids );
+		Map< String, List< Policy > > policies = discoverPolicies( ids );
 
 		Set< String > projects = new HashSet< String >();
 
@@ -194,20 +197,17 @@ public class Worker implements WorkerMBean {
 
 			res.put( project, om );
 
-			List entities = new LinkedList();
-
 			for ( List l : new List[] { apps.get( project ),
 			                            switches.get( project ),
-			                            ifaces.get( project ) } ) {
+			                            ifaces.get( project ),
+			                            policies.get( project ) } ) {
 
 				if ( null != l ) {
-					entities.addAll( l );
+					for ( Object entity : l ) {
+						om.register( entity );
+					}
 				}
 
-			}
-
-			for ( Object entity : entities ) {
-				om.register( entity );
 			}
 
 		}
@@ -332,6 +332,143 @@ public class Worker implements WorkerMBean {
 	}
 
 
+	private Map< String, List< Policy > > discoverPolicies( Map< String, Object > ids ) {
+
+		Map< String, List< Policy > > res = new HashMap< String, List< Policy > >();
+
+		try {
+
+			for ( Matcher m : filterNames( flowManager.getFlows(), NameHelper.REG_POLICY_NAME_CG ) ) {
+
+				String name = m.group();
+
+				FlowMBean flow = flowManager.getByName( name );
+
+				Map< FlowAttribute, String > attrs = flow.getAttributes();
+
+				Filter filter = null;
+
+				if ( attrs.containsKey( FlowAttribute.LOCAL_PORT )
+				     || attrs.containsKey( FlowAttribute.REMOTE_PORT ) ) {
+
+					// We've found PortFilter
+
+					boolean isLocal = attrs.containsKey( FlowAttribute.LOCAL_PORT );
+					PortFilter.Protocol proto = PortFilter.Protocol.valueOf( attrs.get( FlowAttribute.TRANSPORT ).toUpperCase() );
+					int port = Integer.parseInt( attrs.get( isLocal ? FlowAttribute.LOCAL_PORT
+					                                                : FlowAttribute.REMOTE_PORT ) );
+
+					filter = new PortFilter(
+						proto,
+						port,
+						isLocal ? Filter.Location.LOCAL : Filter.Location.REMOTE
+					);
+
+				} else if ( attrs.containsKey( FlowAttribute.TRANSPORT ) ) {
+
+					// We have a TransportFilter
+
+					filter = new TransportFilter(
+						TransportFilter.Transport.valueOf( attrs.get( FlowAttribute.TRANSPORT ).toUpperCase() )
+					);
+
+				} else if ( attrs.containsKey( FlowAttribute.LOCAL_IP )
+				            || attrs.containsKey( FlowAttribute.REMOTE_IP ) ) {
+
+					// IpFilter
+
+					boolean isLocal = attrs.containsKey( FlowAttribute.LOCAL_IP );
+					String s = attrs.get( isLocal ? FlowAttribute.LOCAL_IP : FlowAttribute.REMOTE_IP );
+					IpAddress addr = IpAddress.fromString( s );
+
+					if ( null == addr ) {
+
+						logger.error( "Could not parse address (address: " + s + ")" );
+
+					} else {
+
+						filter = new IpFilter(
+							addr,
+							isLocal ? IpFilter.Location.LOCAL : IpFilter.Location.REMOTE
+						);
+
+					}
+
+				} else {
+
+					// Unknown filter type.
+
+					logger.error( "Unknown filter type." );
+
+				}
+
+				if ( null != filter ) {
+
+					// We have retrieved the filter. Gonna get the policy now.
+
+					Policy policy = null;
+					Map< FlowProperty, String > props = flow.getProperties();
+
+					String policyName = m.group( 5 );
+
+					if ( props.containsKey( FlowProperty.MAXBW ) ) {
+
+						policy = new BandwidthPolicy(
+							policyName,
+							Integer.parseInt( props.get( FlowProperty.MAXBW ) ),
+							filter
+						);
+
+					} else if ( props.containsKey( FlowProperty.PRIORITY ) ) {
+
+						policy = new PriorityPolicy(
+							policyName,
+							PriorityPolicy.Priority.valueOf( props.get( FlowProperty.PRIORITY ).toUpperCase() ),
+							filter
+						);
+
+					}
+
+					if ( null != policy ) {
+
+						Interface iface = ( Interface ) ids.get( NameHelper.extractInterface( m.group() ) );
+							
+						if ( null != iface ) {
+
+							// Attach the policy to the interface.
+
+							iface.addPolicy( policy );
+
+							String project = m.group( 1 );
+
+							if ( ! res.containsKey( project ) ) {
+								res.put( project, new LinkedList< Policy >() );
+							}
+
+							res.get( project ).add( policy );
+							ids.put( m.group( 0 ), policy );
+
+						} else {
+
+							logger.warn( "Could not find parent interface for policy (name: "
+							             + m.group() + ")" );
+
+						}
+
+					}
+
+				}
+
+			}
+
+		} catch ( NoSuchFlowException ex ) {
+		}
+
+		return res;
+
+	}
+
+
 	private List< Matcher > filterNames( Collection< String > names, String regexp ) {
 
 		List< Matcher > res = new LinkedList< Matcher >();
@@ -408,6 +545,8 @@ public class Worker implements WorkerMBean {
 			Filter filter = p.getFilter();
 
 			if ( filter instanceof AnyFilter ) {
+
+				// TODO-DAWID to jest prawdopodobnie do wywalenia
 
 				// We apply the policy directly to the Interface.
 

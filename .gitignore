@@ -15,3 +15,6 @@ nbactions.xml
 *.class
 tags
 .lvimrc
+.classpath
+.project
+build.properties
