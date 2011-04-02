@@ -502,13 +502,6 @@ public class Gui extends Shell {
 
 							} catch (ModelInstantiationException e) {
 								e.printStackTrace();
-
-								MessageDialog
-										.openError(
-												null,
-												"Problem with sending network structure",
-												"Network structure couldn't be sent");
-								return;
 							}
 						}
 					}.start();
