@@ -12,6 +12,7 @@ import javax.management.NotificationFilter;
 import javax.management.NotificationListener;
 
 import org.jims.modules.crossbow.infrastructure.progress.notification.ProgressNotification;
+import org.jims.modules.crossbow.infrastructure.progress.notification.LogNotification;
 import org.jims.modules.crossbow.infrastructure.progress.notification.TaskCompletedNotification;
 import org.jims.modules.crossbow.infrastructure.JimsMBeanServer;
 
@@ -24,9 +25,10 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 
 	private int index;
 
-	private int sequenceNumber = 0;
-
 	private Logger log = Logger.getLogger( CrossbowNotification.class );
+
+	private StringBuilder sb = new StringBuilder();
+	private ProgressNotification progressNotification = null;
 
 	public CrossbowNotification(int totalTasks) {
 		this.index = 0;
@@ -39,8 +41,6 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 	 * 
 	 */
 	private static final long serialVersionUID = 4845007778991652486L;
-
-	private List<NotificationListener> listeners = new LinkedList<NotificationListener>();
 
 	//@todo dopisac rejestrowanie we wszystkich WorkerProgressMBEan'ach - narazie jest tylko jeden
 	private void registerNotificationListener() {
@@ -62,24 +62,17 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 	}
 
 	@Override
-	public void addNotificationListener(NotificationListener listener,
-			NotificationFilter arg1, Object arg2)
-			throws IllegalArgumentException {
-		listeners.add(listener);
+	public synchronized ProgressNotification getProgress() {
+
+		return this.progressNotification;
 	}
 
 	@Override
-	public MBeanNotificationInfo[] getNotificationInfo() {
-		MBeanNotificationInfo info = new MBeanNotificationInfo(null,
-				"Notification about deployment process", null);
-		return new MBeanNotificationInfo[] { info };
-	}
-
-	@Override
-	public void removeNotificationListener(NotificationListener listener)
-			throws ListenerNotFoundException {
-		listeners.remove(listener);
-
+	public synchronized String getNewLogs() {
+		
+		String logs = sb.toString();
+		sb = new StringBuilder();
+		return logs;
 	}
 
 	/**
@@ -88,23 +81,20 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 	 * postepu procesu deploymentu
 	 */
 	@Override
-	public void handleNotification(Notification notification, Object handback) {
+	public synchronized void handleNotification(Notification notification, Object handback) {
 
 		Object userData = notification.getUserData();
 
 		if (notification.getUserData() != null
 				&& notification.getUserData() instanceof TaskCompletedNotification) {
-			userData = new ProgressNotification(++index, totalTasks,
+			progressNotification = new ProgressNotification(++index, totalTasks,
 					((TaskCompletedNotification) notification.getUserData())
 							.getNodeIpAddress());
-		}
-
-		Notification notification2 = new Notification("ProgressNotification",
-				"Supervisor", ++sequenceNumber);
-		notification2.setUserData(userData);
-
-		for (NotificationListener notificationListener : listeners) {
-			notificationListener.handleNotification(notification2, null);
+		} else if(notification.getUserData() != null
+				&& notification.getUserData() instanceof LogNotification) {
+			
+			sb.append(((LogNotification)notification.getUserData()).getLog());
+			sb.append("\n");
 		}
 	}
 }
