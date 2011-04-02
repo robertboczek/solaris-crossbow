@@ -5,12 +5,20 @@ import java.io.Serializable;
 import javax.management.NotificationBroadcaster;
 import javax.management.NotificationListener;
 
+import org.jims.modules.crossbow.infrastructure.progress.notification.ProgressNotification;
+
 /**
  * Bean do notyfikowania o postepach w procesie deploymentu
  * 
  * @author Robert Boczek
  *
  */
-public interface CrossbowNotificationMBean extends NotificationBroadcaster, Serializable, NotificationListener{
+public interface CrossbowNotificationMBean extends Serializable, NotificationListener {
+
+	public ProgressNotification getProgress();
+
+	public String getNewLogs();
+
+	public void reset();
 
 }

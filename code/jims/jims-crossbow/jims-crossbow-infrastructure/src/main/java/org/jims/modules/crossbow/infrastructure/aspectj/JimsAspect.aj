@@ -23,7 +23,6 @@ public aspect JimsAspect {
 	private MBeanServer server = null;
 
 	before (): addMethod() {
-		System.out.println("Before");
 
 		if(workerProgressMBean == null) {
 			getWorkerProgressMBean();
@@ -36,7 +35,6 @@ public aspect JimsAspect {
 	}
 
 	after (): addMethod() {
-		System.out.println("After");
 
 		if(workerProgressMBean == null) {
 			getWorkerProgressMBean();
@@ -63,7 +61,6 @@ public aspect JimsAspect {
 	}
 
 	after (): remMethod() {
-		System.out.println("After");
 
 		if(workerProgressMBean == null) {
 			getWorkerProgressMBean();
@@ -77,7 +74,6 @@ public aspect JimsAspect {
 	}
 
 	before (): updMethod() {
-		System.out.println("Before");
 
 		if(workerProgressMBean == null) {
 			getWorkerProgressMBean();
@@ -90,7 +86,6 @@ public aspect JimsAspect {
 	}
 
 	after (): updMethod() {
-		System.out.println("After");
 
 		if(workerProgressMBean == null) {
 			getWorkerProgressMBean();
@@ -112,6 +107,7 @@ public aspect JimsAspect {
 		MBeanServer server = JimsMBeanServer.findJimsMBeanServer();
 
 		if(server == null) {
+			log.error("Couldn't get MBeanServer");
 			return null;
 		}
 
