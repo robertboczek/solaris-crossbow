@@ -123,7 +123,6 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 		Assigner assigner = new Assigner();
 
 		Supervisor supervisor = new Supervisor();
-		supervisor.setCrossbowNotificationMBean( crossbowNotification );
 
 		supervisor.addWorker( "", worker );
 		supervisor.setAssigner( assigner );

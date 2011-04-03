@@ -55,6 +55,7 @@ import org.jims.modules.crossbow.gui.dialogs.SelectNetworkInterfacesDialog;
 import org.jims.modules.crossbow.gui.jmx.JmxConnector;
 import org.jims.modules.crossbow.gui.statistics.StatisticAnalyzer;
 import org.jims.modules.crossbow.infrastructure.supervisor.SupervisorMBean;
+import org.jims.modules.crossbow.infrastructure.progress.CrossbowNotificationMBean;
 import org.jims.modules.crossbow.infrastructure.worker.exception.ModelInstantiationException;
 import org.jims.modules.crossbow.objectmodel.Actions;
 import org.jims.modules.crossbow.objectmodel.ObjectModel;
@@ -473,6 +474,12 @@ public class Gui extends Shell {
 					final ObjectModel objectModel = new ObjectModel();
 
 					registerObjects(objectModel, modelObjects);
+
+					CrossbowNotificationMBean crossbowNotificationMBean = JMX.newMBeanProxy(mbsc, new ObjectName(
+						"Crossbow:type=CrossbowNotification"),
+						CrossbowNotificationMBean.class);
+
+					crossbowNotificationMBean.reset();
 
 					progressShell = new ProgressShell(Gui.this, jmxConnector);
 					progressShell.create();

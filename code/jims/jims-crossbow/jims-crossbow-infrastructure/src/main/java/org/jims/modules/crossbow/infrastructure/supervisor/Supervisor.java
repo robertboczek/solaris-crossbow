@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.io.File;
 import org.jims.modules.crossbow.infrastructure.assigner.AssignerMBean;
-import org.jims.modules.crossbow.infrastructure.progress.CrossbowNotificationMBean;
 import org.jims.modules.crossbow.infrastructure.worker.WorkerMBean;
 import org.jims.modules.crossbow.infrastructure.worker.exception.ModelInstantiationException;
 import org.jims.modules.crossbow.objectmodel.Actions;
@@ -20,8 +19,6 @@ public class Supervisor implements SupervisorMBean {
 
 	@Override
 	public void instantiate( ObjectModel model, Actions actions ) throws ModelInstantiationException {
-
-		crossbowNotificationMBean.reset();
 
 		Assignments assignments = assigner.assign( model );
 		WorkerMBean worker = workers.values().iterator().next();
@@ -57,14 +54,6 @@ public class Supervisor implements SupervisorMBean {
 		this.assigner = assigner;
 	}
 
-	public void setCrossbowNotificationMBean( CrossbowNotificationMBean crossbowNotificationMBean ) {
-
-		this.crossbowNotificationMBean = crossbowNotificationMBean;
-
-	}
-
-
-	private CrossbowNotificationMBean crossbowNotificationMBean;
 	private AssignerMBean assigner;
 	private Map< String, WorkerMBean > workers = new HashMap< String, WorkerMBean >();
 

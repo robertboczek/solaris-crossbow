@@ -50,9 +50,11 @@ public class ProgressShell extends ProgressMonitorDialog {
 		super(shell);
 
 		this.jmxConnector = jmxConnector;
+
+		registerListenerAtMBSC();
 	}
 
-	public void registerListenerAtMBSC() {
+	private void registerListenerAtMBSC() {
 
 		MBeanServerConnection mbsc;
 		try {
@@ -60,6 +62,8 @@ public class ProgressShell extends ProgressMonitorDialog {
 			crossbowNotificationMBean = JMX.newMBeanProxy(mbsc, new ObjectName(
 					"Crossbow:type=CrossbowNotification"),
 					CrossbowNotificationMBean.class);
+
+			crossbowNotificationMBean.reset();
 
 			getLogs();
 
