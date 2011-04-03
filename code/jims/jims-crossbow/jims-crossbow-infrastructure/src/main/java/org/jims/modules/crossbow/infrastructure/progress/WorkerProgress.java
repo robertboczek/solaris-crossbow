@@ -83,7 +83,7 @@ public class WorkerProgress implements WorkerProgressMBean {
 		}
 	}
 
-	private String getIpAddress() {
+	protected static String getIpAddress() {
 
 		InetAddress addr = null;
 		try {

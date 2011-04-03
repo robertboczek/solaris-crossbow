@@ -120,6 +120,8 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 
 		index = 0;
 		sb = new StringBuilder();
+		progressNotification = new ProgressNotification(0, totalTasks,
+					WorkerProgress.getIpAddress());
 
 	}
 }
