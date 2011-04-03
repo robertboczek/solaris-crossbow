@@ -174,19 +174,22 @@ public class ProgressShell extends ProgressMonitorDialog {
 	public boolean isRunning() {
 		return running;
 	}
-
+	
+	
+	
 	public synchronized void update() {
 
 		System.out.println(logs);
 
-		if (logs != null && logsText != null && !logs.equals("")) {
-			logsText.setText(logs + logsText.getText());
+		if (logs != null && logsText != null) {
+			if(!logs.equals(""))
+				logsText.setText(logs + logsText.getText());
 			System.out.println(logs);
-			
 			logs = null;
 		}
 
 		if (progressNotification != null && progressBar != null) {
+			
 			// progressBar.setMaximum(progressNotification.getMax());
 			progressBar.setSelection(progressNotification.getCurrent()
 					* MAX_VALUE / progressNotification.getMax());
