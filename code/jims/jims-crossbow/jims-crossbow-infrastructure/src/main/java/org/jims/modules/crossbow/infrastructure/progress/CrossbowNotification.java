@@ -77,6 +77,17 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 		return logs;
 	}
 
+	private synchronized void updateLogs(String logs) {
+		sb.append(logs);
+		log.info("New log: " + logs);
+		sb.append("\n");
+	}
+
+	private synchronized void updateProgress(ProgressNotification progressNotification) {
+		this.progressNotification = progressNotification;
+		log.info("Progress notification " + index + " out of " + totalTasks + " is done");
+	}
+
 	/**
 	 * Jesli otrzymana notyfikacja jest o stanie procesu deploymentu to
 	 * aktualizuje licznik i przekazuje notyfikacje do wszystkich listenerow
@@ -92,17 +103,15 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 		if (notification.getUserData() != null
 				&& notification.getUserData() instanceof TaskCompletedNotification) {
 			
-			progressNotification = new ProgressNotification(++index, totalTasks,
+			updateProgress(new ProgressNotification(++index, totalTasks,
 					((TaskCompletedNotification) notification.getUserData())
-						.getNodeIpAddress());
-			log.info("Progress notification " + index + " out of " + totalTasks + " is done");
+						.getNodeIpAddress()));
+			
 							
 		} else if(notification.getUserData() != null
 				&& notification.getUserData() instanceof LogNotification) {
 			
-			sb.append(((LogNotification)notification.getUserData()).getLog());
-			log.info("New log: " + ((LogNotification)notification.getUserData()).getLog());
-			sb.append("\n");
+			updateLogs(((LogNotification)notification.getUserData()).getLog());
 		}
 	}
 
