@@ -65,6 +65,8 @@
   \maketitle
     
   \tableofcontents
+
+  \chapter{Division of labour} %podzial pracy
 	
 
   \chapter{Introduction}
@@ -148,6 +150,57 @@
     \section{Lightweight OS-level virtualization with Solaris Containers}
 
     \section{Crossbow - network virtualization technology}
+
+        One of the most important condition in terms of network virtualization is that network traffic should be insulated between virtual machines.
+        This kind of isolation can be achieved by having a dedicated physical NIC, network cable and port from the switch to the virtual machine itself. 
+        Moreover, switch must also ensure sustainability on every port. In every other case virtual machines will definately interfere between each other.
+        In a particular case when we have to share physical NIC between virtual machines the most promising solution is to virtualize NIC hardware and the
+         second layer of the OSI/ISO stack where sharing is fair and interferences will be avoided. These approach was adapted in the Crossbow architecture
+         in OpenSolaris OS.
+        Traffic separation is achieved by fundamental blocks of new architecture which are Virtual NICs (VNICs) created by dividing NIC into many VNICs. 
+        A VNIC can be created over NIC or Etherstub ( more about them later ) and be dynamically controlled by the bandwidth and CPU resources assigned to
+        it.
+        The crossbow architecture has introduced fully paralized network stack structure. Each stack could be seen as fully independent lane (without
+        any shared locks, queues, and CPUs) therefore network isolation is guaranteed. Key concept is hardware classification performed by the NIC over 
+        which VNIC was created. Each lane has a dedicated buffer for Transmit (Tx) and Receive (Rx) ring. In case when load exceeds assigned limit packets
+         must be dropped as it is wiser to dop them then to expend OS CPU resources. 
+
+	\begin{figure}[H]
+		\includegraphics[width=\textwidth]{img/crossbow-traffic-line.jpg}
+		\caption{Dedicated lines in the Crossbow architecture}
+	\end{figure}
+
+        A virtualization lane can be one of two types, hardware-based or software-based.
+        @todo dopisac Hardware-based virtualization lanes i Software-based virtualization lanes
+
+
+        @todo opisac szczegoly VNIC'ow
+
+        @todo opisac Dynamic Polling and Packet Scheduling
+
+        @todo opisac bandwidth partitioning
+
+        Etherstubs
+
+        As it was mentioned above, the MAC layer provides the virtual switching capabilities which allow VNICs to be created over existing physical NICs.
+        In some cases, creating virtual networks without the use of a physical NIC is more welcomed than creating over physical NICs. In that case VNICs 
+        would be defined on the top of pseudo NICs. The Crossbow provides these kind of elements which are called Etherstubs. These components could be used
+        instead of NICs during creation of VNICs.
+
+        @todo examples of creating vnic and etherstubs
+        \textbf{dladm} is the admin command for managing NICs, VNICs and Etherstubs. Below we present a few examples of creating VNICs, Etherstbus and how
+        to assigned bandwidth and priority to theses elements.
+
+        \begin{enumerate}
+        	\item{dladm create-vnic vnic1 -l e1000g0 - creates new VNIC \textbf{vnic1} over existing NIC \textbf{e1000g0}}
+        	\item{dladm create-etherstub ether00 - creates new Etherstub \textbf{ether00}}
+        	\item{dladm show-linkprop vnic11 - lists all properties assigned to \textbf{vnic11} link}
+        	\item{dladm set-linkprop -pmaxbw=1000 vnic11 - assignes 1Mbps bandwith limit to \textbf{vnic11} link}
+        	\item{dladm set-linkprop -ppriority=low vnic11 - assignes low priority to \textbf{vnic11} link}
+        \end{enumerate}
+
+        Here we have just presented some basic commands. For more examples see \textbf{man dladm}
+        
 
     \section{Resource access control}
 
