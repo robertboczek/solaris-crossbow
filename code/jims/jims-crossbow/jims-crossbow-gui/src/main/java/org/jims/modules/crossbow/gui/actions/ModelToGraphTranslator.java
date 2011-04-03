@@ -26,7 +26,6 @@ public class ModelToGraphTranslator {
 		GRAPH_EDGE
 	}
 	
-	// TODO-DAWID equals+hashcode
 	
 	public void translate( Graph graph, ObjectModel om ) {
 		

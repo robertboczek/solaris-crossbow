@@ -232,9 +232,7 @@ public class Worker implements WorkerMBean {
 
 			logger.info( "Found a " + appType + " (name: " + name + ", project: " + project + ")" );
 
-			// TODO-DAWID  repo id!
-
-			Appliance app = new Appliance( name, project, appType );
+			Appliance app = new Appliance( name, project, appType, "dummy" );  // TODO-DAWID  repo id!
 
 			if ( ! res.containsKey( project ) ) {
 				res.put( project, new LinkedList< Appliance >() );
@@ -296,6 +294,8 @@ public class Worker implements WorkerMBean {
 				// Basic setup.
 
 				Interface iface = new Interface( m.group( 4 ), m.group( 1 ) );
+
+				iface.setIpAddress( new IpAddress( "1.1.1.1", 24 ) );
 
 				// Discover details.
 
@@ -411,19 +411,21 @@ public class Worker implements WorkerMBean {
 
 					String policyName = m.group( 5 );
 
-					if ( props.containsKey( FlowProperty.MAXBW ) ) {
+					String maxbw;
+					if ( ( null != ( maxbw = props.get( FlowProperty.MAXBW ).trim() ) )
+					     && ( ! "".equals( maxbw ) ) ) {
 
-						policy = new BandwidthPolicy(
-							policyName,
-							Integer.parseInt( props.get( FlowProperty.MAXBW ) ),
-							filter
-						);
+						policy = new BandwidthPolicy( policyName, Integer.parseInt( maxbw ), filter );
 
-					} else if ( props.containsKey( FlowProperty.PRIORITY ) ) {
+					}
+
+					String priority;
+					if ( ( null != ( priority = props.get( FlowProperty.PRIORITY ) ) )
+					     && ( ! "".equals( priority ) ) ) {
 
 						policy = new PriorityPolicy(
 							policyName,
-							PriorityPolicy.Priority.valueOf( props.get( FlowProperty.PRIORITY ).toUpperCase() ),
+							PriorityPolicy.Priority.valueOf( priority.toUpperCase() ),
 							filter
 						);
 

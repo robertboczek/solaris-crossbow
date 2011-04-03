@@ -64,10 +64,19 @@ int get_props( void* arg, const char* propname )
 		( ( *it )->value )[ 0 ] = '\0';
 		for ( int i = 0; i < values_len; ++i )
 		{
-			strcat( ( *it )->value, values[ i ] );
+			if ( NULL != values[ i ] )
+			{
+				strcat( ( *it )->value, values[ i ] );
 
-			free( values[ i ] );
+				free( values[ i ] );
+			}
 		}
+
+		#if 0
+		FILE* f = fopen( "/tmp/tralalala", "a" );
+		fprintf( f, "%s: XX%sXX\n", propname, ( *it )->value );
+		fclose( f );
+		#endif
 
 		++( ( ( get_props_arg_t* ) arg )->key_value_pair_it );
 	}

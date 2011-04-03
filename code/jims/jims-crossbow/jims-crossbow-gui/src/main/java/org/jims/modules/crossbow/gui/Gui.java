@@ -19,6 +19,7 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -149,6 +150,8 @@ public class Gui extends Shell {
 						ModelToGraphTranslator.Element.GRAPH_NODE,
 						shell.getDisplay().getSystemColor( SWT.COLOR_WHITE )
 					);
+					
+					shell.setMaximized( true );
 					
 					shell.open();
 					shell.layout();
@@ -522,7 +525,7 @@ public class Gui extends Shell {
 			}
 
 		});
-		graph.applyLayout();
+		// graph.applyLayout();
 	}
 
 	protected void registerObjects(ObjectModel objectModel, List<Object> objects) {
