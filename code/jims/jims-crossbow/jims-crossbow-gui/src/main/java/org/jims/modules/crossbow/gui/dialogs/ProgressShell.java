@@ -50,11 +50,9 @@ public class ProgressShell extends ProgressMonitorDialog {
 		super(shell);
 
 		this.jmxConnector = jmxConnector;
-
-		registerListenerAtMBSC();
 	}
 
-	private void registerListenerAtMBSC() {
+	public void registerListenerAtMBSC() {
 
 		MBeanServerConnection mbsc;
 		try {
