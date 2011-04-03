@@ -25,7 +25,6 @@ public class BasicSupervisorTest {
 
 		worker = mock( WorkerMBean.class );
 		assigner = mock( AssignerMBean.class );
-		notification = mock(CrossbowNotificationMBean.class);
 
 		supervisor = new Supervisor();
 
