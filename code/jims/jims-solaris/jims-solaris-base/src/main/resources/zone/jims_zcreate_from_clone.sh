@@ -35,22 +35,21 @@ function zone_create_from_zfs_snapshot
 	SNAP_ROOT=$ZONE_SRC_SNAPSHOT.ROOT.SNAP
 	SNAP_ZBE=$ZONE_SRC_SNAPSHOT.ROOT.zbe.SNAP
 
-	/usr/sbin/zfs receive $ZFS_ZONE_FS < SNAP_MAIN
+	/usr/sbin/zfs receive $ZFS_ZONE_FS < $SNAP_MAIN
 
 	typeset zfile=/tmp/.zone_create.$$
 	typeset ret=0;
 
 	if [ -e $SNAP_ROOT ]; then
-		/usr/sbin/zfs receive $ZFS_ZONE_FS/ROOT < SNAP_ROOT
-		/usr/sbin/zfs receive $ZFS_ZONE_FS/ROOT/zbe < SNAP_ZBE
+		/usr/sbin/zfs receive $ZFS_ZONE_FS/ROOT < $SNAP_ROOT
+		/usr/sbin/zfs receive $ZFS_ZONE_FS/ROOT/zbe < $SNAP_ZBE
 
-		# Mounted ZFS with imported zone's dir structure
-		ZONE_PATH=`zfs get -H -o value mountpoint $ZFS_ZONE_FS`
-		
 		zfs set mountpoint=legacy $ZFS_ZONE_FS/ROOT
 		zfs set mountpoint=legacy $ZFS_ZONE_FS/ROOT/zbe
 	fi
 
+	# Mounted ZFS with imported zone's dir structure
+	ZONE_PATH=`zfs get -H -o value mountpoint $ZFS_ZONE_FS`
 
 cat > ${zfile} <<_EOF
 create

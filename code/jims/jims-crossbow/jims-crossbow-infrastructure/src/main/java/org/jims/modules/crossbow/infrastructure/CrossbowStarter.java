@@ -12,6 +12,8 @@ import javax.management.ObjectName;
 import org.apache.log4j.Logger;
 import org.jims.modules.crossbow.etherstub.EtherstubManagerMBean;
 import org.jims.modules.crossbow.flow.FlowManagerMBean;
+import org.jims.modules.crossbow.infrastructure.appliance.RepoManager;
+import org.jims.modules.crossbow.infrastructure.appliance.RepoManagerMBean;
 import org.jims.modules.crossbow.infrastructure.assigner.Assigner;
 import org.jims.modules.crossbow.infrastructure.gatherer.StatisticsGatherer;
 import org.jims.modules.crossbow.infrastructure.supervisor.Supervisor;
@@ -89,6 +91,10 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 			server, new ObjectName( "Crossbow:type=ZoneCopier" ), ZoneCopierMBean.class
 		);
 
+		// RepoManagerMBean repoManager = JMX.newMBeanProxy(
+		// 	server, new ObjectName( "Crossbow:type=RepoManager" ), RepoManagerMBean.class
+		// );
+
 
 		// Register MBeans.
 
@@ -123,6 +129,11 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 		supervisor.setAssigner( assigner );
 
 		server.registerMBean( supervisor, new ObjectName( "Crossbow:type=Supervisor" ) );
+
+		// RepoManager
+
+		RepoManager repoManager = new RepoManager();
+		server.registerMBean( repoManager, new ObjectName( "Crossbow:type=RepoManager" ) );
 
 	}
 
