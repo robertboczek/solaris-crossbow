@@ -14,6 +14,8 @@ import javax.management.NotificationListener;
 import org.jims.modules.crossbow.infrastructure.progress.notification.LogNotification;
 import org.jims.modules.crossbow.infrastructure.progress.notification.TaskCompletedNotification;
 
+import org.apache.log4j.Logger;
+
 public class WorkerProgress implements WorkerProgressMBean {
 
 	/**
@@ -24,6 +26,8 @@ public class WorkerProgress implements WorkerProgressMBean {
 	private List<NotificationListener> listeners = new LinkedList<NotificationListener>();
 	
 	private int sequenceNumber = 0;
+
+	private Logger log = Logger.getLogger( WorkerProgress.class );
 
 	@Override
 	public void addNotificationListener(NotificationListener listener,
@@ -54,6 +58,8 @@ public class WorkerProgress implements WorkerProgressMBean {
 				"WorkerNode", ++sequenceNumber);
 		notification.setUserData(logNotification);
 
+		this.log.info("Sending log notification " + log + " to " + listeners.size() + " listeners");
+
 		for (NotificationListener notificationListener : listeners) {
 			notificationListener.handleNotification(notification, null);
 		}
@@ -69,6 +75,8 @@ public class WorkerProgress implements WorkerProgressMBean {
 		Notification notification = new Notification("WorkerNodeProgressNotification",
 				"WorkerNode", ++sequenceNumber);
 		notification.setUserData(taskCompletedNotification);
+
+		log.info("Sending task completed notification to " + listeners.size() + " listeners");
 
 		for (NotificationListener notificationListener : listeners) {
 			notificationListener.handleNotification(notification, null);

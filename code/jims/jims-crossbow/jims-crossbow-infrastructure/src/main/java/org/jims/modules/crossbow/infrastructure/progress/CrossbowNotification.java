@@ -64,12 +64,14 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 	@Override
 	public synchronized ProgressNotification getProgress() {
 
+		log.info("Asking for progressNotification");
 		return this.progressNotification;
 	}
 
 	@Override
 	public synchronized String getNewLogs() {
-		
+
+		log.info("Asking for logs");		
 		String logs = sb.toString();
 		sb = new StringBuilder();
 		return logs;
@@ -85,15 +87,21 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 
 		Object userData = notification.getUserData();
 
+		log.info("Received notification from WorkerProgress ");
+
 		if (notification.getUserData() != null
 				&& notification.getUserData() instanceof TaskCompletedNotification) {
+			
 			progressNotification = new ProgressNotification(++index, totalTasks,
 					((TaskCompletedNotification) notification.getUserData())
-							.getNodeIpAddress());
+						.getNodeIpAddress());
+			log.info("Progress notification " + index + " out of " + totalTasks + " is done");
+							
 		} else if(notification.getUserData() != null
 				&& notification.getUserData() instanceof LogNotification) {
 			
 			sb.append(((LogNotification)notification.getUserData()).getLog());
+			log.info("New log: " + ((LogNotification)notification.getUserData()).getLog());
 			sb.append("\n");
 		}
 	}
