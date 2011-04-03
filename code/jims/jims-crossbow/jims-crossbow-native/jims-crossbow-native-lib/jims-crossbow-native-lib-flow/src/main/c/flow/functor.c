@@ -54,10 +54,9 @@ int get_props( void* arg, const char* propname )
 		values[ i ] = malloc( DLADM_STRSIZE );
 	}
 
-	dladm_get_flowprop( handle, flow, DLADM_PROP_VAL_CURRENT,
-	                    propname, values, &values_len );
-
-	if ( values_len > 0 )
+	if ( ( DLADM_STATUS_OK == dladm_get_flowprop( handle, flow, DLADM_PROP_VAL_CURRENT,
+	                                              propname, values, &values_len ) )
+	     && ( values_len > 0 ) )
 	{
 		strcpy( ( *it )->key, propname );
 
@@ -71,12 +70,6 @@ int get_props( void* arg, const char* propname )
 				free( values[ i ] );
 			}
 		}
-
-		#if 0
-		FILE* f = fopen( "/tmp/tralalala", "a" );
-		fprintf( f, "%s: XX%sXX\n", propname, ( *it )->value );
-		fclose( f );
-		#endif
 
 		++( ( ( get_props_arg_t* ) arg )->key_value_pair_it );
 	}
