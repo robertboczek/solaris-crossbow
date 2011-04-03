@@ -454,7 +454,7 @@ public class IpAddressDialog extends TitleAreaDialog {
 			Policy policy = (Policy) flows.getData(flows.getItem(i));
 			// @todo dorobic UUID
 			if (!interfac.getPoliciesList().contains(policy)) {
-				interfac.getPoliciesList().add(policy);
+				interfac.addPolicy( policy );
 			}
 		}
 	}
