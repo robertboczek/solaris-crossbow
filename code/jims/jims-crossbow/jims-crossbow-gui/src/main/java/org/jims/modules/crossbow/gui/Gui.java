@@ -45,6 +45,7 @@ import org.jims.modules.crossbow.gui.actions.ComponentProxyFactory;
 import org.jims.modules.crossbow.gui.actions.ConfigurationUtil;
 import org.jims.modules.crossbow.gui.actions.DiscoveryHandler;
 import org.jims.modules.crossbow.gui.actions.ModelToGraphTranslator;
+import org.jims.modules.crossbow.gui.actions.RepoManagerProxyFactory;
 import org.jims.modules.crossbow.gui.actions.SupervisorProxyFactory;
 import org.jims.modules.crossbow.gui.data.GraphConnectionData;
 import org.jims.modules.crossbow.gui.dialogs.EditResourceDialog;
@@ -54,8 +55,9 @@ import org.jims.modules.crossbow.gui.dialogs.ProgressShell;
 import org.jims.modules.crossbow.gui.dialogs.SelectNetworkInterfacesDialog;
 import org.jims.modules.crossbow.gui.jmx.JmxConnector;
 import org.jims.modules.crossbow.gui.statistics.StatisticAnalyzer;
-import org.jims.modules.crossbow.infrastructure.supervisor.SupervisorMBean;
 import org.jims.modules.crossbow.infrastructure.progress.CrossbowNotificationMBean;
+import org.jims.modules.crossbow.infrastructure.appliance.RepoManagerMBean;
+import org.jims.modules.crossbow.infrastructure.supervisor.SupervisorMBean;
 import org.jims.modules.crossbow.infrastructure.worker.exception.ModelInstantiationException;
 import org.jims.modules.crossbow.objectmodel.Actions;
 import org.jims.modules.crossbow.objectmodel.ObjectModel;
@@ -109,7 +111,7 @@ public class Gui extends Shell {
 	private List<Object> modelObjects = new LinkedList<Object>();
 
 	private JmxConnector jmxConnector;
-
+	
 	private DiscoveryHandler discoveryHandler;
 
 	/**
@@ -123,34 +125,32 @@ public class Gui extends Shell {
 			public void run() {
 				try {
 					Display display = Display.getDefault();
-
+					
 					componentProxyFactory = new ComponentProxyFactory();
-
+					
 					ModelToGraphTranslator translator = new ModelToGraphTranslator();
-
-					Gui shell = new Gui(display, new DiscoveryHandler(
-							new SupervisorProxyFactory() {
-
-								@Override
-								public SupervisorMBean createSupervisor() {
-									return componentProxyFactory
-											.createSupervisor();
-								}
-
-							}, translator));
-
+					
+					Gui shell = new Gui( display, new DiscoveryHandler( new SupervisorProxyFactory() {
+						
+						@Override
+						public SupervisorMBean createSupervisor() {
+							return componentProxyFactory.createSupervisor();
+						}
+						
+					}, translator ) );
+					
 					// Set the graph's style.
-
+					
 					translator.setColor(
-							ModelToGraphTranslator.Element.GRAPH_EDGE, shell
-									.getDisplay().getSystemColor(
-											SWT.COLOR_BLACK));
-
+						ModelToGraphTranslator.Element.GRAPH_EDGE,
+						shell.getDisplay().getSystemColor( SWT.COLOR_BLACK )
+					);
+					
 					translator.setColor(
-							ModelToGraphTranslator.Element.GRAPH_NODE, shell
-									.getDisplay().getSystemColor(
-											SWT.COLOR_WHITE));
-
+						ModelToGraphTranslator.Element.GRAPH_NODE,
+						shell.getDisplay().getSystemColor( SWT.COLOR_WHITE )
+					);
+					
 					shell.open();
 					shell.layout();
 					while (!shell.isDisposed()) {
@@ -173,11 +173,11 @@ public class Gui extends Shell {
 	 * 
 	 * @param display
 	 */
-	public Gui(Display display, DiscoveryHandler discoveryHandler) {
+	public Gui( Display display, DiscoveryHandler discoveryHandler ) {
 		super(display, SWT.SHELL_TRIM);
-
+		
 		this.discoveryHandler = discoveryHandler;
-
+		
 		Menu menu = new Menu(this, SWT.BAR);
 		setMenuBar(menu);
 
@@ -898,7 +898,36 @@ public class Gui extends Shell {
 					GraphNode graphNode = (GraphNode) list.get(0);
 
 					EditResourceDialog dialog = new EditResourceDialog(null,
-							graphNode.getData());
+							graphNode.getData(), new 
+							RepoManagerProxyFactory() {
+								
+								@Override
+								public RepoManagerMBean getRepoManager() {
+									
+									RepoManagerMBean repoManager = componentProxyFactory.createRepoManager();
+									
+									if ( null == repoManager ) {
+										repoManager = new RepoManagerMBean() {
+											
+											@Override
+											public List< String > getIds() {
+												return new LinkedList< String >();
+											}
+
+											@Override
+											public String getRepoPath() { return null; }
+											
+											@Override
+											public void setRepoPath(String arg0) { }
+
+											};
+										
+									}
+									
+									return repoManager;
+								}
+
+							});
 
 					dialog.create();
 					if (dialog.open() == Window.OK) {
@@ -974,10 +1003,10 @@ public class Gui extends Shell {
 		supervisorPort.setLayoutData(fd_projectId2);
 		supervisorPort.setText("");
 		supervisorPort.pack();
-
+		
 		Button discoverBtn = new Button(buttonGroup, SWT.PUSH);
 		FormData fd_discoverBtn = new FormData();
-
+		
 		fd_discoverBtn.bottom = new FormAttachment(0, 277);
 		fd_discoverBtn.right = new FormAttachment(100, -28);
 		fd_discoverBtn.top = new FormAttachment(deployButton, 0, SWT.TOP);
@@ -985,15 +1014,15 @@ public class Gui extends Shell {
 		discoverBtn.setLayoutData(fd_discoverBtn);
 		discoverBtn.setToolTipText("Discover");
 		discoverBtn.setImage(loadImage("icons/discover.jpg"));
-
-		discoverBtn.addListener(SWT.MouseUp, new Listener() {
-
+		
+		discoverBtn.addListener( SWT.MouseUp, new Listener() {
+			
 			@Override
-			public void handleEvent(Event event) {
-				discoveryHandler.handle(graph);
+			public void handleEvent( Event event ) {
+				discoveryHandler.handle( graph );
 			}
-
-		});
+			
+		} );
 
 		resetConnectionDetailsLabel();
 
@@ -1343,24 +1372,18 @@ public class Gui extends Shell {
 		}
 
 	}
-
 	protected DataBindingContext initDataBindings() {
 		DataBindingContext bindingContext = new DataBindingContext();
 		//
-		IObservableValue supervisorsAddressObserveTextObserveWidget = SWTObservables
-				.observeText(supervisorsAddress, SWT.Modify);
-		IObservableValue componentProxyFactoryMbServerObserveValue = PojoObservables
-				.observeValue(componentProxyFactory, "mbServer");
-		bindingContext.bindValue(supervisorsAddressObserveTextObserveWidget,
-				componentProxyFactoryMbServerObserveValue, null, null);
+		IObservableValue supervisorsAddressObserveTextObserveWidget = SWTObservables.observeText(supervisorsAddress, SWT.Modify);
+		IObservableValue componentProxyFactoryMbServerObserveValue = PojoObservables.observeValue(componentProxyFactory, "mbServer");
+		bindingContext.bindValue(supervisorsAddressObserveTextObserveWidget, componentProxyFactoryMbServerObserveValue, null, null);
 		//
-		IObservableValue supervisorPortObserveTextObserveWidget = SWTObservables
-				.observeText(supervisorPort, SWT.Modify);
-		IObservableValue componentProxyFactoryMbPortObserveValue = PojoObservables
-				.observeValue(componentProxyFactory, "mbPort");
-		bindingContext.bindValue(supervisorPortObserveTextObserveWidget,
-				componentProxyFactoryMbPortObserveValue, null, null);
+		IObservableValue supervisorPortObserveTextObserveWidget = SWTObservables.observeText(supervisorPort, SWT.Modify);
+		IObservableValue componentProxyFactoryMbPortObserveValue = PojoObservables.observeValue(componentProxyFactory, "mbPort");
+		bindingContext.bindValue(supervisorPortObserveTextObserveWidget, componentProxyFactoryMbPortObserveValue, null, null);
 		//
 		return bindingContext;
 	}
 }
+
