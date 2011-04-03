@@ -2,7 +2,6 @@ package org.jims.modules.crossbow.infrastructure.supervisor;
 
 import org.jims.modules.crossbow.infrastructure.worker.*;
 import org.jims.modules.crossbow.infrastructure.assigner.AssignerMBean;
-import org.jims.modules.crossbow.infrastructure.progress.CrossbowNotificationMBean;
 import org.jims.modules.crossbow.objectmodel.Actions;
 import org.jims.modules.crossbow.infrastructure.helper.model.ModelHelper;
 import org.jims.modules.crossbow.objectmodel.Assignments;
@@ -32,7 +31,6 @@ public class BasicSupervisorTest {
 
 		supervisor.addWorker( "some-worker", worker );
 		supervisor.setAssigner( assigner );
-		supervisor.setCrossbowNotificationMBean( notification );
 
 	}
 
@@ -51,13 +49,11 @@ public class BasicSupervisorTest {
 		supervisor.instantiate( model, actions );
 
 		verify( worker ).instantiate( same( model ), same( actions ), same( assignments ) );
-		verify( notification ).reset();
 
 	}
 
 
 	private WorkerMBean worker;
-	private CrossbowNotificationMBean notification;
 	private Actions actions;
 	private ObjectModel model;
 	private Supervisor supervisor;
