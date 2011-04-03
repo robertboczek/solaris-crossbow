@@ -45,6 +45,7 @@ import org.jims.modules.crossbow.gui.actions.ComponentProxyFactory;
 import org.jims.modules.crossbow.gui.actions.ConfigurationUtil;
 import org.jims.modules.crossbow.gui.actions.DiscoveryHandler;
 import org.jims.modules.crossbow.gui.actions.ModelToGraphTranslator;
+import org.jims.modules.crossbow.gui.actions.RepoManagerProxyFactory;
 import org.jims.modules.crossbow.gui.actions.SupervisorProxyFactory;
 import org.jims.modules.crossbow.gui.data.GraphConnectionData;
 import org.jims.modules.crossbow.gui.dialogs.EditResourceDialog;
@@ -54,6 +55,7 @@ import org.jims.modules.crossbow.gui.dialogs.ProgressShell;
 import org.jims.modules.crossbow.gui.dialogs.SelectNetworkInterfacesDialog;
 import org.jims.modules.crossbow.gui.jmx.JmxConnector;
 import org.jims.modules.crossbow.gui.statistics.StatisticAnalyzer;
+import org.jims.modules.crossbow.infrastructure.appliance.RepoManagerMBean;
 import org.jims.modules.crossbow.infrastructure.supervisor.SupervisorMBean;
 import org.jims.modules.crossbow.infrastructure.worker.exception.ModelInstantiationException;
 import org.jims.modules.crossbow.objectmodel.Actions;
@@ -890,7 +892,36 @@ public class Gui extends Shell {
 					GraphNode graphNode = (GraphNode) list.get(0);
 
 					EditResourceDialog dialog = new EditResourceDialog(null,
-							graphNode.getData());
+							graphNode.getData(), new 
+							RepoManagerProxyFactory() {
+								
+								@Override
+								public RepoManagerMBean getRepoManager() {
+									
+									RepoManagerMBean repoManager = componentProxyFactory.createRepoManager();
+									
+									if ( null == repoManager ) {
+										repoManager = new RepoManagerMBean() {
+											
+											@Override
+											public List< String > getIds() {
+												return new LinkedList< String >();
+											}
+
+											@Override
+											public String getRepoPath() { return null; }
+											
+											@Override
+											public void setRepoPath(String arg0) { }
+
+											};
+										
+									}
+									
+									return repoManager;
+								}
+
+							});
 
 					dialog.create();
 					if (dialog.open() == Window.OK) {

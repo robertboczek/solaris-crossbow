@@ -6,6 +6,7 @@ import javax.management.ObjectName;
 
 import org.apache.log4j.Logger;
 import org.jims.modules.crossbow.gui.jmx.JmxConnector;
+import org.jims.modules.crossbow.infrastructure.appliance.RepoManagerMBean;
 import org.jims.modules.crossbow.infrastructure.supervisor.SupervisorMBean;
 
 
@@ -32,6 +33,29 @@ public class ComponentProxyFactory {
 		}
 		
 		return supervisor;
+	}
+	
+	public RepoManagerMBean createRepoManager() {
+		
+		if ( refreshMBeanServerConnection() ) {
+			
+			try {
+				
+				repoManager = JMX.newMBeanProxy(
+					mbsc,
+					new ObjectName( "Crossbow:type=RepoManager" ),
+					RepoManagerMBean.class
+				);
+				
+			} catch ( Exception e ) {
+				
+				// TODO log here
+				
+			}
+			
+		}
+		
+		return repoManager;
 	}
 	
 	
@@ -83,12 +107,14 @@ public class ComponentProxyFactory {
 	}
 
 
-	private String mbServer, mbPort;
+	private String mbServer = "", mbPort = "";
 	private String ruMbServer = "", ruMbPort = "";  // Recently used values
 	
 	private JmxConnector jmxConnector;
 	private MBeanServerConnection mbsc;
+	
 	private SupervisorMBean supervisor;
+	private RepoManagerMBean repoManager;
 	
 	private static final Logger logger = Logger.getLogger( ComponentProxyFactory.class );
 

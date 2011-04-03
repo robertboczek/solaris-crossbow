@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.jims.modules.crossbow.gui.actions.RepoManagerProxyFactory;
 import org.jims.modules.crossbow.objectmodel.filters.address.IpAddress;
 import org.jims.modules.crossbow.objectmodel.resources.Appliance;
 import org.jims.modules.crossbow.objectmodel.resources.ApplianceType;
@@ -36,7 +37,7 @@ import org.jims.modules.crossbow.objectmodel.resources.Switch;
  */
 public class EditResourceDialog extends TitleAreaDialog {
 
-	private Text repoId;
+	private Combo repoId;
 	private Text resourceId;
 	private Combo interfaces;
 
@@ -45,11 +46,13 @@ public class EditResourceDialog extends TitleAreaDialog {
 	private boolean isAddressable;
 	private boolean hasAMachine;
 	private Label label5;
+	private RepoManagerProxyFactory repoManagerProxyFactory;
 
-	public EditResourceDialog(Shell parentShell, Object object) {
+	public EditResourceDialog(Shell parentShell, Object object, RepoManagerProxyFactory repoManagerProxyFactory ) {
 		super(parentShell);
 
 		this.object = object;
+		this.repoManagerProxyFactory = repoManagerProxyFactory;
 
 		hasAMachine = (object instanceof Appliance) && (((Appliance)object).getType().equals(ApplianceType.MACHINE));
 		isAddressable = (object instanceof Appliance);
@@ -109,9 +112,12 @@ public class EditResourceDialog extends TitleAreaDialog {
 		if (hasAMachine) {
 			Label label3 = new Label(parent, SWT.NONE);
 			label3.setText("Repo Id:");
-
-			repoId = new Text(parent, SWT.NONE);
-			repoId.setLayoutData(gridData);
+			
+			repoId = new Combo( parent, SWT.NONE );
+			repoId.setLayoutData( gridData );
+			
+			repoId.setItems( repoManagerProxyFactory.getRepoManager().getIds().toArray( new String[ 0 ] ) );
+			
 			repoId.addFocusListener(new FocusListener() {
 
 				@Override
