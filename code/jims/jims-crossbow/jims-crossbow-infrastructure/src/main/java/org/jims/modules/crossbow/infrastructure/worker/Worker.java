@@ -412,10 +412,10 @@ public class Worker implements WorkerMBean {
 					String policyName = m.group( 5 );
 
 					String maxbw;
-					if ( ( null != ( maxbw = props.get( FlowProperty.MAXBW ).trim() ) )
-					     && ( ! "".equals( maxbw ) ) ) {
+					if ( ( null != ( maxbw = props.get( FlowProperty.MAXBW ) ) )
+					     && ( ! "".equals( maxbw.trim() ) ) ) {
 
-						policy = new BandwidthPolicy( policyName, Integer.parseInt( maxbw ), filter );
+						policy = new BandwidthPolicy( policyName, Integer.parseInt( maxbw.trim() ), filter );
 
 					}
 
