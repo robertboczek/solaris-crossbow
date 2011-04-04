@@ -22,7 +22,11 @@ import org.jims.modules.crossbow.gui.jmx.JmxConnector;
 import org.jims.modules.crossbow.infrastructure.progress.CrossbowNotificationMBean;
 import org.jims.modules.crossbow.infrastructure.progress.notification.ProgressNotification;
 
+import org.apache.log4j.Logger;
+
 public class ProgressShell extends ProgressMonitorDialog {
+
+	private static final Logger logger = Logger.getLogger( ProgressShell.class );
 
 	private static final int MAX_VALUE = 100;
 
@@ -56,14 +60,14 @@ public class ProgressShell extends ProgressMonitorDialog {
 
 	private void registerListenerAtMBSC() {
 
+		logger.info("Getting CrossbowNotificationMBean");
+
 		MBeanServerConnection mbsc;
 		try {
 			mbsc = jmxConnector.getMBeanServerConnection();
 			crossbowNotificationMBean = JMX.newMBeanProxy(mbsc, new ObjectName(
 					"Crossbow:type=CrossbowNotification"),
 					CrossbowNotificationMBean.class);
-
-			crossbowNotificationMBean.reset();
 
 			getLogs();
 
@@ -140,6 +144,7 @@ public class ProgressShell extends ProgressMonitorDialog {
 
 	private void getLogs() {
 
+		logger.info("Starting new ProgressThread");
 		progressThread = new ProgressThread();
 		progressThread.start();
 	}
@@ -152,7 +157,11 @@ public class ProgressShell extends ProgressMonitorDialog {
 
 				while (running) {
 
+
 					if (ProgressShell.this.logs == null && ProgressShell.this.progressNotification == null) {
+
+						logger.debug("Checking progress and logs at CrossbowNotificationMBean");
+
 						String logs = crossbowNotificationMBean.getNewLogs();
 
 						ProgressNotification progressNotification = crossbowNotificationMBean
@@ -179,12 +188,13 @@ public class ProgressShell extends ProgressMonitorDialog {
 	
 	public synchronized void update() {
 
-		System.out.println(logs);
+		logger.debug("Updating logs and progress...");
 
 		if (logs != null && logsText != null) {
-			if(!logs.equals(""))
+			if(!logs.equals("")) {
 				logsText.setText(logs + logsText.getText());
-			System.out.println(logs);
+				logger.info("New logs: '" + logs + "' were added");
+			}
 			logs = null;
 		}
 
@@ -194,8 +204,8 @@ public class ProgressShell extends ProgressMonitorDialog {
 			progressBar.setSelection(progressNotification.getCurrent()
 					* MAX_VALUE / progressNotification.getMax());
 
-			System.out.println(progressNotification.getCurrent() + " "
-					+ progressNotification.getMax());
+			logger.info("Progress " + progressNotification.getCurrent() + " out of "
+					+ progressNotification.getMax() + " was updated");
 
 			// okienko powinno sie zamknac po zakonczeniu
 			// procesu
@@ -203,6 +213,7 @@ public class ProgressShell extends ProgressMonitorDialog {
 
 			if (progressNotification.getCurrent() == progressNotification
 					.getMax()) {
+				logger.info("Setting progressThread running flag to false");
 				running = false;
 			}
 			
@@ -212,6 +223,7 @@ public class ProgressShell extends ProgressMonitorDialog {
 		
 
 		if (!running) {
+			logger.trace("Enabling close button");
 			closeButton.setEnabled(true);
 		}
 

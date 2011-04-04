@@ -43,9 +43,5 @@ public class JmxConnector {
 
 		return mbsc;
 	}
-	
-	public String getMBeanServerConnectionDetails() throws IOException {
-		return (mbsc != null) ? "Default domain: " + mbsc.getDefaultDomain() + " number of registered beans: " + mbsc.getMBeanCount() : "Not connected";
-	}
 
 }

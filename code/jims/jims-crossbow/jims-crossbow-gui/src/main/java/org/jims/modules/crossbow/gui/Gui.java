@@ -8,6 +8,12 @@ import javax.management.JMX;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 
+import org.apache.log4j.Logger;
+import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.beans.PojoObservables;
+import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.Window;
@@ -19,7 +25,6 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -56,8 +61,9 @@ import org.jims.modules.crossbow.gui.dialogs.ProgressShell;
 import org.jims.modules.crossbow.gui.dialogs.SelectNetworkInterfacesDialog;
 import org.jims.modules.crossbow.gui.jmx.JmxConnector;
 import org.jims.modules.crossbow.gui.statistics.StatisticAnalyzer;
-import org.jims.modules.crossbow.infrastructure.progress.CrossbowNotificationMBean;
+import org.jims.modules.crossbow.gui.threads.ConnectionTester;
 import org.jims.modules.crossbow.infrastructure.appliance.RepoManagerMBean;
+import org.jims.modules.crossbow.infrastructure.progress.CrossbowNotificationMBean;
 import org.jims.modules.crossbow.infrastructure.supervisor.SupervisorMBean;
 import org.jims.modules.crossbow.infrastructure.worker.exception.ModelInstantiationException;
 import org.jims.modules.crossbow.objectmodel.Actions;
@@ -68,11 +74,6 @@ import org.jims.modules.crossbow.objectmodel.resources.ApplianceType;
 import org.jims.modules.crossbow.objectmodel.resources.Endpoint;
 import org.jims.modules.crossbow.objectmodel.resources.Interface;
 import org.jims.modules.crossbow.objectmodel.resources.Switch;
-import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.jface.databinding.swt.SWTObservables;
-import org.eclipse.core.databinding.beans.PojoObservables;
-import org.eclipse.core.databinding.observable.Realm;
 
 /**
  * Main view in our GUI allows creating network structure with certain QoS
@@ -81,6 +82,9 @@ import org.eclipse.core.databinding.observable.Realm;
  * 
  */
 public class Gui extends Shell {
+
+	private static final Logger logger = Logger.getLogger(Gui.class);
+
 	private DataBindingContext m_bindingContext;
 
 	public static final int REFRESH_TIME = 10000;// 10seconds
@@ -112,8 +116,8 @@ public class Gui extends Shell {
 	private List<Object> modelObjects = new LinkedList<Object>();
 
 	private JmxConnector jmxConnector;
-	
 	private DiscoveryHandler discoveryHandler;
+	private ConnectionTester connectionTester;
 
 	/**
 	 * Launch the application.
@@ -126,34 +130,36 @@ public class Gui extends Shell {
 			public void run() {
 				try {
 					Display display = Display.getDefault();
-					
+
 					componentProxyFactory = new ComponentProxyFactory();
-					
+
 					ModelToGraphTranslator translator = new ModelToGraphTranslator();
-					
-					Gui shell = new Gui( display, new DiscoveryHandler( new SupervisorProxyFactory() {
-						
-						@Override
-						public SupervisorMBean createSupervisor() {
-							return componentProxyFactory.createSupervisor();
-						}
-						
-					}, translator ) );
-					
+
+					Gui shell = new Gui(display, new DiscoveryHandler(
+							new SupervisorProxyFactory() {
+
+								@Override
+								public SupervisorMBean createSupervisor() {
+									return componentProxyFactory
+											.createSupervisor();
+								}
+
+							}, translator));
+
 					// Set the graph's style.
-					
+
 					translator.setColor(
-						ModelToGraphTranslator.Element.GRAPH_EDGE,
-						shell.getDisplay().getSystemColor( SWT.COLOR_BLACK )
-					);
-					
+							ModelToGraphTranslator.Element.GRAPH_EDGE, shell
+									.getDisplay().getSystemColor(
+											SWT.COLOR_BLACK));
+
 					translator.setColor(
-						ModelToGraphTranslator.Element.GRAPH_NODE,
-						shell.getDisplay().getSystemColor( SWT.COLOR_WHITE )
-					);
-					
-					shell.setMaximized( true );
-					
+							ModelToGraphTranslator.Element.GRAPH_NODE, shell
+									.getDisplay().getSystemColor(
+											SWT.COLOR_WHITE));
+
+					shell.setMaximized(true);
+
 					shell.open();
 					shell.layout();
 					while (!shell.isDisposed()) {
@@ -176,11 +182,11 @@ public class Gui extends Shell {
 	 * 
 	 * @param display
 	 */
-	public Gui( Display display, DiscoveryHandler discoveryHandler ) {
+	public Gui(Display display, DiscoveryHandler discoveryHandler) {
 		super(display, SWT.SHELL_TRIM);
-		
+
 		this.discoveryHandler = discoveryHandler;
-		
+
 		Menu menu = new Menu(this, SWT.BAR);
 		setMenuBar(menu);
 
@@ -208,6 +214,7 @@ public class Gui extends Shell {
 				fileDialog.setFilterNames(new String[] { "Textfiles(*.cro)" });
 				String selected = fileDialog.open();
 				if (selected != null) {
+					logger.trace("Saving network structure");
 					ConfigurationUtil.saveNetwork(selected, modelObjects);
 				}
 			}
@@ -236,8 +243,10 @@ public class Gui extends Shell {
 
 					projectId.setText("");
 
+					logger.trace("Clearing existing items");
 					graphConnectionDataList.clear();
 					modelObjects = ConfigurationUtil.loadNetwork(selected);
+					logger.trace("Restoring network structure from file");
 					for (Object obj : modelObjects) {
 						String iconFileName = null;
 						if ((obj instanceof Appliance)
@@ -256,8 +265,6 @@ public class Gui extends Shell {
 					}
 
 					restoreGraphNodeConnections();
-
-					graph.applyLayout();
 				}
 			}
 		});
@@ -273,7 +280,8 @@ public class Gui extends Shell {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (MessageDialog.openConfirm(null, "Exit?", "Are you sure")) {
-					System.exit(0);
+					logger.info("Closing gui");
+					Gui.this.close();
 				}
 			}
 		});
@@ -348,7 +356,8 @@ public class Gui extends Shell {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				updateGraphConnections();
+				// @todo dorobic wyswietlanie okienka z informacja o systemie i
+				// autorach
 			}
 		});
 
@@ -357,16 +366,28 @@ public class Gui extends Shell {
 
 	public void stop() {
 
+		logger.info("Stopping all running threads");
+
+		if (connectionTester != null) {
+			connectionTester.stopThread();
+		}
+
 		if (statisticAnalyzer != null) {
+			logger.info("Stopping threads responsible for statistics");
 			statisticAnalyzer.stopGatheringStatistics();
 		}
 
 		if (connectionLabelUpdater != null) {
+			logger
+					.info("Interrupting thread responsible for updating network statistics");
 			connectionLabelUpdater.interrupt();
 		}
 	}
 
 	public void updateGraphConnections() {
+
+		logger.trace("Updating graph connections details");
+
 		if (updateGraphConnection) {
 			updateGraphConnection = false;
 			for (Object obj : graph.getConnections()) {
@@ -382,17 +403,15 @@ public class Gui extends Shell {
 			}
 		}
 
-		if (jmxConnector != null) {
-			try {
-				jmxConnector.getMBeanServerConnectionDetails();
-				this.setText("Connected");
-			} catch (IOException e) {
-				resetConnectionDetailsLabel();
-			}
+		if (connectionTester.getConnected()) {
+			this.setText("Connected");
+		} else {
+			this.setText("Not connected");
 		}
 
 		if (progressShell != null) {
 			if (!progressShell.isRunning()) {
+				logger.info("Stopping ProgressShell thread");
 				progressShell = null;
 			} else {
 				progressShell.update();
@@ -408,6 +427,7 @@ public class Gui extends Shell {
 	 * Validates network structure and content
 	 */
 	protected void validateNetwork() {
+
 		// @todo validate network structure
 
 		if (!IpAddressDialog.isIpv4(supervisorsAddress.getText())) {
@@ -436,6 +456,8 @@ public class Gui extends Shell {
 			@Override
 			public void handleEvent(Event event) {
 
+				logger.trace("Starting deploying network");
+
 				for (Object obj : modelObjects) {
 					if (obj instanceof Switch) {
 						Switch swit = (Switch) obj;
@@ -457,17 +479,13 @@ public class Gui extends Shell {
 					mbsc = jmxConnector.getMBeanServerConnection();
 				} catch (Exception e) {
 
+					logger.error("Couldn't get MBeanServerConnection");
 					MessageDialog.openError(null, "Connection problem",
 							"Couldn't connect to specified MBean Server");
 
 					e.printStackTrace();
 					return;
 				}
-
-				supervisorsAddress.setEnabled(false);
-				supervisorPort.setEnabled(false);
-
-				projectId.setEnabled(false);
 
 				try {
 					final SupervisorMBean supervisor = JMX.newMBeanProxy(mbsc,
@@ -478,11 +496,13 @@ public class Gui extends Shell {
 
 					registerObjects(objectModel, modelObjects);
 
-					CrossbowNotificationMBean crossbowNotificationMBean = JMX.newMBeanProxy(mbsc, new ObjectName(
-						"Crossbow:type=CrossbowNotification"),
-						CrossbowNotificationMBean.class);
+					CrossbowNotificationMBean crossbowNotificationMBean = JMX
+							.newMBeanProxy(mbsc, new ObjectName(
+									"Crossbow:type=CrossbowNotification"),
+									CrossbowNotificationMBean.class);
 
 					crossbowNotificationMBean.reset();
+					logger.trace("Reseting progress state before deployment");
 
 					progressShell = new ProgressShell(Gui.this, jmxConnector);
 					progressShell.create();
@@ -509,6 +529,7 @@ public class Gui extends Shell {
 									actions.insert(policy, Actions.ACTION.ADD);
 								}
 
+								logger.info("Starting deployment");
 								supervisor.instantiate(objectModel, actions);
 
 							} catch (ModelInstantiationException e) {
@@ -525,6 +546,7 @@ public class Gui extends Shell {
 					return;
 				}
 
+				logger.info("Starting new threads gathering statistics");
 				statisticAnalyzer = new StatisticAnalyzer(
 						graphConnectionDataList, jmxConnector);
 				statisticAnalyzer.startGatheringStatistics();
@@ -572,6 +594,9 @@ public class Gui extends Shell {
 	}
 
 	private void hideItems() {
+
+		logger.trace("Hiding all items");
+
 		for (Object object : graph.getConnections())
 			((GraphConnection) object).setVisible(false);
 		for (Object object : graph.getNodes())
@@ -642,6 +667,9 @@ public class Gui extends Shell {
 
 			@Override
 			public void handleEvent(Event event) {
+
+				logger.info("Adding new Router");
+
 				Appliance appliance = new Appliance("", "",
 						ApplianceType.ROUTER);
 				createGraphItem(appliance, "icons/router.jpg");
@@ -667,6 +695,9 @@ public class Gui extends Shell {
 
 			@Override
 			public void handleEvent(Event event) {
+
+				logger.info("Adding new Switch");
+
 				Switch swit = new Switch("", "");
 				createGraphItem(swit, "icons/switch.jpg");
 				modelObjects.add(swit);
@@ -692,6 +723,9 @@ public class Gui extends Shell {
 
 			@Override
 			public void handleEvent(Event event) {
+
+				logger.info("Adding new appliance");
+
 				Appliance appliance = new Appliance("", "",
 						ApplianceType.MACHINE);
 				createGraphItem(appliance, "icons/resource.jpg");
@@ -741,6 +775,8 @@ public class Gui extends Shell {
 
 			@Override
 			public void handleEvent(Event event) {
+
+				logger.info("Connecting two links");
 
 				List list = graph.getSelection();
 
@@ -901,32 +937,35 @@ public class Gui extends Shell {
 					GraphNode graphNode = (GraphNode) list.get(0);
 
 					EditResourceDialog dialog = new EditResourceDialog(null,
-							graphNode.getData(), new 
-							RepoManagerProxyFactory() {
-								
+							graphNode.getData(), new RepoManagerProxyFactory() {
+
 								@Override
 								public RepoManagerMBean getRepoManager() {
-									
-									RepoManagerMBean repoManager = componentProxyFactory.createRepoManager();
-									
-									if ( null == repoManager ) {
+
+									RepoManagerMBean repoManager = componentProxyFactory
+											.createRepoManager();
+
+									if (null == repoManager) {
 										repoManager = new RepoManagerMBean() {
-											
+
 											@Override
-											public List< String > getIds() {
-												return new LinkedList< String >();
+											public List<String> getIds() {
+												return new LinkedList<String>();
 											}
 
 											@Override
-											public String getRepoPath() { return null; }
-											
-											@Override
-											public void setRepoPath(String arg0) { }
+											public String getRepoPath() {
+												return null;
+											}
 
-											};
-										
+											@Override
+											public void setRepoPath(String arg0) {
+											}
+
+										};
+
 									}
-									
+
 									return repoManager;
 								}
 
@@ -1006,10 +1045,10 @@ public class Gui extends Shell {
 		supervisorPort.setLayoutData(fd_projectId2);
 		supervisorPort.setText("");
 		supervisorPort.pack();
-		
+
 		Button discoverBtn = new Button(buttonGroup, SWT.PUSH);
 		FormData fd_discoverBtn = new FormData();
-		
+
 		fd_discoverBtn.bottom = new FormAttachment(0, 277);
 		fd_discoverBtn.right = new FormAttachment(100, -28);
 		fd_discoverBtn.top = new FormAttachment(deployButton, 0, SWT.TOP);
@@ -1017,17 +1056,18 @@ public class Gui extends Shell {
 		discoverBtn.setLayoutData(fd_discoverBtn);
 		discoverBtn.setToolTipText("Discover");
 		discoverBtn.setImage(loadImage("icons/discover.jpg"));
-		
-		discoverBtn.addListener( SWT.MouseUp, new Listener() {
-			
+
+		discoverBtn.addListener(SWT.MouseUp, new Listener() {
+
 			@Override
-			public void handleEvent( Event event ) {
-				discoveryHandler.handle( graph );
+			public void handleEvent(Event event) {
+				discoveryHandler.handle(graph);
 			}
-			
-		} );
+
+		});
 
 		resetConnectionDetailsLabel();
+		connectionTester = new ConnectionTester(this);
 
 		this.addKeyListener(keyListener);
 		graph.addKeyListener(keyListener);
@@ -1042,14 +1082,14 @@ public class Gui extends Shell {
 	private void createGraphConnectionData(GraphNode graphNode,
 			GraphNode graphNode2, Endpoint endp1, Endpoint endp2) {
 
-		System.err.println(graphNode + " restore " + graphNode2);
 		if (graphNode == null || graphNode2 == null) {
 			return;
 		}
 		GraphConnectionData graphConnectionData = new GraphConnectionData(
 				graphNode.getData(), graphNode2.getData(), endp1, endp2);
 
-		System.err.println(endp1 + " restore " + endp2);
+		logger.info("Restoring network connection between " + endp1 + " and "
+				+ endp2);
 
 		graphConnectionDataList.add(graphConnectionData);
 
@@ -1079,6 +1119,9 @@ public class Gui extends Shell {
 			}
 		}
 		removeSelectedButton.setEnabled(false);
+
+		// @todo w przyszlosci trzeba zapamietac obiekty jesli zrobiony byl
+		// wczesniej deployment
 	}
 
 	/**
@@ -1232,6 +1275,8 @@ public class Gui extends Shell {
 
 	protected void createGraphItem(Object g, String iconPath) {
 
+		logger.trace("Creating new graph item");
+
 		GraphNode graphNode = new GraphNode(graph, SWT.NONE, "");
 		graphNode.setBackgroundColor(this.getDisplay().getSystemColor(
 				SWT.COLOR_WHITE));
@@ -1252,6 +1297,8 @@ public class Gui extends Shell {
 	}
 
 	protected String updateGraphNodeToolTip(Object obj) {
+
+		logger.debug("Updating tool tip for object " + obj);
 
 		StringBuilder sb = new StringBuilder();
 		if (obj instanceof Appliance) {
@@ -1311,12 +1358,17 @@ public class Gui extends Shell {
 
 	public class GraphConnectionLabelUpdater extends Thread {
 
+		private static final int KILO = 1024;
+		private static final double EIGHT = 8.0;
+
 		@Override
 		public void run() {
 
 			try {
 
 				while (true) {
+
+					logger.info("Refreshing average network bandwidth");
 
 					for (GraphConnectionData graphConnectionData : graphConnectionDataList) {
 
@@ -1328,13 +1380,13 @@ public class Gui extends Shell {
 						}
 						if (graphConnectionData.getStatistic1() != null) {
 							sb.append(" received: ");
-							sb.append(8.0 * graphConnectionData.getStatistic1()
-									.getAverageStatistics().get(
-											LinkStatistics.RBYTES) / 1024.0);
+							sb.append(countAvgBandwidth(graphConnectionData
+									.getStatistic1().getAverageStatistics()
+									.get(LinkStatistics.RBYTES)));
 							sb.append(" sent: ");
-							sb.append(8.0 * graphConnectionData.getStatistic1()
-									.getAverageStatistics().get(
-											LinkStatistics.OBYTES) / 1024.0);
+							sb.append(countAvgBandwidth(graphConnectionData
+									.getStatistic1().getAverageStatistics()
+									.get(LinkStatistics.OBYTES)));
 						}
 
 						if (!sb.toString().equals("")) {
@@ -1348,15 +1400,17 @@ public class Gui extends Shell {
 						}
 						if (graphConnectionData.getStatistic2() != null) {
 							sb.append(" received: ");
-							sb.append(8.0 * graphConnectionData.getStatistic2()
-									.getAverageStatistics().get(
-											LinkStatistics.RBYTES) / 1024.0);
+							sb.append(countAvgBandwidth(graphConnectionData
+									.getStatistic2().getAverageStatistics()
+									.get(LinkStatistics.RBYTES)));
 							sb.append("kbps sent: ");
-							sb.append(8.0 * graphConnectionData.getStatistic2()
-									.getAverageStatistics().get(
-											LinkStatistics.OBYTES) / 1024.0);
+							sb.append(countAvgBandwidth(graphConnectionData
+									.getStatistic2().getAverageStatistics()
+									.get(LinkStatistics.OBYTES)));
 							sb.append("kbps");
 						}
+
+						logger.info("Updated statistics " + sb.toString());
 
 						graphConnectionData.setToolTip(sb.toString());
 
@@ -1374,19 +1428,43 @@ public class Gui extends Shell {
 
 		}
 
+		private String countAvgBandwidth(double value) {
+
+			return String.valueOf(EIGHT * value / KILO);
+		}
+
 	}
+
+	/**
+	 * Zwraca adres zdalnego MBean servera
+	 * 
+	 * @return
+	 */
+	public String getConnectionAddress() {
+		return componentProxyFactory.getMbServer();
+	}
+
+	public String getConnectionPort() {
+		return componentProxyFactory.getMbPort();
+	}
+
 	protected DataBindingContext initDataBindings() {
 		DataBindingContext bindingContext = new DataBindingContext();
 		//
-		IObservableValue supervisorsAddressObserveTextObserveWidget = SWTObservables.observeText(supervisorsAddress, SWT.Modify);
-		IObservableValue componentProxyFactoryMbServerObserveValue = PojoObservables.observeValue(componentProxyFactory, "mbServer");
-		bindingContext.bindValue(supervisorsAddressObserveTextObserveWidget, componentProxyFactoryMbServerObserveValue, null, null);
+		IObservableValue supervisorsAddressObserveTextObserveWidget = SWTObservables
+				.observeText(supervisorsAddress, SWT.Modify);
+		IObservableValue componentProxyFactoryMbServerObserveValue = PojoObservables
+				.observeValue(componentProxyFactory, "mbServer");
+		bindingContext.bindValue(supervisorsAddressObserveTextObserveWidget,
+				componentProxyFactoryMbServerObserveValue, null, null);
 		//
-		IObservableValue supervisorPortObserveTextObserveWidget = SWTObservables.observeText(supervisorPort, SWT.Modify);
-		IObservableValue componentProxyFactoryMbPortObserveValue = PojoObservables.observeValue(componentProxyFactory, "mbPort");
-		bindingContext.bindValue(supervisorPortObserveTextObserveWidget, componentProxyFactoryMbPortObserveValue, null, null);
+		IObservableValue supervisorPortObserveTextObserveWidget = SWTObservables
+				.observeText(supervisorPort, SWT.Modify);
+		IObservableValue componentProxyFactoryMbPortObserveValue = PojoObservables
+				.observeValue(componentProxyFactory, "mbPort");
+		bindingContext.bindValue(supervisorPortObserveTextObserveWidget,
+				componentProxyFactoryMbPortObserveValue, null, null);
 		//
 		return bindingContext;
 	}
 }
-
