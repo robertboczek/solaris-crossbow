@@ -112,7 +112,6 @@ public class Gui extends Shell {
 
 	private ProgressShell progressShell;
 
-	private boolean updateGraphConnection = false;
 	private List<Object> modelObjects = new LinkedList<Object>();
 
 	private JmxConnector jmxConnector;
@@ -121,13 +120,15 @@ public class Gui extends Shell {
 
 	private ObjectModel objectModel;
 
+	private Display display;
+
 	/**
 	 * Launch the application.
 	 * 
 	 * @param args
 	 */
 	public static void main(String args[]) {
-		
+
 		Display display = Display.getDefault();
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
 			public void run() {
@@ -166,7 +167,6 @@ public class Gui extends Shell {
 					shell.open();
 					shell.layout();
 					while (!shell.isDisposed()) {
-						shell.updateGraphConnections();
 						if (!display.readAndDispatch()) {
 							display.sleep();
 						}
@@ -187,6 +187,8 @@ public class Gui extends Shell {
 	 */
 	public Gui(Display display, DiscoveryHandler discoveryHandler) {
 		super(display, SWT.SHELL_TRIM);
+
+		this.display = display;
 
 		this.discoveryHandler = discoveryHandler;
 
@@ -387,41 +389,6 @@ public class Gui extends Shell {
 		}
 	}
 
-	public void updateGraphConnections() {
-
-		logger.trace("Updating graph connections details");
-
-		if (updateGraphConnection) {
-			updateGraphConnection = false;
-			for (Object obj : graph.getConnections()) {
-				if (obj instanceof GraphConnection) {
-					GraphConnection graphConnection = (GraphConnection) obj;
-					if (((GraphConnectionData) graphConnection.getData())
-							.toString() != null) {
-						graphConnection
-								.setText(((GraphConnectionData) graphConnection
-										.getData()).toString());
-					}
-				}
-			}
-		}
-
-		if (connectionTester.getConnected()) {
-			this.setText("Connected");
-		} else {
-			this.setText("Not connected");
-		}
-
-		if (progressShell != null) {
-			if (!progressShell.isRunning()) {
-				logger.info("Stopping ProgressShell thread");
-				progressShell = null;
-			} else {
-				progressShell.update();
-			}
-		}
-	}
-
 	private void resetConnectionDetailsLabel() {
 		this.setText("Not connected");
 	}
@@ -518,7 +485,7 @@ public class Gui extends Shell {
 			crossbowNotificationMBean.reset();
 			logger.trace("Reseting progress state before deployment");
 
-			progressShell = new ProgressShell(Gui.this, jmxConnector);
+			progressShell = new ProgressShell(Gui.this, jmxConnector, display);
 			progressShell.create();
 			if (progressShell.open() == Window.OK) {
 			}
@@ -1077,7 +1044,7 @@ public class Gui extends Shell {
 		});
 
 		resetConnectionDetailsLabel();
-		connectionTester = new ConnectionTester(this);
+		connectionTester = new ConnectionTester(this, display);
 
 		this.addKeyListener(keyListener);
 		graph.addKeyListener(keyListener);
@@ -1110,7 +1077,34 @@ public class Gui extends Shell {
 		graphConnection.setLineColor(Gui.this.getDisplay().getSystemColor(
 				SWT.COLOR_BLACK));
 
-		updateGraphConnection = true;
+		updateGraphConnection();
+
+	}
+
+	private void updateGraphConnection() {
+
+		display.asyncExec(new Runnable() {
+
+			@Override
+			public void run() {
+
+				logger.trace("Updating graph connections details");
+
+				for (Object obj : graph.getConnections()) {
+					if (obj instanceof GraphConnection) {
+						GraphConnection graphConnection = (GraphConnection) obj;
+						if (((GraphConnectionData) graphConnection.getData())
+								.toString() != null) {
+							graphConnection
+									.setText(((GraphConnectionData) graphConnection
+											.getData()).toString());
+						}
+					}
+				}
+
+			}
+
+		});
 
 	}
 
@@ -1393,10 +1387,11 @@ public class Gui extends Shell {
 							sb.append(countAvgBandwidth(graphConnectionData
 									.getStatistic1().getAverageStatistics()
 									.get(LinkStatistics.RBYTES)));
-							sb.append(" sent: ");
+							sb.append(" kbps sent: ");
 							sb.append(countAvgBandwidth(graphConnectionData
 									.getStatistic1().getAverageStatistics()
 									.get(LinkStatistics.OBYTES)));
+							sb.append(" kbps");
 						}
 
 						if (!sb.toString().equals("")) {
@@ -1413,11 +1408,11 @@ public class Gui extends Shell {
 							sb.append(countAvgBandwidth(graphConnectionData
 									.getStatistic2().getAverageStatistics()
 									.get(LinkStatistics.RBYTES)));
-							sb.append("kbps sent: ");
+							sb.append(" kbps sent: ");
 							sb.append(countAvgBandwidth(graphConnectionData
 									.getStatistic2().getAverageStatistics()
 									.get(LinkStatistics.OBYTES)));
-							sb.append("kbps");
+							sb.append(" kbps");
 						}
 
 						logger.info("Updated statistics " + sb.toString());
@@ -1426,7 +1421,7 @@ public class Gui extends Shell {
 
 					}
 
-					updateGraphConnection = true;
+					updateGraphConnection();
 
 					Thread.sleep(REFRESH_TIME);
 
@@ -1457,6 +1452,10 @@ public class Gui extends Shell {
 
 	public String getConnectionPort() {
 		return componentProxyFactory.getMbPort();
+	}
+
+	public void resetProgress() {
+		progressShell = null;
 	}
 
 	protected DataBindingContext initDataBindings() {

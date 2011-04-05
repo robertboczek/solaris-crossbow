@@ -11,6 +11,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -18,6 +19,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.jims.modules.crossbow.gui.Gui;
 import org.jims.modules.crossbow.gui.jmx.JmxConnector;
 import org.jims.modules.crossbow.infrastructure.progress.CrossbowNotificationMBean;
 import org.jims.modules.crossbow.infrastructure.progress.notification.ProgressNotification;
@@ -26,7 +28,7 @@ import org.apache.log4j.Logger;
 
 public class ProgressShell extends ProgressMonitorDialog {
 
-	private static final Logger logger = Logger.getLogger( ProgressShell.class );
+	private static final Logger logger = Logger.getLogger(ProgressShell.class);
 
 	private static final int MAX_VALUE = 100;
 
@@ -44,15 +46,21 @@ public class ProgressShell extends ProgressMonitorDialog {
 
 	private boolean running = true;
 
+	private Gui gui;
+
+	private Display display;
+
 	/**
 	 * Create the shell.
 	 * 
 	 * @param display
 	 * @param jmxConnector
 	 */
-	public ProgressShell(Shell shell, JmxConnector jmxConnector) {
+	public ProgressShell(Gui shell, JmxConnector jmxConnector, Display display) {
 		super(shell);
 
+		this.gui = shell;
+		this.display = display;
 		this.jmxConnector = jmxConnector;
 
 		registerListenerAtMBSC();
@@ -157,10 +165,11 @@ public class ProgressShell extends ProgressMonitorDialog {
 
 				while (running) {
 
+					if (ProgressShell.this.logs == null
+							&& ProgressShell.this.progressNotification == null) {
 
-					if (ProgressShell.this.logs == null && ProgressShell.this.progressNotification == null) {
-
-						logger.debug("Checking progress and logs at CrossbowNotificationMBean");
+						logger
+								.debug("Checking progress and logs at CrossbowNotificationMBean");
 
 						String logs = crossbowNotificationMBean.getNewLogs();
 
@@ -169,9 +178,11 @@ public class ProgressShell extends ProgressMonitorDialog {
 
 						ProgressShell.this.progressNotification = progressNotification;
 						ProgressShell.this.logs = logs;
+
+						update();
 					}
 					try {
-						Thread.sleep(500);
+						Thread.sleep(2000);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
@@ -183,50 +194,58 @@ public class ProgressShell extends ProgressMonitorDialog {
 	public boolean isRunning() {
 		return running;
 	}
-	
-	
-	
+
 	public synchronized void update() {
 
 		logger.debug("Updating logs and progress...");
 
-		if (logs != null && logsText != null) {
-			if(!logs.equals("")) {
-				logsText.setText(logs + logsText.getText());
-				logger.info("New logs: '" + logs + "' were added");
+		display.asyncExec(new Runnable() {
+
+			@Override
+			public void run() {
+				if (logs != null && logsText != null) {
+					if (!logs.equals("")) {
+						logsText.setText(logs + logsText.getText());
+						logger.info("New logs: '" + logs + "' were added");
+					}
+					logs = null;
+				}
+
+				if (progressNotification != null && progressBar != null) {
+
+					// progressBar.setMaximum(progressNotification.getMax());
+					progressBar.setSelection(progressNotification.getCurrent()
+							* MAX_VALUE / progressNotification.getMax());
+
+					logger.info("Progress " + progressNotification.getCurrent()
+							+ " out of " + progressNotification.getMax()
+							+ " was updated");
+
+					// okienko powinno sie zamknac po zakonczeniu
+					// procesu
+					// deployementu
+
+					if (progressNotification.getCurrent() == progressNotification
+							.getMax()) {
+						logger
+								.info("Setting progressThread running flag to false");
+						running = false;
+
+						logger.info("Stopping ProgressShell thread");
+						gui.resetProgress();
+					}
+
+					progressNotification = null;
+				}
+
+				if (!running) {
+					logger.trace("Enabling close button");
+					closeButton.setEnabled(true);
+				}
+
 			}
-			logs = null;
-		}
 
-		if (progressNotification != null && progressBar != null) {
-			
-			// progressBar.setMaximum(progressNotification.getMax());
-			progressBar.setSelection(progressNotification.getCurrent()
-					* MAX_VALUE / progressNotification.getMax());
-
-			logger.info("Progress " + progressNotification.getCurrent() + " out of "
-					+ progressNotification.getMax() + " was updated");
-
-			// okienko powinno sie zamknac po zakonczeniu
-			// procesu
-			// deployementu
-
-			if (progressNotification.getCurrent() == progressNotification
-					.getMax()) {
-				logger.info("Setting progressThread running flag to false");
-				running = false;
-			}
-			
-			progressNotification = null;
-		}
-
-		
-
-		if (!running) {
-			logger.trace("Enabling close button");
-			closeButton.setEnabled(true);
-		}
-
+		});
 	}
 
 }

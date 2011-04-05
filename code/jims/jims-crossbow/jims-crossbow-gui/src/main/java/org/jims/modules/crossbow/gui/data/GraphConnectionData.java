@@ -71,11 +71,11 @@ public class GraphConnectionData implements Serializable {
 		return null;
 	}
 	
-	public void setEndp1Statistic(StatisticAnalyzer.EndpointStatistic statistic) {
+	public void setEndp1Statistic(EndpointStatistic statistic) {
 		this.statistic1 = statistic;
 	}
 	
-	public void setEndp2Statistic(StatisticAnalyzer.EndpointStatistic statistic) {
+	public void setEndp2Statistic(EndpointStatistic statistic) {
 		this.statistic2 = statistic;
 	}
 

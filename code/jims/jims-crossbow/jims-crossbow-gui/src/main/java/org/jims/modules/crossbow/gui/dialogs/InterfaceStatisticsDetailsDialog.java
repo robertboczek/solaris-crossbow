@@ -27,11 +27,12 @@ import org.jims.modules.crossbow.objectmodel.resources.Interface;
  * 
  */
 public class InterfaceStatisticsDetailsDialog extends TitleAreaDialog {
-	
-	private static final Logger logger = Logger.getLogger(InterfaceStatisticsDetailsDialog.class);
+
+	private static final Logger logger = Logger
+			.getLogger(InterfaceStatisticsDetailsDialog.class);
 
 	private Combo endpoints;
-	
+
 	private Text receivedBytesLabel;
 	private Text receivedPacketsLabel;
 	private Text avgBytesReceived;
@@ -51,15 +52,17 @@ public class InterfaceStatisticsDetailsDialog extends TitleAreaDialog {
 	public void setControlsValues() {
 
 		if (graphConnectionData.getEndp1() != null) {
-			endpoints.add(((Interface)graphConnectionData.getEndp1()).getIpAddress().toString());
-			endpoints.setData(((Interface)graphConnectionData.getEndp1()).getIpAddress().toString(),
-					graphConnectionData.getEndp1());
+			endpoints.add(((Interface) graphConnectionData.getEndp1())
+					.getIpAddress().toString());
+			endpoints.setData(((Interface) graphConnectionData.getEndp1())
+					.getIpAddress().toString(), graphConnectionData.getStatistic1());
 		}
 
 		if (graphConnectionData.getEndp2() != null) {
-			endpoints.add(((Interface)graphConnectionData.getEndp2()).getIpAddress().toString());
-			endpoints.setData(((Interface)graphConnectionData.getEndp2()).getIpAddress().toString(),
-					graphConnectionData.getEndp2());
+			endpoints.add(((Interface) graphConnectionData.getEndp2())
+					.getIpAddress().toString());
+			endpoints.setData(((Interface) graphConnectionData.getEndp2())
+					.getIpAddress().toString(), graphConnectionData.getStatistic2());
 		}
 
 	}
@@ -73,7 +76,8 @@ public class InterfaceStatisticsDetailsDialog extends TitleAreaDialog {
 	}
 
 	private void setInformation() {
-		setMessage("Select interface to see statistic details", IMessageProvider.INFORMATION);
+		setMessage("Select interface to see statistic details",
+				IMessageProvider.INFORMATION);
 	}
 
 	@Override
@@ -86,70 +90,69 @@ public class InterfaceStatisticsDetailsDialog extends TitleAreaDialog {
 		gridData.grabExcessHorizontalSpace = true;
 		gridData.horizontalAlignment = GridData.FILL;
 		gridData.minimumWidth = 200;
-		
+
 		Label label0 = new Label(parent, SWT.NONE);
-		label0.setText("Wybierz interfejs: ");	
-		
+		label0.setText("Wybierz interfejs: ");
+
 		endpoints = new Combo(parent, SWT.NONE);
 		endpoints.addSelectionListener(new SelectionListener() {
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent arg0) {
-				
+
 			}
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				logger.debug(endpoints.getSelectionIndex());
-				
-				if(endpoints.getSelectionIndex() == 0) {
-					actualizeLabels(graphConnectionData.getStatistic1());
-				} else if(endpoints.getSelectionIndex() == 1) {
-					actualizeLabels(graphConnectionData.getStatistic2());
+
+				if (endpoints.getSelectionIndex() == 0) {
+					actualizeLabels((EndpointStatistic)endpoints.getData(endpoints.getText()));
+				} else if (endpoints.getSelectionIndex() == 1) {
+					actualizeLabels((EndpointStatistic)endpoints.getData(endpoints.getText()));
 				}
-				
+
 			}
 		});
 
 		Label label1 = new Label(parent, SWT.NONE);
-		label1.setText("Recieved bytes:");		
-		
+		label1.setText("Recieved bytes:");
+
 		receivedBytesLabel = new Text(parent, SWT.NONE);
 		receivedBytesLabel.setText("");
 		receivedBytesLabel.setEnabled(false);
-		
+
 		Label label2 = new Label(parent, SWT.NONE);
 		label2.setText("Recieved packets:");
-		
-		
+
 		receivedPacketsLabel = new Text(parent, SWT.NONE);
 		receivedPacketsLabel.setText("");
 		receivedPacketsLabel.setEnabled(false);
-		
+
 		Label label3 = new Label(parent, SWT.NONE);
 		label3.setText("Average received kbps:");
-		
+
 		avgBytesReceived = new Text(parent, SWT.NONE);
 		avgBytesReceived.setText("");
 		avgBytesReceived.setEnabled(false);
-		
+
 		Label label4 = new Label(parent, SWT.NONE);
 		label4.setText("Bytes received");
-		
+
 		sentBytesLabel = new Text(parent, SWT.NONE);
 		sentBytesLabel.setText("");
 		sentBytesLabel.setEnabled(false);
-		
+
 		Label label5 = new Label(parent, SWT.NONE);
 		label5.setText("Sent packets:");
-		
+
 		sentPacketsLabel = new Text(parent, SWT.NONE);
 		sentPacketsLabel.setText("");
 		sentPacketsLabel.setEnabled(false);
-		
+
 		Label label6 = new Label(parent, SWT.NONE);
 		label6.setText("Average sent kbps:");
-		
+
 		avgBytesSent = new Text(parent, SWT.NONE);
 		avgBytesSent.setText("");
 		avgBytesSent.setEnabled(false);
@@ -164,26 +167,29 @@ public class InterfaceStatisticsDetailsDialog extends TitleAreaDialog {
 	/**
 	 * Aktualizuje etykiety wg wybranego interfejsu
 	 * 
-	 * @param statistic Zebrane statystyki dla wybranego interfejsu
+	 * @param statistic
+	 *            Zebrane statystyki dla wybranego interfejsu
 	 */
 	protected void actualizeLabels(EndpointStatistic statistic) {
-		
+
 		System.out.println(statistic);
-		
-		if(statistic == null) {
+
+		if (statistic == null) {
 			return;
 		}
-		
+
 		logger.debug("Received bytes: " + statistic.getReceivedBytes());
-		receivedBytesLabel.setText(String.valueOf(statistic.getReceivedBytes()));
+		receivedBytesLabel
+				.setText(String.valueOf(statistic.getReceivedBytes()));
 		receivedPacketsLabel.setText(statistic.getReceivedPackets().toString());
-		avgBytesReceived.setText(new Double(8.0 * statistic.getAverageStatistics().get(
-				LinkStatistics.RBYTES) / 1024.0).toString());
+		avgBytesReceived.setText(new Double(8.0 * statistic
+				.getAverageStatistics().get(LinkStatistics.RBYTES) / 1024.0)
+				.toString());
 		sentBytesLabel.setText(statistic.getSentBytes().toString());
 		sentPacketsLabel.setText(statistic.getSentPackets().toString());
-		avgBytesSent.setText(new Double(8.0 * statistic.getAverageStatistics().get(
-						LinkStatistics.OBYTES) / 1024.0).toString());
-		
+		avgBytesSent.setText(new Double(8.0 * statistic.getAverageStatistics()
+				.get(LinkStatistics.OBYTES) / 1024.0).toString());
+
 	}
 
 }
