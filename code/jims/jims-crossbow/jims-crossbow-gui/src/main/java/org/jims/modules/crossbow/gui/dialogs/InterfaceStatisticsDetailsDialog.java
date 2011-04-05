@@ -1,5 +1,6 @@
 package org.jims.modules.crossbow.gui.dialogs;
 
+import org.apache.log4j.Logger;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
@@ -20,12 +21,14 @@ import org.jims.modules.crossbow.gui.statistics.StatisticAnalyzer.EndpointStatis
 import org.jims.modules.crossbow.objectmodel.resources.Interface;
 
 /**
- * Dialog wyswietlajacy szczegoly statystyk interfejsow
+ * Dialog displaying details about interfaces statistics
  * 
  * @author robert
  * 
  */
 public class InterfaceStatisticsDetailsDialog extends TitleAreaDialog {
+	
+	private static final Logger logger = Logger.getLogger(InterfaceStatisticsDetailsDialog.class);
 
 	private Combo endpoints;
 	
@@ -97,7 +100,8 @@ public class InterfaceStatisticsDetailsDialog extends TitleAreaDialog {
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				System.out.println(endpoints.getSelectionIndex());
+				logger.debug(endpoints.getSelectionIndex());
+				
 				if(endpoints.getSelectionIndex() == 0) {
 					actualizeLabels(graphConnectionData.getStatistic1());
 				} else if(endpoints.getSelectionIndex() == 1) {
@@ -170,7 +174,7 @@ public class InterfaceStatisticsDetailsDialog extends TitleAreaDialog {
 			return;
 		}
 		
-		System.out.println(statistic.getReceivedBytes());
+		logger.debug("Received bytes: " + statistic.getReceivedBytes());
 		receivedBytesLabel.setText(String.valueOf(statistic.getReceivedBytes()));
 		receivedPacketsLabel.setText(statistic.getReceivedPackets().toString());
 		avgBytesReceived.setText(new Double(8.0 * statistic.getAverageStatistics().get(

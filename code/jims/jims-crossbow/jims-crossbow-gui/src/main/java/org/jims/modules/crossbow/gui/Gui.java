@@ -1,6 +1,6 @@
 package org.jims.modules.crossbow.gui;
 
-import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -56,12 +56,12 @@ import org.jims.modules.crossbow.gui.actions.SupervisorProxyFactory;
 import org.jims.modules.crossbow.gui.data.GraphConnectionData;
 import org.jims.modules.crossbow.gui.dialogs.EditResourceDialog;
 import org.jims.modules.crossbow.gui.dialogs.InterfaceStatisticsDetailsDialog;
-import org.jims.modules.crossbow.gui.dialogs.IpAddressDialog;
 import org.jims.modules.crossbow.gui.dialogs.ProgressShell;
 import org.jims.modules.crossbow.gui.dialogs.SelectNetworkInterfacesDialog;
 import org.jims.modules.crossbow.gui.jmx.JmxConnector;
 import org.jims.modules.crossbow.gui.statistics.StatisticAnalyzer;
 import org.jims.modules.crossbow.gui.threads.ConnectionTester;
+import org.jims.modules.crossbow.gui.validator.NetworkValidator;
 import org.jims.modules.crossbow.infrastructure.appliance.RepoManagerMBean;
 import org.jims.modules.crossbow.infrastructure.progress.CrossbowNotificationMBean;
 import org.jims.modules.crossbow.infrastructure.supervisor.SupervisorMBean;
@@ -119,12 +119,15 @@ public class Gui extends Shell {
 	private DiscoveryHandler discoveryHandler;
 	private ConnectionTester connectionTester;
 
+	private ObjectModel objectModel;
+
 	/**
 	 * Launch the application.
 	 * 
 	 * @param args
 	 */
 	public static void main(String args[]) {
+		
 		Display display = Display.getDefault();
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
 			public void run() {
@@ -428,11 +431,16 @@ public class Gui extends Shell {
 	 */
 	protected void validateNetwork() {
 
-		// @todo validate network structure
+		deployButton.setEnabled(false);
 
-		if (!IpAddressDialog.isIpv4(supervisorsAddress.getText())) {
-			MessageDialog.openError(null, "Validation result",
-					"Please type endpoint address in ipv4 format");
+		objectModel = new ObjectModel();
+		registerObjects(objectModel, modelObjects);
+
+		NetworkValidator networkValidator = new NetworkValidator();
+		String result = networkValidator.validate(objectModel);
+
+		if (result != null) {
+			MessageDialog.openError(null, "Validation result", result);
 			return;
 		}
 
@@ -447,113 +455,115 @@ public class Gui extends Shell {
 			return;
 		}
 
+		if (connectionTester.getConnected() == false) {
+			MessageDialog.openError(null, "Validation result",
+					"You must be connected to deploy");
+			return;
+		}
+
 		MessageDialog.openInformation(null, "Validation result",
 				"Network structure has been successfully validated");
 
 		deployButton.setEnabled(true);
-		deployButton.addListener(SWT.MouseUp, new Listener() {
+	}
 
-			@Override
-			public void handleEvent(Event event) {
+	/**
+	 * Start network deployment
+	 */
+	protected void deploy() {
 
-				logger.trace("Starting deploying network");
+		logger.trace("Starting deploying network");
 
-				for (Object obj : modelObjects) {
-					if (obj instanceof Switch) {
-						Switch swit = (Switch) obj;
-						swit.setProjectId(projectId.getText());
-					} else if (obj instanceof Appliance) {
-						Appliance app = (Appliance) obj;
-						app.setProjectId(projectId.getText());
-						for (Interface interf : app.getInterfaces()) {
-							interf.setProjectId(projectId.getText());
-						}
-					}
+		for (Object obj : modelObjects) {
+			if (obj instanceof Switch) {
+				Switch swit = (Switch) obj;
+				swit.setProjectId(projectId.getText());
+			} else if (obj instanceof Appliance) {
+				Appliance app = (Appliance) obj;
+				app.setProjectId(projectId.getText());
+				for (Interface interf : app.getInterfaces()) {
+					interf.setProjectId(projectId.getText());
 				}
+			}
+		}
 
-				jmxConnector = new JmxConnector(supervisorsAddress.getText(),
-						Integer.parseInt(supervisorPort.getText()));
+		jmxConnector = new JmxConnector(supervisorsAddress.getText(), Integer
+				.parseInt(supervisorPort.getText()));
 
-				MBeanServerConnection mbsc = null;
-				try {
-					mbsc = jmxConnector.getMBeanServerConnection();
-				} catch (Exception e) {
+		MBeanServerConnection mbsc = null;
+		try {
+			mbsc = jmxConnector.getMBeanServerConnection();
+		} catch (Exception e) {
 
-					logger.error("Couldn't get MBeanServerConnection");
-					MessageDialog.openError(null, "Connection problem",
-							"Couldn't connect to specified MBean Server");
+			logger.error("Couldn't get MBeanServerConnection");
+			MessageDialog.openError(null, "Connection problem",
+					"Couldn't connect to specified MBean Server");
 
-					e.printStackTrace();
-					return;
-				}
+			e.printStackTrace();
+			return;
+		}
 
-				try {
-					final SupervisorMBean supervisor = JMX.newMBeanProxy(mbsc,
-							new ObjectName("Crossbow:type=Supervisor"),
-							SupervisorMBean.class);
+		try {
+			final SupervisorMBean supervisor = JMX.newMBeanProxy(mbsc,
+					new ObjectName("Crossbow:type=Supervisor"),
+					SupervisorMBean.class);
 
-					final ObjectModel objectModel = new ObjectModel();
+			final ObjectModel objModel = objectModel;
 
-					registerObjects(objectModel, modelObjects);
+			CrossbowNotificationMBean crossbowNotificationMBean = JMX
+					.newMBeanProxy(mbsc, new ObjectName(
+							"Crossbow:type=CrossbowNotification"),
+							CrossbowNotificationMBean.class);
 
-					CrossbowNotificationMBean crossbowNotificationMBean = JMX
-							.newMBeanProxy(mbsc, new ObjectName(
-									"Crossbow:type=CrossbowNotification"),
-									CrossbowNotificationMBean.class);
+			crossbowNotificationMBean.reset();
+			logger.trace("Reseting progress state before deployment");
 
-					crossbowNotificationMBean.reset();
-					logger.trace("Reseting progress state before deployment");
-
-					progressShell = new ProgressShell(Gui.this, jmxConnector);
-					progressShell.create();
-					if (progressShell.open() == Window.OK) {
-					}
-
-					new Thread() {
-
-						public void run() {
-							try {
-								Actions actions = new Actions();
-
-								for (Appliance app : objectModel
-										.getAppliances()) {
-									actions.insert(app, Actions.ACTION.ADD);
-								}
-								for (Interface interf : objectModel.getPorts()) {
-									actions.insert(interf, Actions.ACTION.ADD);
-								}
-								for (Switch swit : objectModel.getSwitches()) {
-									actions.insert(swit, Actions.ACTION.ADD);
-								}
-								for (Policy policy : objectModel.getPolicies()) {
-									actions.insert(policy, Actions.ACTION.ADD);
-								}
-
-								logger.info("Starting deployment");
-								supervisor.instantiate(objectModel, actions);
-
-							} catch (ModelInstantiationException e) {
-								e.printStackTrace();
-							}
-						}
-					}.start();
-
-				} catch (Exception e) {
-					MessageDialog.openError(null, "Connection problem",
-							"Couldn't get Supervisor.class");
-
-					e.printStackTrace();
-					return;
-				}
-
-				logger.info("Starting new threads gathering statistics");
-				statisticAnalyzer = new StatisticAnalyzer(
-						graphConnectionDataList, jmxConnector);
-				statisticAnalyzer.startGatheringStatistics();
+			progressShell = new ProgressShell(Gui.this, jmxConnector);
+			progressShell.create();
+			if (progressShell.open() == Window.OK) {
 			}
 
-		});
-		// graph.applyLayout();
+			new Thread() {
+
+				public void run() {
+					try {
+						Actions actions = new Actions();
+
+						for (Appliance app : objModel.getAppliances()) {
+							actions.insert(app, Actions.ACTION.ADD);
+						}
+						for (Interface interf : objModel.getPorts()) {
+							actions.insert(interf, Actions.ACTION.ADD);
+						}
+						for (Switch swit : objModel.getSwitches()) {
+							actions.insert(swit, Actions.ACTION.ADD);
+						}
+						for (Policy policy : objModel.getPolicies()) {
+							actions.insert(policy, Actions.ACTION.ADD);
+						}
+
+						logger.info("Starting deployment");
+						supervisor.instantiate(objModel, actions);
+
+					} catch (ModelInstantiationException e) {
+						e.printStackTrace();
+					}
+				}
+			}.start();
+
+		} catch (Exception e) {
+			MessageDialog.openError(null, "Connection problem",
+					"Couldn't get Supervisor.class");
+
+			e.printStackTrace();
+			return;
+		}
+
+		logger.info("Starting new threads gathering statistics");
+		statisticAnalyzer = new StatisticAnalyzer(graphConnectionDataList,
+				jmxConnector);
+		statisticAnalyzer.startGatheringStatistics();
+
 	}
 
 	protected void registerObjects(ObjectModel objectModel, List<Object> objects) {
@@ -865,7 +875,7 @@ public class Gui extends Shell {
 
 			@Override
 			public void handleEvent(Event event) {
-				// @todo send network structure to mapper
+				deploy();
 			}
 
 		});
@@ -1430,7 +1440,8 @@ public class Gui extends Shell {
 
 		private String countAvgBandwidth(double value) {
 
-			return String.valueOf(EIGHT * value / KILO);
+			DecimalFormat df = new DecimalFormat("#,##0.00");
+			return df.format(EIGHT * value / KILO);
 		}
 
 	}
