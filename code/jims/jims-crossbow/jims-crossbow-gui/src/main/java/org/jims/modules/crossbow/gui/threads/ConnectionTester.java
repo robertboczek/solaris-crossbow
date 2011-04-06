@@ -1,6 +1,7 @@
 package org.jims.modules.crossbow.gui.threads;
 
 import org.apache.log4j.Logger;
+import org.eclipse.swt.widgets.Display;
 import org.jims.modules.crossbow.gui.Gui;
 import org.jims.modules.crossbow.gui.jmx.JmxConnector;
 
@@ -21,10 +22,13 @@ public class ConnectionTester extends Thread {
 	private boolean connected = false;
 
 	private JmxConnector jmxConnector;
+	private Display display;
 
-	public ConnectionTester(Gui gui) {
+	public ConnectionTester(Gui gui, Display display) {
 
 		this.gui = gui;
+		this.display = display;
+
 		this.start();
 
 	}
@@ -55,6 +59,7 @@ public class ConnectionTester extends Thread {
 					jmxConnector.getMBeanServerConnection();
 
 					logger.debug("Gui is connected");
+
 					connected = true;
 
 				} catch (NumberFormatException e) {
@@ -64,6 +69,16 @@ public class ConnectionTester extends Thread {
 					connected = false;
 					logger.debug("Not connected");
 				}
+				
+				display.asyncExec(new Runnable() {
+					public void run() {
+						if (connected) {
+							gui.setText("Connected");
+						} else {
+							gui.setText("Not connected");
+						}
+					}
+				});
 
 				Thread.sleep(DELAY);
 			} catch (InterruptedException e) {

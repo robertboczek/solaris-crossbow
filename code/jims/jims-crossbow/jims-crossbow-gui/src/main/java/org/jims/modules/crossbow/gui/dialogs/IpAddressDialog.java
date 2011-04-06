@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
+import org.jims.modules.crossbow.gui.validator.IpValidator;
 import org.jims.modules.crossbow.objectmodel.filters.AnyFilter;
 import org.jims.modules.crossbow.objectmodel.filters.Filter;
 import org.jims.modules.crossbow.objectmodel.filters.IpFilter;
@@ -363,26 +364,14 @@ public class IpAddressDialog extends TitleAreaDialog {
 	private String validateAddress() {
 		String errorMessage = "";
 
-		if (!isIpv4(address.getText())) {
+		if (!IpValidator.isIpv4(address.getText())) {
 			errorMessage += "Address must in ipv4 format \n";
 		}
 
 		return errorMessage;
 	}
 
-	public static boolean isIpv4(String address) {
-		String[] tab = address.split("\\.");
-		if (tab.length != 4) {
-			return false;
-		}
-		for (String part : tab) {
-			Integer i = Integer.parseInt(part);
-			if (i > 255 || i < 0) {
-				return false;
-			}
-		}
-		return true;
-	}
+	
 
 	@Override
 	protected boolean isResizable() {
