@@ -756,6 +756,12 @@ public class Worker implements WorkerMBean {
 
 			try {
 
+				// TODO the following is temporary
+				if ( ApplianceType.ROUTER.equals( app.getType() ) ) {
+					app.setRepoId( "dummy" );
+				}
+				// TODO END
+
 				String name = ApplianceType.MACHINE.equals( app.getType() )
 				              ? NameHelper.machineName( app )
 				              : NameHelper.routerName( app );

@@ -17,9 +17,9 @@ import org.jims.modules.crossbow.objectmodel.resources.Switch;
 public class NameHelper {
 
 	public static String interfaceName( Interface iface ) {
-		return ApplianceType.ROUTER.equals( iface.getAppliance().getType() )
-		       ? routerName( iface.getAppliance() )
-		       : machineName( iface.getAppliance() )
+		return ( ApplianceType.ROUTER.equals( iface.getAppliance().getType() )
+		         ? routerName( iface.getAppliance() )
+		         : machineName( iface.getAppliance() ) )
 		       + SEP + iface.getResourceId();
 	}
 

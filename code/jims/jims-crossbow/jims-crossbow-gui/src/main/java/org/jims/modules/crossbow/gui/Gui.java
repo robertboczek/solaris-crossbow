@@ -167,6 +167,7 @@ public class Gui extends Shell {
 						if (!display.readAndDispatch()) {
 							display.sleep();
 						}
+						Thread.sleep( 5 );
 					}
 
 					shell.stop();
@@ -386,7 +387,7 @@ public class Gui extends Shell {
 
 	public void updateGraphConnections() {
 
-		logger.trace("Updating graph connections details");
+		// logger.trace("Updating graph connections details");
 
 		if (updateGraphConnection) {
 			updateGraphConnection = false;
@@ -568,7 +569,7 @@ public class Gui extends Shell {
 
 				int ifaceNo = 0;
 				for (Interface interf : app.getInterfaces()) {
-					interf.setResourceId("IFACE" + String.valueOf(ifaceNo));
+					interf.setResourceId("IFACE" + ifaceNo);
 					objectModel.register(interf);
 					for (Policy policy : interf.getPoliciesList()) {
 						objectModel.register(policy);
