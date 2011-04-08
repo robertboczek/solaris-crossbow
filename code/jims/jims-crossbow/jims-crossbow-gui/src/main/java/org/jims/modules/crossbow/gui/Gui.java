@@ -170,7 +170,6 @@ public class Gui extends Shell {
 						if (!display.readAndDispatch()) {
 							display.sleep();
 						}
-						Thread.sleep( 5 );
 					}
 
 					shell.stop();

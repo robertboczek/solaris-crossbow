@@ -101,8 +101,9 @@ public class NameHelper {
 
 	public final static String REG_APPLIANCE_NAME
 		= group( REG_MACHINE_NAME + "|" + REG_ROUTER_NAME );
-	// public final static String REG_APPLIANCE_NAME_CG
-	// 	= group( REG_MACHINE_NAME_CG + "|" + REG_ROUTER_NAME_CG );
+	public final static String REG_APPLIANCE_NAME_CG
+		= group( capgroup( REG_PROJECT_ID ) + REG_SEP
+		  + capgroup( ROUTER + "|" + MACHINE ) + capgroup( REG_PROJECT_ID ) );
 
 	public final static String REG_INTERFACE_NAME
 		= group( REG_APPLIANCE_NAME + REG_SEP + REG_RESOURCE_ID );

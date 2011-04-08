@@ -224,7 +224,7 @@ public class Worker implements WorkerMBean {
 		Map< String, List< Appliance > > res = new HashMap< String, List< Appliance > >();
 		List< String > zones = globalZoneManagement.getZones();
 
-		for ( Matcher m : filterNames( zones, NameHelper.REG_MACHINE_NAME_CG ) ) {
+		for ( Matcher m : filterNames( zones, NameHelper.REG_APPLIANCE_NAME_CG ) ) {
 
 			String project = m.group( 1 ), type = m.group( 2 ), name = m.group( 3 );
 
