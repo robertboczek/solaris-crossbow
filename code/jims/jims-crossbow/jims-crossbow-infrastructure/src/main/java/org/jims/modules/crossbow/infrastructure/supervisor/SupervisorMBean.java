@@ -1,5 +1,6 @@
 package org.jims.modules.crossbow.infrastructure.supervisor;
 
+import java.util.List;
 import java.util.Map;
 import org.jims.modules.crossbow.infrastructure.worker.exception.ModelInstantiationException;
 import org.jims.modules.crossbow.objectmodel.Actions;
@@ -17,5 +18,7 @@ public interface SupervisorMBean {
 	public void instantiate( ObjectModel model, Actions actions, Assignments assignments );
 
 	public Map< String, ObjectModel > discover();
+
+	public List< String > getWorkers();
 
 }

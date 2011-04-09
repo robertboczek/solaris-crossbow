@@ -3,6 +3,7 @@ package org.jims.modules.crossbow.infrastructure;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
+import javax.management.InstanceNotFoundException;
 import javax.management.JMX;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
@@ -24,6 +25,7 @@ import org.jims.modules.crossbow.infrastructure.progress.WorkerProgress;
 import org.jims.modules.crossbow.infrastructure.worker.Worker;
 import org.jims.modules.crossbow.link.VNicManagerMBean;
 import org.jims.modules.crossbow.zones.ZoneCopierMBean;
+import org.jims.modules.sg.service.wnservice.WNDelegateMBean;
 import org.jims.modules.solaris.commands.SolarisCommandFactory;
 import org.jims.modules.solaris.solaris10.mbeans.GlobalZoneManagementMBean;
 
@@ -119,15 +121,23 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 		CrossbowNotificationMBean crossbowNotification = new CrossbowNotification(3); //3 etapy (usuniecie, instlacja, update ) * ilosc workerwow - narazie 1
 		server.registerMBean(crossbowNotification, new ObjectName( "Crossbow:type=CrossbowNotification" ) );
 
-		// Supervisor MBean
 		Assigner assigner = new Assigner();
 
-		Supervisor supervisor = new Supervisor();
+		// Supervisor MBean
 
-		supervisor.addWorker( "", worker );
-		supervisor.setAssigner( assigner );
+		WNDelegateMBean wnDelegate = JMX.newMBeanProxy(
+			server, new ObjectName( "Core:name=WNDelegate" ), WNDelegateMBean.class
+		);
+
+		Supervisor supervisor = new Supervisor( new JmxWorkerProvider( wnDelegate ), assigner );
 
 		server.registerMBean( supervisor, new ObjectName( "Crossbow:type=Supervisor" ) );
+
+		try {
+			server.addNotificationListener( new ObjectName( "Core:name=GWEmitter" ), supervisor, null, null );
+		} catch ( InstanceNotFoundException ex ) {
+			logger.info( "Ignoring InstanceNotFoundException. Probably not a gateway." );
+		}
 
 		// RepoManager
 

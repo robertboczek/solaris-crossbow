@@ -1,21 +1,34 @@
 package org.jims.modules.crossbow.infrastructure.supervisor;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
-import java.io.File;
+import javax.management.Notification;
+import javax.management.NotificationListener;
+import org.apache.log4j.Logger;
 import org.jims.modules.crossbow.infrastructure.assigner.AssignerMBean;
 import org.jims.modules.crossbow.infrastructure.worker.WorkerMBean;
 import org.jims.modules.crossbow.infrastructure.worker.exception.ModelInstantiationException;
 import org.jims.modules.crossbow.objectmodel.Actions;
 import org.jims.modules.crossbow.objectmodel.Assignments;
 import org.jims.modules.crossbow.objectmodel.ObjectModel;
+import org.jims.modules.gds.notification.WorkerNodeAddedNotification;
 
 
 /**
  *
  * @author cieplik
  */
-public class Supervisor implements SupervisorMBean {
+public class Supervisor implements SupervisorMBean, NotificationListener {
+
+	public Supervisor( WorkerProvider workerProvider, AssignerMBean assigner ) {
+
+		this.workerProvider = workerProvider;
+		this.assigner = assigner;
+
+	}
+
 
 	@Override
 	public void instantiate( ObjectModel model, Actions actions ) throws ModelInstantiationException {
@@ -32,12 +45,42 @@ public class Supervisor implements SupervisorMBean {
 	public void instantiate( ObjectModel model, Actions actions, Assignments assignments ) {
 	}
 
+
 	@Override
 	public Map< String, ObjectModel > discover() {
 
 		WorkerMBean worker = workers.values().iterator().next();
 
 		return worker.discover();
+
+	}
+
+
+	@Override
+	public List< String > getWorkers() {
+
+		synchronized ( workers ) {
+			return new LinkedList< String >( workers.keySet() );
+		}
+
+	}
+
+
+	@Override
+	public void handleNotification( Notification notification, Object handback ) {
+
+		if ( notification instanceof WorkerNodeAddedNotification ) {
+
+			logger.info( "Refreshing the list of workers." );
+
+			// Refresh the list of workers.
+
+			synchronized ( workers ) {
+				workers.clear();
+				workers.putAll( workerProvider.getWorkers() );
+			}
+
+		}
 
 	}
 
@@ -55,6 +98,9 @@ public class Supervisor implements SupervisorMBean {
 	}
 
 	private AssignerMBean assigner;
-	private Map< String, WorkerMBean > workers = new HashMap< String, WorkerMBean >();
+	private WorkerProvider workerProvider;
+	private final Map< String, WorkerMBean > workers = new HashMap< String, WorkerMBean >();
+
+	private static final Logger logger = Logger.getLogger( Supervisor.class );
 
 }
