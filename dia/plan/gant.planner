@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="" company="" manager="" phase="" project-start="20110401T000000Z" mrproject-version="2" calendar="1">
+<project name="" company="" manager="" phase="" project-start="20110401T000000Z" mrproject-version="2" calendar="2">
   <properties/>
   <phases/>
   <calendars>
@@ -8,16 +8,7 @@
       <day-type id="1" name="Nonworking" description="Domy&#x15B;lny dzie&#x144; wolny"/>
       <day-type id="2" name="U&#x17C;ycie podstawy" description="Use day from base calendar"/>
     </day-types>
-    <calendar id="1" name="8/7">
-      <default-week mon="0" tue="0" wed="0" thu="0" fri="0" sat="0" sun="0"/>
-      <overridden-day-types>
-        <overridden-day-type id="0">
-          <interval start="0800" end="1700"/>
-        </overridden-day-type>
-      </overridden-day-types>
-      <days/>
-    </calendar>
-    <calendar id="2" name="Domy&#x15B;lny">
+    <calendar id="1" name="Domy&#x15B;lny">
       <default-week mon="0" tue="0" wed="0" thu="0" fri="0" sat="1" sun="1"/>
       <overridden-day-types>
         <overridden-day-type id="0">
@@ -27,11 +18,20 @@
       </overridden-day-types>
       <days/>
     </calendar>
+    <calendar id="2" name="8/7">
+      <default-week mon="0" tue="0" wed="0" thu="0" fri="0" sat="0" sun="0"/>
+      <overridden-day-types>
+        <overridden-day-type id="0">
+          <interval start="0800" end="1700"/>
+        </overridden-day-type>
+      </overridden-day-types>
+      <days/>
+    </calendar>
   </calendars>
   <tasks>
     <task id="1" name="Obs&#x142;uga wielu fizycznych w&#x119;z&#x142;&#xF3;w" note="" work="324000" start="20110401T000000Z" end="20110414T170000Z" work-start="20110401T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
       <task id="2" name="Obci&#x105;&#x17C;enie - Aktualne statystyki" note="" work="64800" start="20110401T000000Z" end="20110402T170000Z" work-start="20110401T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work"/>
-      <task id="3" name="Wykrywanie aktywnych w&#x119;z&#x142;&#xF3;w" note="sob 09 kwi 2011, 01:18&#10;JIMS notifications" work="32400" start="20110409T000000Z" end="20110409T170000Z" work-start="20110409T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
+      <task id="3" name="Wykrywanie aktywnych w&#x119;z&#x142;&#xF3;w" note="sob 09 kwi 2011, 01:18&#10;JIMS notifications" work="32400" start="20110409T000000Z" end="20110409T170000Z" work-start="20110409T080000Z" percent-complete="100" priority="0" type="normal" scheduling="fixed-work">
         <constraint type="must-start-on" time="20110409T000000Z"/>
       </task>
       <task id="4" name="Validate: rozdzia&#x142; tylko per-podsie&#x107; IP" note="" work="32400" start="20110411T170000Z" end="20110412T170000Z" work-start="20110412T080000Z" percent-complete="0" priority="0" type="normal" scheduling="fixed-work">
@@ -73,10 +73,10 @@
   </tasks>
   <resource-groups/>
   <resources>
-    <resource id="1" name="Robert" short-name="" type="1" units="0" email="" note="" std-rate="0"/>
-    <resource id="2" name="Dawid" short-name="" type="1" units="0" email="" note="" std-rate="0"/>
+    <resource id="1" name="Dawid" short-name="" type="1" units="0" email="" note="" std-rate="0"/>
+    <resource id="2" name="Robert" short-name="" type="1" units="0" email="" note="" std-rate="0"/>
   </resources>
   <allocations>
-    <allocation task-id="3" resource-id="2" units="100"/>
+    <allocation task-id="3" resource-id="1" units="100"/>
   </allocations>
 </project>
