@@ -4,13 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.management.JMX;
-import javax.management.MBeanServerConnection;
-import javax.management.ObjectName;
-
 import org.jims.modules.crossbow.enums.LinkStatistics;
+import org.jims.modules.crossbow.gui.actions.ComponentProxyFactory;
 import org.jims.modules.crossbow.gui.data.GraphConnectionData;
-import org.jims.modules.crossbow.gui.jmx.JmxConnector;
 import org.jims.modules.crossbow.infrastructure.gatherer.StatisticsGathererMBean;
 import org.jims.modules.crossbow.objectmodel.resources.Interface;
 
@@ -21,13 +17,13 @@ public class StatisticAnalyzer {
 	private List<GraphConnectionData> graphConnectionDataList;
 	private Map<Interface, EndpointStatistic> interfacesMap = new HashMap<Interface, EndpointStatistic>();
 
-	private JmxConnector jmxConnector;
+	private ComponentProxyFactory componentProxyFactory;
 
 	public StatisticAnalyzer(List<GraphConnectionData> graphConnectionDataList,
-			JmxConnector jmxConnector) {
+			ComponentProxyFactory componentProxyFactory) {
 
 		this.graphConnectionDataList = graphConnectionDataList;
-		this.jmxConnector = jmxConnector;
+		this.componentProxyFactory = componentProxyFactory;
 
 		prepareInterfaceMap();
 
@@ -124,22 +120,10 @@ public class StatisticAnalyzer {
 			try {
 				while (!stop) {
 
-					MBeanServerConnection mbsc = null;
-					try {
-						mbsc = jmxConnector.getMBeanServerConnection();
-					} catch (Exception e) {
-
-						e.printStackTrace();
-						Thread.sleep(REFRESH_TIME);
-						continue;
-					}
-
 					StatisticsGathererMBean statisticGatherer = null;
 
 					try {
-						statisticGatherer = JMX.newMBeanProxy(mbsc,
-								new ObjectName("Crossbow:type=StatisticsGatherer"),
-								StatisticsGathererMBean.class);
+						statisticGatherer = componentProxyFactory.createStatisticAnalyzer();
 					} catch (Exception e) {
 
 						e.printStackTrace();

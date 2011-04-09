@@ -1,9 +1,6 @@
 package org.jims.modules.crossbow.gui.dialogs;
 
-import javax.management.JMX;
-import javax.management.MBeanServerConnection;
-import javax.management.ObjectName;
-
+import org.apache.log4j.Logger;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -13,18 +10,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ProgressBar;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.jims.modules.crossbow.gui.Gui;
-import org.jims.modules.crossbow.gui.jmx.JmxConnector;
+import org.jims.modules.crossbow.gui.actions.ComponentProxyFactory;
 import org.jims.modules.crossbow.infrastructure.progress.CrossbowNotificationMBean;
 import org.jims.modules.crossbow.infrastructure.progress.notification.ProgressNotification;
-
-import org.apache.log4j.Logger;
 
 public class ProgressShell extends ProgressMonitorDialog {
 
@@ -34,7 +27,7 @@ public class ProgressShell extends ProgressMonitorDialog {
 
 	private Text logsText;
 	private ProgressBar progressBar;
-	private JmxConnector jmxConnector;
+	private ComponentProxyFactory componentProxyFactory;
 	private CrossbowNotificationMBean crossbowNotificationMBean;
 
 	private Button closeButton;
@@ -54,14 +47,14 @@ public class ProgressShell extends ProgressMonitorDialog {
 	 * Create the shell.
 	 * 
 	 * @param display
-	 * @param jmxConnector
+	 * @param componentProxyFactory
 	 */
-	public ProgressShell(Gui shell, JmxConnector jmxConnector, Display display) {
+	public ProgressShell(Gui shell, ComponentProxyFactory componentProxyFactory, Display display) {
 		super(shell);
 
 		this.gui = shell;
 		this.display = display;
-		this.jmxConnector = jmxConnector;
+		this.componentProxyFactory = componentProxyFactory;
 
 		registerListenerAtMBSC();
 	}
@@ -70,13 +63,8 @@ public class ProgressShell extends ProgressMonitorDialog {
 
 		logger.info("Getting CrossbowNotificationMBean");
 
-		MBeanServerConnection mbsc;
 		try {
-			mbsc = jmxConnector.getMBeanServerConnection();
-			crossbowNotificationMBean = JMX.newMBeanProxy(mbsc, new ObjectName(
-					"Crossbow:type=CrossbowNotification"),
-					CrossbowNotificationMBean.class);
-
+			crossbowNotificationMBean = componentProxyFactory.createCrossbowNotification();
 			getLogs();
 
 		} catch (Exception e) {
@@ -168,8 +156,7 @@ public class ProgressShell extends ProgressMonitorDialog {
 					if (ProgressShell.this.logs == null
 							&& ProgressShell.this.progressNotification == null) {
 
-						logger
-								.debug("Checking progress and logs at CrossbowNotificationMBean");
+						logger.debug("Checking progress and logs at CrossbowNotificationMBean");
 
 						String logs = crossbowNotificationMBean.getNewLogs();
 
