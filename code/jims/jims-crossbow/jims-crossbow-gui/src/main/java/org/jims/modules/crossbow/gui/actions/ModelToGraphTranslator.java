@@ -1,14 +1,17 @@
 package org.jims.modules.crossbow.gui.actions;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.zest.core.widgets.Graph;
 import org.eclipse.zest.core.widgets.GraphConnection;
+import org.eclipse.zest.core.widgets.GraphItem;
 import org.eclipse.zest.core.widgets.GraphNode;
 import org.jims.modules.crossbow.gui.data.GraphConnectionData;
 import org.jims.modules.crossbow.objectmodel.ObjectModel;
@@ -26,8 +29,14 @@ public class ModelToGraphTranslator {
 		GRAPH_EDGE
 	}
 	
+	private List<GraphConnectionData> graphConnectionDataList;
 	
-	public void translate( Graph graph, ObjectModel om ) {
+	
+	public void translate( Graph graph, ObjectModel om, List<Object> modelObjects, List<GraphConnectionData> graphConnectionDataList ) {
+		
+		this.graphConnectionDataList = graphConnectionDataList;
+		
+		hideItems(graph);
 		
 		Map< Object, GraphNode > nodes = new HashMap< Object, GraphNode >();
 		
@@ -43,6 +52,10 @@ public class ModelToGraphTranslator {
 		
 		for ( Switch s : om.getSwitches() ) {
 			createGraphItem( graph, s, "icons/switch.jpg", nodes );
+		}
+		
+		for(Map.Entry<Object, GraphNode> entry : nodes.entrySet()) {
+			modelObjects.add(entry.getKey());
 		}
 
 		restoreGraphNodeConnections( graph, om, nodes );
@@ -66,14 +79,6 @@ public class ModelToGraphTranslator {
 		graphNode.setData(g);
 		String toolTipText = updateGraphNodeToolTip(g);
 		graphNode.setTooltip(new org.eclipse.draw2d.Label(toolTipText));
-
-		// if (g instanceof Appliance) {
-			// Appliance appliance = (Appliance) g;
-			
-			// if (projectId.getText() == null || projectId.getText().equals("")) {
-				// projectId.setText(appliance.getProjectId());
-			// }
-		// }
 
 		graphNode.setText(toolTipText);
 		
@@ -138,7 +143,6 @@ public class ModelToGraphTranslator {
 					nodes.get( app ), nodes.get( iface.getEndpoint() ),
 					iface, iface.getEndpoint()
 				);
-				
 			}
 			
 		}
@@ -159,7 +163,7 @@ public class ModelToGraphTranslator {
 
 		System.err.println(endp1 + " restore " + endp2);
 
-		// graphConnectionDataList.add(graphConnectionData);
+		graphConnectionDataList.add(graphConnectionData);
 
 		GraphConnection graphConnection = new GraphConnection(graph, SWT.NONE,
 				graphNode, graphNode2);
@@ -171,6 +175,17 @@ public class ModelToGraphTranslator {
 
 	}
 	
+	private void hideItems(Graph graph) {
+
+		logger.trace("Hiding all items");
+
+		for (Object object : graph.getConnections())
+			((GraphConnection) object).setVisible(false);
+		for (Object object : graph.getNodes())
+			((GraphItem) object).setVisible(false);
+	}
+	
+	private static final Logger logger = Logger.getLogger(ModelToGraphTranslator.class);
 	
 	Map< Element, Color > colors = new HashMap< Element, Color >();
 	

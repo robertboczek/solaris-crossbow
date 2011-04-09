@@ -4,10 +4,6 @@ import java.text.DecimalFormat;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.management.JMX;
-import javax.management.MBeanServerConnection;
-import javax.management.ObjectName;
-
 import org.apache.log4j.Logger;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.PojoObservables;
@@ -50,6 +46,7 @@ import org.jims.modules.crossbow.enums.LinkStatistics;
 import org.jims.modules.crossbow.gui.actions.ComponentProxyFactory;
 import org.jims.modules.crossbow.gui.actions.ConfigurationUtil;
 import org.jims.modules.crossbow.gui.actions.DiscoveryHandler;
+import org.jims.modules.crossbow.gui.actions.GraphToModelTranslator;
 import org.jims.modules.crossbow.gui.actions.ModelToGraphTranslator;
 import org.jims.modules.crossbow.gui.actions.RepoManagerProxyFactory;
 import org.jims.modules.crossbow.gui.actions.SupervisorProxyFactory;
@@ -114,7 +111,6 @@ public class Gui extends Shell {
 
 	private List<Object> modelObjects = new LinkedList<Object>();
 
-	private JmxConnector jmxConnector;
 	private DiscoveryHandler discoveryHandler;
 	private ConnectionTester connectionTester;
 
@@ -377,16 +373,29 @@ public class Gui extends Shell {
 			connectionTester.stopThread();
 		}
 
-		if (statisticAnalyzer != null) {
-			logger.info("Stopping threads responsible for statistics");
-			statisticAnalyzer.stopGatheringStatistics();
-		}
+		stopStatisticAnalyzer();
 
 		if (connectionLabelUpdater != null) {
 			logger
 					.info("Interrupting thread responsible for updating network statistics");
 			connectionLabelUpdater.interrupt();
 		}
+	}
+	
+	private void stopStatisticAnalyzer() {
+		
+		if (statisticAnalyzer != null) {
+			logger.info("Stopping threads responsible for statistics");
+			statisticAnalyzer.stopGatheringStatistics();
+		}
+	}
+	
+	private void resetStatisticAnalyzer() {
+		
+		stopStatisticAnalyzer();		
+		statisticAnalyzer = new StatisticAnalyzer(graphConnectionDataList,
+				componentProxyFactory);
+		statisticAnalyzer.startGatheringStatistics();
 	}
 
 	private void resetConnectionDetailsLabel() {
@@ -399,9 +408,8 @@ public class Gui extends Shell {
 	protected void validateNetwork() {
 
 		deployButton.setEnabled(false);
-
-		objectModel = new ObjectModel();
-		registerObjects(objectModel, modelObjects);
+		objectModel = new GraphToModelTranslator().translate(modelObjects);
+		
 
 		NetworkValidator networkValidator = new NetworkValidator();
 		String result = networkValidator.validate(objectModel);
@@ -441,51 +449,25 @@ public class Gui extends Shell {
 
 		logger.trace("Starting deploying network");
 
-		for (Object obj : modelObjects) {
-			if (obj instanceof Switch) {
-				Switch swit = (Switch) obj;
-				swit.setProjectId(projectId.getText());
-			} else if (obj instanceof Appliance) {
-				Appliance app = (Appliance) obj;
-				app.setProjectId(projectId.getText());
-				for (Interface interf : app.getInterfaces()) {
-					interf.setProjectId(projectId.getText());
-				}
+		new GraphToModelTranslator().updateProjectIdName(modelObjects, projectId.getText());
+
+		try {
+			final SupervisorMBean supervisor = componentProxyFactory.createSupervisor();
+			
+			if(supervisor == null) {
+				MessageDialog.openError(null, "Connection problem",
+				"Couldn't connect to specified MBeanServer");
+				return;
 			}
-		}
-
-		jmxConnector = new JmxConnector(supervisorsAddress.getText(), Integer
-				.parseInt(supervisorPort.getText()));
-
-		MBeanServerConnection mbsc = null;
-		try {
-			mbsc = jmxConnector.getMBeanServerConnection();
-		} catch (Exception e) {
-
-			logger.error("Couldn't get MBeanServerConnection");
-			MessageDialog.openError(null, "Connection problem",
-					"Couldn't connect to specified MBean Server");
-
-			e.printStackTrace();
-			return;
-		}
-
-		try {
-			final SupervisorMBean supervisor = JMX.newMBeanProxy(mbsc,
-					new ObjectName("Crossbow:type=Supervisor"),
-					SupervisorMBean.class);
 
 			final ObjectModel objModel = objectModel;
 
-			CrossbowNotificationMBean crossbowNotificationMBean = JMX
-					.newMBeanProxy(mbsc, new ObjectName(
-							"Crossbow:type=CrossbowNotification"),
-							CrossbowNotificationMBean.class);
+			CrossbowNotificationMBean crossbowNotificationMBean = componentProxyFactory.createCrossbowNotification();
 
 			crossbowNotificationMBean.reset();
 			logger.trace("Reseting progress state before deployment");
 
-			progressShell = new ProgressShell(Gui.this, jmxConnector, display);
+			progressShell = new ProgressShell(Gui.this, componentProxyFactory, display);
 			progressShell.create();
 			if (progressShell.open() == Window.OK) {
 			}
@@ -527,36 +509,9 @@ public class Gui extends Shell {
 		}
 
 		logger.info("Starting new threads gathering statistics");
-		statisticAnalyzer = new StatisticAnalyzer(graphConnectionDataList,
-				jmxConnector);
-		statisticAnalyzer.startGatheringStatistics();
-
+		resetStatisticAnalyzer();
 	}
 
-	protected void registerObjects(ObjectModel objectModel, List<Object> objects) {
-
-		for (Object obj : objects) {
-			if (obj instanceof Switch) {
-				Switch swit = (Switch) obj;
-				objectModel.register(swit);
-			} else if (obj instanceof Appliance) {
-				Appliance app = (Appliance) obj;
-				objectModel.register(app);
-
-				int ifaceNo = 0;
-				for (Interface interf : app.getInterfaces()) {
-					interf.setResourceId("IFACE" + ifaceNo);
-					objectModel.register(interf);
-					for (Policy policy : interf.getPoliciesList()) {
-						objectModel.register(policy);
-					}
-
-					++ifaceNo;
-				}
-			}
-		}
-
-	}
 
 	/**
 	 * Clears graph component and object model behind it
@@ -1038,7 +993,8 @@ public class Gui extends Shell {
 
 			@Override
 			public void handleEvent(Event event) {
-				discoveryHandler.handle(graph);
+				discoveryHandler.handle(graph, projectId, modelObjects, graphConnectionDataList);
+				resetStatisticAnalyzer();
 			}
 
 		});
@@ -1115,10 +1071,13 @@ public class Gui extends Shell {
 
 		for (Object object : graph.getSelection()) {
 			if (object instanceof GraphItem) {
+				
 				GraphItem graphItem = (GraphItem) object;
 				graphItem.setVisible(false);
+				
 				modelObjects.remove(graphItem.getData());
 				graphConnectionDataList.remove(object);
+				
 				removeData(graphItem.getData());
 			}
 		}

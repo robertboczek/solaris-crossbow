@@ -2,7 +2,6 @@ package org.jims.modules.crossbow.gui.data;
 
 import java.io.Serializable;
 
-import org.jims.modules.crossbow.gui.statistics.StatisticAnalyzer;
 import org.jims.modules.crossbow.gui.statistics.StatisticAnalyzer.EndpointStatistic;
 import org.jims.modules.crossbow.objectmodel.resources.Endpoint;
 
