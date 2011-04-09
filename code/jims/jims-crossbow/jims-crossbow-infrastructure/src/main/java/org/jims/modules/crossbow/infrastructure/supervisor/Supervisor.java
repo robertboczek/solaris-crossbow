@@ -14,6 +14,7 @@ import org.jims.modules.crossbow.objectmodel.Actions;
 import org.jims.modules.crossbow.objectmodel.Assignments;
 import org.jims.modules.crossbow.objectmodel.ObjectModel;
 import org.jims.modules.gds.notification.WorkerNodeAddedNotification;
+import org.jims.modules.gds.notification.WorkerNodeRemovedNotification;
 
 
 /**
@@ -69,7 +70,8 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 	@Override
 	public void handleNotification( Notification notification, Object handback ) {
 
-		if ( notification instanceof WorkerNodeAddedNotification ) {
+		if ( ( notification instanceof WorkerNodeAddedNotification )
+		     || ( notification instanceof WorkerNodeRemovedNotification ) ) {
 
 			logger.info( "Refreshing the list of workers." );
 
