@@ -13,8 +13,10 @@ import org.eclipse.zest.core.widgets.Graph;
 import org.eclipse.zest.core.widgets.GraphConnection;
 import org.eclipse.zest.core.widgets.GraphItem;
 import org.eclipse.zest.core.widgets.GraphNode;
+import org.jims.modules.crossbow.gui.NetworkStructureHelper;
 import org.jims.modules.crossbow.gui.data.GraphConnectionData;
 import org.jims.modules.crossbow.objectmodel.ObjectModel;
+import org.jims.modules.crossbow.objectmodel.policy.Policy;
 import org.jims.modules.crossbow.objectmodel.resources.Appliance;
 import org.jims.modules.crossbow.objectmodel.resources.ApplianceType;
 import org.jims.modules.crossbow.objectmodel.resources.Endpoint;
@@ -32,32 +34,35 @@ public class ModelToGraphTranslator {
 	private List<GraphConnectionData> graphConnectionDataList;
 	
 	
-	public void translate( Graph graph, ObjectModel om, List<Object> modelObjects, List<GraphConnectionData> graphConnectionDataList ) {
+public void translate( Graph graph, ObjectModel om, NetworkStructureHelper networkStructureHelper, List<GraphConnectionData> graphConnectionDataList ) {
 		
 		this.graphConnectionDataList = graphConnectionDataList;
 		
-		hideItems(graph);
+		networkStructureHelper.clearAllItems();
 		
 		Map< Object, GraphNode > nodes = new HashMap< Object, GraphNode >();
 		
 		for ( Appliance app : om.getAppliances() ) {
-			
 			if ( ApplianceType.MACHINE.equals( app.getType() ) ) {
-				createGraphItem( graph, app, "icons/resource.jpg", nodes );
+				GraphItem item = createGraphItem( graph, app, "icons/resource.jpg", nodes );
+				networkStructureHelper.addDeployedElement(app, item);
 			} else if ( ApplianceType.ROUTER.equals( app.getType() ) ) {
-				createGraphItem( graph, app, "icons/router.jpg", nodes );
+				GraphItem item = createGraphItem( graph, app, "icons/router.jpg", nodes );
+				networkStructureHelper.addDeployedElement(app, item);
 			}
 			
 		}
 		
 		for ( Switch s : om.getSwitches() ) {
-			createGraphItem( graph, s, "icons/switch.jpg", nodes );
+			GraphItem item = createGraphItem( graph, s, "icons/switch.jpg", nodes );
+			networkStructureHelper.addDeployedElement(s, item);
 		}
 		
-		for(Map.Entry<Object, GraphNode> entry : nodes.entrySet()) {
-			modelObjects.add(entry.getKey());
+		System.out.println("Policy number " + om.getPolicies().size());
+		
+		for(Policy policy : om.getPolicies()) {
 		}
-
+		
 		restoreGraphNodeConnections( graph, om, nodes );
 		graph.applyLayout();
 		
@@ -69,7 +74,7 @@ public class ModelToGraphTranslator {
 	}
 	
 	
-	private void createGraphItem( Graph graph, Object g, String iconPath,
+	private GraphItem createGraphItem( Graph graph, Object g, String iconPath,
 	                              Map< Object, GraphNode > nodes ) {
 
 		GraphNode graphNode = new GraphNode(graph, SWT.NONE, "");
@@ -83,6 +88,8 @@ public class ModelToGraphTranslator {
 		graphNode.setText(toolTipText);
 		
 		nodes.put( g, graphNode );
+		
+		return graphNode;
 
 	}
 	
@@ -138,6 +145,8 @@ public class ModelToGraphTranslator {
 			
 			for ( Interface iface : app.getInterfaces() ) {
 				
+				System.err.println(iface.getIpAddress().getAddress());
+				
 				createGraphConnectionData(
 					graph,
 					nodes.get( app ), nodes.get( iface.getEndpoint() ),
@@ -161,8 +170,6 @@ public class ModelToGraphTranslator {
 		GraphConnectionData graphConnectionData = new GraphConnectionData(
 				graphNode.getData(), graphNode2.getData(), endp1, endp2);
 
-		System.err.println(endp1 + " restore " + endp2);
-
 		graphConnectionDataList.add(graphConnectionData);
 
 		GraphConnection graphConnection = new GraphConnection(graph, SWT.NONE,
@@ -171,18 +178,6 @@ public class ModelToGraphTranslator {
 		graphConnection.setLineWidth(2);
 		graphConnection.setLineColor( colors.get( Element.GRAPH_EDGE ) );
 		
-		// updateGraphConnection = true;
-
-	}
-	
-	private void hideItems(Graph graph) {
-
-		logger.trace("Hiding all items");
-
-		for (Object object : graph.getConnections())
-			((GraphConnection) object).setVisible(false);
-		for (Object object : graph.getNodes())
-			((GraphItem) object).setVisible(false);
 	}
 	
 	private static final Logger logger = Logger.getLogger(ModelToGraphTranslator.class);

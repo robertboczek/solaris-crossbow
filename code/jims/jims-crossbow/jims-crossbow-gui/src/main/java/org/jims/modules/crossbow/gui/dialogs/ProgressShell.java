@@ -219,7 +219,6 @@ public class ProgressShell extends ProgressMonitorDialog {
 						running = false;
 
 						logger.info("Stopping ProgressShell thread");
-						gui.resetProgress();
 					}
 
 					progressNotification = null;

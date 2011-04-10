@@ -1,6 +1,9 @@
 package org.jims.modules.crossbow.gui.threads;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.jims.modules.crossbow.gui.Gui;
 import org.jims.modules.crossbow.gui.jmx.JmxConnector;
@@ -23,11 +26,13 @@ public class ConnectionTester extends Thread {
 
 	private JmxConnector jmxConnector;
 	private Display display;
+	private List<Button> buttonsList;
 
-	public ConnectionTester(Gui gui, Display display) {
+	public ConnectionTester(Gui gui, Display display, List<Button> buttonsList) {
 
 		this.gui = gui;
 		this.display = display;
+		this.buttonsList = buttonsList;
 
 		this.start();
 
@@ -61,7 +66,7 @@ public class ConnectionTester extends Thread {
 					logger.debug("Gui is connected");
 
 					connected = true;
-
+					
 				} catch (NumberFormatException e) {
 					connected = false;
 					logger.error("Port number must be positive integer");
@@ -74,8 +79,19 @@ public class ConnectionTester extends Thread {
 					public void run() {
 						if (connected) {
 							gui.setText("Connected");
+							for(Button button : buttonsList) {
+								if(button.getToolTipText().equals("Discover")) {
+									button.setEnabled(true);
+								}
+							}
 						} else {
 							gui.setText("Not connected");
+							
+							for(Button button : buttonsList) {
+								if(button.isEnabled()) {
+									button.setEnabled(false);
+								}
+							}
 						}
 					}
 				});

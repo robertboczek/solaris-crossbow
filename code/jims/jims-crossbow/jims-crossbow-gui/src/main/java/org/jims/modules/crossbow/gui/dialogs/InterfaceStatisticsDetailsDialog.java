@@ -51,14 +51,14 @@ public class InterfaceStatisticsDetailsDialog extends TitleAreaDialog {
 
 	public void setControlsValues() {
 
-		if (graphConnectionData.getEndp1() != null) {
+		if (graphConnectionData.getEndp1() != null && graphConnectionData.getEndp1() instanceof Interface) {
 			endpoints.add(((Interface) graphConnectionData.getEndp1())
 					.getIpAddress().toString());
 			endpoints.setData(((Interface) graphConnectionData.getEndp1())
 					.getIpAddress().toString(), graphConnectionData.getStatistic1());
 		}
 
-		if (graphConnectionData.getEndp2() != null) {
+		if (graphConnectionData.getEndp2() != null && graphConnectionData.getEndp2() instanceof Interface) {
 			endpoints.add(((Interface) graphConnectionData.getEndp2())
 					.getIpAddress().toString());
 			endpoints.setData(((Interface) graphConnectionData.getEndp2())

@@ -36,21 +36,25 @@ public class StatisticAnalyzer {
 			System.out.println(g.getEndp1() + " " + g.getEndp2());
 			if (g.getEndp1() != null) {
 
-				Interface interf = (Interface) (g.getEndp1());
-				EndpointStatistic endpointStatistic = new EndpointStatistic(
-						interf);
-				g.setEndp1Statistic(endpointStatistic);
-				interfacesMap.put(interf, endpointStatistic);
+				if (g.getEndp1() instanceof Interface) {
+
+					Interface interf = (Interface) (g.getEndp1());
+					EndpointStatistic endpointStatistic = new EndpointStatistic(
+							interf);
+					g.setEndp1Statistic(endpointStatistic);
+					interfacesMap.put(interf, endpointStatistic);
+				}
 
 			}
 
 			if (g.getEndp2() != null) {
-
-				Interface interf = (Interface) g.getEndp2();
-				EndpointStatistic endpointStatistic = new EndpointStatistic(
-						interf);
-				g.setEndp2Statistic(endpointStatistic);
-				interfacesMap.put(interf, endpointStatistic);
+				if (g.getEndp2() instanceof Interface) {
+					Interface interf = (Interface) g.getEndp2();
+					EndpointStatistic endpointStatistic = new EndpointStatistic(
+							interf);
+					g.setEndp2Statistic(endpointStatistic);
+					interfacesMap.put(interf, endpointStatistic);
+				}
 			}
 		}
 
@@ -123,7 +127,8 @@ public class StatisticAnalyzer {
 					StatisticsGathererMBean statisticGatherer = null;
 
 					try {
-						statisticGatherer = componentProxyFactory.createStatisticAnalyzer();
+						statisticGatherer = componentProxyFactory
+								.createStatisticAnalyzer();
 					} catch (Exception e) {
 
 						e.printStackTrace();

@@ -16,7 +16,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.jims.modules.crossbow.objectmodel.resources.Appliance;
+import org.jims.modules.crossbow.objectmodel.resources.Endpoint;
 import org.jims.modules.crossbow.objectmodel.resources.Interface;
+import org.jims.modules.crossbow.objectmodel.resources.Switch;
 
 /**
  * Class used to select which network interfaces we would like to connect
@@ -31,8 +33,8 @@ public class SelectNetworkInterfacesDialog extends TitleAreaDialog {
 
 	private Object object;
 	private Object object2;
-	private Interface rightEndpointInterface;
-	private Interface leftEndpointInterface;
+	private Endpoint rightEndpoint;
+	private Endpoint leftEndpoint;
 	
 	private Label label5, label6;
 
@@ -161,26 +163,33 @@ public class SelectNetworkInterfacesDialog extends TitleAreaDialog {
 		String errorMessage = "";
 
 		try {
-			Interface interfac = null;
+			Endpoint endp1 = null;
 			if(object instanceof Appliance && interfaces1.getSelectionIndex() != -1) {
-				interfac = (Interface) interfaces1.getData(interfaces1
+				endp1 = (Interface) interfaces1.getData(interfaces1
 					.getItem(interfaces1.getSelectionIndex()));
+			} else if(object instanceof Switch) {
+				endp1 = (Endpoint)object;
 			}
 			
-			Interface interfac2 = null;
-			if(object2 instanceof Appliance && interfaces2.getSelectionIndex() != -1)
-				interfac2 = (Interface) interfaces2.getData(interfaces2
+			Endpoint endp2 = null;
+			if(object2 instanceof Appliance && interfaces2.getSelectionIndex() != -1) {
+				endp2 = (Interface) interfaces2.getData(interfaces2
 					.getItem(interfaces2.getSelectionIndex()));
+			} else if(object2 instanceof Switch) {
+				endp2 = (Endpoint)object2;
+			}
 
-			if ((interfac == null && object instanceof Appliance) ||
-					(interfac2 == null && object2 instanceof Appliance))
+			if ((endp1 == null && object instanceof Appliance) ||
+					(endp2 == null && object2 instanceof Appliance))
 			{
 				throw new Exception();
 			}
 
-			leftEndpointInterface = interfac;
-			rightEndpointInterface = interfac2;
+			leftEndpoint = endp1;
+			rightEndpoint = endp2;
+			
 		} catch (Exception e) {
+			e.printStackTrace();
 			valid = false;
 			errorMessage = "For router and resource you must select interface";
 		}
@@ -201,12 +210,12 @@ public class SelectNetworkInterfacesDialog extends TitleAreaDialog {
 		super.okPressed();
 	}
 
-	public Interface getRightEndpoint() {
-		return rightEndpointInterface;
+	public Endpoint getRightEndpoint() {
+		return rightEndpoint;
 	}
 
-	public Interface getLeftEndpoint() {
-		return leftEndpointInterface;
+	public Endpoint getLeftEndpoint() {
+		return leftEndpoint;
 	}
 
 }

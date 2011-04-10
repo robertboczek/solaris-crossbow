@@ -1,6 +1,7 @@
 package org.jims.modules.crossbow.gui;
 
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -51,11 +52,11 @@ import org.jims.modules.crossbow.gui.actions.ModelToGraphTranslator;
 import org.jims.modules.crossbow.gui.actions.RepoManagerProxyFactory;
 import org.jims.modules.crossbow.gui.actions.SupervisorProxyFactory;
 import org.jims.modules.crossbow.gui.data.GraphConnectionData;
+import org.jims.modules.crossbow.gui.data.NetworkInfo;
 import org.jims.modules.crossbow.gui.dialogs.EditResourceDialog;
 import org.jims.modules.crossbow.gui.dialogs.InterfaceStatisticsDetailsDialog;
 import org.jims.modules.crossbow.gui.dialogs.ProgressShell;
 import org.jims.modules.crossbow.gui.dialogs.SelectNetworkInterfacesDialog;
-import org.jims.modules.crossbow.gui.jmx.JmxConnector;
 import org.jims.modules.crossbow.gui.statistics.StatisticAnalyzer;
 import org.jims.modules.crossbow.gui.threads.ConnectionTester;
 import org.jims.modules.crossbow.gui.validator.NetworkValidator;
@@ -104,12 +105,10 @@ public class Gui extends Shell {
 	private List<GraphConnectionData> graphConnectionDataList = new LinkedList<GraphConnectionData>();
 
 	private Text projectId;
-	private Text supervisorsAddress;
+	private Text supervisorAddress;
 	private Text supervisorPort;
 
-	private ProgressShell progressShell;
-
-	private List<Object> modelObjects = new LinkedList<Object>();
+	private NetworkStructureHelper networkStructureHelper;
 
 	private DiscoveryHandler discoveryHandler;
 	private ConnectionTester connectionTester;
@@ -216,7 +215,10 @@ public class Gui extends Shell {
 				String selected = fileDialog.open();
 				if (selected != null) {
 					logger.trace("Saving network structure");
-					ConfigurationUtil.saveNetwork(selected, modelObjects);
+
+					objectModel = new GraphToModelTranslator()
+							.translate(networkStructureHelper);
+					ConfigurationUtil.saveNetwork(selected, new NetworkInfo(objectModel, supervisorAddress.getText(), supervisorPort.getText(), projectId.getText()));
 				}
 			}
 		});
@@ -240,32 +242,20 @@ public class Gui extends Shell {
 
 				if (selected != null) {
 
-					hideItems();
+					clearAllGraphItems();
 
 					projectId.setText("");
 
-					logger.trace("Clearing existing items");
-					graphConnectionDataList.clear();
-					modelObjects = ConfigurationUtil.loadNetwork(selected);
+					NetworkInfo networkInfo = ConfigurationUtil.loadNetwork(selected);
+					objectModel = networkInfo.getObjectModel();
+					projectId.setText(networkInfo.getProjectId());
+					supervisorPort.setText(networkInfo.getPort());
+					supervisorAddress.setText(networkInfo.getAddress());
+					
 					logger.trace("Restoring network structure from file");
-					for (Object obj : modelObjects) {
-						String iconFileName = null;
-						if ((obj instanceof Appliance)
-								&& ((Appliance) (obj)).getType().equals(
-										ApplianceType.MACHINE)) {
-							iconFileName = "icons/resource.jpg";
-						} else if (obj instanceof Switch) {
-							iconFileName = "icons/switch.jpg";
-						} else if ((obj instanceof Appliance)
-								&& ((Appliance) (obj)).getType().equals(
-										ApplianceType.ROUTER)) {
-							iconFileName = "icons/router.jpg";
-						}
 
-						createGraphItem(obj, iconFileName);
-					}
-
-					restoreGraphNodeConnections();
+					new ModelToGraphTranslator().translate(graph, objectModel,
+							networkStructureHelper, graphConnectionDataList);
 				}
 			}
 		});
@@ -381,18 +371,18 @@ public class Gui extends Shell {
 			connectionLabelUpdater.interrupt();
 		}
 	}
-	
+
 	private void stopStatisticAnalyzer() {
-		
+
 		if (statisticAnalyzer != null) {
 			logger.info("Stopping threads responsible for statistics");
 			statisticAnalyzer.stopGatheringStatistics();
 		}
 	}
-	
+
 	private void resetStatisticAnalyzer() {
-		
-		stopStatisticAnalyzer();		
+
+		stopStatisticAnalyzer();
 		statisticAnalyzer = new StatisticAnalyzer(graphConnectionDataList,
 				componentProxyFactory);
 		statisticAnalyzer.startGatheringStatistics();
@@ -405,18 +395,18 @@ public class Gui extends Shell {
 	/**
 	 * Validates network structure and content
 	 */
-	protected void validateNetwork() {
+	protected boolean validateNetwork() {
 
 		deployButton.setEnabled(false);
-		objectModel = new GraphToModelTranslator().translate(modelObjects);
-		
+		objectModel = new GraphToModelTranslator()
+				.translate(networkStructureHelper);
 
 		NetworkValidator networkValidator = new NetworkValidator();
 		String result = networkValidator.validate(objectModel);
 
 		if (result != null) {
 			MessageDialog.openError(null, "Validation result", result);
-			return;
+			return false;
 		}
 
 		try {
@@ -427,19 +417,21 @@ public class Gui extends Shell {
 		} catch (Exception e) {
 			MessageDialog.openError(null, "Validation result",
 					"Port number must be positive number");
-			return;
+			return false;
 		}
 
 		if (connectionTester.getConnected() == false) {
 			MessageDialog.openError(null, "Validation result",
 					"You must be connected to deploy");
-			return;
+			return true;
 		}
 
 		MessageDialog.openInformation(null, "Validation result",
 				"Network structure has been successfully validated");
 
 		deployButton.setEnabled(true);
+
+		return true;
 	}
 
 	/**
@@ -449,25 +441,31 @@ public class Gui extends Shell {
 
 		logger.trace("Starting deploying network");
 
-		new GraphToModelTranslator().updateProjectIdName(modelObjects, projectId.getText());
+		new GraphToModelTranslator()
+				.updateProjectIdName(networkStructureHelper);
 
 		try {
-			final SupervisorMBean supervisor = componentProxyFactory.createSupervisor();
-			
-			if(supervisor == null) {
+			final SupervisorMBean supervisor = componentProxyFactory
+					.createSupervisor();
+
+			if (supervisor == null) {
 				MessageDialog.openError(null, "Connection problem",
-				"Couldn't connect to specified MBeanServer");
+						"Couldn't connect to specified MBeanServer");
 				return;
 			}
 
 			final ObjectModel objModel = objectModel;
+			System.err.println("Policies number "
+					+ objModel.getPolicies().size());
 
-			CrossbowNotificationMBean crossbowNotificationMBean = componentProxyFactory.createCrossbowNotification();
+			CrossbowNotificationMBean crossbowNotificationMBean = componentProxyFactory
+					.createCrossbowNotification();
 
 			crossbowNotificationMBean.reset();
 			logger.trace("Reseting progress state before deployment");
 
-			progressShell = new ProgressShell(Gui.this, componentProxyFactory, display);
+			ProgressShell progressShell = new ProgressShell(Gui.this,
+					componentProxyFactory, display);
 			progressShell.create();
 			if (progressShell.open() == Window.OK) {
 			}
@@ -476,20 +474,8 @@ public class Gui extends Shell {
 
 				public void run() {
 					try {
-						Actions actions = new Actions();
-
-						for (Appliance app : objModel.getAppliances()) {
-							actions.insert(app, Actions.ACTION.ADD);
-						}
-						for (Interface interf : objModel.getPorts()) {
-							actions.insert(interf, Actions.ACTION.ADD);
-						}
-						for (Switch swit : objModel.getSwitches()) {
-							actions.insert(swit, Actions.ACTION.ADD);
-						}
-						for (Policy policy : objModel.getPolicies()) {
-							actions.insert(policy, Actions.ACTION.ADD);
-						}
+						Actions actions = new GraphToModelTranslator()
+								.createActions(objModel, networkStructureHelper);
 
 						logger.info("Starting deployment");
 						supervisor.instantiate(objModel, actions);
@@ -499,6 +485,8 @@ public class Gui extends Shell {
 					}
 				}
 			}.start();
+
+			updateNetworkState(NetworkState.DEPLOYED);
 
 		} catch (Exception e) {
 			MessageDialog.openError(null, "Connection problem",
@@ -512,27 +500,16 @@ public class Gui extends Shell {
 		resetStatisticAnalyzer();
 	}
 
+	private void updateNetworkState(NetworkState state) {
+		networkStructureHelper.setNetworkState(state);
+	}
 
 	/**
 	 * Clears graph component and object model behind it
 	 */
 	protected void clearAllGraphItems() {
 
-		modelObjects.clear();
-		graphConnectionDataList.clear();
-		// items were removed so i hide them
-		hideItems();
-
-	}
-
-	private void hideItems() {
-
-		logger.trace("Hiding all items");
-
-		for (Object object : graph.getConnections())
-			((GraphConnection) object).setVisible(false);
-		for (Object object : graph.getNodes())
-			((GraphItem) object).setVisible(false);
+		networkStructureHelper.clearAllItems();
 	}
 
 	/**
@@ -601,11 +578,7 @@ public class Gui extends Shell {
 			public void handleEvent(Event event) {
 
 				logger.info("Adding new Router");
-
-				Appliance appliance = new Appliance("", "",
-						ApplianceType.ROUTER);
-				createGraphItem(appliance, "icons/router.jpg");
-				modelObjects.add(appliance);
+				networkStructureHelper.addItem(NetworkType.ROUTER);
 			}
 		});
 
@@ -629,10 +602,7 @@ public class Gui extends Shell {
 			public void handleEvent(Event event) {
 
 				logger.info("Adding new Switch");
-
-				Switch swit = new Switch("", "");
-				createGraphItem(swit, "icons/switch.jpg");
-				modelObjects.add(swit);
+				networkStructureHelper.addItem(NetworkType.SWITCH);
 			}
 
 		});
@@ -657,11 +627,7 @@ public class Gui extends Shell {
 			public void handleEvent(Event event) {
 
 				logger.info("Adding new appliance");
-
-				Appliance appliance = new Appliance("", "",
-						ApplianceType.MACHINE);
-				createGraphItem(appliance, "icons/resource.jpg");
-				modelObjects.add(appliance);
+				networkStructureHelper.addItem(NetworkType.MACHINE);
 			}
 		});
 
@@ -711,7 +677,6 @@ public class Gui extends Shell {
 				logger.info("Connecting two links");
 
 				List list = graph.getSelection();
-
 				SelectNetworkInterfacesDialog d = new SelectNetworkInterfacesDialog(
 						null, ((GraphNode) (list.get(0))).getData(),
 						((GraphNode) (list.get(1))).getData());
@@ -719,44 +684,14 @@ public class Gui extends Shell {
 				if (d.open() == Window.OK) {
 
 					createGraphConnectionData((GraphNode) (list.get(0)),
-							(GraphNode) (list.get(1)), d.getRightEndpoint(), d
-									.getLeftEndpoint());
+							(GraphNode) (list.get(1)), d.getLeftEndpoint(), d
+									.getRightEndpoint());
 
-					if (d.getLeftEndpoint() != null) {
-						if (d.getRightEndpoint() != null) {
-							d.getLeftEndpoint().setEndpoint(
-									d.getRightEndpoint());
-							d.getRightEndpoint().setEndpoint(
-									d.getLeftEndpoint());
-						} else if (((GraphNode) (list.get(1))).getData() instanceof Switch) {
-							d.getLeftEndpoint().setEndpoint(
-									(Switch) ((GraphNode) (list.get(1)))
-											.getData());
-							((Switch) ((GraphNode) (list.get(1))).getData())
-									.getEndpoints().add(d.getLeftEndpoint());
-						}
+					System.err.println(((GraphNode) (list.get(0))).getData() + " " + d.getLeftEndpoint() + " " + ((GraphNode) (list.get(1))).getData() + " " + d.getRightEndpoint());
+					networkStructureHelper.connect((GraphNode) (list.get(0)),
+							(GraphNode) (list.get(1)), d
+							.getLeftEndpoint(), d.getRightEndpoint());
 
-					} else if (((GraphNode) (list.get(0))).getData() instanceof Switch) {
-
-						if (d.getRightEndpoint() != null) {
-							((Switch) ((GraphNode) (list.get(0))).getData())
-									.getEndpoints().add(d.getRightEndpoint());
-							d.getRightEndpoint().setEndpoint(
-									((Switch) ((GraphNode) (list.get(0)))
-											.getData()));
-						} else if (((GraphNode) (list.get(1))).getData() instanceof Switch) {
-							((Switch) ((GraphNode) (list.get(0))).getData())
-									.getEndpoints()
-									.add(
-											(Switch) ((GraphNode) (list.get(1)))
-													.getData());
-							((Switch) ((GraphNode) (list.get(1))).getData())
-									.getEndpoints()
-									.add(
-											(Switch) ((GraphNode) (list.get(0)))
-													.getData());
-						}
-					}
 				}
 			}
 
@@ -954,13 +889,13 @@ public class Gui extends Shell {
 		label2.setText("Deployment address:  ");
 		label2.pack();
 
-		supervisorsAddress = new Text(buttonGroup, SWT.NONE);
+		supervisorAddress = new Text(buttonGroup, SWT.NONE);
 		FormData fd_projectId1 = new FormData();
 		fd_projectId1.top = new FormAttachment(5, 287);
 		fd_projectId1.left = new FormAttachment(15, 55);
-		supervisorsAddress.setLayoutData(fd_projectId1);
-		supervisorsAddress.setText("");
-		supervisorsAddress.pack();
+		supervisorAddress.setLayoutData(fd_projectId1);
+		supervisorAddress.setText("");
+		supervisorAddress.pack();
 
 		Label label3 = new Label(buttonGroup, SWT.NONE);
 		FormData fd_label3 = new FormData();
@@ -993,14 +928,20 @@ public class Gui extends Shell {
 
 			@Override
 			public void handleEvent(Event event) {
-				discoveryHandler.handle(graph, projectId, modelObjects, graphConnectionDataList);
+				discoveryHandler.handle(graph, projectId,
+						networkStructureHelper, graphConnectionDataList);
 				resetStatisticAnalyzer();
+				updateNetworkState(NetworkState.DEPLOYED);
 			}
 
 		});
 
+		networkStructureHelper = new NetworkStructureHelper(graph, projectId);
+		updateNetworkState(NetworkState.UNDEPLOYED);
+
 		resetConnectionDetailsLabel();
-		connectionTester = new ConnectionTester(this, display);
+		connectionTester = new ConnectionTester(this, display, Arrays
+				.asList(new Button[] { deployButton, discoverBtn }));
 
 		this.addKeyListener(keyListener);
 		graph.addKeyListener(keyListener);
@@ -1069,22 +1010,8 @@ public class Gui extends Shell {
 	 */
 	protected void removeSelected() {
 
-		for (Object object : graph.getSelection()) {
-			if (object instanceof GraphItem) {
-				
-				GraphItem graphItem = (GraphItem) object;
-				graphItem.setVisible(false);
-				
-				modelObjects.remove(graphItem.getData());
-				graphConnectionDataList.remove(object);
-				
-				removeData(graphItem.getData());
-			}
-		}
+		networkStructureHelper.removeItems(graph.getSelection());
 		removeSelectedButton.setEnabled(false);
-
-		// @todo w przyszlosci trzeba zapamietac obiekty jesli zrobiony byl
-		// wczesniej deployment
 	}
 
 	/**
@@ -1173,90 +1100,6 @@ public class Gui extends Shell {
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * Removes references to data from other network elements
-	 * 
-	 * @param data
-	 *            Graph data to be removed
-	 */
-	protected void removeData(Object data) {
-
-		if (data instanceof GraphConnectionData) {
-			removeGraphNodeConnection((GraphConnectionData) data);
-
-		} else {
-			removeElement(data);
-		}
-	}
-
-	private void removeElement(Object data) {
-
-		if (data instanceof Appliance) {
-			Appliance appliance = (Appliance) data;
-			modelObjects.remove(appliance);
-			for (Interface interfac : appliance.getInterfaces()) {
-				removeReferenceToEndpoint(interfac.getEndpoint(), interfac);
-			}
-			appliance.setInterfaces(new LinkedList<Interface>());
-
-		} else if (data instanceof Switch) {
-			Switch switc = (Switch) data;
-			for (Endpoint endpoint : switc.getEndpoints()) {
-				removeReferenceToEndpoint(endpoint, switc);
-			}
-			switc.setEndpoints(new LinkedList<Endpoint>());
-		}
-	}
-
-	/**
-	 * Removes from endpoint connection with endpoint2
-	 * 
-	 * @param endpoint
-	 * @param endpoint2
-	 */
-	private void removeReferenceToEndpoint(Endpoint endpoint, Endpoint endpoint2) {
-
-		if (endpoint != null) {
-			if (endpoint instanceof Switch) {
-				Switch switc = (Switch) endpoint;
-				switc.getEndpoints().remove(endpoint2);
-			} else if (endpoint instanceof Interface) {
-				Interface interfac = (Interface) endpoint;
-				interfac.setEndpoint(null);
-			}
-		}
-	}
-
-	private void removeGraphNodeConnection(
-			GraphConnectionData graphConnectionData) {
-
-		removeElement(graphConnectionData.getLeftNode());
-		removeElement(graphConnectionData.getLeftNode());
-	}
-
-	protected void createGraphItem(Object g, String iconPath) {
-
-		logger.trace("Creating new graph item");
-
-		GraphNode graphNode = new GraphNode(graph, SWT.NONE, "");
-		graphNode.setBackgroundColor(this.getDisplay().getSystemColor(
-				SWT.COLOR_WHITE));
-		graphNode.setImage(loadImage(iconPath));
-		graphNode.setData(g);
-		String toolTipText = updateGraphNodeToolTip(g);
-		graphNode.setTooltip(new org.eclipse.draw2d.Label(toolTipText));
-
-		if (g instanceof Appliance) {
-			Appliance appliance = (Appliance) g;
-			if (projectId.getText() == null || projectId.getText().equals("")) {
-				projectId.setText(appliance.getProjectId());
-			}
-		}
-
-		graphNode.setText(toolTipText);
-
 	}
 
 	protected String updateGraphNodeToolTip(Object obj) {
@@ -1413,15 +1256,11 @@ public class Gui extends Shell {
 		return componentProxyFactory.getMbPort();
 	}
 
-	public void resetProgress() {
-		progressShell = null;
-	}
-
 	protected DataBindingContext initDataBindings() {
 		DataBindingContext bindingContext = new DataBindingContext();
 		//
 		IObservableValue supervisorsAddressObserveTextObserveWidget = SWTObservables
-				.observeText(supervisorsAddress, SWT.Modify);
+				.observeText(supervisorAddress, SWT.Modify);
 		IObservableValue componentProxyFactoryMbServerObserveValue = PojoObservables
 				.observeValue(componentProxyFactory, "mbServer");
 		bindingContext.bindValue(supervisorsAddressObserveTextObserveWidget,

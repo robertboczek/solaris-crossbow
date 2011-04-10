@@ -62,13 +62,13 @@ public class GraphConnectionData implements Serializable {
 		return endp1;
 	}
 
-	public Object getSecondEndpoint(Object object){
+	/*public Object getSecondEndpoint(Object object){
 		if(object == rightNode)
 			return leftNode;
 		else if(object == leftNode)
 			return rightNode;
 		return null;
-	}
+	}*/
 	
 	public void setEndp1Statistic(EndpointStatistic statistic) {
 		this.statistic1 = statistic;
