@@ -1,5 +1,7 @@
 package org.jims.modules.crossbow.link;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import org.jims.modules.crossbow.enums.LinkParameters;
 import org.jims.modules.crossbow.exception.LinkException;
 import org.jims.modules.crossbow.lib.VNicHelper;
@@ -61,6 +63,28 @@ public class VNic extends Link implements VNicMBean {
         }
         return this.parent;
     }
+
+		@Override
+		public String getIpAddress() {
+
+			String res = "";
+			String cmd[] = { "zlogin",
+			                 this.name.replaceAll( "\\.\\.IFACE[0-9]", "" ),  // TODO-DAWID  < this is temporary
+			                 "ifconfig " + this.name + " | grep inet | sed 's/.*inet \\([.0-9]*\\).*/\\1/'" };
+
+			try {
+
+				Process proc = Runtime.getRuntime().exec( cmd );
+				proc.waitFor();
+				res = new BufferedReader( new InputStreamReader( proc.getInputStream() ) ).readLine();
+
+			} catch ( Exception ex ) {
+				logger.error( "Exception while getting IP address.", ex );
+			}
+
+			return res;
+
+		}
 
     @Override
     public int hashCode() {
