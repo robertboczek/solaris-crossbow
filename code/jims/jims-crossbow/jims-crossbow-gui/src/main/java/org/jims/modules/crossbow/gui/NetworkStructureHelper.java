@@ -400,12 +400,14 @@ public class NetworkStructureHelper {
 
 	public ACTION getPolicyAction(Policy policy) {
 
-		if (hasPolicy(policy, newObjects) || newPolicies.contains(policy)) {
+		if (hasPolicy(policy, newObjects)) {
+			return Actions.ACTION.ADD;
+		} else if (hasPolicy(policy, removedObjects)) {
+			return Actions.ACTION.REM;
+		} else if (newPolicies.contains(policy)) {
 			return Actions.ACTION.ADD;
 		} else if (modifiedPolicies.contains(policy)) {
 			return Actions.ACTION.UPD;
-		} else if (hasPolicy(policy, removedObjects)) {
-			return Actions.ACTION.REM;
 		}
 
 		return Actions.ACTION.NOOP;
@@ -413,12 +415,14 @@ public class NetworkStructureHelper {
 
 	public ACTION getInterfaceAction(Interface interf) {
 
-		if (hasInterface(interf, newObjects) || newInterfaces.contains(interf)) {
+		if (hasInterface(interf, newObjects)) {
+			return Actions.ACTION.ADD;
+		} else if (hasInterface(interf, removedObjects)) {
+			return Actions.ACTION.REM;
+		} else if (newInterfaces.contains(interf)) {
 			return Actions.ACTION.ADD;
 		} else if (modifiedInterfaces.contains(interf)) {
 			return Actions.ACTION.UPD;
-		} else if (hasInterface(interf, removedObjects)) {
-			return Actions.ACTION.REM;
 		}
 
 		return Actions.ACTION.NOOP;
