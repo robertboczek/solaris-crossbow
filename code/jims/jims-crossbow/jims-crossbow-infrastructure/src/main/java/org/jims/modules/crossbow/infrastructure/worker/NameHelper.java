@@ -90,14 +90,14 @@ public class NameHelper {
 		= group( capgroup( REG_PROJECT_ID ) + REG_SEP + SWITCH + capgroup( REG_RESOURCE_ID ) );
 
 	public final static String REG_MACHINE_NAME
-		= group( REG_PROJECT_ID + REG_SEP + MACHINE + REG_RESOURCE_ID );
+		= group( REG_PROJECT_ID + REG_SEP + MACHINE + REG_PROJECT_ID );
 	public final static String REG_MACHINE_NAME_CG
-		= group( capgroup( REG_PROJECT_ID ) + REG_SEP + capgroup( MACHINE ) + capgroup( REG_RESOURCE_ID ) );
+		= group( capgroup( REG_PROJECT_ID ) + REG_SEP + capgroup( MACHINE ) + capgroup( REG_PROJECT_ID ) );
 
 	public final static String REG_ROUTER_NAME
-		= group( REG_PROJECT_ID + REG_SEP + ROUTER + REG_RESOURCE_ID );
+		= group( REG_PROJECT_ID + REG_SEP + ROUTER + REG_PROJECT_ID );
 	public final static String REG_ROUTER_NAME_CG
-		= group( capgroup( REG_PROJECT_ID ) + REG_SEP + capgroup( ROUTER ) + capgroup( REG_RESOURCE_ID ) );
+		= group( capgroup( REG_PROJECT_ID ) + REG_SEP + capgroup( ROUTER ) + capgroup( REG_PROJECT_ID ) );
 
 	public final static String REG_APPLIANCE_NAME
 		= group( REG_MACHINE_NAME + "|" + REG_ROUTER_NAME );
@@ -109,7 +109,7 @@ public class NameHelper {
 		= group( REG_APPLIANCE_NAME + REG_SEP + REG_RESOURCE_ID );
 	public final static String REG_INTERFACE_NAME_CG
 		= group( capgroup( REG_PROJECT_ID ) + REG_SEP + capgroup( ROUTER + "|" + MACHINE )
-		  + capgroup( REG_RESOURCE_ID ) + REG_SEP + capgroup( REG_RESOURCE_ID ) );
+		  + capgroup( REG_PROJECT_ID ) + REG_SEP + capgroup( REG_RESOURCE_ID ) );
 
 	public final static String REG_POLICY_NAME_CG
 		= group( REG_INTERFACE_NAME_CG + REG_SEP + capgroup( REG_PROJECT_ID ) );
