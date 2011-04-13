@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.jims.modules.crossbow.gui.NetworkStructureHelper;
 import org.jims.modules.crossbow.gui.actions.RepoManagerProxyFactory;
 import org.jims.modules.crossbow.objectmodel.filters.address.IpAddress;
 import org.jims.modules.crossbow.objectmodel.resources.Appliance;
@@ -45,14 +46,16 @@ public class EditResourceDialog extends TitleAreaDialog {
 	private Button addInterfaceButton;
 	private boolean isAddressable;
 	private boolean hasAMachine;
-	private Label label5;
+	private Label interfaceLabel;
 	private RepoManagerProxyFactory repoManagerProxyFactory;
+	private NetworkStructureHelper networkStructureHelper;
 
-	public EditResourceDialog(Shell parentShell, Object object, RepoManagerProxyFactory repoManagerProxyFactory ) {
+	public EditResourceDialog(Shell parentShell, Object object, RepoManagerProxyFactory repoManagerProxyFactory, NetworkStructureHelper networkStructureHelper ) {
 		super(parentShell);
 
 		this.object = object;
 		this.repoManagerProxyFactory = repoManagerProxyFactory;
+		this.networkStructureHelper = networkStructureHelper;
 
 		hasAMachine = (object instanceof Appliance) && (((Appliance)object).getType().equals(ApplianceType.MACHINE));
 		isAddressable = (object instanceof Appliance);
@@ -75,7 +78,7 @@ public class EditResourceDialog extends TitleAreaDialog {
 
 		if (!isAddressable) {
 			interfaces.setVisible(false);
-			label5.setVisible(false);
+			interfaceLabel.setVisible(false);
 			addInterfaceButton.setVisible(false);
 		}
 
@@ -159,8 +162,8 @@ public class EditResourceDialog extends TitleAreaDialog {
 			}
 		});
 
-		label5 = new Label(parent, SWT.NONE);
-		label5.setText("Select interface:");
+		interfaceLabel = new Label(parent, SWT.NONE);
+		interfaceLabel.setText("Select interface:");
 
 		interfaces = new Combo(parent, SWT.NONE);
 		interfaces.addSelectionListener(new SelectionListener() {
@@ -175,17 +178,26 @@ public class EditResourceDialog extends TitleAreaDialog {
 
 				Interface interfac = (Interface) interfaces.getData(interfaces
 						.getText());
-				IpAddressDialog f = new IpAddressDialog(null, interfac);
+				Interface newInterfac = new Interface(interfac.getResourceId(), interfac.getProjectId());
+				newInterfac.setPoliciesList(interfac.getPoliciesList());
+				newInterfac.setIpAddress(interfac.getIpAddress());
+				
+				IpAddressDialog f = new IpAddressDialog(null, newInterfac, networkStructureHelper);
 				f.create();
 				int index = interfaces.getSelectionIndex();
 				interfaces.remove(index);
 				
 				if (f.open() == Window.OK) {
+					interfac.setPoliciesList(newInterfac.getPoliciesList());
+					interfac.setIpAddress(newInterfac.getIpAddress());
+					networkStructureHelper.updateElement(interfac);
+
+					interfaces.add(interfac.getIpAddress().toString());
+					interfaces.setData(interfac.getIpAddress().toString(), interfac);
+					interfaces.setText("");
 				}
 				
-				interfaces.add(interfac.getIpAddress().toString());
-				interfaces.setData(interfac.getIpAddress().toString(), interfac);
-				interfaces.setText("");
+				
 			}
 		});
 
@@ -201,12 +213,15 @@ public class EditResourceDialog extends TitleAreaDialog {
 				Interface interfac = new Interface(((Appliance) object).getResourceId(), ((Appliance) object).getRepoId());
 				IpAddress ipAddress = new IpAddress("0.0.0.0", 24);
 				interfac.setIpAddress(ipAddress);
-				IpAddressDialog f = new IpAddressDialog(null, interfac);
+				IpAddressDialog f = new IpAddressDialog(null, interfac, networkStructureHelper);
 				f.create();
 				if (f.open() == Window.OK) {
 					interfaces.add(ipAddress.toString());
 					interfaces.setData(ipAddress.toString(), interfac);
 					((Appliance) object).addInterface(interfac);
+					
+					//updejtuje element
+					networkStructureHelper.addNewElement(interfac);
 				}
 			}
 

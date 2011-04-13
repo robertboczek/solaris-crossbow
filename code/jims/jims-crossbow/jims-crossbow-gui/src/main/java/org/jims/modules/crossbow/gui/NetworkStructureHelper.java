@@ -1,7 +1,7 @@
 package org.jims.modules.crossbow.gui;
 
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,23 +18,29 @@ import org.eclipse.zest.core.widgets.GraphNode;
 import org.jims.modules.crossbow.gui.data.GraphConnectionData;
 import org.jims.modules.crossbow.objectmodel.Actions;
 import org.jims.modules.crossbow.objectmodel.Actions.ACTION;
+import org.jims.modules.crossbow.objectmodel.policy.Policy;
 import org.jims.modules.crossbow.objectmodel.resources.Appliance;
 import org.jims.modules.crossbow.objectmodel.resources.ApplianceType;
 import org.jims.modules.crossbow.objectmodel.resources.Endpoint;
 import org.jims.modules.crossbow.objectmodel.resources.Interface;
 import org.jims.modules.crossbow.objectmodel.resources.Switch;
 
-
 public class NetworkStructureHelper {
-	
-	private static final Logger logger = Logger.getLogger(NetworkStructureHelper.class);
-	
+
+	private static final Logger logger = Logger
+			.getLogger(NetworkStructureHelper.class);
+
 	private NetworkState networkState;
-	
+
 	private Map<Object, GraphItem> newObjects = new HashMap<Object, GraphItem>();
 	private Map<Object, GraphItem> deployedObjects = new HashMap<Object, GraphItem>();
-	private Map<Object, GraphItem> changedObjects = new HashMap<Object, GraphItem>();
+	private Map<Object, GraphItem> modifiedObjects = new HashMap<Object, GraphItem>();
 	private Map<Object, GraphItem> removedObjects = new HashMap<Object, GraphItem>();
+
+	private Set<Interface> newInterfaces = new HashSet<Interface>();
+	private Set<Policy> newPolicies = new HashSet<Policy>();
+	private Set<Interface> modifiedInterfaces = new HashSet<Interface>();
+	private Set<Policy> modifiedPolicies = new HashSet<Policy>();
 
 	private Graph graph;
 	private Text projectId;
@@ -51,83 +57,101 @@ public class NetworkStructureHelper {
 	public void setNetworkState(NetworkState networkState) {
 		this.networkState = networkState;
 	}
-	
-	public void addItem(NetworkType networkType) {
+
+	public void deployed() {
+
+		this.networkState = NetworkState.DEPLOYED;
+		for (Map.Entry<Object, GraphItem> entry : newObjects.entrySet()) {
+			deployedObjects.put(entry.getKey(), entry.getValue());
+		}
 		
+		for (Map.Entry<Object, GraphItem> entry : modifiedObjects.entrySet()) {
+			deployedObjects.put(entry.getKey(), entry.getValue());
+		}
+		
+		newObjects.clear();
+		removedObjects.clear();
+		modifiedObjects.clear();
+
+		newInterfaces.clear();
+		newPolicies.clear();
+		modifiedInterfaces.clear();
+		modifiedPolicies.clear();
+	}
+
+	public void addItem(NetworkType networkType) {
+
 		GraphNode graphNode = null;
 		String iconFileName = null;
 		Object obj = null;
-		
-		if(networkType.equals(NetworkType.SWITCH)) {
+
+		if (networkType.equals(NetworkType.SWITCH)) {
 			iconFileName = "icons/switch.jpg";
 			Switch swit = new Switch("", "");
 			obj = swit;
-		} else if(networkType.equals(NetworkType.MACHINE)) {
+		} else if (networkType.equals(NetworkType.MACHINE)) {
 			iconFileName = "icons/resource.jpg";
-			Appliance appliance = new Appliance("", "",
-					ApplianceType.MACHINE);
+			Appliance appliance = new Appliance("", "", ApplianceType.MACHINE);
 			obj = appliance;
-		} else if(networkType.equals(NetworkType.ROUTER)) {
+		} else if (networkType.equals(NetworkType.ROUTER)) {
 			iconFileName = "icons/router.jpg";
-			Appliance appliance = new Appliance("", "",
-					ApplianceType.ROUTER);
+			Appliance appliance = new Appliance("", "", ApplianceType.ROUTER);
 			obj = appliance;
 		}
-		
-		if(obj != null) {
+
+		if (obj != null) {
 			graphNode = createGraphItem(obj, iconFileName);
-		
 			newObjects.put(obj, graphNode);
 		}
-		
+
 	}
-	
+
 	public void addDeployedElement(Object obj, GraphItem graphItem) {
 		deployedObjects.put(obj, graphItem);
 	}
-	
+
 	public void removeItems(List<Object> objects) {
-		
-		
-		
-		//najpierw iteruje po wszystkich GraphConnection
-		for(Object obj : objects) {
-			if(obj instanceof GraphConnection) {
+
+		// najpierw iteruje po wszystkich GraphConnection
+		for (Object obj : objects) {
+			if (obj instanceof GraphConnection) {
 				GraphConnection gc = (GraphConnection) obj;
 				gc.setVisible(false);
 				GraphConnectionData gcd = (GraphConnectionData) gc.getData();
-				
+
 				removeConnection(gcd);
 			}
 		}
-		
-		//potem po wszystkich GraphNode'ach
-		for(Object obj : objects) {
-			if(obj instanceof GraphNode) {
+
+		// potem po wszystkich GraphNode'ach
+		for (Object obj : objects) {
+			if (obj instanceof GraphNode) {
 				Object objectToRemove = ((GraphItem) obj).getData();
-				
+
 				((GraphItem) obj).setVisible(false);
-				if(newObjects.containsKey(objectToRemove)) {
+				if (newObjects.containsKey(objectToRemove)) {
 					newObjects.remove(objectToRemove);
-				} else if(deployedObjects.containsKey(objectToRemove)) {
-					removedObjects.put(objectToRemove, deployedObjects.get(objectToRemove));
-				}else if(changedObjects.containsKey(objectToRemove)) {
-					removedObjects.put(objectToRemove, changedObjects.get(objectToRemove));
+				} else if (deployedObjects.containsKey(objectToRemove)) {
+					removedObjects.put(objectToRemove, deployedObjects
+							.get(objectToRemove));
+				} else if (modifiedObjects.containsKey(objectToRemove)) {
+					removedObjects.put(objectToRemove, modifiedObjects
+							.get(objectToRemove));
 				}
-				
+
 				removeElement(objectToRemove);
 			}
-			
+
 		}
 	}
-	
+
 	/**
 	 * Usuwa element Switch, Router lub MAchine i aktualizuje endpointy
 	 * 
 	 * @param objectToRemove
 	 */
 	private void removeElement(Object objectToRemove) {
-		
+
 		if (objectToRemove instanceof Appliance) {
 			Appliance appliance = (Appliance) objectToRemove;
 			for (Interface interfac : appliance.getInterfaces()) {
@@ -140,25 +164,26 @@ public class NetworkStructureHelper {
 				removeReferenceToEndpoint(endpoint, switc);
 			}
 		}
-		
-		if(changedObjects.containsKey(objectToRemove) || deployedObjects.containsKey(objectToRemove)) {
-			changedObjects.remove(objectToRemove);
+
+		if (modifiedObjects.containsKey(objectToRemove)
+				|| deployedObjects.containsKey(objectToRemove)) {
+			modifiedObjects.remove(objectToRemove);
 			deployedObjects.remove(objectToRemove);
 			removedObjects.put(objectToRemove, null);
 		}
-		
+
 	}
 
 	private void removeReferenceToEndpoint(Endpoint endpoint, Object obj) {
-		
-		for(Map.Entry<Object, GraphItem> entry : newObjects.entrySet()) {
-			
-			if(entry.getKey().equals(endpoint)) {
+
+		for (Map.Entry<Object, GraphItem> entry : newObjects.entrySet()) {
+
+			if (entry.getKey().equals(endpoint)) {
 				Object object = entry.getKey();
 				if (object instanceof Appliance) {
 					Appliance appliance = (Appliance) object;
 					for (Interface interfac : appliance.getInterfaces()) {
-						if(interfac.getEndpoint().equals(object)) {
+						if (interfac.getEndpoint().equals(object)) {
 							interfac.setEndpoint(null);
 						}
 					}
@@ -175,11 +200,11 @@ public class NetworkStructureHelper {
 
 		removeReferenceFromNodeElement(gcd.getLeftNode(), gcd.getEndp2());
 		removeReferenceFromNodeElement(gcd.getRightNode(), gcd.getEndp1());
-		
+
 	}
 
 	private void removeReferenceFromNodeElement(Object node, Endpoint endp) {
-		
+
 		if (node instanceof Appliance) {
 			Appliance appliance = (Appliance) node;
 			for (Interface interfac : appliance.getInterfaces()) {
@@ -210,18 +235,18 @@ public class NetworkStructureHelper {
 		}
 
 		graphNode.setText(toolTipText);
-		
+
 		return graphNode;
 
 	}
-	
+
 	protected Image loadImage(String fileName) {
 
 		ImageDescriptor descriptor = ImageDescriptor.createFromFile(null,
 				fileName);
 		return descriptor.createImage();
 	}
-	
+
 	protected String updateGraphNodeToolTip(Object obj) {
 
 		logger.debug("Updating tool tip for object " + obj);
@@ -261,46 +286,55 @@ public class NetworkStructureHelper {
 
 	public void connect(GraphNode graphNode, GraphNode graphNode2,
 			Endpoint rightEndpoint, Endpoint leftEndpoint) {
-		
+
 		Object obj = graphNode.getData();
-		if(obj instanceof Appliance) {
-			for(Interface interf : ((Appliance)obj).getInterfaces()) {
-				if(interf.equals(rightEndpoint)) {
-					logger.info("Added new endpoint " + leftEndpoint + " to interface " + interf);
+		if (obj instanceof Appliance) {
+			for (Interface interf : ((Appliance) obj).getInterfaces()) {
+				if (interf.equals(rightEndpoint)) {
+					logger.info("Added new endpoint " + leftEndpoint
+							+ " to interface " + interf);
 					interf.setEndpoint(leftEndpoint);
 				}
 			}
-		} else if(obj instanceof Switch) {
-			logger.info("Added new endpoint " + leftEndpoint + " to switch " + obj);
-			((Switch)obj).getEndpoints().add(leftEndpoint);
+		} else if (obj instanceof Switch) {
+			logger.info("Added new endpoint " + leftEndpoint + " to switch "
+					+ obj);
+			((Switch) obj).getEndpoints().add(leftEndpoint);
 		}
-		
+
 		obj = graphNode2.getData();
-		if(obj instanceof Appliance) {
-			for(Interface interf : ((Appliance)obj).getInterfaces()) {
-				if(interf.equals(leftEndpoint)) {
-					logger.info("Added new endpoint " + rightEndpoint + " to interface " + interf);
+		if (obj instanceof Appliance) {
+			for (Interface interf : ((Appliance) obj).getInterfaces()) {
+				if (interf.equals(leftEndpoint)) {
+					logger.info("Added new endpoint " + rightEndpoint
+							+ " to interface " + interf);
 					interf.setEndpoint(rightEndpoint);
 				}
 			}
-		} else if(obj instanceof Switch) {
-			logger.info("Added new endpoint " + rightEndpoint + " to switch " + obj);
-			((Switch)obj).getEndpoints().add(rightEndpoint);
+		} else if (obj instanceof Switch) {
+			logger.info("Added new endpoint " + rightEndpoint + " to switch "
+					+ obj);
+			((Switch) obj).getEndpoints().add(rightEndpoint);
 		}
 	}
 
 	public void clearAllItems() {
-	
+
 		networkState = NetworkState.UNDEPLOYED;
-		
+
 		newObjects.clear();
 		deployedObjects.clear();
-		changedObjects.clear();
+		modifiedObjects.clear();
 		removedObjects.clear();
 		
+		modifiedInterfaces.clear();
+		modifiedPolicies.clear();
+		newInterfaces.clear();
+		newPolicies.clear();
+
 		hideItems();
 	}
-	
+
 	private void hideItems() {
 
 		logger.trace("Hiding all items");
@@ -320,7 +354,7 @@ public class NetworkStructureHelper {
 	}
 
 	public Set<Object> getChangedObjects() {
-		return changedObjects.keySet();
+		return modifiedObjects.keySet();
 	}
 
 	public Set<Object> getRemovedObjects() {
@@ -331,24 +365,143 @@ public class NetworkStructureHelper {
 		return projectId.getText();
 	}
 
-	/**
-	 * Zwraca ACTION w zaleznosci w ktorej mapie
-	 * app sie znajduje
-	 * @param app
-	 * @return Zwraca odpowiednia akcje do wykonania
-	 */
-	public ACTION getAction(Appliance app) {
-		
-		if(newObjects.containsKey(app)) {
+	private ACTION getAction(Object obj) {
+		if (newObjects.containsKey(obj)) {
 			return Actions.ACTION.ADD;
-		} else if(deployedObjects.containsKey(app)) {
+		} else if (deployedObjects.containsKey(obj)) {
 			return Actions.ACTION.NOOP;
-		} else if(changedObjects.containsKey(app)) {
+		} else if (modifiedObjects.containsKey(obj)) {
 			return Actions.ACTION.UPD;
-		} else if(removedObjects.containsKey(app)) {
+		} else if (removedObjects.containsKey(obj)) {
 			return Actions.ACTION.REM;
 		}
 		return Actions.ACTION.NOOP;
+	}
+
+	/**
+	 * Zwraca ACTION w zaleznosci w ktorej mapie sie znajduje appliance app
+	 * 
+	 * @param app
+	 * @return Zwraca odpowiednia akcje do wykonania
+	 */
+	public ACTION getApplianceAction(Appliance app) {
+		return getAction(app);
+	}
+
+	/**
+	 * Zwraca ACTION w zaleznosci w ktorej mapie sie znajduje sie app
+	 * 
+	 * @param app
+	 * @return Zwraca odpowiednia akcje do wykonania
+	 */
+	public ACTION getSwitchAction(Switch swit) {
+		return getAction(swit);
+	}
+
+	public ACTION getPolicyAction(Policy policy) {
+
+		if (hasPolicy(policy, newObjects)) {
+			return Actions.ACTION.ADD;
+		} else if (hasPolicy(policy, removedObjects)) {
+			return Actions.ACTION.REM;
+		} else if (newPolicies.contains(policy)) {
+			return Actions.ACTION.ADD;
+		} else if (modifiedPolicies.contains(policy)) {
+			return Actions.ACTION.UPD;
+		}
+
+		return Actions.ACTION.NOOP;
+	}
+
+	public ACTION getInterfaceAction(Interface interf) {
+
+		if (hasInterface(interf, newObjects)) {
+			return Actions.ACTION.ADD;
+		} else if (hasInterface(interf, removedObjects)) {
+			return Actions.ACTION.REM;
+		} else if (newInterfaces.contains(interf)) {
+			return Actions.ACTION.ADD;
+		} else if (modifiedInterfaces.contains(interf)) {
+			return Actions.ACTION.UPD;
+		}
+
+		return Actions.ACTION.NOOP;
+	}
+
+	private boolean hasPolicy(Policy policy, Map<Object, GraphItem> objectsMap) {
+
+		for (Map.Entry<Object, GraphItem> entry : objectsMap.entrySet()) {
+
+			Object object = entry.getKey();
+			if (object instanceof Appliance) {
+				Appliance appliance = (Appliance) object;
+				for (Interface interfac : appliance.getInterfaces()) {
+					if (interfac.getPoliciesList().contains(policy)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	private boolean hasInterface(Interface interf,
+			Map<Object, GraphItem> objectsMap) {
+
+		for (Map.Entry<Object, GraphItem> entry : objectsMap.entrySet()) {
+
+			Object object = entry.getKey();
+			if (object instanceof Appliance) {
+				Appliance appliance = (Appliance) object;
+				if (appliance.getInterfaces().contains(interf)) {
+					return true;
+				}
+			}
+		}
+		return false;
+
+	}
+
+	/**
+	 * Actions dla elementu Object ma byc Actions.UPD
+	 * 
+	 * @param object
+	 */
+	public void updateElement(Object object) {
+
+		if (object instanceof Appliance || object instanceof Switch) {
+
+			if (deployedObjects.containsKey(object)) {
+				modifiedObjects.put(object, deployedObjects.get(object));
+				deployedObjects.remove(object);
+			}
+
+		} else if (object instanceof Policy) {
+
+			modifiedPolicies.add((Policy) object);
+
+		} else if (object instanceof Interface) {
+
+			modifiedInterfaces.add((Interface) object);
+
+		}
+	}
+
+	/**
+	 * Dodaje nowy element do stworzenia w jimsie
+	 * 
+	 * @param object
+	 *            Nowo utworzony obiekt Interface lub Policy
+	 */
+	public void addNewElement(Object object) {
+
+		if (object instanceof Policy) {
+			logger.debug("Added new policy to policies list");
+			newPolicies.add((Policy) object);
+		} else if (object instanceof Interface) {
+			logger.debug("Added new policy to interface list");
+			newInterfaces.add((Interface) object);
+		}
 	}
 }
 

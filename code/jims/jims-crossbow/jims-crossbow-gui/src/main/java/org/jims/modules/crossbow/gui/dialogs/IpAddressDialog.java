@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
+import org.jims.modules.crossbow.gui.NetworkStructureHelper;
 import org.jims.modules.crossbow.gui.validator.IpValidator;
 import org.jims.modules.crossbow.objectmodel.filters.AnyFilter;
 import org.jims.modules.crossbow.objectmodel.filters.Filter;
@@ -53,10 +54,13 @@ public class IpAddressDialog extends TitleAreaDialog {
 
 	private String flowName;
 
-	public IpAddressDialog(Shell parentShell, Interface interfac) {
+	private NetworkStructureHelper networkStructureHelper;
+
+	public IpAddressDialog(Shell parentShell, Interface interfac, NetworkStructureHelper networkStructureHelper) {
 		super(parentShell);
 
 		this.interfac = interfac;
+		this.networkStructureHelper = networkStructureHelper;
 	}
 
 	private void setControlsValues() {
@@ -211,6 +215,7 @@ public class IpAddressDialog extends TitleAreaDialog {
 					flows.remove(index);
 
 					if (f.getReturnCode() != FlowDialog.DELETE_CODE) {
+						networkStructureHelper.updateElement(policy);
 						flows.add(policy.toString(), index);
 						flows.setData(policy.toString(), policy);
 					}
@@ -258,6 +263,7 @@ public class IpAddressDialog extends TitleAreaDialog {
 				if (f.open() == Window.OK) {
 
 					if (f.getReturnCode() != FlowDialog.DELETE_CODE) {
+						networkStructureHelper.addNewElement(policy);
 						flows.add(policy.toString());
 						flows.setData(policy.toString(), policy);
 					}
@@ -385,6 +391,7 @@ public class IpAddressDialog extends TitleAreaDialog {
 	}
 
 	private void saveInput() {
+		
 		this.interfac.getIpAddress().setAddress(this.address.getText());
 		this.interfac.getIpAddress().setNetmask(
 				Integer.parseInt(netmask.getText()));
@@ -399,19 +406,22 @@ public class IpAddressDialog extends TitleAreaDialog {
 				}
 			}
 		}
+
 		if (bandwidth.getText().equals("")) {
 			if (bandwidthPolicy != null) {
 				interfac.getPoliciesList().remove(bandwidthPolicy);
 			}
 		} else {
 			if (bandwidthPolicy == null) {
-				bandwidthPolicy = new BandwidthPolicy(Integer.valueOf(bandwidth
+				bandwidthPolicy = new BandwidthPolicy("BandwidthPriority", Integer.valueOf(bandwidth
 						.getText()));
 				bandwidthPolicy.setFilter(new AnyFilter());
 				bandwidthPolicy.setInterface(interfac);
-				interfac.getPoliciesList().add(bandwidthPolicy);
+				interfac.addPolicy(bandwidthPolicy);
+				networkStructureHelper.addNewElement(bandwidthPolicy);
 			} else {
 				bandwidthPolicy.setLimit(Integer.valueOf(bandwidth.getText()));
+				networkStructureHelper.updateElement(bandwidthPolicy);
 			}
 		}
 
@@ -428,22 +438,24 @@ public class IpAddressDialog extends TitleAreaDialog {
 
 		if (priority.getSelectionIndex() != -1) {
 			if (priorityPolicy == null) {
-				priorityPolicy = new PriorityPolicy("PriorityPolicy",
+				priorityPolicy = new PriorityPolicy("PriorityPolicy", 
 						((PriorityPolicy.Priority) priority.getData(priority
 								.getText())), new AnyFilter());
 				priorityPolicy.setInterface(interfac);
 				interfac.addPolicy(priorityPolicy);
+				networkStructureHelper.addNewElement(priorityPolicy);
 			} else {
 				priorityPolicy.setPriority(((PriorityPolicy.Priority) priority
 						.getData(priority.getText())));
+				networkStructureHelper.updateElement(priorityPolicy);
 			}
 		}
 
 		for (int i = 0; i < flows.getItemCount(); i++) {
 			Policy policy = (Policy) flows.getData(flows.getItem(i));
-			// @todo dorobic UUID
-			if (!interfac.getPoliciesList().contains(policy)) {
-				interfac.addPolicy( policy );
+
+			if (policy != null && !interfac.getPoliciesList().contains(policy) ) {
+				interfac.addPolicy(policy);
 			}
 		}
 	}
