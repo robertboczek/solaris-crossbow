@@ -67,7 +67,7 @@ public class VNic extends Link implements VNicMBean {
 		@Override
 		public String getIpAddress() {
 
-			String res = "";
+			String res = "0.0.0.0";
 			String cmd[] = { "zlogin",
 			                 this.name.replaceAll( "\\.\\.IFACE[0-9]", "" ),  // TODO-DAWID  < this is temporary
 			                 "ifconfig " + this.name + " | grep inet | sed 's/.*inet \\([.0-9]*\\).*/\\1/'" };
@@ -84,6 +84,11 @@ public class VNic extends Link implements VNicMBean {
 
 			return res;
 
+		}
+
+		@Override
+		public String getIpMask() {
+			return "255.255.255.0";  // TODO-DAWID  < temporary
 		}
 
     @Override
