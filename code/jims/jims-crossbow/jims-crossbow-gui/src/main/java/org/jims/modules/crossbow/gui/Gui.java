@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.databinding.DataBindingContext;
@@ -38,7 +39,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.zest.core.widgets.Graph;
 import org.eclipse.zest.core.widgets.GraphConnection;
-import org.eclipse.zest.core.widgets.GraphItem;
 import org.eclipse.zest.core.widgets.GraphNode;
 import org.eclipse.zest.layouts.LayoutStyles;
 import org.eclipse.zest.layouts.algorithms.SpringLayoutAlgorithm;
@@ -66,7 +66,7 @@ import org.jims.modules.crossbow.infrastructure.supervisor.SupervisorMBean;
 import org.jims.modules.crossbow.infrastructure.worker.exception.ModelInstantiationException;
 import org.jims.modules.crossbow.objectmodel.Actions;
 import org.jims.modules.crossbow.objectmodel.ObjectModel;
-import org.jims.modules.crossbow.objectmodel.policy.Policy;
+import org.jims.modules.crossbow.objectmodel.Actions.ACTION;
 import org.jims.modules.crossbow.objectmodel.resources.Appliance;
 import org.jims.modules.crossbow.objectmodel.resources.ApplianceType;
 import org.jims.modules.crossbow.objectmodel.resources.Endpoint;
@@ -402,7 +402,7 @@ public class Gui extends Shell {
 				.translate(networkStructureHelper);
 
 		NetworkValidator networkValidator = new NetworkValidator();
-		String result = networkValidator.validate(objectModel);
+		String result = networkValidator.validate(projectId.getText(), objectModel);
 
 		if (result != null) {
 			MessageDialog.openError(null, "Validation result", result);
@@ -455,8 +455,6 @@ public class Gui extends Shell {
 			}
 
 			final ObjectModel objModel = objectModel;
-			System.err.println("Policies number "
-					+ objModel.getPolicies().size());
 
 			CrossbowNotificationMBean crossbowNotificationMBean = componentProxyFactory
 					.createCrossbowNotification();
@@ -476,17 +474,24 @@ public class Gui extends Shell {
 					try {
 						Actions actions = new GraphToModelTranslator()
 								.createActions(objModel, networkStructureHelper);
+						
+						for(Map.Entry<Object, ACTION> entry : actions.getAll().entrySet()) {
+
+							logger.debug("Object with action - " + entry.getKey() + " " + entry.getValue());
+							
+						}
 
 						logger.info("Starting deployment");
+						
 						supervisor.instantiate(objModel, actions);
+						
+						networkStructureHelper.deployed();
 
 					} catch (ModelInstantiationException e) {
 						e.printStackTrace();
 					}
 				}
 			}.start();
-
-			updateNetworkState(NetworkState.DEPLOYED);
 
 		} catch (Exception e) {
 			MessageDialog.openError(null, "Connection problem",
@@ -496,6 +501,7 @@ public class Gui extends Shell {
 			return;
 		}
 
+		deployButton.setEnabled(false);
 		logger.info("Starting new threads gathering statistics");
 		resetStatisticAnalyzer();
 	}
@@ -836,7 +842,7 @@ public class Gui extends Shell {
 									return repoManager;
 								}
 
-							});
+							}, networkStructureHelper);
 
 					dialog.create();
 					if (dialog.open() == Window.OK) {
@@ -846,6 +852,9 @@ public class Gui extends Shell {
 						graphNode.setTooltip(new org.eclipse.draw2d.Label(
 								toolTip, null));
 						graphNode.setText(toolTip);
+						
+						//updejtuje element
+						networkStructureHelper.updateElement(graphNode.getData());
 					}
 				} else if (list.size() == 1
 						&& list.get(0) instanceof GraphConnection) {
@@ -931,7 +940,6 @@ public class Gui extends Shell {
 				discoveryHandler.handle(graph, projectId,
 						networkStructureHelper, graphConnectionDataList);
 				resetStatisticAnalyzer();
-				updateNetworkState(NetworkState.DEPLOYED);
 			}
 
 		});
@@ -1035,10 +1043,9 @@ public class Gui extends Shell {
 					Switch swit = (Switch) object;
 
 					List<Endpoint> endpoints = swit.getEndpoints();
-					System.err.println(endpoints.size());
+//					System.err.println(endpoints.size());
 					for (Endpoint endpoint : endpoints) {
 						GraphNode secondNode = findSecondEndpointObject(endpoint);
-						System.err.println(secondNode);
 
 						if (!restoredEndpoints.contains(endpoint)
 								&& !restoredEndpoints.contains(swit)) {

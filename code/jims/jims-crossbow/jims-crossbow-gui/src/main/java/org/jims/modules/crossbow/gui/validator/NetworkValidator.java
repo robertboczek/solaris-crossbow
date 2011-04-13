@@ -20,10 +20,15 @@ public class NetworkValidator {
 	/**
 	 * Validates input network
 	 * 
+	 * @param projectId
 	 * @param objectModel Object Model
 	 * @return Return string with first found error
 	 */
-	public String validate(ObjectModel objectModel) {
+	public String validate(String projectId, ObjectModel objectModel) {
+		
+		if(projectId == null || projectId.equals("")) {
+			return "Project ID can't be empty";
+		}
 		
 		Set<String> interfaces = new HashSet<String>();
 		for(Interface interfac : objectModel.getPorts()) {
@@ -51,6 +56,9 @@ public class NetworkValidator {
 		Set<String> switches = new HashSet<String>();
 		
 		for(Appliance app : objectModel.getAppliances()) {
+			if(app.getResourceId() == null || app.getResourceId().equals("")) {
+				return "ResourceId can't be null";
+			}
 			if(app.getType().equals(ApplianceType.MACHINE)) {
 				if(appliances.contains(app.getResourceId())) {
 					return "Duplicate appliance " + app.getResourceId() + " resource name";
@@ -68,6 +76,11 @@ public class NetworkValidator {
 		}
 		
 		for(Switch switc : objectModel.getSwitches()) {
+			
+			if(switc.getResourceId() == null || switc.getResourceId().equals("")) {
+				return "ResourceId can't be null";
+			}
+			
 			if(switches.contains(switc.getResourceId())) {
 				return "Duplicate switch " + switc.getResourceId() + " resource name";
 			} else {

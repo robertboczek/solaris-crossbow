@@ -33,7 +33,6 @@ public class ModelToGraphTranslator {
 	
 	private List<GraphConnectionData> graphConnectionDataList;
 	
-	
 public void translate( Graph graph, ObjectModel om, NetworkStructureHelper networkStructureHelper, List<GraphConnectionData> graphConnectionDataList ) {
 		
 		this.graphConnectionDataList = graphConnectionDataList;
@@ -42,11 +41,14 @@ public void translate( Graph graph, ObjectModel om, NetworkStructureHelper netwo
 		
 		Map< Object, GraphNode > nodes = new HashMap< Object, GraphNode >();
 		
+		logger.debug("Restoring deployed appliances in total number : " + om.getAppliances().size());
 		for ( Appliance app : om.getAppliances() ) {
 			if ( ApplianceType.MACHINE.equals( app.getType() ) ) {
+				logger.debug("Restoring deployed Appliance");
 				GraphItem item = createGraphItem( graph, app, "icons/resource.jpg", nodes );
 				networkStructureHelper.addDeployedElement(app, item);
 			} else if ( ApplianceType.ROUTER.equals( app.getType() ) ) {
+				logger.debug("Restoring deployed Router");
 				GraphItem item = createGraphItem( graph, app, "icons/router.jpg", nodes );
 				networkStructureHelper.addDeployedElement(app, item);
 			}
@@ -54,16 +56,19 @@ public void translate( Graph graph, ObjectModel om, NetworkStructureHelper netwo
 		}
 		
 		for ( Switch s : om.getSwitches() ) {
+			logger.debug("Restoring deployed Switch");
 			GraphItem item = createGraphItem( graph, s, "icons/switch.jpg", nodes );
 			networkStructureHelper.addDeployedElement(s, item);
 		}
 		
-		System.out.println("Policy number " + om.getPolicies().size());
-		
 		for(Policy policy : om.getPolicies()) {
+			
 		}
 		
 		restoreGraphNodeConnections( graph, om, nodes );
+		
+		networkStructureHelper.deployed();
+		
 		graph.applyLayout();
 		
 	}

@@ -1,7 +1,6 @@
 package org.jims.modules.crossbow.gui.actions;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.jims.modules.crossbow.gui.NetworkStructureHelper;
@@ -16,13 +15,12 @@ public class GraphToModelTranslator {
 	
 	public ObjectModel translate(NetworkStructureHelper networkStructureHelper) {
 		
-		ObjectModel objectModel = new ObjectModel();
-		registerObjects(objectModel, networkStructureHelper);
-		
-		return objectModel;
+		return registerObjects(networkStructureHelper);
 	}
 	
-	protected void registerObjects(ObjectModel objectModel, NetworkStructureHelper networkStructureHelper) {
+	protected ObjectModel registerObjects(NetworkStructureHelper networkStructureHelper) {
+		
+		ObjectModel objectModel = new ObjectModel();
 
 		Set<Object> set = new HashSet<Object>();
 		set.addAll(networkStructureHelper.getChangedObjects());
@@ -41,16 +39,17 @@ public class GraphToModelTranslator {
 				int ifaceNo = 0;
 				for (Interface interf : app.getInterfaces()) {
 					interf.setResourceId("IFACE" + ifaceNo);
-					System.err.println("Policies number " + interf.getPoliciesList().size());
+					//System.err.println("Policies number " + interf.getPoliciesList().size());
 					objectModel.register(interf);
 					for (Policy policy : interf.getPoliciesList()) {
 						objectModel.register(policy);
 					}
-
 					++ifaceNo;
 				}
 			}
 		}
+		
+		return objectModel;
 	}
 
 	public void updateProjectIdName(Set<Object> modelObjects, String projectId) {
@@ -74,16 +73,16 @@ public class GraphToModelTranslator {
 		Actions actions = new Actions();
 
 		for (Appliance app : om.getAppliances()) {
-			actions.insert(app, networkStructureHelper.getAction(app));
+			actions.insert(app, networkStructureHelper.getApplianceAction(app));
 		}
 		for (Interface interf : om.getPorts()) {
-			actions.insert(interf, Actions.ACTION.ADD);
+			actions.insert(interf, networkStructureHelper.getInterfaceAction(interf));
 		}
 		for (Switch swit : om.getSwitches()) {
-			actions.insert(swit, Actions.ACTION.ADD);
+			actions.insert(swit, networkStructureHelper.getSwitchAction(swit));
 		}
 		for (Policy policy : om.getPolicies()) {
-			actions.insert(policy, Actions.ACTION.ADD);
+			actions.insert(policy, networkStructureHelper.getPolicyAction(policy));
 		}
 
 		return actions;
