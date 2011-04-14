@@ -949,6 +949,8 @@ public class Gui extends Shell {
 		connectionTester = new ConnectionTester(this, display, Arrays
 				.asList(new Button[] { deployButton, discoverBtn }));
 		
+		connectionTester.addConnectedListener( new WorkerMonitor( graph, componentProxyFactory, display ) );
+
 		this.addKeyListener(keyListener);
 		graph.addKeyListener(keyListener);
 		buttonGroup.addKeyListener(keyListener);

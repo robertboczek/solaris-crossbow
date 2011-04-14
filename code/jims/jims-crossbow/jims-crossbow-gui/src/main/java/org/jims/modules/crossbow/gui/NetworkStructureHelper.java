@@ -10,11 +10,17 @@ import org.apache.log4j.Logger;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.zest.core.widgets.Graph;
 import org.eclipse.zest.core.widgets.GraphConnection;
+import org.eclipse.zest.core.widgets.GraphContainer;
 import org.eclipse.zest.core.widgets.GraphItem;
 import org.eclipse.zest.core.widgets.GraphNode;
+import org.eclipse.zest.core.widgets.IContainer;
 import org.jims.modules.crossbow.gui.data.GraphConnectionData;
 import org.jims.modules.crossbow.objectmodel.Actions;
 import org.jims.modules.crossbow.objectmodel.Actions.ACTION;
@@ -220,13 +226,50 @@ public class NetworkStructureHelper {
 	protected GraphNode createGraphItem(Object g, String iconPath) {
 
 		logger.trace("Creating new graph item");
+		
+		// By default, put the item directly into the graph.
+		
+		IContainer container = graph;
+		
+		if ( ( 1 == graph.getSelection().size() )
+		     && ( graph.getSelection().get( 0 ) instanceof GraphContainer ) ) {
+			
+			// If, however, a container is selected, put the item into it.
+			container = ( GraphContainer ) graph.getSelection().get( 0 );
+			
+		}
 
-		GraphNode graphNode = new GraphNode(graph, SWT.NONE, "");
+		GraphNode graphNode = new GraphNode( container, SWT.NONE, "");
 		graphNode.setImage(loadImage(iconPath));
 		graphNode.setData(g);
 		String toolTipText = updateGraphNodeToolTip(g);
 		graphNode.setTooltip(new org.eclipse.draw2d.Label(toolTipText));
-
+		
+		final Menu menu = new Menu( graph );
+		MenuItem menuItem = new MenuItem( menu, SWT.NONE );
+		menuItem.setText( "Move to {WORKER}" );
+		
+		graph.addListener( SWT.MouseUp, new Listener() {
+			
+			@Override
+			public void handleEvent( Event event ) {
+				
+				if ( 0 != graph.getSelection().size() ) {
+					
+					for ( Object o : graph.getSelection() ) {
+						if ( ! ( o instanceof GraphNode ) ) {
+							return;
+						}
+					}
+				
+					if ( 3 == event.button ) {
+						menu.setVisible( true );
+					}
+					
+				}
+			}
+		} );
+		
 		if (g instanceof Appliance) {
 			Appliance appliance = (Appliance) g;
 			if (projectId.getText() == null || projectId.getText().equals("")) {
