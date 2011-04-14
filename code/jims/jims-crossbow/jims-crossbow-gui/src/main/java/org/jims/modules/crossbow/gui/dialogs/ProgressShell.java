@@ -64,7 +64,7 @@ public class ProgressShell extends ProgressMonitorDialog {
 		logger.info("Getting CrossbowNotificationMBean");
 
 		try {
-			crossbowNotificationMBean = componentProxyFactory.createCrossbowNotification();
+			crossbowNotificationMBean = componentProxyFactory.createProxy( CrossbowNotificationMBean.class );
 			getLogs();
 
 		} catch (Exception e) {

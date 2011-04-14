@@ -1,5 +1,6 @@
 package org.jims.modules.crossbow.gui.threads;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -15,6 +16,10 @@ import org.jims.modules.crossbow.gui.jmx.JmxConnector;
  * 
  */
 public class ConnectionTester extends Thread {
+	
+	public static interface ConnectedListener {
+		public void connected( String server );
+	}
 
 	private static final int DELAY = 15000;
 	private static final Logger logger = Logger
@@ -27,6 +32,7 @@ public class ConnectionTester extends Thread {
 	private JmxConnector jmxConnector;
 	private Display display;
 	private List<Button> buttonsList;
+	private List< ConnectedListener > listeners = new LinkedList< ConnectedListener >();
 
 	public ConnectionTester(Gui gui, Display display, List<Button> buttonsList) {
 
@@ -36,6 +42,10 @@ public class ConnectionTester extends Thread {
 
 		this.start();
 
+	}
+	
+	public void addConnectedListener( ConnectedListener l ) {
+		listeners.add( l );
 	}
 
 	public void stopThread() {
@@ -64,6 +74,14 @@ public class ConnectionTester extends Thread {
 					jmxConnector.getMBeanServerConnection();
 
 					logger.debug("Gui is connected");
+					
+					if ( ! connected ) {
+						// Notify the listeners only after transition:
+						// NOT CONNECTED -> CONNECTED
+						for ( ConnectedListener l : listeners ) {
+							l.connected( "TODO" );  // TODO < server name
+						}
+					}
 
 					connected = true;
 					

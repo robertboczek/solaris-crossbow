@@ -139,8 +139,7 @@ public class Gui extends Shell {
 
 								@Override
 								public SupervisorMBean createSupervisor() {
-									return componentProxyFactory
-											.createSupervisor();
+									return componentProxyFactory.createProxy( SupervisorMBean.class );
 								}
 
 							}, translator));
@@ -445,8 +444,7 @@ public class Gui extends Shell {
 				.updateProjectIdName(networkStructureHelper);
 
 		try {
-			final SupervisorMBean supervisor = componentProxyFactory
-					.createSupervisor();
+			final SupervisorMBean supervisor = componentProxyFactory.createProxy( SupervisorMBean.class );
 
 			if (supervisor == null) {
 				MessageDialog.openError(null, "Connection problem",
@@ -457,7 +455,7 @@ public class Gui extends Shell {
 			final ObjectModel objModel = objectModel;
 
 			CrossbowNotificationMBean crossbowNotificationMBean = componentProxyFactory
-					.createCrossbowNotification();
+				.createProxy( CrossbowNotificationMBean.class );
 
 			crossbowNotificationMBean.reset();
 			logger.trace("Reseting progress state before deployment");
@@ -816,7 +814,7 @@ public class Gui extends Shell {
 								public RepoManagerMBean getRepoManager() {
 
 									RepoManagerMBean repoManager = componentProxyFactory
-											.createRepoManager();
+										.createProxy( RepoManagerMBean.class );
 
 									if (null == repoManager) {
 										repoManager = new RepoManagerMBean() {
@@ -950,7 +948,7 @@ public class Gui extends Shell {
 		resetConnectionDetailsLabel();
 		connectionTester = new ConnectionTester(this, display, Arrays
 				.asList(new Button[] { deployButton, discoverBtn }));
-
+		
 		this.addKeyListener(keyListener);
 		graph.addKeyListener(keyListener);
 		buttonGroup.addKeyListener(keyListener);

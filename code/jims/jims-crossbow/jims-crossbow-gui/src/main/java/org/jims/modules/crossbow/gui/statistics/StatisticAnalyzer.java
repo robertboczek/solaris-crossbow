@@ -128,7 +128,7 @@ public class StatisticAnalyzer {
 
 					try {
 						statisticGatherer = componentProxyFactory
-								.createStatisticAnalyzer();
+							.createProxy( StatisticsGathererMBean.class );
 					} catch (Exception e) {
 
 						e.printStackTrace();

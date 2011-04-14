@@ -1,5 +1,8 @@
 package org.jims.modules.crossbow.gui.actions;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.management.JMX;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
@@ -12,84 +15,40 @@ import org.jims.modules.crossbow.infrastructure.progress.CrossbowNotificationMBe
 import org.jims.modules.crossbow.infrastructure.supervisor.SupervisorMBean;
 
 public class ComponentProxyFactory {
-
-	public SupervisorMBean createSupervisor() {
-
-		if (refreshMBeanServerConnection()) {
-
-			try {
-
-				supervisor = JMX.newMBeanProxy(mbsc, new ObjectName(
-						"Crossbow:type=Supervisor"), SupervisorMBean.class);
-
-			} catch (Exception e) {
-
-				// TODO log here
-
-			}
-
-		}
-
-		return supervisor;
-	}
-
-	public RepoManagerMBean createRepoManager() {
-
-		if (refreshMBeanServerConnection()) {
-
-			try {
-
-				repoManager = JMX.newMBeanProxy(mbsc, new ObjectName(
-						"Crossbow:type=RepoManager"), RepoManagerMBean.class);
-
-			} catch (Exception e) {
-
-				// TODO log here
-
-			}
-
-		}
-
-		return repoManager;
-	}
-
-	public CrossbowNotificationMBean createCrossbowNotification() {
-
-		if (refreshMBeanServerConnection()) {
-
-			try {
-
-				crossbowNotificationMBean = JMX.newMBeanProxy(mbsc,
-						new ObjectName("Crossbow:type=CrossbowNotification"),
-						CrossbowNotificationMBean.class);
-
-			} catch (Exception e) {
-
-				// TODO log here
-
-			}
-		}
-		return crossbowNotificationMBean;
+	
+	public ComponentProxyFactory() {
+		
+		objectNames.put( SupervisorMBean.class, "Crossbow:type=Supervisor" );
+		objectNames.put( RepoManagerMBean.class, "Crossbow:type=RepoManager" );
+		objectNames.put( CrossbowNotificationMBean.class, "Crossbow:type=CrossbowNotification" );
+		objectNames.put( StatisticsGathererMBean.class, "Crossbow:type=StatisticsGatherer" );
+		
 	}
 	
-	public StatisticsGathererMBean createStatisticAnalyzer() {
-
-		if (refreshMBeanServerConnection()) {
+	
+	@SuppressWarnings( "unchecked" )
+	public < T > T createProxy( Class< T > klass ) {
+		
+		if ( refreshMBeanServerConnection() || ( null == proxies.get( klass ) ) ) {
 
 			try {
 
-				statisticsGathererMBean = JMX.newMBeanProxy(mbsc,
-						new ObjectName("Crossbow:type=StatisticsGatherer"),
-						StatisticsGathererMBean.class);
+				T proxy = JMX.newMBeanProxy( mbsc, new ObjectName( objectNames.get( klass ) ), klass );
+				proxies.put( klass, proxy );
 
-			} catch (Exception e) {
+			} catch ( Exception e ) {
 
 				// TODO log here
 
 			}
+
 		}
-		return statisticsGathererMBean;
+		
+		return ( T ) proxies.get( klass );
+		
 	}
+	
+	
 
 	private boolean refreshMBeanServerConnection() {
 
@@ -143,13 +102,13 @@ public class ComponentProxyFactory {
 
 	private JmxConnector jmxConnector;
 	private MBeanServerConnection mbsc;
-
-	private SupervisorMBean supervisor;
-	private RepoManagerMBean repoManager;
-	private CrossbowNotificationMBean crossbowNotificationMBean;
-	private StatisticsGathererMBean statisticsGathererMBean;
+	
+	private Map< Class< ? extends Object >, Object > proxies
+		= new HashMap< Class< ? extends Object >, Object >();
+	private Map< Class< ? extends Object >, String > objectNames
+		= new HashMap< Class< ? extends Object >, String >();
 
 	private static final Logger logger = Logger
-			.getLogger(ComponentProxyFactory.class);
+		.getLogger(ComponentProxyFactory.class);
 
 }
