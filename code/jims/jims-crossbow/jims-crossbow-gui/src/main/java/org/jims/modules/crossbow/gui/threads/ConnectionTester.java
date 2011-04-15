@@ -17,8 +17,9 @@ import org.jims.modules.crossbow.gui.jmx.JmxConnector;
  */
 public class ConnectionTester extends Thread {
 	
-	public static interface ConnectedListener {
+	public static interface ConnectionStatusListener {
 		public void connected( String server );
+		public void disconnected( String server );
 	}
 
 	private static final int DELAY = 15000;
@@ -32,7 +33,7 @@ public class ConnectionTester extends Thread {
 	private JmxConnector jmxConnector;
 	private Display display;
 	private List<Button> buttonsList;
-	private List< ConnectedListener > listeners = new LinkedList< ConnectedListener >();
+	private List< ConnectionStatusListener > listeners = new LinkedList< ConnectionStatusListener >();
 
 	public ConnectionTester(Gui gui, Display display, List<Button> buttonsList) {
 
@@ -44,7 +45,7 @@ public class ConnectionTester extends Thread {
 
 	}
 	
-	public void addConnectedListener( ConnectedListener l ) {
+	public void addConnectedListener( ConnectionStatusListener l ) {
 		listeners.add( l );
 	}
 
@@ -63,6 +64,8 @@ public class ConnectionTester extends Thread {
 			// testuje polaczenie z jmx'owym mbean serverem
 			try {
 
+				boolean oldConnected = connected;
+					
 				try {
 
 					jmxConnector = new JmxConnector(gui.getConnectionAddress(),
@@ -75,14 +78,6 @@ public class ConnectionTester extends Thread {
 
 					logger.debug("Gui is connected");
 					
-					if ( ! connected ) {
-						// Notify the listeners only after transition:
-						// NOT CONNECTED -> CONNECTED
-						for ( ConnectedListener l : listeners ) {
-							l.connected( "TODO" );  // TODO < server name
-						}
-					}
-
 					connected = true;
 					
 				} catch (NumberFormatException e) {
@@ -91,6 +86,20 @@ public class ConnectionTester extends Thread {
 				} catch (Exception e) {
 					connected = false;
 					logger.debug("Not connected");
+				}
+				
+				if ( oldConnected != connected ) {
+					
+					if ( connected ) {
+						for ( ConnectionStatusListener l : listeners ) {
+							l.connected( "TODO" );  // TODO < server name
+						}
+					} else  {
+						for ( ConnectionStatusListener l : listeners ) {
+							l.disconnected( "TODO" );  // TODO < server name
+						}
+					}
+					
 				}
 				
 				display.asyncExec(new Runnable() {

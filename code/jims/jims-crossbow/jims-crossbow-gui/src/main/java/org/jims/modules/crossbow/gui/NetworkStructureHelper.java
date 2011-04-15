@@ -245,31 +245,6 @@ public class NetworkStructureHelper {
 		String toolTipText = updateGraphNodeToolTip(g);
 		graphNode.setTooltip(new org.eclipse.draw2d.Label(toolTipText));
 		
-		final Menu menu = new Menu( graph );
-		MenuItem menuItem = new MenuItem( menu, SWT.NONE );
-		menuItem.setText( "Move to {WORKER}" );
-		
-		graph.addListener( SWT.MouseUp, new Listener() {
-			
-			@Override
-			public void handleEvent( Event event ) {
-				
-				if ( 0 != graph.getSelection().size() ) {
-					
-					for ( Object o : graph.getSelection() ) {
-						if ( ! ( o instanceof GraphNode ) ) {
-							return;
-						}
-					}
-				
-					if ( 3 == event.button ) {
-						menu.setVisible( true );
-					}
-					
-				}
-			}
-		} );
-		
 		if (g instanceof Appliance) {
 			Appliance appliance = (Appliance) g;
 			if (projectId.getText() == null || projectId.getText().equals("")) {
