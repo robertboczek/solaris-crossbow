@@ -4,9 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Display;
-import org.jims.modules.crossbow.gui.Gui;
 import org.jims.modules.crossbow.gui.jmx.JmxConnector;
 
 /**
@@ -26,23 +23,16 @@ public class ConnectionTester extends Thread {
 	private static final Logger logger = Logger
 			.getLogger(ConnectionTester.class);
 
-	private Gui gui;
 	private boolean run = true;
 	private boolean connected = false;
 
 	private JmxConnector jmxConnector;
-	private Display display;
-	private List<Button> buttonsList;
 	private List< ConnectionStatusListener > listeners = new LinkedList< ConnectionStatusListener >();
+	
+	private String address = "", port = "";
 
-	public ConnectionTester(Gui gui, Display display, List<Button> buttonsList) {
-
-		this.gui = gui;
-		this.display = display;
-		this.buttonsList = buttonsList;
-
+	public ConnectionTester() {
 		this.start();
-
 	}
 	
 	public void addConnectedListener( ConnectionStatusListener l ) {
@@ -68,8 +58,7 @@ public class ConnectionTester extends Thread {
 					
 				try {
 
-					jmxConnector = new JmxConnector(gui.getConnectionAddress(),
-							Integer.parseInt(gui.getConnectionPort()));
+					jmxConnector = new JmxConnector( address, Integer.parseInt( port ) );
 
 					logger.debug("Trying to connect to "
 							+ jmxConnector.getUrl());
@@ -92,37 +81,16 @@ public class ConnectionTester extends Thread {
 					
 					if ( connected ) {
 						for ( ConnectionStatusListener l : listeners ) {
-							l.connected( "TODO" );  // TODO < server name
+							l.connected( address + ":" + port );
 						}
 					} else  {
 						for ( ConnectionStatusListener l : listeners ) {
-							l.disconnected( "TODO" );  // TODO < server name
+							l.disconnected( address + ":" + port );
 						}
 					}
 					
 				}
 				
-				display.asyncExec(new Runnable() {
-					public void run() {
-						if (connected) {
-							gui.setText("Connected");
-							for(Button button : buttonsList) {
-								if(button.getToolTipText().equals("Discover")) {
-									button.setEnabled(true);
-								}
-							}
-						} else {
-							gui.setText("Not connected");
-							
-							for(Button button : buttonsList) {
-								if(button.isEnabled()) {
-									button.setEnabled(false);
-								}
-							}
-						}
-					}
-				});
-
 				Thread.sleep(DELAY);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -131,5 +99,23 @@ public class ConnectionTester extends Thread {
 		}
 
 	}
+	
+	
+	public String getAddress() {
+		return address;
+	}
+	
+	public void setAddress( String address ) {
+		this.address = address;
+	}
+	
+	
+	public String getPort() {
+		return port;
+	}
 
+	public void setPort( String port ) {
+		this.port = port;
+	}
+	
 }

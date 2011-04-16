@@ -2,6 +2,7 @@ package org.jims.modules.crossbow.gui;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
@@ -39,6 +41,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.zest.core.widgets.Graph;
 import org.eclipse.zest.core.widgets.GraphConnection;
+import org.eclipse.zest.core.widgets.GraphContainer;
 import org.eclipse.zest.core.widgets.GraphNode;
 import org.eclipse.zest.layouts.LayoutStyles;
 import org.eclipse.zest.layouts.algorithms.SpringLayoutAlgorithm;
@@ -112,6 +115,8 @@ public class Gui extends Shell {
 
 	private DiscoveryHandler discoveryHandler;
 	private ConnectionTester connectionTester;
+	
+	private WindowTitleManager windowTitleManager;
 
 	private ObjectModel objectModel;
 
@@ -185,6 +190,7 @@ public class Gui extends Shell {
 		this.display = display;
 
 		this.discoveryHandler = discoveryHandler;
+		this.windowTitleManager = new WindowTitleManager( this, display );
 
 		Menu menu = new Menu(this, SWT.BAR);
 		setMenuBar(menu);
@@ -803,7 +809,9 @@ public class Gui extends Shell {
 			public void handleEvent(Event event) {
 
 				List list = graph.getSelection();
-				if (list.size() == 1 && list.get(0) instanceof GraphNode) {
+				if (list.size() == 1
+				    && list.get(0) instanceof GraphNode
+				    && ( ! ( list.get(0) instanceof GraphContainer ) ) ) {
 
 					GraphNode graphNode = (GraphNode) list.get(0);
 
@@ -921,6 +929,7 @@ public class Gui extends Shell {
 		supervisorPort.pack();
 
 		Button discoverBtn = new Button(buttonGroup, SWT.PUSH);
+		discoverBtn.setEnabled(false);
 		FormData fd_discoverBtn = new FormData();
 
 		fd_discoverBtn.bottom = new FormAttachment(0, 277);
@@ -946,10 +955,20 @@ public class Gui extends Shell {
 		updateNetworkState(NetworkState.UNDEPLOYED);
 
 		resetConnectionDetailsLabel();
-		connectionTester = new ConnectionTester(this, display, Arrays
-				.asList(new Button[] { deployButton, discoverBtn }));
+		
+		// ConnectionTester instance and event listeners.
+		
+		connectionTester = new ConnectionTester();
 		
 		connectionTester.addConnectedListener( new WorkerMonitor( graph, componentProxyFactory, display ) );
+		
+		Map< Control, WindowTitleManager.ControlType > controls = new HashMap< Control, WindowTitleManager.ControlType >();
+		controls.put( deployButton, WindowTitleManager.ControlType.DISCONNECT_ONLY );
+		controls.put( discoverBtn, WindowTitleManager.ControlType.NORMAL );
+		
+		windowTitleManager.setControls( controls );
+		
+		connectionTester.addConnectedListener( windowTitleManager );
 
 		this.addKeyListener(keyListener);
 		graph.addKeyListener(keyListener);
@@ -981,6 +1000,7 @@ public class Gui extends Shell {
 		graphConnection.setLineWidth(2);
 		graphConnection.setLineColor(Gui.this.getDisplay().getSystemColor(
 				SWT.COLOR_BLACK));
+		graphConnection.setVisible(true);
 
 		updateGraphConnection();
 
@@ -1262,23 +1282,24 @@ public class Gui extends Shell {
 	public String getConnectionPort() {
 		return componentProxyFactory.getMbPort();
 	}
-
 	protected DataBindingContext initDataBindings() {
 		DataBindingContext bindingContext = new DataBindingContext();
 		//
-		IObservableValue supervisorsAddressObserveTextObserveWidget = SWTObservables
-				.observeText(supervisorAddress, SWT.Modify);
-		IObservableValue componentProxyFactoryMbServerObserveValue = PojoObservables
-				.observeValue(componentProxyFactory, "mbServer");
-		bindingContext.bindValue(supervisorsAddressObserveTextObserveWidget,
-				componentProxyFactoryMbServerObserveValue, null, null);
+		IObservableValue supervisorsAddressObserveTextObserveWidget = SWTObservables.observeText(supervisorAddress, SWT.Modify);
+		IObservableValue componentProxyFactoryMbServerObserveValue = PojoObservables.observeValue(componentProxyFactory, "mbServer");
+		bindingContext.bindValue(supervisorsAddressObserveTextObserveWidget, componentProxyFactoryMbServerObserveValue, null, null);
 		//
-		IObservableValue supervisorPortObserveTextObserveWidget = SWTObservables
-				.observeText(supervisorPort, SWT.Modify);
-		IObservableValue componentProxyFactoryMbPortObserveValue = PojoObservables
-				.observeValue(componentProxyFactory, "mbPort");
-		bindingContext.bindValue(supervisorPortObserveTextObserveWidget,
-				componentProxyFactoryMbPortObserveValue, null, null);
+		IObservableValue supervisorPortObserveTextObserveWidget = SWTObservables.observeText(supervisorPort, SWT.Modify);
+		IObservableValue componentProxyFactoryMbPortObserveValue = PojoObservables.observeValue(componentProxyFactory, "mbPort");
+		bindingContext.bindValue(supervisorPortObserveTextObserveWidget, componentProxyFactoryMbPortObserveValue, null, null);
+		//
+		IObservableValue supervisorAddressObserveTextObserveWidget = SWTObservables.observeText(supervisorAddress, SWT.Modify);
+		IObservableValue connectionTesterAddressObserveValue = PojoObservables.observeValue(connectionTester, "address");
+		bindingContext.bindValue(supervisorAddressObserveTextObserveWidget, connectionTesterAddressObserveValue, null, null);
+		//
+		IObservableValue supervisorPortObserveTextObserveWidget_1 = SWTObservables.observeText(supervisorPort, SWT.Modify);
+		IObservableValue connectionTesterPortObserveValue = PojoObservables.observeValue(connectionTester, "port");
+		bindingContext.bindValue(supervisorPortObserveTextObserveWidget_1, connectionTesterPortObserveValue, null, null);
 		//
 		return bindingContext;
 	}
