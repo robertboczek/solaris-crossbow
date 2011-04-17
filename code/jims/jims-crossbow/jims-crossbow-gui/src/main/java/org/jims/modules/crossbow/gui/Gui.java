@@ -989,11 +989,17 @@ public class Gui extends Shell {
 				.addNetworkStateListener(new NetworkStructureHelper.NetworkStateListener() {
 
 					@Override
-					public void stateChanged(NetworkState networkState) {
-						chartsButton.setEnabled(NetworkState.DEPLOYED
-								.equals(networkState));
-						deployButton.setEnabled(NetworkState.DEPLOYED
-								.equals(networkState));
+					public void stateChanged(final NetworkState networkState) {
+						display.asyncExec(new Runnable() {
+
+							@Override
+							public void run() {
+								chartsButton.setEnabled(NetworkState.DEPLOYED
+										.equals(networkState));
+								deployButton.setEnabled(NetworkState.DEPLOYED
+										.equals(networkState));
+							}
+						});
 					}
 				});
 		updateNetworkState(NetworkState.UNDEPLOYED);
