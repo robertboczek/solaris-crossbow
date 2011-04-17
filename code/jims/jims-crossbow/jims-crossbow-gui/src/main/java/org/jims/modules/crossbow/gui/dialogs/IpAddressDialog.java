@@ -413,7 +413,7 @@ public class IpAddressDialog extends TitleAreaDialog {
 			}
 		} else {
 			if (bandwidthPolicy == null) {
-				bandwidthPolicy = new BandwidthPolicy("BandwidthPriority", Integer.valueOf(bandwidth
+				bandwidthPolicy = new BandwidthPolicy(interfac.getIpAddress().getAddress() + "-BandwidthPolicy", Integer.valueOf(bandwidth
 						.getText()));
 				bandwidthPolicy.setFilter(new AnyFilter());
 				bandwidthPolicy.setInterface(interfac);
@@ -438,7 +438,7 @@ public class IpAddressDialog extends TitleAreaDialog {
 
 		if (priority.getSelectionIndex() != -1) {
 			if (priorityPolicy == null) {
-				priorityPolicy = new PriorityPolicy("PriorityPolicy", 
+				priorityPolicy = new PriorityPolicy(interfac.getIpAddress().getAddress() + "-PriorityPolicy", 
 						((PriorityPolicy.Priority) priority.getData(priority
 								.getText())), new AnyFilter());
 				priorityPolicy.setInterface(interfac);

@@ -30,6 +30,10 @@ public class NetworkValidator {
 			return "Project ID can't be empty";
 		}
 		
+		if(objectModel.getSwitches().size() + objectModel.getAppliances().size() == 0) {
+			return "Project must have at least one router, switch or appliance";
+		}
+		
 		Set<String> interfaces = new HashSet<String>();
 		for(Interface interfac : objectModel.getPorts()) {
 			if(interfac != null && interfaces.contains(interfac.getIpAddress().getAddress())) {

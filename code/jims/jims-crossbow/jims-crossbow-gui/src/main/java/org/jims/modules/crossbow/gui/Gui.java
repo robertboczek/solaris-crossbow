@@ -54,11 +54,14 @@ import org.jims.modules.crossbow.gui.actions.GraphToModelTranslator;
 import org.jims.modules.crossbow.gui.actions.ModelToGraphTranslator;
 import org.jims.modules.crossbow.gui.actions.RepoManagerProxyFactory;
 import org.jims.modules.crossbow.gui.actions.SupervisorProxyFactory;
+import org.jims.modules.crossbow.gui.chart.ChartDisplayer;
+import org.jims.modules.crossbow.gui.chart.ChartTimeType;
 import org.jims.modules.crossbow.gui.data.GraphConnectionData;
 import org.jims.modules.crossbow.gui.data.NetworkInfo;
 import org.jims.modules.crossbow.gui.dialogs.EditResourceDialog;
 import org.jims.modules.crossbow.gui.dialogs.InterfaceStatisticsDetailsDialog;
 import org.jims.modules.crossbow.gui.dialogs.ProgressShell;
+import org.jims.modules.crossbow.gui.dialogs.SelectFlowForChart;
 import org.jims.modules.crossbow.gui.dialogs.SelectNetworkInterfacesDialog;
 import org.jims.modules.crossbow.gui.statistics.StatisticAnalyzer;
 import org.jims.modules.crossbow.gui.threads.ConnectionTester;
@@ -98,7 +101,7 @@ public class Gui extends Shell {
 	private Group buttonGroup;
 	private Button addRouterButton, addSwitchButton, addResourceButton;
 	private Button removeSelectedButton, connectButton;
-	private Button validateButton, deployButton;
+	private Button validateButton, deployButton, chartsButton;
 
 	// watek odpowiedzialny za obliczanie statystyk interfejsow
 	private StatisticAnalyzer statisticAnalyzer;
@@ -115,7 +118,7 @@ public class Gui extends Shell {
 
 	private DiscoveryHandler discoveryHandler;
 	private ConnectionTester connectionTester;
-	
+
 	private WindowTitleManager windowTitleManager;
 
 	private ObjectModel objectModel;
@@ -144,7 +147,8 @@ public class Gui extends Shell {
 
 								@Override
 								public SupervisorMBean createSupervisor() {
-									return componentProxyFactory.createProxy( SupervisorMBean.class );
+									return componentProxyFactory
+											.createProxy(SupervisorMBean.class);
 								}
 
 							}, translator));
@@ -190,7 +194,7 @@ public class Gui extends Shell {
 		this.display = display;
 
 		this.discoveryHandler = discoveryHandler;
-		this.windowTitleManager = new WindowTitleManager( this, display );
+		this.windowTitleManager = new WindowTitleManager(this, display);
 
 		Menu menu = new Menu(this, SWT.BAR);
 		setMenuBar(menu);
@@ -223,7 +227,9 @@ public class Gui extends Shell {
 
 					objectModel = new GraphToModelTranslator()
 							.translate(networkStructureHelper);
-					ConfigurationUtil.saveNetwork(selected, new NetworkInfo(objectModel, supervisorAddress.getText(), supervisorPort.getText(), projectId.getText()));
+					ConfigurationUtil.saveNetwork(selected, new NetworkInfo(
+							objectModel, supervisorAddress.getText(),
+							supervisorPort.getText(), projectId.getText()));
 				}
 			}
 		});
@@ -251,12 +257,13 @@ public class Gui extends Shell {
 
 					projectId.setText("");
 
-					NetworkInfo networkInfo = ConfigurationUtil.loadNetwork(selected);
+					NetworkInfo networkInfo = ConfigurationUtil
+							.loadNetwork(selected);
 					objectModel = networkInfo.getObjectModel();
 					projectId.setText(networkInfo.getProjectId());
 					supervisorPort.setText(networkInfo.getPort());
 					supervisorAddress.setText(networkInfo.getAddress());
-					
+
 					logger.trace("Restoring network structure from file");
 
 					new ModelToGraphTranslator().translate(graph, objectModel,
@@ -354,6 +361,7 @@ public class Gui extends Shell {
 			public void widgetSelected(SelectionEvent e) {
 				// @todo dorobic wyswietlanie okienka z informacja o systemie i
 				// autorach
+				new ChartDisplayer(ChartTimeType.HOURLY, null);
 			}
 		});
 
@@ -407,7 +415,8 @@ public class Gui extends Shell {
 				.translate(networkStructureHelper);
 
 		NetworkValidator networkValidator = new NetworkValidator();
-		String result = networkValidator.validate(projectId.getText(), objectModel);
+		String result = networkValidator.validate(projectId.getText(),
+				objectModel);
 
 		if (result != null) {
 			MessageDialog.openError(null, "Validation result", result);
@@ -450,7 +459,8 @@ public class Gui extends Shell {
 				.updateProjectIdName(networkStructureHelper);
 
 		try {
-			final SupervisorMBean supervisor = componentProxyFactory.createProxy( SupervisorMBean.class );
+			final SupervisorMBean supervisor = componentProxyFactory
+					.createProxy(SupervisorMBean.class);
 
 			if (supervisor == null) {
 				MessageDialog.openError(null, "Connection problem",
@@ -461,41 +471,39 @@ public class Gui extends Shell {
 			final ObjectModel objModel = objectModel;
 
 			CrossbowNotificationMBean crossbowNotificationMBean = componentProxyFactory
-				.createProxy( CrossbowNotificationMBean.class );
+					.createProxy(CrossbowNotificationMBean.class);
 
 			crossbowNotificationMBean.reset();
 			logger.trace("Reseting progress state before deployment");
 
-			ProgressShell progressShell = new ProgressShell(Gui.this,
-					componentProxyFactory, display);
-			progressShell.create();
-			if (progressShell.open() == Window.OK) {
-			}
-
-			new Thread() {
-
-				public void run() {
-					try {
-						Actions actions = new GraphToModelTranslator()
-								.createActions(objModel, networkStructureHelper);
-						
-						for(Map.Entry<Object, ACTION> entry : actions.getAll().entrySet()) {
-
-							logger.debug("Object with action - " + entry.getKey() + " " + entry.getValue());
-							
-						}
-
-						logger.info("Starting deployment");
-						
-						supervisor.instantiate(objModel, actions);
-						
-						networkStructureHelper.deployed();
-
-					} catch (ModelInstantiationException e) {
-						e.printStackTrace();
-					}
-				}
-			}.start();
+			/*
+			 * ProgressShell progressShell = new ProgressShell(Gui.this,
+			 * componentProxyFactory, display); progressShell.create(); if
+			 * (progressShell.open() == Window.OK) { }
+			 * 
+			 * new Thread() {
+			 * 
+			 * public void run() { try { Actions actions = new
+			 * GraphToModelTranslator() .createActions(objModel,
+			 * networkStructureHelper);
+			 * 
+			 * for(Map.Entry<Object, ACTION> entry :
+			 * actions.getAll().entrySet()) {
+			 * 
+			 * logger.debug("Object with action - " + entry.getKey() + " " +
+			 * entry.getValue());
+			 * 
+			 * }
+			 * 
+			 * logger.info("Starting deployment");
+			 * 
+			 * supervisor.instantiate(objModel, actions);
+			 * 
+			 * networkStructureHelper.deployed();
+			 * 
+			 * } catch (ModelInstantiationException e) { e.printStackTrace(); }
+			 * } }.start();
+			 */
 
 		} catch (Exception e) {
 			MessageDialog.openError(null, "Connection problem",
@@ -506,6 +514,7 @@ public class Gui extends Shell {
 		}
 
 		deployButton.setEnabled(false);
+		chartsButton.setEnabled(true);
 		logger.info("Starting new threads gathering statistics");
 		resetStatisticAnalyzer();
 	}
@@ -697,10 +706,13 @@ public class Gui extends Shell {
 							(GraphNode) (list.get(1)), d.getLeftEndpoint(), d
 									.getRightEndpoint());
 
-					System.err.println(((GraphNode) (list.get(0))).getData() + " " + d.getLeftEndpoint() + " " + ((GraphNode) (list.get(1))).getData() + " " + d.getRightEndpoint());
+					System.err.println(((GraphNode) (list.get(0))).getData()
+							+ " " + d.getLeftEndpoint() + " "
+							+ ((GraphNode) (list.get(1))).getData() + " "
+							+ d.getRightEndpoint());
 					networkStructureHelper.connect((GraphNode) (list.get(0)),
-							(GraphNode) (list.get(1)), d
-							.getLeftEndpoint(), d.getRightEndpoint());
+							(GraphNode) (list.get(1)), d.getLeftEndpoint(), d
+									.getRightEndpoint());
 
 				}
 			}
@@ -743,6 +755,28 @@ public class Gui extends Shell {
 			@Override
 			public void handleEvent(Event event) {
 				deploy();
+			}
+
+		});
+
+		// wyswietla wykresy ze statystykami
+		chartsButton = new Button(buttonGroup, SWT.PUSH);
+		FormData fd_chartsButton = new FormData();
+		fd_chartsButton.bottom = new FormAttachment(0, 337);
+		fd_chartsButton.right = new FormAttachment(0, 87);
+		fd_chartsButton.top = new FormAttachment(0, 277);
+		fd_chartsButton.left = new FormAttachment(0, 27);
+		chartsButton.setLayoutData(fd_chartsButton);
+		chartsButton.setImage(loadImage("icons/charts.jpg"));
+		chartsButton.setToolTipText("Show chart");
+		chartsButton.addListener(SWT.MouseUp, new Listener() {
+
+			@Override
+			public void handleEvent(Event event) {
+
+				SelectFlowForChart s = new SelectFlowForChart(Gui.this,
+						objectModel);
+				s.open();
 			}
 
 		});
@@ -809,9 +843,8 @@ public class Gui extends Shell {
 			public void handleEvent(Event event) {
 
 				List list = graph.getSelection();
-				if (list.size() == 1
-				    && list.get(0) instanceof GraphNode
-				    && ( ! ( list.get(0) instanceof GraphContainer ) ) ) {
+				if (list.size() == 1 && list.get(0) instanceof GraphNode
+						&& (!(list.get(0) instanceof GraphContainer))) {
 
 					GraphNode graphNode = (GraphNode) list.get(0);
 
@@ -822,7 +855,7 @@ public class Gui extends Shell {
 								public RepoManagerMBean getRepoManager() {
 
 									RepoManagerMBean repoManager = componentProxyFactory
-										.createProxy( RepoManagerMBean.class );
+											.createProxy(RepoManagerMBean.class);
 
 									if (null == repoManager) {
 										repoManager = new RepoManagerMBean() {
@@ -858,9 +891,10 @@ public class Gui extends Shell {
 						graphNode.setTooltip(new org.eclipse.draw2d.Label(
 								toolTip, null));
 						graphNode.setText(toolTip);
-						
-						//updejtuje element
-						networkStructureHelper.updateElement(graphNode.getData());
+
+						// updejtuje element
+						networkStructureHelper.updateElement(graphNode
+								.getData());
 					}
 				} else if (list.size() == 1
 						&& list.get(0) instanceof GraphConnection) {
@@ -898,7 +932,7 @@ public class Gui extends Shell {
 
 		Label label2 = new Label(buttonGroup, SWT.NONE);
 		FormData fd_label2 = new FormData();
-		fd_label2.top = new FormAttachment(5, 267);
+		fd_label2.top = new FormAttachment(5, 297);
 		fd_label2.left = new FormAttachment(0, 7);
 		label2.setLayoutData(fd_label2);
 		label2.setText("Deployment address:  ");
@@ -906,7 +940,7 @@ public class Gui extends Shell {
 
 		supervisorAddress = new Text(buttonGroup, SWT.NONE);
 		FormData fd_projectId1 = new FormData();
-		fd_projectId1.top = new FormAttachment(5, 287);
+		fd_projectId1.top = new FormAttachment(5, 317);
 		fd_projectId1.left = new FormAttachment(15, 55);
 		supervisorAddress.setLayoutData(fd_projectId1);
 		supervisorAddress.setText("");
@@ -914,7 +948,7 @@ public class Gui extends Shell {
 
 		Label label3 = new Label(buttonGroup, SWT.NONE);
 		FormData fd_label3 = new FormData();
-		fd_label3.top = new FormAttachment(5, 307);
+		fd_label3.top = new FormAttachment(5, 337);
 		fd_label3.left = new FormAttachment(0, 7);
 		label3.setLayoutData(fd_label3);
 		label3.setText("Deployment port:  ");
@@ -922,14 +956,13 @@ public class Gui extends Shell {
 
 		supervisorPort = new Text(buttonGroup, SWT.NONE);
 		FormData fd_projectId2 = new FormData();
-		fd_projectId2.top = new FormAttachment(5, 327);
+		fd_projectId2.top = new FormAttachment(5, 357);
 		fd_projectId2.left = new FormAttachment(15, 55);
 		supervisorPort.setLayoutData(fd_projectId2);
 		supervisorPort.setText("");
 		supervisorPort.pack();
 
 		Button discoverBtn = new Button(buttonGroup, SWT.PUSH);
-		discoverBtn.setEnabled(false);
 		FormData fd_discoverBtn = new FormData();
 
 		fd_discoverBtn.bottom = new FormAttachment(0, 277);
@@ -952,23 +985,36 @@ public class Gui extends Shell {
 		});
 
 		networkStructureHelper = new NetworkStructureHelper(graph, projectId);
+		networkStructureHelper
+				.addNetworkStateListener(new NetworkStructureHelper.NetworkStateListener() {
+
+					@Override
+					public void stateChanged(NetworkState networkState) {
+						chartsButton.setEnabled(NetworkState.DEPLOYED
+								.equals(networkState));
+						deployButton.setEnabled(NetworkState.DEPLOYED
+								.equals(networkState));
+					}
+				});
 		updateNetworkState(NetworkState.UNDEPLOYED);
 
 		resetConnectionDetailsLabel();
-		
+
 		// ConnectionTester instance and event listeners.
-		
+
 		connectionTester = new ConnectionTester();
-		
-		connectionTester.addConnectedListener( new WorkerMonitor( graph, componentProxyFactory, display ) );
-		
-		Map< Control, WindowTitleManager.ControlType > controls = new HashMap< Control, WindowTitleManager.ControlType >();
-		controls.put( deployButton, WindowTitleManager.ControlType.DISCONNECT_ONLY );
-		controls.put( discoverBtn, WindowTitleManager.ControlType.NORMAL );
-		
-		windowTitleManager.setControls( controls );
-		
-		connectionTester.addConnectedListener( windowTitleManager );
+
+		connectionTester.addConnectedListener(new WorkerMonitor(graph,
+				componentProxyFactory, display));
+
+		Map<Control, WindowTitleManager.ControlType> controls = new HashMap<Control, WindowTitleManager.ControlType>();
+		controls.put(deployButton,
+				WindowTitleManager.ControlType.DISCONNECT_ONLY);
+		controls.put(discoverBtn, WindowTitleManager.ControlType.NORMAL);
+
+		windowTitleManager.setControls(controls);
+
+		connectionTester.addConnectedListener(windowTitleManager);
 
 		this.addKeyListener(keyListener);
 		graph.addKeyListener(keyListener);
@@ -1063,7 +1109,7 @@ public class Gui extends Shell {
 					Switch swit = (Switch) object;
 
 					List<Endpoint> endpoints = swit.getEndpoints();
-//					System.err.println(endpoints.size());
+					// System.err.println(endpoints.size());
 					for (Endpoint endpoint : endpoints) {
 						GraphNode secondNode = findSecondEndpointObject(endpoint);
 
@@ -1282,24 +1328,37 @@ public class Gui extends Shell {
 	public String getConnectionPort() {
 		return componentProxyFactory.getMbPort();
 	}
+
 	protected DataBindingContext initDataBindings() {
 		DataBindingContext bindingContext = new DataBindingContext();
 		//
-		IObservableValue supervisorsAddressObserveTextObserveWidget = SWTObservables.observeText(supervisorAddress, SWT.Modify);
-		IObservableValue componentProxyFactoryMbServerObserveValue = PojoObservables.observeValue(componentProxyFactory, "mbServer");
-		bindingContext.bindValue(supervisorsAddressObserveTextObserveWidget, componentProxyFactoryMbServerObserveValue, null, null);
+		IObservableValue supervisorsAddressObserveTextObserveWidget = SWTObservables
+				.observeText(supervisorAddress, SWT.Modify);
+		IObservableValue componentProxyFactoryMbServerObserveValue = PojoObservables
+				.observeValue(componentProxyFactory, "mbServer");
+		bindingContext.bindValue(supervisorsAddressObserveTextObserveWidget,
+				componentProxyFactoryMbServerObserveValue, null, null);
 		//
-		IObservableValue supervisorPortObserveTextObserveWidget = SWTObservables.observeText(supervisorPort, SWT.Modify);
-		IObservableValue componentProxyFactoryMbPortObserveValue = PojoObservables.observeValue(componentProxyFactory, "mbPort");
-		bindingContext.bindValue(supervisorPortObserveTextObserveWidget, componentProxyFactoryMbPortObserveValue, null, null);
+		IObservableValue supervisorPortObserveTextObserveWidget = SWTObservables
+				.observeText(supervisorPort, SWT.Modify);
+		IObservableValue componentProxyFactoryMbPortObserveValue = PojoObservables
+				.observeValue(componentProxyFactory, "mbPort");
+		bindingContext.bindValue(supervisorPortObserveTextObserveWidget,
+				componentProxyFactoryMbPortObserveValue, null, null);
 		//
-		IObservableValue supervisorAddressObserveTextObserveWidget = SWTObservables.observeText(supervisorAddress, SWT.Modify);
-		IObservableValue connectionTesterAddressObserveValue = PojoObservables.observeValue(connectionTester, "address");
-		bindingContext.bindValue(supervisorAddressObserveTextObserveWidget, connectionTesterAddressObserveValue, null, null);
+		IObservableValue supervisorAddressObserveTextObserveWidget = SWTObservables
+				.observeText(supervisorAddress, SWT.Modify);
+		IObservableValue connectionTesterAddressObserveValue = PojoObservables
+				.observeValue(connectionTester, "address");
+		bindingContext.bindValue(supervisorAddressObserveTextObserveWidget,
+				connectionTesterAddressObserveValue, null, null);
 		//
-		IObservableValue supervisorPortObserveTextObserveWidget_1 = SWTObservables.observeText(supervisorPort, SWT.Modify);
-		IObservableValue connectionTesterPortObserveValue = PojoObservables.observeValue(connectionTester, "port");
-		bindingContext.bindValue(supervisorPortObserveTextObserveWidget_1, connectionTesterPortObserveValue, null, null);
+		IObservableValue supervisorPortObserveTextObserveWidget_1 = SWTObservables
+				.observeText(supervisorPort, SWT.Modify);
+		IObservableValue connectionTesterPortObserveValue = PojoObservables
+				.observeValue(connectionTester, "port");
+		bindingContext.bindValue(supervisorPortObserveTextObserveWidget_1,
+				connectionTesterPortObserveValue, null, null);
 		//
 		return bindingContext;
 	}

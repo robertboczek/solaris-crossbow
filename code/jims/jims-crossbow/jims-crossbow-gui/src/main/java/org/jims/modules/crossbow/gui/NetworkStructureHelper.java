@@ -2,6 +2,7 @@ package org.jims.modules.crossbow.gui;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,6 +48,8 @@ public class NetworkStructureHelper {
 	private Set<Policy> newPolicies = new HashSet<Policy>();
 	private Set<Interface> modifiedInterfaces = new HashSet<Interface>();
 	private Set<Policy> modifiedPolicies = new HashSet<Policy>();
+	
+	private List<NetworkStateListener> networkStateListeners = new LinkedList<NetworkStateListener>();
 
 	private Graph graph;
 	private Text projectId;
@@ -62,11 +65,14 @@ public class NetworkStructureHelper {
 
 	public void setNetworkState(NetworkState networkState) {
 		this.networkState = networkState;
+		for(NetworkStateListener networkStateListener : networkStateListeners) {
+			networkStateListener.stateChanged(networkState);
+		}
 	}
 
 	public void deployed() {
 
-		this.networkState = NetworkState.DEPLOYED;
+		setNetworkState(NetworkState.DEPLOYED);
 		for (Map.Entry<Object, GraphItem> entry : newObjects.entrySet()) {
 			deployedObjects.put(entry.getKey(), entry.getValue());
 		}
@@ -227,6 +233,8 @@ public class NetworkStructureHelper {
 
 		logger.trace("Creating new graph item");
 		
+		setNetworkState(NetworkState.UNDEPLOYED);
+		
 		// By default, put the item directly into the graph.
 		
 		IContainer container = graph;
@@ -338,7 +346,7 @@ public class NetworkStructureHelper {
 
 	public void clearAllItems() {
 
-		networkState = NetworkState.UNDEPLOYED;
+		setNetworkState(NetworkState.UNDEPLOYED);
 
 		newObjects.clear();
 		deployedObjects.clear();
@@ -520,6 +528,14 @@ public class NetworkStructureHelper {
 			logger.debug("Added new policy to interface list");
 			newInterfaces.add((Interface) object);
 		}
+	}
+	
+	public void addNetworkStateListener(NetworkStateListener networkStateListener) {
+		this.networkStateListeners .add(networkStateListener);
+	}
+	
+	public static interface NetworkStateListener{
+		public void stateChanged(NetworkState networkState);
 	}
 }
 

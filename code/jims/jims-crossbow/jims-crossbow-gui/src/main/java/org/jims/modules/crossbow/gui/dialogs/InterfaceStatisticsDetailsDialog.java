@@ -16,6 +16,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import org.jims.modules.crossbow.enums.LinkStatistics;
+import org.jims.modules.crossbow.gui.chart.ChartDisplayer;
+import org.jims.modules.crossbow.gui.chart.ChartTimeType;
 import org.jims.modules.crossbow.gui.data.GraphConnectionData;
 import org.jims.modules.crossbow.gui.statistics.StatisticAnalyzer.EndpointStatistic;
 import org.jims.modules.crossbow.objectmodel.resources.Interface;
@@ -39,6 +41,8 @@ public class InterfaceStatisticsDetailsDialog extends TitleAreaDialog {
 	private Text sentBytesLabel;
 	private Text sentPacketsLabel;
 	private Text avgBytesSent;
+	
+	private Combo chartType;
 
 	private GraphConnectionData graphConnectionData;
 
@@ -156,6 +160,34 @@ public class InterfaceStatisticsDetailsDialog extends TitleAreaDialog {
 		avgBytesSent = new Text(parent, SWT.NONE);
 		avgBytesSent.setText("");
 		avgBytesSent.setEnabled(false);
+		
+		Label label7 = new Label(parent, SWT.NONE);
+		label7.setText("Select chart type: ");
+
+		chartType = new Combo(parent, SWT.NONE);
+		chartType.add("Last minute");
+		chartType.setData("Last minute", ChartTimeType.MINUTELY);
+		chartType.add("Last 5 minutes");
+		chartType.setData("Last 5 minutes", ChartTimeType.FIVE_MINUTELY);
+		chartType.add("Last hour");
+		chartType.setData("Last hour", ChartTimeType.HOURLY);
+		chartType.add("Last day");
+		chartType.setData("Last day", ChartTimeType.DAILY);
+		
+		chartType.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+
+			}
+
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				logger.debug("Opening chart");
+
+				new ChartDisplayer((ChartTimeType) chartType.getData(chartType.getText()), null);
+			}
+		});
 
 		endpoints.setText("");
 
