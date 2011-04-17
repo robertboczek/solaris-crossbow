@@ -31,13 +31,13 @@ public class ChartDisplayer {
 		try {
 			double [][]data = { {344.5, 622.7, 122.3}, {544.3, 1023.9, 111.3}, {0.0, 25.2, 300.0} };
 			String legend[] = { "interface1", "interface2", "interface3" };
-			displayChart(new ChartPreparer().prepareChart(data, legend, chartTimeType));
+			displayChart(new ChartPreparer().prepareChart(data, legend, ChartDescription.CHART_TITLE, chartTimeType));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void displayChart(String urlString) throws Exception {
+	public static void displayChart(String urlString) throws Exception {
 
 		JFrame frame = new JFrame("Chart number " + ++chartNumber);
 		JLabel label = new JLabel(new ImageIcon(ImageIO
@@ -45,8 +45,6 @@ public class ChartDisplayer {
 		frame.getContentPane().add(label, BorderLayout.CENTER);
 		frame.pack();
 		frame.setVisible(true);
-		
-		
 
 	}
 

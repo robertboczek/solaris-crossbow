@@ -29,7 +29,7 @@ public class ChartPreparer {
 	 * 
 	 * @return Returns String url
 	 */
-	public String prepareChart(double [][]data, String []legend, ChartTimeType chartTimeType) {
+	public String prepareChart(double [][]data, String []legend, String chartTitle, ChartTimeType chartTimeType) {
 		
 		Line line1 = null, line2 = null, line3 = null;
 		Color c1 = Color.newColor("CA3D05"), c2 = SKYBLUE, c3 = GREEN;
@@ -66,7 +66,7 @@ public class ChartPreparer {
 		}
 		
         chart.setSize(600, 450);
-        chart.setTitle("Average bandwidth on selected interfaces and flows", WHITE, 14);
+        chart.setTitle(chartTitle, WHITE, 14);
         //chart.addHorizontalRangeMarker(40, 60, Color.newColor(RED, 30));
         //chart.addVerticalRangeMarker(70, 90, Color.newColor(GREEN, 30));
         chart.setGrid(25, 25, 3, 2);
@@ -108,6 +108,7 @@ public class ChartPreparer {
         LinearGradientFill fill = Fills.newLinearGradientFill(0, Color.newColor("363433"), 100);
         fill.addColorAndOffset(Color.newColor("2E2B2A"), 0);
         chart.setAreaFill(fill);
+        
         return chart.toURLString();
 	}
 	

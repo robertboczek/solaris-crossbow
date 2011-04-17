@@ -10,6 +10,8 @@ public class ChartDescription {
 	public static final String Y_AXIS_DESCRIPTION = "Average bandwidth [kb/s]";
 	public static final String X_AXIS_DESCRIPTION = "Time";
 	
+	public static final String CHART_TITLE = "Average bandwidth on selected interfaces and flows";
+	
 	
 
 }
