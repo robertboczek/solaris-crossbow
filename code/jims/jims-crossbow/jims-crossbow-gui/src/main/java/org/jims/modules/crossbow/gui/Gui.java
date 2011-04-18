@@ -2,10 +2,13 @@ package org.jims.modules.crossbow.gui;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import javax.management.MBeanServerConnection;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.databinding.DataBindingContext;
@@ -63,9 +66,14 @@ import org.jims.modules.crossbow.gui.dialogs.InterfaceStatisticsDetailsDialog;
 import org.jims.modules.crossbow.gui.dialogs.ProgressShell;
 import org.jims.modules.crossbow.gui.dialogs.SelectFlowForChart;
 import org.jims.modules.crossbow.gui.dialogs.SelectNetworkInterfacesDialog;
+import org.jims.modules.crossbow.gui.jmx.JmxConnector;
 import org.jims.modules.crossbow.gui.statistics.StatisticAnalyzer;
 import org.jims.modules.crossbow.gui.threads.ConnectionTester;
 import org.jims.modules.crossbow.gui.validator.NetworkValidator;
+import org.jims.modules.crossbow.gui.worker.StatsManager;
+import org.jims.modules.crossbow.gui.worker.TooltipStatsHandler;
+import org.jims.modules.crossbow.gui.worker.StatsManager.ConnectionProvider;
+import org.jims.modules.crossbow.gui.worker.TooltipStatsHandler.ContainerProvider;
 import org.jims.modules.crossbow.infrastructure.appliance.RepoManagerMBean;
 import org.jims.modules.crossbow.infrastructure.progress.CrossbowNotificationMBean;
 import org.jims.modules.crossbow.infrastructure.supervisor.SupervisorMBean;
@@ -1015,6 +1023,61 @@ public class Gui extends Shell {
 		windowTitleManager.setControls(controls);
 
 		connectionTester.addConnectedListener(windowTitleManager);
+		
+		TooltipStatsHandler tooltipStatsHandler = new TooltipStatsHandler( 
+				
+				
+				new ContainerProvider() {
+					
+					@Override
+					public GraphContainer provide( final String url ) {
+						
+						final List< GraphContainer > conts = new LinkedList< GraphContainer >();
+						
+						display.syncExec( new Runnable() {
+							
+							@Override
+							public void run() {
+								
+						for ( Object node : graph.getNodes() ) {
+							if ( ( node instanceof GraphContainer )
+							     && ( url.equals( ( ( GraphContainer ) node ).getText() ) ) ) {
+								
+								conts.add( ( GraphContainer ) node );
+								return;
+								
+							}
+						}
+								
+							}
+						});
+						
+						return conts.get( 0 );
+						
+					}
+				}
+				
+				, display );
+		
+		StatsManager statsManager = new StatsManager( componentProxyFactory, 
+				
+				new ConnectionProvider() {
+					
+					@Override
+					public MBeanServerConnection provide( String url ) {
+						try {
+							return new JmxConnector( url ).getMBeanServerConnection();
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						return null;
+					}
+				}
+				
+				, tooltipStatsHandler );
+		
+		connectionTester.addConnectedListener(statsManager);
 
 		this.addKeyListener(keyListener);
 		graph.addKeyListener(keyListener);

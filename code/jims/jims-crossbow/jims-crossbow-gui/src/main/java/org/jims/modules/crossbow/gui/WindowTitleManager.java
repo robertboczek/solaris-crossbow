@@ -28,12 +28,12 @@ public class WindowTitleManager implements ConnectionTester.ConnectionStatusList
 	
 
 	@Override
-	public void connected( final String server ) {
+	public void connected( final String server, final int port ) {
 		
 		display.asyncExec( new Runnable() {
 			public void run() {
 				
-				window.setText( "Connected to " + server );
+				window.setText( "Connected to " + server + ":" + port );
 				
 				for ( Map.Entry< Control, ControlType > entry : controls.entrySet() ) {
 					if ( ControlType.NORMAL.equals( entry.getValue() ) ) {
@@ -48,7 +48,7 @@ public class WindowTitleManager implements ConnectionTester.ConnectionStatusList
 
 
 	@Override
-	public void disconnected( String server ) {
+	public void disconnected( String server, final int port ) {
 		
 		display.asyncExec( new Runnable() {
 			public void run() {

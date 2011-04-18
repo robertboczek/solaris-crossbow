@@ -94,7 +94,7 @@ public class WorkerMonitor implements ConnectionTester.ConnectionStatusListener 
 	
 
 	@Override
-	public void connected( String server ) {
+	public void connected( String server, int port ) {
 		
 		moveItems.clear();
 		
@@ -138,7 +138,7 @@ public class WorkerMonitor implements ConnectionTester.ConnectionStatusListener 
 	
 	
 	@Override
-	public void disconnected( String server ) {
+	public void disconnected( String server, int port ) {
 		
 		display.asyncExec( new Runnable() {
 			
