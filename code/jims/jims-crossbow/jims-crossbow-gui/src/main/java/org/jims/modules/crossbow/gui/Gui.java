@@ -2,10 +2,13 @@ package org.jims.modules.crossbow.gui;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import javax.management.MBeanServerConnection;
 
 import org.apache.log4j.Logger;
 import org.eclipse.core.databinding.DataBindingContext;
@@ -63,9 +66,16 @@ import org.jims.modules.crossbow.gui.dialogs.InterfaceStatisticsDetailsDialog;
 import org.jims.modules.crossbow.gui.dialogs.ProgressShell;
 import org.jims.modules.crossbow.gui.dialogs.SelectFlowForChart;
 import org.jims.modules.crossbow.gui.dialogs.SelectNetworkInterfacesDialog;
+import org.jims.modules.crossbow.gui.jmx.JmxConnector;
 import org.jims.modules.crossbow.gui.statistics.StatisticAnalyzer;
 import org.jims.modules.crossbow.gui.threads.ConnectionTester;
 import org.jims.modules.crossbow.gui.validator.NetworkValidator;
+import org.jims.modules.crossbow.gui.worker.ActiveContainerProvider;
+import org.jims.modules.crossbow.gui.worker.JmxConnectionProvider;
+import org.jims.modules.crossbow.gui.worker.StatsManager;
+import org.jims.modules.crossbow.gui.worker.TooltipStatsHandler;
+import org.jims.modules.crossbow.gui.worker.StatsManager.ConnectionProvider;
+import org.jims.modules.crossbow.gui.worker.TooltipStatsHandler.ContainerProvider;
 import org.jims.modules.crossbow.infrastructure.appliance.RepoManagerMBean;
 import org.jims.modules.crossbow.infrastructure.progress.CrossbowNotificationMBean;
 import org.jims.modules.crossbow.infrastructure.supervisor.SupervisorMBean;
@@ -476,36 +486,26 @@ public class Gui extends Shell {
 			crossbowNotificationMBean.reset();
 			logger.trace("Reseting progress state before deployment");
 
-			/*
-			 * ProgressShell progressShell = new ProgressShell(Gui.this,
-			 * componentProxyFactory, display); progressShell.create(); if
-			 * (progressShell.open() == Window.OK) { }
-			 * 
-			 * new Thread() {
-			 * 
-			 * public void run() { try { Actions actions = new
-			 * GraphToModelTranslator() .createActions(objModel,
-			 * networkStructureHelper);
-			 * 
-			 * for(Map.Entry<Object, ACTION> entry :
-			 * actions.getAll().entrySet()) {
-			 * 
-			 * logger.debug("Object with action - " + entry.getKey() + " " +
-			 * entry.getValue());
-			 * 
-			 * }
-			 * 
-			 * logger.info("Starting deployment");
-			 * 
-			 * supervisor.instantiate(objModel, actions);
-			 * 
-			 * networkStructureHelper.deployed();
-			 * 
-			 * } catch (ModelInstantiationException e) { e.printStackTrace(); }
-			 * } }.start();
-			 */
-
-		} catch (Exception e) {
+			 ProgressShell progressShell = new ProgressShell(Gui.this,
+			 componentProxyFactory, display); progressShell.create(); if
+			 (progressShell.open() == Window.OK) { }
+			 new Thread() {
+			 public void run() { try { Actions actions = new
+			 GraphToModelTranslator() .createActions(objModel,
+			 networkStructureHelper);
+			 for(Map.Entry<Object, ACTION> entry :
+			 actions.getAll().entrySet()) {
+			 logger.debug("Object with action - " + entry.getKey() + " " +
+			 entry.getValue());
+			 }
+			 logger.info("Starting deployment");
+			 supervisor.instantiate(objModel, actions);
+			 networkStructureHelper.deployed();
+			 } catch (ModelInstantiationException e) { e.printStackTrace(); }
+			 } }.start();
+			 
+			 
+			 } catch (Exception e) {
 			MessageDialog.openError(null, "Connection problem",
 					"Couldn't get Supervisor.class");
 
@@ -1021,6 +1021,18 @@ public class Gui extends Shell {
 		windowTitleManager.setControls(controls);
 
 		connectionTester.addConnectedListener(windowTitleManager);
+		
+		// Worker / node basic stats.
+		
+		TooltipStatsHandler tooltipStatsHandler = new TooltipStatsHandler( 
+			new ActiveContainerProvider( display, graph ), display, 5000
+		);
+		
+		StatsManager statsManager = new StatsManager( componentProxyFactory,
+		                                              new JmxConnectionProvider(),
+		                                              tooltipStatsHandler );
+		
+		connectionTester.addConnectedListener(statsManager);
 
 		this.addKeyListener(keyListener);
 		graph.addKeyListener(keyListener);

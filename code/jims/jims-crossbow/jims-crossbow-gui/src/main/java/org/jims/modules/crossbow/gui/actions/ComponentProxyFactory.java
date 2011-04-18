@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.management.JMX;
 import javax.management.MBeanServerConnection;
+import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
 import org.apache.log4j.Logger;
@@ -13,6 +14,7 @@ import org.jims.modules.crossbow.infrastructure.appliance.RepoManagerMBean;
 import org.jims.modules.crossbow.infrastructure.gatherer.StatisticsGathererMBean;
 import org.jims.modules.crossbow.infrastructure.progress.CrossbowNotificationMBean;
 import org.jims.modules.crossbow.infrastructure.supervisor.SupervisorMBean;
+import org.jims.modules.solaris.solaris10.mbeans.GlobalZoneMonitoringMBean;
 
 public class ComponentProxyFactory {
 	
@@ -23,6 +25,8 @@ public class ComponentProxyFactory {
 		objectNames.put( CrossbowNotificationMBean.class, "Crossbow:type=CrossbowNotification" );
 		objectNames.put( StatisticsGathererMBean.class, "Crossbow:type=StatisticsGatherer" );
 		
+		objectNames.put( GlobalZoneMonitoringMBean.class, "solaris10.monitoring.global:type=ZoneMonitor,role=monitoring" );
+		
 	}
 	
 	
@@ -30,24 +34,27 @@ public class ComponentProxyFactory {
 	public < T > T createProxy( Class< T > klass ) {
 		
 		if ( refreshMBeanServerConnection() || ( null == proxies.get( klass ) ) ) {
-
-			try {
-
-				T proxy = JMX.newMBeanProxy( mbsc, new ObjectName( objectNames.get( klass ) ), klass );
-				proxies.put( klass, proxy );
-
-			} catch ( Exception e ) {
-
-				// TODO log here
-
-			}
-
+			proxies.put( klass, createProxy( klass, mbsc ) );
 		}
 		
 		return ( T ) proxies.get( klass );
 		
 	}
 	
+	
+	public < T > T createProxy( Class< T > klass, MBeanServerConnection mbsc ) {
+		
+		T res = null;
+		
+		try {
+			res = JMX.newMBeanProxy( mbsc, new ObjectName( objectNames.get( klass ) ), klass );
+		} catch ( Exception e ) {
+			logger.error( "Could not create proxy for " + klass, e );
+		}
+				
+		return res;
+		
+	}
 	
 
 	private boolean refreshMBeanServerConnection() {

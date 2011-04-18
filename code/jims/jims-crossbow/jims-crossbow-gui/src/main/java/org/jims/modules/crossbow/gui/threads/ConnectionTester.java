@@ -15,8 +15,8 @@ import org.jims.modules.crossbow.gui.jmx.JmxConnector;
 public class ConnectionTester extends Thread {
 	
 	public static interface ConnectionStatusListener {
-		public void connected( String server );
-		public void disconnected( String server );
+		public void connected( String server, int port );
+		public void disconnected( String server, int port );
 	}
 
 	private static final int DELAY = 15000;
@@ -81,11 +81,11 @@ public class ConnectionTester extends Thread {
 					
 					if ( connected ) {
 						for ( ConnectionStatusListener l : listeners ) {
-							l.connected( address + ":" + port );
+							l.connected( address, Integer.parseInt( port ) );
 						}
-					} else  {
+					} else {
 						for ( ConnectionStatusListener l : listeners ) {
-							l.disconnected( address + ":" + port );
+							l.disconnected( address, Integer.parseInt( port ) );
 						}
 					}
 					

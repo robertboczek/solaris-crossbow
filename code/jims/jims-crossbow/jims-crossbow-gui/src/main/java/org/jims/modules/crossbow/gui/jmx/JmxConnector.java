@@ -1,8 +1,5 @@
 package org.jims.modules.crossbow.gui.jmx;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-
 import javax.management.MBeanServerConnection;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
@@ -16,19 +13,16 @@ import javax.management.remote.JMXServiceURL;
  */
 public class JmxConnector {
 
-	private int port;
-	private String address;
-
-	private MBeanServerConnection mbsc;
-
+	public JmxConnector( String url ) {
+		this.url = url;
+	}
+	
 	public JmxConnector(String address, int port) {
-		this.address = address;
-		this.port = port;
+		this.url = "service:jmx:rmi:///jndi/rmi://" + address + ":" + port + "/jims";
 	}
 	
 	public String getUrl() {
-		return "service:jmx:rmi:///jndi/rmi://" + address + ":" + port
-		+ "/jims";
+		return url;
 	}
 
 	public MBeanServerConnection getMBeanServerConnection() throws Exception {
@@ -43,5 +37,9 @@ public class JmxConnector {
 
 		return mbsc;
 	}
+	
+	
+	private String url;
+	private MBeanServerConnection mbsc;
 
 }
