@@ -17,11 +17,12 @@ public class TooltipStatsHandler implements StatsManager.StatsHandler {
 	public static interface ContainerProvider {
 		public GraphContainer provide( String url );
 	}
+
 	
-	
-	public TooltipStatsHandler( ContainerProvider provider, Display display ) {
+	public TooltipStatsHandler( ContainerProvider provider, Display display, int interval ) {
 		this.provider = provider;
 		this.display = display;
+		this.interval = interval;
 	}
 
 	@Override
@@ -34,12 +35,13 @@ public class TooltipStatsHandler implements StatsManager.StatsHandler {
 			@Override
 			public void run() {
 				
-				logger.debug( "Refreshing worker(s) statistics." );
-				
 				for ( Map.Entry< String, GlobalZoneMonitoringMBean > e : monitors.entrySet() ) {
 					
 					String url = e.getKey();
 					final GlobalZoneMonitoringMBean monitor = e.getValue();
+					
+					logger.debug( String.format( "Refreshing worker's statistics (url: %s).",
+					                             url ) );
 					
 					final GraphContainer container = TooltipStatsHandler.this.provider.provide( url );
 					
@@ -77,7 +79,7 @@ public class TooltipStatsHandler implements StatsManager.StatsHandler {
 		};
 		
 		timer = new Timer();
-		timer.schedule( task, 0, 5000 );
+		timer.schedule( task, 0, interval );
 		
 	}
 	
@@ -95,6 +97,7 @@ public class TooltipStatsHandler implements StatsManager.StatsHandler {
 	private Display display;
 	TimerTask task;
 	Timer timer;
+	private int interval;
 	
 	private static final Logger logger = Logger.getLogger( TooltipStatsHandler.class );
 

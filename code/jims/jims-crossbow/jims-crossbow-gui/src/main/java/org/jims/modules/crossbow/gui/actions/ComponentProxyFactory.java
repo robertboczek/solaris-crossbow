@@ -34,13 +34,7 @@ public class ComponentProxyFactory {
 	public < T > T createProxy( Class< T > klass ) {
 		
 		if ( refreshMBeanServerConnection() || ( null == proxies.get( klass ) ) ) {
-
-			try {
-				proxies.put( klass, createProxy( klass, mbsc ) );
-			} catch ( Exception e ) {
-				// TODO log here
-			}
-
+			proxies.put( klass, createProxy( klass, mbsc ) );
 		}
 		
 		return ( T ) proxies.get( klass );
@@ -55,7 +49,7 @@ public class ComponentProxyFactory {
 		try {
 			res = JMX.newMBeanProxy( mbsc, new ObjectName( objectNames.get( klass ) ), klass );
 		} catch ( Exception e ) {
-			// TODO log
+			logger.error( "Could not create proxy for " + klass, e );
 		}
 				
 		return res;

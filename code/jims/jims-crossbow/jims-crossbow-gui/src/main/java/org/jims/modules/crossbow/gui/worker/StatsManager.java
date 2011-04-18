@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.management.MBeanServerConnection;
 
+import org.apache.log4j.Logger;
 import org.jims.modules.crossbow.gui.actions.ComponentProxyFactory;
 import org.jims.modules.crossbow.gui.threads.ConnectionTester;
 import org.jims.modules.crossbow.infrastructure.supervisor.SupervisorMBean;
@@ -43,7 +44,8 @@ public class StatsManager implements ConnectionTester.ConnectionStatusListener {
 		
 		if ( null == supervisor ) {
 			
-			// TODO-DAWID  log error here
+			logger.error( String.format( "Supervisor not found. (server: %s, port: %d)",
+			                             server, port ) );
 			
 		} else {
 			
@@ -59,7 +61,7 @@ public class StatsManager implements ConnectionTester.ConnectionStatusListener {
 			}
 			
 			if ( null == handler ) {
-				// TODO-DAWID  log error here
+				logger.error( "No handler set." );
 			} else {
 				handler.handle( monitors );
 			}
@@ -78,5 +80,7 @@ public class StatsManager implements ConnectionTester.ConnectionStatusListener {
 	private ComponentProxyFactory proxyFactory;
 	private ConnectionProvider provider;
 	private StatsHandler handler;
+	
+	private static final Logger logger  = Logger.getLogger( StatsManager.class );
 
 }

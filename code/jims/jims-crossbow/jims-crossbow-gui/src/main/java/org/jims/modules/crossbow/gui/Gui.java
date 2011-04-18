@@ -70,6 +70,8 @@ import org.jims.modules.crossbow.gui.jmx.JmxConnector;
 import org.jims.modules.crossbow.gui.statistics.StatisticAnalyzer;
 import org.jims.modules.crossbow.gui.threads.ConnectionTester;
 import org.jims.modules.crossbow.gui.validator.NetworkValidator;
+import org.jims.modules.crossbow.gui.worker.ActiveContainerProvider;
+import org.jims.modules.crossbow.gui.worker.JmxConnectionProvider;
 import org.jims.modules.crossbow.gui.worker.StatsManager;
 import org.jims.modules.crossbow.gui.worker.TooltipStatsHandler;
 import org.jims.modules.crossbow.gui.worker.StatsManager.ConnectionProvider;
@@ -484,36 +486,26 @@ public class Gui extends Shell {
 			crossbowNotificationMBean.reset();
 			logger.trace("Reseting progress state before deployment");
 
-			/*
-			 * ProgressShell progressShell = new ProgressShell(Gui.this,
-			 * componentProxyFactory, display); progressShell.create(); if
-			 * (progressShell.open() == Window.OK) { }
-			 * 
-			 * new Thread() {
-			 * 
-			 * public void run() { try { Actions actions = new
-			 * GraphToModelTranslator() .createActions(objModel,
-			 * networkStructureHelper);
-			 * 
-			 * for(Map.Entry<Object, ACTION> entry :
-			 * actions.getAll().entrySet()) {
-			 * 
-			 * logger.debug("Object with action - " + entry.getKey() + " " +
-			 * entry.getValue());
-			 * 
-			 * }
-			 * 
-			 * logger.info("Starting deployment");
-			 * 
-			 * supervisor.instantiate(objModel, actions);
-			 * 
-			 * networkStructureHelper.deployed();
-			 * 
-			 * } catch (ModelInstantiationException e) { e.printStackTrace(); }
-			 * } }.start();
-			 */
-
-		} catch (Exception e) {
+			 ProgressShell progressShell = new ProgressShell(Gui.this,
+			 componentProxyFactory, display); progressShell.create(); if
+			 (progressShell.open() == Window.OK) { }
+			 new Thread() {
+			 public void run() { try { Actions actions = new
+			 GraphToModelTranslator() .createActions(objModel,
+			 networkStructureHelper);
+			 for(Map.Entry<Object, ACTION> entry :
+			 actions.getAll().entrySet()) {
+			 logger.debug("Object with action - " + entry.getKey() + " " +
+			 entry.getValue());
+			 }
+			 logger.info("Starting deployment");
+			 supervisor.instantiate(objModel, actions);
+			 networkStructureHelper.deployed();
+			 } catch (ModelInstantiationException e) { e.printStackTrace(); }
+			 } }.start();
+			 
+			 
+			 } catch (Exception e) {
 			MessageDialog.openError(null, "Connection problem",
 					"Couldn't get Supervisor.class");
 
@@ -995,15 +987,22 @@ public class Gui extends Shell {
 		networkStructureHelper = new NetworkStructureHelper(graph, projectId);
 		networkStructureHelper
 				.addNetworkStateListener(new NetworkStructureHelper.NetworkStateListener() {
+					
+				  public void stateChanged(final NetworkState networkState) {
 
-					@Override
-					public void stateChanged(NetworkState networkState) {
-						chartsButton.setEnabled(NetworkState.DEPLOYED
-								.equals(networkState));
-						deployButton.setEnabled(NetworkState.DEPLOYED
-								.equals(networkState));
-					}
-				});
+				  	            display.asyncExec(new Runnable() {
+				  	
+				  	              @Override
+				  	              public void run() {
+				  	                chartsButton.setEnabled(NetworkState.DEPLOYED
+				  	                    .equals(networkState));
+				  	                deployButton.setEnabled(NetworkState.DEPLOYED
+				  	                    .equals(networkState));
+				  	              } } );
+					
+					
+
+				  } } );
 		updateNetworkState(NetworkState.UNDEPLOYED);
 
 		resetConnectionDetailsLabel();
@@ -1024,58 +1023,15 @@ public class Gui extends Shell {
 
 		connectionTester.addConnectedListener(windowTitleManager);
 		
-		TooltipStatsHandler tooltipStatsHandler = new TooltipStatsHandler( 
-				
-				
-				new ContainerProvider() {
-					
-					@Override
-					public GraphContainer provide( final String url ) {
-						
-						final List< GraphContainer > conts = new LinkedList< GraphContainer >();
-						
-						display.syncExec( new Runnable() {
-							
-							@Override
-							public void run() {
-								
-						for ( Object node : graph.getNodes() ) {
-							if ( ( node instanceof GraphContainer )
-							     && ( url.equals( ( ( GraphContainer ) node ).getText() ) ) ) {
-								
-								conts.add( ( GraphContainer ) node );
-								return;
-								
-							}
-						}
-								
-							}
-						});
-						
-						return conts.get( 0 );
-						
-					}
-				}
-				
-				, display );
+		// Worker / node basic stats.
 		
-		StatsManager statsManager = new StatsManager( componentProxyFactory, 
-				
-				new ConnectionProvider() {
-					
-					@Override
-					public MBeanServerConnection provide( String url ) {
-						try {
-							return new JmxConnector( url ).getMBeanServerConnection();
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						return null;
-					}
-				}
-				
-				, tooltipStatsHandler );
+		TooltipStatsHandler tooltipStatsHandler = new TooltipStatsHandler( 
+			new ActiveContainerProvider( display, graph ), display, 5000
+		);
+		
+		StatsManager statsManager = new StatsManager( componentProxyFactory,
+		                                              new JmxConnectionProvider(),
+		                                              tooltipStatsHandler );
 		
 		connectionTester.addConnectedListener(statsManager);
 
