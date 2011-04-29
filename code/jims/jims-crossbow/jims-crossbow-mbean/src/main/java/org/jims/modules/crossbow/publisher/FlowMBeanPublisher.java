@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
  *
  * @author cieplik
  */
-public class FlowMBeanPublisher extends MBeanPublisher {
+public class FlowMBeanPublisher extends MBeanPublisher< FlowMBean > {
 
 	/**
 	 * @see  MBeanPublisher#MBeanPublisher( javax.management.MBeanServer )
@@ -24,19 +24,17 @@ public class FlowMBeanPublisher extends MBeanPublisher {
 
 
 	@Override
-	protected boolean identifies( Object id, Object o ) {
+	protected boolean identifies( Object id, FlowMBean o ) {
 		return ( ( FlowMBean ) o ).getName().equals( id );
 	}
 
 
 	@Override
-	protected ObjectName createObjectName( Object object ) throws MalformedObjectNameException {
-
-		FlowMBean flowMBean = ( FlowMBean ) object;
+	protected ObjectName createObjectName( FlowMBean object ) throws MalformedObjectNameException {
 
 		return new ObjectName( String.format(
 			"Crossbow:type=Flow,link=%s,name=%s",
-			flowMBean.getLink(), flowMBean.getName()
+			object.getLink(), object.getName()
 		) );
 
 	}

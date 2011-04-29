@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
  * 
  * @author robert boczek
  */
-public class VNicMBeanPublisher extends MBeanPublisher {
+public class VNicMBeanPublisher extends MBeanPublisher< VNicMBean > {
 
     private static final Logger logger = Logger.getLogger(VNicMBeanPublisher.class);
 
@@ -38,9 +38,7 @@ public class VNicMBeanPublisher extends MBeanPublisher {
 
      */
     @Override
-    protected ObjectName createObjectName(Object object) throws MalformedObjectNameException {
-
-			VNicMBean vnic = ( VNicMBean ) object;
+    protected ObjectName createObjectName(VNicMBean vnic) throws MalformedObjectNameException {
 
 			String parent = "unknown";
 			try {
@@ -58,7 +56,7 @@ public class VNicMBeanPublisher extends MBeanPublisher {
      * @see MBeanPublisher#identifies(java.lang.Object, java.lang.Object)
      */
     @Override
-    protected boolean identifies(Object id, Object o) {
+    protected boolean identifies(Object id, VNicMBean o) {
         return id.equals(o);
     }
 }

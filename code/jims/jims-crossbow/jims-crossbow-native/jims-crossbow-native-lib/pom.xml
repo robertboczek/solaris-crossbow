@@ -18,6 +18,7 @@
 		<module>jims-crossbow-native-lib-etherstub</module>
 		<module>jims-crossbow-native-lib-flow</module>
 		<module>jims-crossbow-native-lib-link</module>
+		<module>jims-crossbow-native-lib-vlan</module>
 	</modules>
 
 	<dependencies>

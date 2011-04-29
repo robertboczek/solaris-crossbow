@@ -31,6 +31,10 @@ import javax.management.timer.Timer;
 import org.apache.log4j.Logger;
 import org.jims.modules.crossbow.flow.FlowAccounting;
 import org.jims.modules.crossbow.jna.JNALinkHelper;
+import org.jims.modules.crossbow.jna.JNAVlanHelper;
+import org.jims.modules.crossbow.lib.VlanHelper;
+import org.jims.modules.crossbow.publisher.VlanMBeanPublisher;
+import org.jims.modules.crossbow.vlan.VlanManager;
 import org.jims.modules.crossbow.zones.ZoneCopier;
 import org.jims.modules.crossbow.zones.ZoneCopierMBean;
 
@@ -92,7 +96,8 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 
 		for ( String lib : Arrays.asList( JNAEtherstubHelper.LIB_NAME,
 		                                  JNAFlowHelper.LIB_NAME,
-		                                  JNALinkHelper.LIB_NAME ) ) {
+		                                  JNALinkHelper.LIB_NAME,
+		                                  JNAVlanHelper.LIB_NAME ) ) {
 
 			String destFileName = libraryPath + File.separator + lib;
 
@@ -106,6 +111,7 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 		NicHelper nicHelper = new JNANicHelper( libraryPath, linkValidator );
 		VNicHelper vnicHelper = new JNAVNicHelper( libraryPath, linkValidator );
 		EtherstubHelper etherstubHelper = new JNAEtherstubHelper( libraryPath );
+		VlanHelper vlanHelper = new JNAVlanHelper( libraryPath );
 
 		// Create managers.
 
@@ -125,6 +131,10 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 		etherstubManager.setEtherstHelper( etherstubHelper );
 		etherstubManager.setPublisher( new EtherstubMBeanPublisher( server ) );
 
+		VlanManager vlanManager = new VlanManager();
+		vlanManager.setVlanHelper( vlanHelper );
+		vlanManager.setPublisher( new VlanMBeanPublisher( server ) );
+
 		// Create FlowAccounting.
 
 		FlowAccounting flowAccounting = new FlowAccounting();
@@ -138,6 +148,7 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 		timer.addNotificationListener(nicManager, null, null);
 		timer.addNotificationListener(vNicManager, null, null);
 		timer.addNotificationListener(etherstubManager, null, null);
+		timer.addNotificationListener(vlanManager, null, null);
 		timer.start();
 
                 // Create ZoneCopier MBean
@@ -150,6 +161,7 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 		server.registerMBean(nicManager, new ObjectName("Crossbow:type=NicManager"));
 		server.registerMBean(vNicManager, new ObjectName("Crossbow:type=VNicManager"));
 		server.registerMBean(etherstubManager, new ObjectName("Crossbow:type=EtherstubManager"));
+		server.registerMBean(vlanManager, new ObjectName("Crossbow:type=VlanManager"));
 		server.registerMBean(timer, new ObjectName("Crossbow:type=Timer"));
                 server.registerMBean(zoneCopier, new ObjectName("Crossbow:type=ZoneCopier"));
 

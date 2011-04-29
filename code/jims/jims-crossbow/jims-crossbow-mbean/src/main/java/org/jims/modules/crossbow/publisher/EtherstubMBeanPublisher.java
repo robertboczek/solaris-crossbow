@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
  *
  * @author robert boczek
  */
-public class EtherstubMBeanPublisher extends MBeanPublisher {
+public class EtherstubMBeanPublisher extends MBeanPublisher< EtherstubMBean > {
 
     private static final Logger logger = Logger.getLogger(EtherstubMBeanPublisher.class);
 
@@ -37,18 +37,18 @@ public class EtherstubMBeanPublisher extends MBeanPublisher {
      * @throws MalformedObjectNameException
     */
     @Override
-    protected ObjectName createObjectName(Object object) throws MalformedObjectNameException {
+    protected ObjectName createObjectName(EtherstubMBean object) throws MalformedObjectNameException {
         
         return new ObjectName(String.format(
                 "Crossbow:type=Etherstub,name=%s",
-                ((EtherstubMBean) object).getName()));
+                object.getName()));
     }
 
     /**
      * @see MBeanPublisher#identifies(java.lang.Object, java.lang.Object)
      */
     @Override
-    protected boolean identifies(Object id, Object o) {
+    protected boolean identifies(Object id, EtherstubMBean o) {
         return id.equals(o);
     }
 }

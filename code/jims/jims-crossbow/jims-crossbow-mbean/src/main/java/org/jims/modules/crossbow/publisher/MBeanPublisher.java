@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
  *
  * @author cieplik
  */
-public abstract class MBeanPublisher implements Publisher {
+public abstract class MBeanPublisher < T > implements Publisher< T > {
 
 	/**
 	 * @brief  Creates MBeanPublisher for specified MBeanServer.
@@ -33,7 +33,7 @@ public abstract class MBeanPublisher implements Publisher {
 	 * @see  Publisher#publish(java.lang.Object)
 	 */
 	@Override
-	public void publish( Object object ) {
+	public void publish( T object ) {
 
 		if ( published.contains( object ) ) {
 
@@ -77,7 +77,7 @@ public abstract class MBeanPublisher implements Publisher {
 
 		boolean found = false;
 
-		for ( Object o : published ) {
+		for ( T o : published ) {
 
 			if ( identifies( id, o )  ) {
 
@@ -113,7 +113,7 @@ public abstract class MBeanPublisher implements Publisher {
 	 * @see  Publisher#getPublished()
 	 */
 	@Override
-	public List< Object > getPublished() {
+	public List< T > getPublished() {
 		return published;
 	}
 
@@ -127,14 +127,14 @@ public abstract class MBeanPublisher implements Publisher {
 	 *
 	 * @return  ObjectName for object
 	 */
-	protected abstract ObjectName createObjectName( Object object ) throws MalformedObjectNameException;
+	protected abstract ObjectName createObjectName( T object ) throws MalformedObjectNameException;
 
-	protected abstract boolean identifies( Object id, Object o );
+	protected abstract boolean identifies( Object id, T o );
 
 
 	private MBeanServer mBeanServer = null;
-	private List published = new LinkedList();
+	private List< T > published = new LinkedList< T >();
 
-	private static final Logger logger = Logger.getLogger( FlowMBeanPublisher.class );
+	private static final Logger logger = Logger.getLogger( MBeanPublisher.class );
 
 }

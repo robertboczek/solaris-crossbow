@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
  *
  * @author cieplik
  */
-public class NicMBeanPublisher extends MBeanPublisher {
+public class NicMBeanPublisher extends MBeanPublisher< NicMBean > {
 
 	/**
 	 * @see  MBeanPublisher#MBeanPublisher( javax.management.MBeanServer )
@@ -27,8 +27,8 @@ public class NicMBeanPublisher extends MBeanPublisher {
 	 * @see  MBeanPublisher#identifies( java.lang.Object, java.lang.Object )
 	 */
 	@Override
-	protected boolean identifies( Object id, Object o ) {
-		return ( ( NicMBean ) o ).getName().equals( o );
+	protected boolean identifies( Object id, NicMBean o ) {
+		return o.getName().equals( o );
 	}
 
 
@@ -36,11 +36,11 @@ public class NicMBeanPublisher extends MBeanPublisher {
 	 * @see  MBeanPublisher#createObjectName( java.lang.Object )
 	 */
 	@Override
-	protected ObjectName createObjectName( Object object ) throws MalformedObjectNameException {
+	protected ObjectName createObjectName( NicMBean object ) throws MalformedObjectNameException {
 
 		return new ObjectName( String.format(
 			"Crossbow:type=Nic,name=%s",
-			( ( NicMBean ) object ).getName()
+			object.getName()
 		) );
 
 	}

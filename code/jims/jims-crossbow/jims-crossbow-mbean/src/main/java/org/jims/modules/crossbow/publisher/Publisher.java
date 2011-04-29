@@ -9,14 +9,14 @@ import java.util.List;
  *
  * @author cieplik
  */
-public interface Publisher {
+public interface Publisher < T > {
 
 	/**
 	 * Publishes object.
 	 *
 	 * @param  object  object to be published
 	 */
-	public void publish( Object object );
+	public void publish( T object );
 
 	/**
 	 * Unpublishes object.
@@ -32,6 +32,6 @@ public interface Publisher {
 	 *
 	 * @return  list of published objects
 	 */
-	public List< Object > getPublished();
+	public List< T > getPublished();
 
 }

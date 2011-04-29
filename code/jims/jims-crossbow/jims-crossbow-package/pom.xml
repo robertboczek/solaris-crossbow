@@ -35,6 +35,12 @@
 		</dependency>
 		<dependency>
 			<groupId>jims</groupId>
+			<artifactId>jims-crossbow-native-lib-vlan</artifactId>
+			<version>3.0.0</version>
+			<type>nar</type>
+		</dependency>
+		<dependency>
+			<groupId>jims</groupId>
 			<artifactId>jims-crossbow-mbean</artifactId>
 			<version>3.0.0</version>
 			<type>jar</type>
@@ -119,6 +125,12 @@
 								</resource>
 								<resource>
 									<directory>target/nar/jims-crossbow-native-lib-link-${project.version}-${os.arch}-${os.name}-gcc-shared/lib/${os.arch}-${os.name}-gcc/shared</directory>
+									<includes>
+										<include>*.so</include>
+									</includes>
+								</resource>
+								<resource>
+									<directory>target/nar/jims-crossbow-native-lib-vlan-${project.version}-${os.arch}-${os.name}-gcc-shared/lib/${os.arch}-${os.name}-gcc/shared</directory>
 									<includes>
 										<include>*.so</include>
 									</includes>
