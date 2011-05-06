@@ -125,6 +125,37 @@ public class ModelHelper {
 
 
 	/**
+	 *      ROUTER
+	 *     /      \
+	 *  IFACE0   IFACE1
+	 *    |        |
+	 *  SWITCH0  SWITCH1
+	 *
+	 * @param projectId
+	 * @return
+	 */
+	public static ObjectModel getSimplestRouterModel( String projectId ) {
+
+		Switch s0 = new Switch( "SWITCH0", projectId );
+		Switch s1 = new Switch( "SWITCH1", projectId );
+
+		Interface routerFirstIface = new Interface( "IFACE0", projectId, s0, new IpAddress( "192.168.18.1", 24 ) );
+		Interface routerSecondIface = new Interface( "IFACE1", projectId, s1, new IpAddress( "192.168.19.1", 24 ) );
+
+		Appliance router = new Appliance( "ROUTER", projectId, ApplianceType.ROUTER, "dummy" );
+		router.addInterface( routerFirstIface );
+		router.addInterface( routerSecondIface );
+
+		ObjectModel model = new ObjectModel();
+
+		model.registerAll( s0, s1, routerFirstIface, routerSecondIface, router );
+
+		return model;
+
+	}
+
+
+	/**
 	 *  FIRST         ROUTER         SECOND
 	 *    |          /      \          |
 	 *  IFACE0    IFACE0   IFACE1    IFACE1
@@ -133,14 +164,12 @@ public class ModelHelper {
 	 */
 	public static ObjectModel getSimpleRouterModel( String projectId ) {
 
-		Switch s0 = new Switch( "SWITCH0", projectId );
-		Switch s1 = new Switch( "SWITCH1", projectId );
+		ObjectModel model = getSimplestRouterModel( projectId );
+
+		Switch s0 = model.getSwitches().get( 0 );
+		Switch s1 = model.getSwitches().get( 1 );
 
 		Interface firstIface = new Interface( "IFACE0", projectId, s0, new IpAddress( "192.168.18.2", 24 ) );
-
-		Interface routerFirstIface = new Interface( "IFACE0", projectId, s0, new IpAddress( "192.168.18.1", 24 ) );
-		Interface routerSecondIface = new Interface( "IFACE1", projectId, s1, new IpAddress( "192.168.19.1", 24 ) );
-
 		Interface secondIface = new Interface( "IFACE0", projectId, s1, new IpAddress( "192.168.19.2", 24 ) );
 
 		Appliance first = new Appliance( "FIRST", projectId, ApplianceType.MACHINE, "dummy" );
@@ -149,14 +178,7 @@ public class ModelHelper {
 		Appliance second = new Appliance( "SECOND", projectId, ApplianceType.MACHINE, "dummy" );
 		second.addInterface( secondIface );
 
-		Appliance router = new Appliance( "ROUTER", projectId, ApplianceType.ROUTER, "dummy" );
-		router.addInterface( routerFirstIface );
-		router.addInterface( routerSecondIface );
-
-		ObjectModel model = new ObjectModel();
-		model.registerAll( Arrays.asList( s0, s1, firstIface, secondIface,
-		                                  routerFirstIface, routerSecondIface,
-		                                  first, second, router ) );
+		model.registerAll( firstIface, secondIface, first, second );
 
 		return model;
 

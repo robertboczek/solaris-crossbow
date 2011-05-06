@@ -18,6 +18,7 @@ import org.jims.modules.crossbow.objectmodel.Actions;
 import org.jims.modules.crossbow.objectmodel.Assignments;
 import org.jims.modules.crossbow.objectmodel.ObjectModel;
 import org.jims.modules.crossbow.objectmodel.VlanInterfaceAssignment;
+import org.jims.modules.crossbow.objectmodel.filters.address.IpAddress;
 import org.jims.modules.crossbow.objectmodel.resources.Appliance;
 import org.jims.modules.crossbow.objectmodel.resources.ApplianceType;
 import org.jims.modules.crossbow.objectmodel.resources.Interface;
@@ -166,6 +167,7 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 
 					Map< Interface, String > desc = new HashMap< Interface, String >();
 
+					int i = 1;
 					for ( String target : targets ) {
 
 						Appliance router = new Appliance( app.getResourceId(), app.getProjectId(),
@@ -180,7 +182,8 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 
 						// Add one more interface used for internal router communication.
 
-						Interface vlan = new Interface( "INTRA0", app.getProjectId() );
+						Interface vlan = new Interface( "INTRA0", app.getProjectId(), null,
+						                                new IpAddress( "200.0.0." + i++, 24 ) );
 						router.addInterface( vlan );
 
 						toreg.add( vlan );

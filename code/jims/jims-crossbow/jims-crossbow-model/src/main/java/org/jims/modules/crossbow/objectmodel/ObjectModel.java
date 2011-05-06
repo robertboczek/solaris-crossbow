@@ -56,7 +56,7 @@ public class ObjectModel implements Serializable {
 
 	}
 
-	public void registerAll( Collection< ? > entities ) {
+	public void registerAll( Object ... entities ) {
 		for ( Object entity : entities ) {
 			register( entity );
 		}
