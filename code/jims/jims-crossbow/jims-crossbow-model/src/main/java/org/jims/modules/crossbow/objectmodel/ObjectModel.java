@@ -62,6 +62,12 @@ public class ObjectModel implements Serializable {
 		}
 	}
 
+	public void registerAll( Collection< Object > entities ) {
+		for ( Object entity : entities ) {
+			register( entity );
+		}
+	}
+
 	public void remove( Appliance app ) {
 		appliances.remove( app );
 	}
