@@ -20,7 +20,7 @@ public class Worker01SimpleModelLinkRemovalIT extends WorkerITBase {
 		model.getSwitches().clear();
 
 		Actions actions = new Actions();
-		actions.insert( model.getPorts().get( 0 ), Actions.ACTION.REM );
+		actions.put( model.getInterfaces().get( 0 ), Actions.Action.REM );
 
 		worker.instantiate( model, actions, new Assignments() );
 

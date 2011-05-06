@@ -2,6 +2,7 @@ package org.jims.modules.crossbow.objectmodel;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -11,8 +12,7 @@ import java.util.Map;
  */
 public class Actions implements Serializable {
 
-	public enum ACTION {
-
+	public enum Action {
 		ADD,
 		REM,
 		UPD,
@@ -20,24 +20,45 @@ public class Actions implements Serializable {
 	}
 
 
-	public void insert( Object o, ACTION a ) {
+	public void put( Object o, Action a ) {
 		actions.put( o, a );
 	}
 
 
-	public Map< Object, ACTION > getAll() {
+	public Map< Object, Action > getAll() {
 		return actions;
 	}
 
 
-	public ACTION get( Object o ) {
+	public Action get( Object o ) {
+		return actions.get( o );
 
-		ACTION a = actions.get( o );
-		return ( null == a ) ? ACTION.ADD : a;
+		// Action a = actions.get( o );
+		// return ( null == a ) ? Action.ADD : a;
 
 	}
 
 
-	private Map< Object, ACTION > actions = new HashMap< Object, ACTION >();
+	public void remove( Object o ) {
+		actions.remove( o );
+	}
+
+
+	public Actions filterByKeys( List< Object > objs ) {
+
+		Actions res = new Actions();
+
+		for ( Map.Entry< Object, Action > entry : actions.entrySet() ) {
+			if ( objs.contains( entry.getKey() ) ) {
+				res.put( entry.getKey(), entry.getValue() );
+			}
+		}
+
+		return res;
+
+	}
+
+
+	private Map< Object, Action > actions = new HashMap< Object, Action >();
 
 }

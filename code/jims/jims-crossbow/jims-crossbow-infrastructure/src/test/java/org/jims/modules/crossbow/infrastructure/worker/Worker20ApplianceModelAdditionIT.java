@@ -19,7 +19,7 @@ public class Worker20ApplianceModelAdditionIT extends WorkerITBase {
 		ObjectModel model = ModelHelper.getApplianceModel( projectId, SEP );
 
 		Actions actions = new Actions();
-		actions.insert( model.getAppliances().get( 0 ), Actions.ACTION.ADD );
+		actions.put( model.getAppliances().get( 0 ), Actions.Action.ADD );
 
 		worker.instantiate( model, actions, new Assignments() );
 

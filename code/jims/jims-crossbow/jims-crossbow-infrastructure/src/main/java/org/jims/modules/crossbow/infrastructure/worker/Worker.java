@@ -31,7 +31,9 @@ import org.jims.modules.crossbow.link.VNicMBean;
 import org.jims.modules.crossbow.link.VNicManagerMBean;
 import org.jims.modules.crossbow.objectmodel.Actions;
 import org.jims.modules.crossbow.objectmodel.Assignments;
+import org.jims.modules.crossbow.objectmodel.InterfaceAssignment;
 import org.jims.modules.crossbow.objectmodel.ObjectModel;
+import org.jims.modules.crossbow.objectmodel.VlanInterfaceAssignment;
 import org.jims.modules.crossbow.objectmodel.filters.AnyFilter;
 import org.jims.modules.crossbow.objectmodel.filters.Filter;
 import org.jims.modules.crossbow.objectmodel.filters.IpFilter;
@@ -45,6 +47,7 @@ import org.jims.modules.crossbow.objectmodel.resources.Appliance;
 import org.jims.modules.crossbow.objectmodel.resources.ApplianceType;
 import org.jims.modules.crossbow.objectmodel.resources.Interface;
 import org.jims.modules.crossbow.objectmodel.resources.Switch;
+import org.jims.modules.crossbow.vlan.VlanManagerMBean;
 import org.jims.modules.solaris.commands.CreateZoneFromSnapshotCommand;
 import org.jims.modules.solaris.commands.ModifyZoneCommand;
 import org.jims.modules.solaris.commands.RemoveZoneCommand;
@@ -61,12 +64,14 @@ public class Worker implements WorkerMBean {
 	// TODO mechanizm wycofywania zmian w przypadku bledu
 
 	public Worker( VNicManagerMBean vNicManager, EtherstubManagerMBean etherstubManager,
-	               FlowManagerMBean flowManager, GlobalZoneManagementMBean globalZoneManagement,
+	               FlowManagerMBean flowManager, VlanManagerMBean vlanManager,
+	               GlobalZoneManagementMBean globalZoneManagement,
 	               SolarisCommandFactory commandFactory ) {
 
 		this.vNicManager = vNicManager;
 		this.etherstubManager = etherstubManager;
 		this.flowManager = flowManager;
+		this.vlanManager = vlanManager;
 		this.globalZoneManagement = globalZoneManagement;
 
 		this.commandFactory = commandFactory;
@@ -79,13 +84,13 @@ public class Worker implements WorkerMBean {
 
 		logger.info( "Instantiating new model." );
 
-		Map< Object, Actions.ACTION > actionsMap = actions.getAll();
+		Map< Object, Actions.Action > actionsMap = actions.getAll();
 
 		try {
 
-			instantiateREM( extractByAction( actionsMap, Actions.ACTION.REM ) );
-			instantiateADD( extractByAction( actionsMap, Actions.ACTION.ADD ), assignments );
-			instantiateUPD( extractByAction( actionsMap, Actions.ACTION.UPD ) );
+			instantiateREM( extractByAction( actionsMap, Actions.Action.REM ) );
+			instantiateADD( extractByAction( actionsMap, Actions.Action.ADD ), assignments );
+			instantiateUPD( extractByAction( actionsMap, Actions.Action.UPD ) );
 
 		} catch ( ActionException ex ) {
 
@@ -118,7 +123,7 @@ public class Worker implements WorkerMBean {
 		logger.info( "Creating (ADD) resources." );
 
 		switchesADD( extractByType( resources, Switch.class ) );
-		interfacesADD( extractByType( resources, Interface.class ) );
+		interfacesADD( extractByType( resources, Interface.class ), assignments );
 		policiesADD( extractByType( resources, Policy.class ) );
 
 		appliancesADD( extractByType( resources, Appliance.class ) );
@@ -139,11 +144,11 @@ public class Worker implements WorkerMBean {
 	}
 
 
-	private List< Object > extractByAction( Map< Object, Actions.ACTION > actionsMap, Actions.ACTION action ) {
+	private List< Object > extractByAction( Map< Object, Actions.Action > actionsMap, Actions.Action action ) {
 
 		List< Object > res = new LinkedList< Object >();
 
-		for ( Map.Entry< Object, Actions.ACTION > entry : actionsMap.entrySet() ) {
+		for ( Map.Entry< Object, Actions.Action > entry : actionsMap.entrySet() ) {
 
 			if ( action.equals( entry.getValue() ) ) {
 				res.add( entry.getKey() );
@@ -684,23 +689,45 @@ public class Worker implements WorkerMBean {
 	}
 
 
-	private void interfacesADD( List< Interface > interfaces ) throws ActionException {
+	private void interfacesADD( List< Interface > interfaces, Assignments assignments ) throws ActionException {
 
-		for ( Interface i : interfaces ) {
+		for ( Interface iface : interfaces ) {
 
-			logger.info( "Creating (ADD) interface (name: " + i.getResourceId() + ")." );
+			logger.info( "Creating (ADD) interface (name: " + iface.getResourceId() + ")." );
 
-			try {
+			InterfaceAssignment annotation = assignments.getAnnotation( iface );
 
-				if ( i.getEndpoint() instanceof Switch ) {
-					vNicManager.create( new VNic( NameHelper.interfaceName( i ), TEMPORARY, NameHelper.switchName( ( Switch ) i.getEndpoint() ) ) );
-				} else {
-					// TODO what to do now?
+			if ( ( null != annotation ) && ( annotation instanceof VlanInterfaceAssignment ) ) {
+
+				// We have to instantiate VLAN interface
+
+				VlanInterfaceAssignment assign = ( VlanInterfaceAssignment ) annotation;
+
+				logger.info( "VLAN interface instantiation (name: " + "TODO"
+				             + ", tag: " + assign.getTag() + ")." );
+
+				// TODO  for now, only default names are supported (and it's sufficient)
+
+				vlanManager.create( NameHelper.interfaceName( iface ),
+				                    getDefaultPhysical(),
+				                    assign.getTag() );
+
+			} else {
+
+				try {
+
+					if ( iface.getEndpoint() instanceof Switch ) {
+						vNicManager.create( new VNic( NameHelper.interfaceName( iface ), TEMPORARY,
+						                    NameHelper.switchName( ( Switch ) iface.getEndpoint() ) ) );
+					} else {
+						// TODO what to do now?
+					}
+
+				} catch ( LinkException ex ) {
+
+					throw new ActionException( "Interface ADD error", ex );
+
 				}
-
-			} catch ( LinkException ex ) {
-
-				throw new ActionException( "Interface ADD error", ex );
 
 			}
 
@@ -816,6 +843,11 @@ public class Worker implements WorkerMBean {
 	}
 
 
+	private String getDefaultPhysical() {
+		return "vnet0";  // TODO  change it to return the interface with proper IP.
+	}
+
+
 	/*
 	 * JConsole only
 	 */
@@ -830,6 +862,7 @@ public class Worker implements WorkerMBean {
 	private final EtherstubManagerMBean etherstubManager;
 	private final FlowManagerMBean flowManager;
 	private final GlobalZoneManagementMBean globalZoneManagement;
+	private final VlanManagerMBean vlanManager;
 
 	private final SolarisCommandFactory commandFactory;
 

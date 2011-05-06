@@ -22,9 +22,9 @@ public class Worker11SimpleQosModelRemovalIT extends WorkerITBase {
 
 		Actions actions = new Actions();
 
-		actions.insert( model.getSwitches().get( 0 ), Actions.ACTION.REM );
-		actions.insert( model.getPorts().get( 0 ), Actions.ACTION.REM );
-		actions.insert( model.getPolicies().get( 0 ), Actions.ACTION.REM );
+		actions.put( model.getSwitches().get( 0 ), Actions.Action.REM );
+		actions.put( model.getInterfaces().get( 0 ), Actions.Action.REM );
+		actions.put( model.getPolicies().get( 0 ), Actions.Action.REM );
 
 		worker.instantiate( model, actions, new Assignments() );
 

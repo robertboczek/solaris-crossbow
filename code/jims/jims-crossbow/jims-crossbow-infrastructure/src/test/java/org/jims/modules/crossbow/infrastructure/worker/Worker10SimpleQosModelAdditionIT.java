@@ -20,9 +20,9 @@ public class Worker10SimpleQosModelAdditionIT extends WorkerITBase {
 
 		Actions actions = new Actions();
 
-		actions.insert( model.getSwitches().get( 0 ), Actions.ACTION.ADD );
-		actions.insert( model.getPorts().get( 0 ), Actions.ACTION.ADD );
-		actions.insert( model.getPolicies().get( 0 ), Actions.ACTION.ADD );
+		actions.put( model.getSwitches().get( 0 ), Actions.Action.ADD );
+		actions.put( model.getInterfaces().get( 0 ), Actions.Action.ADD );
+		actions.put( model.getPolicies().get( 0 ), Actions.Action.ADD );
 
 		worker.instantiate( model, actions, new Assignments() );
 

@@ -19,7 +19,7 @@ public class Worker21ApplianceModelRemovalIT extends WorkerITBase {
 		ObjectModel model = ModelHelper.getApplianceModel( projectId, SEP );
 
 		Actions actions = new Actions();
-		actions.insert( model.getAppliances().get( 0 ), Actions.ACTION.REM );
+		actions.put( model.getAppliances().get( 0 ), Actions.Action.REM );
 
 		worker.instantiate( model, actions, new Assignments() );
 

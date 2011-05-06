@@ -82,7 +82,7 @@ import org.jims.modules.crossbow.infrastructure.supervisor.SupervisorMBean;
 import org.jims.modules.crossbow.infrastructure.worker.exception.ModelInstantiationException;
 import org.jims.modules.crossbow.objectmodel.Actions;
 import org.jims.modules.crossbow.objectmodel.ObjectModel;
-import org.jims.modules.crossbow.objectmodel.Actions.ACTION;
+import org.jims.modules.crossbow.objectmodel.Actions.Action;
 import org.jims.modules.crossbow.objectmodel.resources.Appliance;
 import org.jims.modules.crossbow.objectmodel.resources.ApplianceType;
 import org.jims.modules.crossbow.objectmodel.resources.Endpoint;
@@ -493,7 +493,7 @@ public class Gui extends Shell {
 			 public void run() { try { Actions actions = new
 			 GraphToModelTranslator() .createActions(objModel,
 			 networkStructureHelper);
-			 for(Map.Entry<Object, ACTION> entry :
+			 for(Map.Entry<Object, Action> entry :
 			 actions.getAll().entrySet()) {
 			 logger.debug("Object with action - " + entry.getKey() + " " +
 			 entry.getValue());

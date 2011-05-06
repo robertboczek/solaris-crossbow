@@ -73,16 +73,16 @@ public class GraphToModelTranslator {
 		Actions actions = new Actions();
 
 		for (Appliance app : om.getAppliances()) {
-			actions.insert(app, networkStructureHelper.getApplianceAction(app));
+			actions.put(app, networkStructureHelper.getApplianceAction(app));
 		}
-		for (Interface interf : om.getPorts()) {
-			actions.insert(interf, networkStructureHelper.getInterfaceAction(interf));
+		for (Interface interf : om.getInterfaces()) {
+			actions.put(interf, networkStructureHelper.getInterfaceAction(interf));
 		}
 		for (Switch swit : om.getSwitches()) {
-			actions.insert(swit, networkStructureHelper.getSwitchAction(swit));
+			actions.put(swit, networkStructureHelper.getSwitchAction(swit));
 		}
 		for (Policy policy : om.getPolicies()) {
-			actions.insert(policy, networkStructureHelper.getPolicyAction(policy));
+			actions.put(policy, networkStructureHelper.getPolicyAction(policy));
 		}
 
 		return actions;

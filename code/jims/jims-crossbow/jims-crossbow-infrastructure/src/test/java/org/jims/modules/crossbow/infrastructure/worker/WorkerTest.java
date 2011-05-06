@@ -14,6 +14,7 @@ import org.jims.modules.crossbow.objectmodel.resources.Appliance;
 import org.jims.modules.crossbow.objectmodel.resources.ApplianceType;
 import org.jims.modules.crossbow.objectmodel.resources.Interface;
 import org.jims.modules.crossbow.objectmodel.resources.Switch;
+import org.jims.modules.crossbow.vlan.VlanManagerMBean;
 import org.jims.modules.solaris.commands.CreateZoneFromSnapshotCommand;
 import org.jims.modules.solaris.commands.ModifyZoneCommand;
 import org.jims.modules.solaris.commands.SolarisCommandFactory;
@@ -38,10 +39,12 @@ public class WorkerTest {
 		vNicManager = mock( VNicManagerMBean.class );
 		etherstubManager = mock( EtherstubManagerMBean.class );
 		flowManager = mock( FlowManagerMBean.class );
+		vlanManager = mock( VlanManagerMBean.class );
 		zoneManagement = mock( GlobalZoneManagementMBean.class );
 		commandFactory = mock( SolarisCommandFactory.class );
 
-		worker = new Worker( vNicManager, etherstubManager, flowManager, zoneManagement, commandFactory );
+		worker = new Worker( vNicManager, etherstubManager, flowManager, vlanManager,
+		                     zoneManagement, commandFactory );
 
 	}
 
@@ -79,9 +82,9 @@ public class WorkerTest {
 		model.register( m );
 
 		Actions actions = new Actions();
-		actions.insert( m, Actions.ACTION.ADD );
-		actions.insert( p, Actions.ACTION.ADD );
-		actions.insert( s, Actions.ACTION.ADD );
+		actions.put( m, Actions.Action.ADD );
+		actions.put( p, Actions.Action.ADD );
+		actions.put( s, Actions.Action.ADD );
 
 		worker.instantiate( model, actions, new Assignments() );
 
@@ -113,6 +116,7 @@ public class WorkerTest {
 	private VNicManagerMBean vNicManager;
 	private EtherstubManagerMBean etherstubManager;
 	private FlowManagerMBean flowManager;
+	private VlanManagerMBean vlanManager;
 	private SolarisCommandFactory commandFactory;
 	private GlobalZoneManagementMBean zoneManagement;
 

@@ -24,6 +24,7 @@ import org.jims.modules.crossbow.infrastructure.progress.WorkerProgressMBean;
 import org.jims.modules.crossbow.infrastructure.progress.WorkerProgress;
 import org.jims.modules.crossbow.infrastructure.worker.Worker;
 import org.jims.modules.crossbow.link.VNicManagerMBean;
+import org.jims.modules.crossbow.vlan.VlanManagerMBean;
 import org.jims.modules.crossbow.zones.ZoneCopierMBean;
 import org.jims.modules.sg.service.wnservice.WNDelegateMBean;
 import org.jims.modules.solaris.commands.SolarisCommandFactory;
@@ -81,6 +82,10 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 			server, new ObjectName( "Crossbow:type=FlowManager" ), FlowManagerMBean.class
 		);
 
+		VlanManagerMBean vlanManager = JMX.newMBeanProxy(
+			server, new ObjectName( "Crossbow:type=VlanManager" ), VlanManagerMBean.class
+		);
+
 		VNicManagerMBean vnicManager = JMX.newMBeanProxy(
 			server, new ObjectName( "Crossbow:type=VNicManager" ), VNicManagerMBean.class
 		);
@@ -100,7 +105,7 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 
 		// Register MBeans.
 
-		Worker worker = new Worker( vnicManager, etherstubManager, flowManager,
+		Worker worker = new Worker( vnicManager, etherstubManager, flowManager, vlanManager,
 		                            globalZoneManagement, SolarisCommandFactory.getFactory( SolarisCommandFactory.SOLARIS10 ) );
 
 		server.registerMBean( worker, new ObjectName( "Crossbow:type=XBowWorker" ) );

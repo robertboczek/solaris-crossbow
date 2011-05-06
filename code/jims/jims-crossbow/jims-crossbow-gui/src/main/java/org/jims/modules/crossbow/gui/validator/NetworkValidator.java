@@ -35,7 +35,7 @@ public class NetworkValidator {
 		}
 		
 		Set<String> interfaces = new HashSet<String>();
-		for(Interface interfac : objectModel.getPorts()) {
+		for(Interface interfac : objectModel.getInterfaces()) {
 			if(interfac != null && interfaces.contains(interfac.getIpAddress().getAddress())) {
 				return "IpAddress " + interfac.getIpAddress().getAddress() + " was duplicated";
 				

@@ -1,10 +1,12 @@
 package org.jims.modules.crossbow.objectmodel;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import org.jims.modules.crossbow.objectmodel.policy.Policy;
 import org.jims.modules.crossbow.objectmodel.resources.Appliance;
+import org.jims.modules.crossbow.objectmodel.resources.ApplianceType;
 import org.jims.modules.crossbow.objectmodel.resources.Interface;
 import org.jims.modules.crossbow.objectmodel.resources.Switch;
 
@@ -54,16 +56,55 @@ public class ObjectModel implements Serializable {
 
 	}
 
+	public void registerAll( Collection< ? > entities ) {
+		for ( Object entity : entities ) {
+			register( entity );
+		}
+	}
+
+	public void remove( Appliance app ) {
+		appliances.remove( app );
+	}
+
+
 	public List< Switch > getSwitches() {
 		return switches;
 	}
 
-	public List< Interface > getPorts() {
+	public List< Interface > getInterfaces() {
 		return ports;
 	}
 
 	public List< Appliance > getAppliances() {
 		return appliances;
+	}
+
+	public List< Appliance > getRouters() {
+
+		List< Appliance > res = new LinkedList< Appliance >();
+
+		for ( Appliance app : appliances ) {
+			if ( ApplianceType.ROUTER.equals( app.getType() ) ) {
+				res.add( app );
+			}
+		}
+
+		return res;
+
+	}
+
+	public List< Appliance > getMachines() {
+
+		List< Appliance > res = new LinkedList< Appliance >();
+
+		for ( Appliance app : appliances ) {
+			if ( ApplianceType.MACHINE.equals( app.getType() ) ) {
+				res.add( app );
+			}
+		}
+
+		return res;
+
 	}
 
 	public List< Policy > getPolicies() {

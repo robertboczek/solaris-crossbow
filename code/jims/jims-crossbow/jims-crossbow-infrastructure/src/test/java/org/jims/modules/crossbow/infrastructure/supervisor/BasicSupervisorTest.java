@@ -42,9 +42,9 @@ public class BasicSupervisorTest {
 	@Test
 	public void testOperationsDelegation() throws Exception {
 
-		actions.insert( model.getPorts().get( 0 ), Actions.ACTION.REM );
-		actions.insert( model.getSwitches().get( 0 ), Actions.ACTION.ADD );
-		actions.insert( model.getAppliances().get( 0 ), Actions.ACTION.ADD );
+		actions.put( model.getInterfaces().get( 0 ), Actions.Action.REM );
+		actions.put( model.getSwitches().get( 0 ), Actions.Action.ADD );
+		actions.put( model.getAppliances().get( 0 ), Actions.Action.ADD );
 
 		Assignments assignments = new Assignments();
 

@@ -24,15 +24,15 @@ public class Worker40SimpleRouterModelAdditionIT extends WorkerITBase {
 		Actions actions = new Actions();
 
 		for ( Appliance app : model.getAppliances() ) {
-			actions.insert( app, Actions.ACTION.ADD );
+			actions.put( app, Actions.Action.ADD );
 		}
 
-		for ( Interface iface : model.getPorts() ) {
-			actions.insert( iface, Actions.ACTION.ADD );
+		for ( Interface iface : model.getInterfaces() ) {
+			actions.put( iface, Actions.Action.ADD );
 		}
 
 		for ( Switch s : model.getSwitches() ) {
-			actions.insert( s, Actions.ACTION.ADD );
+			actions.put( s, Actions.Action.ADD );
 		}
 
 

@@ -24,7 +24,7 @@ import org.eclipse.zest.core.widgets.GraphNode;
 import org.eclipse.zest.core.widgets.IContainer;
 import org.jims.modules.crossbow.gui.data.GraphConnectionData;
 import org.jims.modules.crossbow.objectmodel.Actions;
-import org.jims.modules.crossbow.objectmodel.Actions.ACTION;
+import org.jims.modules.crossbow.objectmodel.Actions.Action;
 import org.jims.modules.crossbow.objectmodel.policy.Policy;
 import org.jims.modules.crossbow.objectmodel.resources.Appliance;
 import org.jims.modules.crossbow.objectmodel.resources.ApplianceType;
@@ -391,67 +391,67 @@ public class NetworkStructureHelper {
 		return projectId.getText();
 	}
 
-	private ACTION getAction(Object obj) {
+	private Action getAction(Object obj) {
 		if (newObjects.containsKey(obj)) {
-			return Actions.ACTION.ADD;
+			return Actions.Action.ADD;
 		} else if (deployedObjects.containsKey(obj)) {
-			return Actions.ACTION.NOOP;
+			return Actions.Action.NOOP;
 		} else if (modifiedObjects.containsKey(obj)) {
-			return Actions.ACTION.UPD;
+			return Actions.Action.UPD;
 		} else if (removedObjects.containsKey(obj)) {
-			return Actions.ACTION.REM;
+			return Actions.Action.REM;
 		}
-		return Actions.ACTION.NOOP;
+		return Actions.Action.NOOP;
 	}
 
 	/**
-	 * Zwraca ACTION w zaleznosci w ktorej mapie sie znajduje appliance app
+	 * Zwraca Action w zaleznosci w ktorej mapie sie znajduje appliance app
 	 * 
 	 * @param app
 	 * @return Zwraca odpowiednia akcje do wykonania
 	 */
-	public ACTION getApplianceAction(Appliance app) {
+	public Action getApplianceAction(Appliance app) {
 		return getAction(app);
 	}
 
 	/**
-	 * Zwraca ACTION w zaleznosci w ktorej mapie sie znajduje sie app
+	 * Zwraca Action w zaleznosci w ktorej mapie sie znajduje sie app
 	 * 
 	 * @param app
 	 * @return Zwraca odpowiednia akcje do wykonania
 	 */
-	public ACTION getSwitchAction(Switch swit) {
+	public Action getSwitchAction(Switch swit) {
 		return getAction(swit);
 	}
 
-	public ACTION getPolicyAction(Policy policy) {
+	public Action getPolicyAction(Policy policy) {
 
 		if (hasPolicy(policy, newObjects)) {
-			return Actions.ACTION.ADD;
+			return Actions.Action.ADD;
 		} else if (hasPolicy(policy, removedObjects)) {
-			return Actions.ACTION.REM;
+			return Actions.Action.REM;
 		} else if (newPolicies.contains(policy)) {
-			return Actions.ACTION.ADD;
+			return Actions.Action.ADD;
 		} else if (modifiedPolicies.contains(policy)) {
-			return Actions.ACTION.UPD;
+			return Actions.Action.UPD;
 		}
 
-		return Actions.ACTION.NOOP;
+		return Actions.Action.NOOP;
 	}
 
-	public ACTION getInterfaceAction(Interface interf) {
+	public Action getInterfaceAction(Interface interf) {
 
 		if (hasInterface(interf, newObjects)) {
-			return Actions.ACTION.ADD;
+			return Actions.Action.ADD;
 		} else if (hasInterface(interf, removedObjects)) {
-			return Actions.ACTION.REM;
+			return Actions.Action.REM;
 		} else if (newInterfaces.contains(interf)) {
-			return Actions.ACTION.ADD;
+			return Actions.Action.ADD;
 		} else if (modifiedInterfaces.contains(interf)) {
-			return Actions.ACTION.UPD;
+			return Actions.Action.UPD;
 		}
 
-		return Actions.ACTION.NOOP;
+		return Actions.Action.NOOP;
 	}
 
 	private boolean hasPolicy(Policy policy, Map<Object, GraphItem> objectsMap) {

@@ -17,10 +17,10 @@ public class Worker02SimpleModelSwitchRemovalIT extends WorkerITBase {
 	public void go() throws Exception {
 
 		ObjectModel model = ModelHelper.getSimpleModel( projectId, SEP );
-		model.getPorts().clear();
+		model.getInterfaces().clear();
 
 		Actions actions = new Actions();
-		actions.insert( model.getSwitches().get( 0 ), Actions.ACTION.REM );
+		actions.put( model.getSwitches().get( 0 ), Actions.Action.REM );
 
 		worker.instantiate( model, actions, new Assignments() );
 
