@@ -1,11 +1,13 @@
 package org.jims.modules.crossbow.link;
 
+import java.util.List;
 import org.jims.modules.crossbow.enums.LinkParameters;
 import org.jims.modules.crossbow.enums.LinkProperties;
 import org.jims.modules.crossbow.enums.LinkStatistics;
 import org.jims.modules.crossbow.exception.LinkException;
 import org.jims.modules.crossbow.exception.ValidationException;
 import java.util.Map;
+import org.jims.modules.crossbow.enums.LinkStatisticTimePeriod;
 
 
 /**
@@ -117,6 +119,14 @@ public interface LinkMBean {
 	 * @param  up  true iff the link is up
 	 */
 	public void setUp(boolean up) throws LinkException;
+
+        /**
+         * @brief Gets statistics for specified period
+         *
+         * @param period Time period type
+         * @return Returns List with map with statistics for specified time period
+         */
+        public List<Map<LinkStatistics, Long>> getStatistics(LinkStatisticTimePeriod period);
 
 
 	/*

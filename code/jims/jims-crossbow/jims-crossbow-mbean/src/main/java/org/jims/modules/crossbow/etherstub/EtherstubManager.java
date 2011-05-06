@@ -175,6 +175,9 @@ public class EtherstubManager extends BaseManager implements EtherstubManagerMBe
         if (publisher != null) {
             //register in the mbean server
             publisher.publish(etherstubMBean);
+            if(etherstubMBean instanceof Etherstub) {
+                ((Etherstub)etherstubMBean).startGatheringStatistics();
+            }
         }
     }
 
@@ -193,6 +196,9 @@ public class EtherstubManager extends BaseManager implements EtherstubManagerMBe
                 }
             } catch (NotPublishedException ex) {
                 logger.error("Etherstub object : " + etherstubMBean + " has not been registered in the mbean server");
+            }
+            if(etherstubMBean instanceof Etherstub) {
+                ((Etherstub)etherstubMBean).stopGatheringStatistics();
             }
         }
     }

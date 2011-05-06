@@ -6,6 +6,8 @@ import org.jims.modules.crossbow.flow.enums.FlowAttribute;
 import org.jims.modules.crossbow.flow.enums.FlowProperty;
 import java.util.List;
 import java.util.Map;
+import org.jims.modules.crossbow.enums.LinkStatisticTimePeriod;
+import org.jims.modules.crossbow.enums.LinkStatistics;
 import org.jims.modules.crossbow.flow.enums.FlowStatistics;
 
 
@@ -91,6 +93,14 @@ public interface FlowMBean {
 	 * @return  flow statistics map
 	 */
 	public Map< FlowStatistics, Long > getStatistics();
+
+        /**
+         * @brief Gets statistics for specified period
+         *
+         * @param period Time period type
+         * @return Returns List containging map with statistics for specified time period
+         */
+        public List<Map<FlowStatistics, Long>> getStatistics(LinkStatisticTimePeriod period);
 
 
 	/*

@@ -5,6 +5,8 @@ import org.jims.modules.crossbow.enums.LinkProperties;
 import org.jims.modules.crossbow.enums.LinkStatistics;
 import org.jims.modules.crossbow.exception.EtherstubException;
 import java.util.Map;
+import java.util.List;
+import org.jims.modules.crossbow.enums.LinkStatisticTimePeriod;
 
 /**
  * @brief Defines possible operations for Etherstubs
@@ -68,6 +70,14 @@ public interface EtherstubMBean {
      * @throws XbowException Exeption thrown in case of error
      */
     public void setProperty(LinkProperties etherstubProperty, String value) throws EtherstubException;
+
+    /**
+     * @brief Gets lsit containing map with statistics for specified time period
+     *
+     * @param period Time period type
+     * @return Returns list containing map with statistics for specified time period
+     */
+    public List<Map<LinkStatistics, Long>> getStatistics(LinkStatisticTimePeriod period);
 
 
     /*

@@ -2,10 +2,12 @@ package org.jims.modules.crossbow.etherstub;
 
 import org.jims.modules.crossbow.enums.LinkParameters;
 import org.jims.modules.crossbow.enums.LinkProperties;
+import org.jims.modules.crossbow.enums.LinkStatisticTimePeriod;
 import org.jims.modules.crossbow.enums.LinkStatistics;
 import org.jims.modules.crossbow.exception.EtherstubException;
 import org.jims.modules.crossbow.lib.EtherstubHelper;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
 
@@ -24,6 +26,9 @@ public class Etherstub implements EtherstubMBean {
     private Map<LinkParameters, String> parametersMap;
     private Map<LinkProperties, String> propertiesMap; //some properties contain a few values like names of cpus
     private Map<LinkStatistics, String> statisticsMap;
+    
+    protected EtherstubStatisticsGatherer etherstubStatisticsGatherer;
+
     private EtherstubHelper etherstubHelper = null;
 
     /**
@@ -39,6 +44,8 @@ public class Etherstub implements EtherstubMBean {
         this.parametersMap = new HashMap<LinkParameters, String>();
         this.propertiesMap = new HashMap<LinkProperties, String>();
         this.statisticsMap = new HashMap<LinkStatistics, String>();
+
+        this.etherstubStatisticsGatherer = new EtherstubStatisticsGatherer(name);
     }
 
     /**
@@ -112,6 +119,7 @@ public class Etherstub implements EtherstubMBean {
      * @param etherstubHelper Concrete implementation of Ehterstubadm
      */
     public void setEtherstubHelper(EtherstubHelper etherstubHelper) {
+        etherstubStatisticsGatherer.setEtherstubHelper(etherstubHelper);
         this.etherstubHelper = etherstubHelper;
     }
 
@@ -194,5 +202,18 @@ public class Etherstub implements EtherstubMBean {
 
         return res;
 
+    }
+
+    @Override
+    public List<Map<LinkStatistics, Long>> getStatistics(LinkStatisticTimePeriod period) {
+        return etherstubStatisticsGatherer.getStatistics(period);
+    }
+
+    public void startGatheringStatistics(){
+       etherstubStatisticsGatherer.start();
+    }
+
+    public void stopGatheringStatistics(){
+       etherstubStatisticsGatherer.stop();
     }
 }

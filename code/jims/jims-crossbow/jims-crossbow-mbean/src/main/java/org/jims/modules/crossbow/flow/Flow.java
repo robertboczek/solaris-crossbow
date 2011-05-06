@@ -1,5 +1,7 @@
 package org.jims.modules.crossbow.flow;
 
+import java.text.SimpleDateFormat;
+import org.jims.modules.crossbow.enums.LinkStatisticTimePeriod;
 import org.jims.modules.crossbow.exception.NoSuchEnumException;
 import org.jims.modules.crossbow.exception.NoSuchFlowException;
 import org.jims.modules.crossbow.exception.ValidationException;
@@ -7,7 +9,9 @@ import org.jims.modules.crossbow.flow.enums.FlowAttribute;
 import org.jims.modules.crossbow.flow.enums.FlowProperty;
 import org.jims.modules.crossbow.lib.FlowHelper;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
@@ -20,6 +24,11 @@ import org.jims.modules.crossbow.flow.enums.FlowStatistics;
  * @author cieplik
  */
 public class Flow implements FlowMBean {
+
+    private static final long DAY_MILIS = 8640000;
+    private static final long HOUR_MILIS = 360000;
+    private static final long FIVE_MINUTES_MILIS = 30000;
+    private static final long MINUTE_MILIS = 6000;
 
 	public Flow() {}
 
@@ -369,5 +378,37 @@ public class Flow implements FlowMBean {
 	private FlowHelper flowadm;
 
 	private static final Logger logger = Logger.getLogger( Flow.class );
+
+    @Override
+    public List<Map<FlowStatistics, Long>> getStatistics(LinkStatisticTimePeriod period) {
+
+        Date now = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("YYYY.MM.DD,hh:mm:ss");
+
+        if(flowadm == null) {
+            return null;
+        }
+
+        //pobieramy 10 wartosci
+        long diff = 0;
+        long date = now.getTime();
+        if(period.equals(LinkStatisticTimePeriod.MINUTELY)) {
+            diff = MINUTE_MILIS;
+        } else if(period.equals(LinkStatisticTimePeriod.FIVE_MINUTELY)) {
+            diff = FIVE_MINUTES_MILIS;
+        } else if(period.equals(LinkStatisticTimePeriod.HOURLY)) {
+            diff = HOUR_MILIS;
+        } else if(period.equals(LinkStatisticTimePeriod.DAILY)) {
+            diff =  DAY_MILIS;
+        }
+
+        LinkedList<Map<FlowStatistics, Long>> list = new LinkedList<Map<FlowStatistics, Long>>();
+        for(int i=0; i<10; i++) {
+            list.addFirst(flowadm.getUsage(name, sdf.format(new Date(date-diff)), sdf.format(date)));
+            date -= diff;
+        }
+        
+        return list;
+    }
 
 }

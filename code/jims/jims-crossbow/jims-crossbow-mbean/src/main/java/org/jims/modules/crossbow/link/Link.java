@@ -7,8 +7,10 @@ import org.jims.modules.crossbow.exception.LinkException;
 import org.jims.modules.crossbow.exception.ValidationException;
 import org.jims.modules.crossbow.lib.LinkHelper;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.apache.log4j.Logger;
+import org.jims.modules.crossbow.enums.LinkStatisticTimePeriod;
 
 /**
  * The class implements Link MBean functionality.
@@ -26,6 +28,8 @@ public abstract class Link implements LinkMBean {
     protected Map<LinkParameters, String> parametersMap = new HashMap<LinkParameters, String>();
     private static final Logger logger = Logger.getLogger(Link.class);
 
+    protected LinkStatisticsGatherer linkStatisticsGatherer;
+
     /**
      * Constructor of link object
      *
@@ -33,6 +37,7 @@ public abstract class Link implements LinkMBean {
      */
     public Link(String name) {
         this.name = name;
+        this.linkStatisticsGatherer = new LinkStatisticsGatherer(name);
     }
 
     /**
@@ -82,8 +87,8 @@ public abstract class Link implements LinkMBean {
 
         } catch (LinkException e) {
             logger.error("Couldn't set new ip address: " + ipAddress + " to vnic: " + this.name, e);
-        } catch (ValidationException e2) {
-            logger.error("Couldn't set new ip address: " + ipAddress + " to vnic: " + this.name + ". Ip format is incorrect", e2);
+        } catch (ValidationException ex) {
+            logger.error("Couldn't set new ip address: " + ipAddress + " to vnic: " + this.name + ". Ip format is incorrect", ex);
         }
     }
 
@@ -190,6 +195,8 @@ public abstract class Link implements LinkMBean {
 
     public void setLinkHelper(LinkHelper linkHelper) {
         this.linkHelper = linkHelper;
+
+        linkStatisticsGatherer.setLinkHelper(linkHelper);
     }
 
 
@@ -238,5 +245,18 @@ public abstract class Link implements LinkMBean {
 
         return res;
 
+    }
+
+    @Override
+    public List<Map<LinkStatistics, Long>> getStatistics(LinkStatisticTimePeriod period) {
+        return linkStatisticsGatherer.getStatistics(period);
+    }
+
+    public void startGatheringStatistics(){
+       linkStatisticsGatherer.start();
+    }
+
+    public void stopGatheringStatistics(){
+       linkStatisticsGatherer.stop();
     }
 }

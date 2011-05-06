@@ -33,6 +33,8 @@ public class VNic extends Link implements VNicMBean {
         super(name);
         this.temporary = temporary;
         this.parent = parent;
+
+        //this.etherstubStatisticsGatherer = new EtherstubStatisticsGatherer(name);
     }
 
     /**
@@ -122,5 +124,4 @@ public class VNic extends Link implements VNicMBean {
         this.vNicHelper = vNicHelper;
         super.linkHelper = vNicHelper;
     }
-
 }

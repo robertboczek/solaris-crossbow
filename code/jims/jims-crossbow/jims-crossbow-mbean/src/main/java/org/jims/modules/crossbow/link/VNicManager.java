@@ -186,6 +186,10 @@ public class VNicManager extends BaseManager implements VNicManagerMBean, Notifi
             logger.debug("Registering new VNicMBean to MBeanServer: " + vNicMBean);
             publisher.publish(vNicMBean);
         }
+
+        if(vNicMBean instanceof Link) {
+            ((Link)vNicMBean).startGatheringStatistics();
+        }
     }
 
     /**
@@ -203,6 +207,9 @@ public class VNicManager extends BaseManager implements VNicManagerMBean, Notifi
                 }
             } catch (NotPublishedException ex) {
                 logger.error("VNicMBean object : " + vNicMBean + " has not been registered in the mbean server");
+            }
+            if(vNicMBean instanceof Link) {
+                ((Link)vNicMBean).stopGatheringStatistics();
             }
         }
     }
