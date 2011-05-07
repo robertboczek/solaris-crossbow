@@ -1,0 +1,95 @@
+\documentclass{beamer}
+
+\usepackage[polish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{tabularx}
+\usepackage{tikz}
+
+\usetikzlibrary{positioning}
+
+\mode<presentation>{\usetheme{Dresden}}
+\setbeamercovered{dynamic}
+
+\title{Component-based system for management of multilevel virtualization of networking resources}
+\subtitle{System komponentowy wspomagający wielopoziomową wirtualizację zasobów sieciowych}
+\author{Robert Boczek \and Dawid Ciepliński \\ ~ \\ prof. dr hab. inż Krzysztof Zieliński}
+\date{29.03.2011}
+
+\begin{document}
+
+	\begin{frame}
+		\titlepage
+	\end{frame}
+
+
+	\begin{frame}{The environment}
+
+		\begin{enumerate}
+
+			\item Physical
+
+				5 Logical Domains connected with a vswitch:
+
+				\begin{itemize}
+					\item dedicated NFS server node
+					\item 4 worker nodes
+				\end{itemize}
+
+				\includegraphics[scale=.2]{img/env.pdf}
+
+
+				% TODO  image here
+
+			\item Software
+
+				JIMS features \& work done:
+
+				\begin{itemize}
+					\item node discovery
+					\item Solaris resource management \& monitoring
+					\item common codebase
+				\end{itemize}
+		
+		\end{enumerate}
+
+	\end{frame}
+
+
+	\begin{frame}{Wrappers}
+
+		\texttt{libdladm}- and \texttt{libflowadm}-based native libraries.
+
+		\medskip
+
+		Allow for higher-level operations (CRUD) for etherstubs, (V)NICs, VLANs and flows. Still native, with minimum external dependencies.
+	
+	\end{frame}
+
+
+	\begin{frame}{MBeans}
+
+		Two kinds:
+		
+		\begin{enumerate}
+			\item managers: entity discovery \& general management
+			\item entities: fine-grained control (properties, statistics)
+		\end{enumerate}
+
+		Bidirectional operations.
+	
+	\end{frame}
+
+
+	\begin{frame}{Components (simplified)}
+
+		go here
+	
+	\end{frame}
+
+
+\end{document}
+
