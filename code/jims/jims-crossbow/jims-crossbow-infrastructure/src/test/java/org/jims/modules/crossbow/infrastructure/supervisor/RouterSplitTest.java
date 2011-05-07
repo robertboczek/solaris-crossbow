@@ -11,6 +11,7 @@ import org.jims.modules.crossbow.objectmodel.resources.Interface;
 import org.jims.modules.crossbow.objectmodel.resources.Switch;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 
 /**
@@ -76,7 +77,7 @@ public class RouterSplitTest {
 
 		supervisor.splitRouters( model, actions, assignments );
 
-		assert ( 2 == model.getRouters().size() );
+		assertEquals( 2, model.getRouters().size() );
 
 		assert ( Actions.Action.ADD.equals( actions.get( model.getRouters().get( 0 ) ) ) );
 		assert ( Actions.Action.ADD.equals( actions.get( model.getRouters().get( 1 ) ) ) );

@@ -11,6 +11,7 @@ import org.jims.modules.crossbow.infrastructure.worker.*;
 import org.jims.modules.crossbow.infrastructure.assigner.AssignerMBean;
 import org.jims.modules.crossbow.objectmodel.Actions;
 import org.jims.modules.crossbow.infrastructure.helper.model.ModelHelper;
+import org.jims.modules.crossbow.infrastructure.supervisor.vlan.VlanTagProvider;
 import org.jims.modules.crossbow.objectmodel.Assignments;
 import org.jims.modules.crossbow.objectmodel.ObjectModel;
 import org.jims.modules.crossbow.objectmodel.VlanApplianceAnnotation;
@@ -40,18 +41,22 @@ public class MultipleWorkersSupervisorTest {
 		secondWorker = mock( WorkerMBean.class );
 		assigner = mock( AssignerMBean.class );
 		provider = mock( WorkerProvider.class );
+		tagProvider = mock( VlanTagProvider.class );
 
 		supervisor = new Supervisor( provider, assigner );
 
 		supervisor.addWorker( W0, firstWorker );
 		supervisor.addWorker( W1, secondWorker );
 		supervisor.setAssigner( assigner );
+		supervisor.setTagProvider( tagProvider );
 
 	}
 
 
 	@Test
 	public void testEveryWorkerGettingItsPart() throws Exception {
+
+		when( tagProvider.provide() ).thenReturn( TAG );
 
 		model = ModelHelper.getSimpleRouterModel( "MY-PROJECT" );
 
@@ -145,5 +150,6 @@ public class MultipleWorkersSupervisorTest {
 	private Supervisor supervisor;
 	private WorkerProvider provider;
 	private AssignerMBean assigner;
+	private VlanTagProvider tagProvider;
 
 }

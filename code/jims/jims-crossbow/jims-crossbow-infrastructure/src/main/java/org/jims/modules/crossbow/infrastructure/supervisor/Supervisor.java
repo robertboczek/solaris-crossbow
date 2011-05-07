@@ -149,6 +149,7 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 		// E.g.  [subnet A; assign: w0] -- R -- [subnet B; assign: w1]
 
 		List< Object > toreg = new LinkedList< Object >();
+		List< Object > torem = new LinkedList< Object >();
 
 		Iterator< Appliance > it = model.getRouters().iterator();
 		while ( it.hasNext() ) {
@@ -205,7 +206,7 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 
 				}
 
-				it.remove();
+				torem.add( app );
 				actions.remove( app );
 				assignments.remove( app );
 
@@ -213,6 +214,10 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 
 			}
 
+		}
+
+		for ( Object o : torem ) {
+			model.remove( ( Appliance ) o );
 		}
 
 		model.registerAll( toreg );
