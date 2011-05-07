@@ -231,7 +231,14 @@ public class NetworkStructureHelper {
 
 	protected GraphNode createGraphItem(Object g, String iconPath) {
 
-		logger.trace("Creating new graph item");
+		logger.debug("Creating new graph item");
+		
+		if ( g instanceof Appliance ) {
+			Appliance app = ( Appliance ) g;
+			logger.debug( "Creating new graph item (project: " + app.getProjectId()
+			              + ", resource: " + app.getResourceId()
+			              + ", repo: " + app.getRepoId() + ")." );
+		}
 		
 		setNetworkState(NetworkState.UNDEPLOYED);
 		

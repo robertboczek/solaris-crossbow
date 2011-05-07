@@ -113,7 +113,7 @@ public class Appliance extends Resource {
 
 
 	private ApplianceType type;
-	private String repoId;
+	private String repoId = "";  // TODO  this is temporary and should be removed (GUI issue)
 	private List< Interface > interfaces = new LinkedList< Interface >();
 	private UUID uuid = UUID.randomUUID();
 
