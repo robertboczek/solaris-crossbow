@@ -95,6 +95,27 @@ public class Interface extends Endpoint {
 			this.endpoint = e;
 		}
 
+	@Override
+	public boolean equals( Object o ) {
+
+		if ( this == o ) {
+			return true;
+		} else if ( o instanceof Interface ) {
+			return this.getUUID().equals( ( ( Interface ) o ).getUUID() );
+		}
+
+		return false;
+
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 97 * hash + (this.ipAddress != null ? this.ipAddress.hashCode() : 0);
+		hash = 97 * hash + (this.appliance != null ? this.appliance.hashCode() : 0);
+		return hash;
+	}
+
 
 		private List< Policy  > policiesList = new LinkedList< Policy >();
 		private IpAddress ipAddress;
