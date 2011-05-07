@@ -244,8 +244,6 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 
 						assignments.putAnnotation( iface, assign );
 
-						logger.info( "new assignment " + assign );
-
 					}
 
 				}

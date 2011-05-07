@@ -708,9 +708,15 @@ public class Worker implements WorkerMBean {
 
 				// TODO  for now, only default names are supported (and it's sufficient)
 
-				vlanManager.create( NameHelper.interfaceName( iface ),
-				                    getDefaultPhysical(),
-				                    assign.getTag() );
+				try {
+
+					vlanManager.create( NameHelper.interfaceName( iface ),
+					                    getDefaultPhysical(),
+					                    assign.getTag() );
+
+				} catch ( XbowException ex ) {
+					throw new ActionException( "Interface ADD error", ex );
+				}
 
 			} else {
 
@@ -724,9 +730,7 @@ public class Worker implements WorkerMBean {
 					}
 
 				} catch ( LinkException ex ) {
-
 					throw new ActionException( "Interface ADD error", ex );
-
 				}
 
 			}
