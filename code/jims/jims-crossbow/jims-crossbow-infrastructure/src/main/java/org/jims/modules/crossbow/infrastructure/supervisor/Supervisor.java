@@ -189,12 +189,11 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 						toreg.add( vlan );
 						actions.put( vlan, action );
 						assignments.put( vlan, target );
+						desc.put( vlan, target );
 
 						toreg.add( router );
 						actions.put( router, action );
 						assignments.put( router, target );
-
-						desc.put( vlan, target );
 
 					}
 
@@ -235,7 +234,7 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 
 					Interface iface = entry.getKey();
 
-					if ( null == assignments.get( iface ) ) {
+					if ( null == assignments.getAnnotation( iface ) ) {
 
 						if ( -1 == tag ) {
 							tag = 905;  // TODO  < this is temporary
