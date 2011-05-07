@@ -225,7 +225,7 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 
 		for ( Map< Interface, String > vlan : parts ) {
 
-			if ( Actions.Action.ADD.equals( actions.get( vlan ) ) ) {
+			// if ( Actions.Action.ADD.equals( actions.get( vlan ) ) ) {
 
 				int tag = -1;
 				VlanInterfaceAssignment assign = null;
@@ -250,7 +250,7 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 
 				}
 
-			}
+			// }
 
 		}
 
