@@ -1,7 +1,9 @@
 package org.jims.modules.crossbow.infrastructure;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Set;
 import javax.management.InstanceNotFoundException;
 import javax.management.JMX;
@@ -22,7 +24,10 @@ import org.jims.modules.crossbow.infrastructure.progress.CrossbowNotificationMBe
 import org.jims.modules.crossbow.infrastructure.progress.CrossbowNotification;
 import org.jims.modules.crossbow.infrastructure.progress.WorkerProgressMBean;
 import org.jims.modules.crossbow.infrastructure.progress.WorkerProgress;
+import org.jims.modules.crossbow.infrastructure.supervisor.vlan.ContiguousVlanTagProvider;
+import org.jims.modules.crossbow.infrastructure.supervisor.vlan.VlanTagProvider;
 import org.jims.modules.crossbow.infrastructure.worker.Worker;
+import org.jims.modules.crossbow.infrastructure.worker.WorkerMBean;
 import org.jims.modules.crossbow.link.VNicManagerMBean;
 import org.jims.modules.crossbow.vlan.VlanManagerMBean;
 import org.jims.modules.crossbow.zones.ZoneCopierMBean;
@@ -134,7 +139,21 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 			server, new ObjectName( "Core:name=WNDelegate" ), WNDelegateMBean.class
 		);
 
-		Supervisor supervisor = new Supervisor( new JmxWorkerProvider( wnDelegate ), assigner );
+		final Supervisor supervisor = new Supervisor( new JmxWorkerProvider( wnDelegate ), assigner );
+
+		VlanTagProvider tagProvider = new ContiguousVlanTagProvider( 900, 931,  new ContiguousVlanTagProvider.UsedTagsProvider() {
+
+			// TODO  implement it properly!
+
+			@Override
+			public Collection< Integer > provide() {
+				Collection< Integer > tags = new LinkedList< Integer >();
+				return tags;
+			}
+
+		} );  // TODO  read the range from properties file!
+
+		supervisor.setTagProvider( tagProvider );
 
 		server.registerMBean( supervisor, new ObjectName( "Crossbow:type=Supervisor" ) );
 

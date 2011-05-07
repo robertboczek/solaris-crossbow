@@ -1,5 +1,6 @@
 package org.jims.modules.crossbow.infrastructure.supervisor;
 
+import org.jims.modules.crossbow.infrastructure.supervisor.vlan.VlanTagProvider;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,8 +16,11 @@ import org.jims.modules.crossbow.infrastructure.assigner.AssignerMBean;
 import org.jims.modules.crossbow.infrastructure.worker.WorkerMBean;
 import org.jims.modules.crossbow.infrastructure.worker.exception.ModelInstantiationException;
 import org.jims.modules.crossbow.objectmodel.Actions;
+import org.jims.modules.crossbow.objectmodel.ApplianceAnnotation;
 import org.jims.modules.crossbow.objectmodel.Assignments;
+import org.jims.modules.crossbow.objectmodel.InterfaceAssignment;
 import org.jims.modules.crossbow.objectmodel.ObjectModel;
+import org.jims.modules.crossbow.objectmodel.VlanApplianceAnnotation;
 import org.jims.modules.crossbow.objectmodel.VlanInterfaceAssignment;
 import org.jims.modules.crossbow.objectmodel.filters.address.IpAddress;
 import org.jims.modules.crossbow.objectmodel.resources.Appliance;
@@ -34,10 +38,8 @@ import org.jims.modules.gds.notification.WorkerNodeRemovedNotification;
 public class Supervisor implements SupervisorMBean, NotificationListener {
 
 	public Supervisor( WorkerProvider workerProvider, AssignerMBean assigner ) {
-
 		this.workerProvider = workerProvider;
 		this.assigner = assigner;
-
 	}
 
 
@@ -59,7 +61,7 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 
 		// Adjust the model.
 
-		Collection< Map< Interface, String > > parts = splitRouters( model, actions, assignments );
+		Map< Appliance, Collection< Interface > > parts = splitRouters( model, actions, assignments );
 
 		// Now, create VLAN interface assignments, if applicable.
 
@@ -104,11 +106,15 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 
 	@Override
 	public List< String > getWorkers() {
-
 		synchronized ( workers ) {
 			return new LinkedList< String >( workers.keySet() );
 		}
+	}
 
+	public List< WorkerMBean > getWorkersMBean() {
+		synchronized ( workers ) {
+			return new LinkedList< WorkerMBean >( workers.values() );
+		}
 	}
 
 
@@ -132,11 +138,11 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 	}
 
 
-	Collection< Map< Interface, String > > splitRouters( ObjectModel model, Actions actions, Assignments assignments ) {
+	Map< Appliance, Collection< Interface > > splitRouters( ObjectModel model, Actions actions, Assignments assignments ) {
 
 		logger.debug( "Splitting routers connecting multiple workers." );
 
-		Collection< Map< Interface, String > > res = new LinkedList< Map< Interface, String > >();
+		Map< Appliance, Collection< Interface > > res = new HashMap< Appliance, Collection< Interface > >();
 
 		// Inspect the routers to see if they connect subnets with different assignments.
 		// E.g.  [subnet A; assign: w0] -- R -- [subnet B; assign: w1]
@@ -144,63 +150,59 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 		List< Appliance > torem = new LinkedList< Appliance >();
 		List< Object > toreg = new LinkedList< Object >();
 
-		for ( Appliance app : model.getAppliances() ) {
+		for ( Appliance app : model.getRouters() ) {
 
-			if ( ApplianceType.ROUTER.equals( app.getType() ) ) {
+			Set< String > targets = new HashSet< String >();
+			Actions.Action action = actions.get( app );
 
-				Set< String > targets = new HashSet< String >();
-				Actions.Action action = actions.get( app );
-
-				for ( Interface iface : app.getInterfaces() ) {
-					if ( iface.getEndpoint() instanceof Switch ) {
-						targets.add( assignments.get( ( Switch ) iface.getEndpoint() ) );
-					}
+			for ( Interface iface : app.getInterfaces() ) {
+				if ( iface.getEndpoint() instanceof Switch ) {
+					targets.add( assignments.get( ( Switch ) iface.getEndpoint() ) );
 				}
+			}
 
-				if ( targets.size() > 1 ) {
+			if ( targets.size() > 1 ) {
 
-					logger.info( "A router is going to be split (id: " + app.getResourceId()
-					             + ", parts: " + targets.size() + ")." );
+				logger.info( "A router is going to be split (id: " + app.getResourceId()
+				             + ", parts: " + targets.size() + ")." );
 
-					// The router connects subnets assigned to different workers.
-					// Create new router appliance for each worker.
+				// The router connects subnets assigned to different workers.
+				// Create new router appliance for each worker.
 
-					Map< Interface, String > desc = new HashMap< Interface, String >();
+				Collection< Interface > vlans = new LinkedList< Interface >();
 
-					int i = 1;
-					for ( String target : targets ) {
+				int i = 1;
+				for ( String target : targets ) {
 
-						Appliance router = new Appliance( app.getResourceId(), app.getProjectId(),
-						                                  app.getType(), app.getRepoId() );
+					Appliance router = new Appliance( app.getResourceId(), app.getProjectId(),
+					                                  app.getType(), app.getRepoId() );
 
-						for ( Interface iface : app.getInterfaces() ) {
-							if ( ( iface.getEndpoint() instanceof Switch )
-							     && ( target.equals( assignments.get( ( Switch ) iface.getEndpoint() ) ) ) ) {
-								router.addInterface( iface );
-							}
+					for ( Interface iface : app.getInterfaces() ) {
+						if ( ( iface.getEndpoint() instanceof Switch )
+						     && ( target.equals( assignments.get( ( Switch ) iface.getEndpoint() ) ) ) ) {
+							router.addInterface( iface );
 						}
-
-						// Add one more interface used for internal router communication.
-
-						Interface vlan = new Interface( "INTRA0", app.getProjectId(), null,
-						                                new IpAddress( "200.0.0." + i++, 24 ) );
-						router.addInterface( vlan );
-
-						toreg.add( vlan );
-						actions.put( vlan, action );
-						assignments.put( vlan, target );
-						desc.put( vlan, target );
-
-						toreg.add( router );
-						actions.put( router, action );
-						assignments.put( router, target );
-
 					}
 
-					res.add( desc );
-					torem.add( app );
+					// Add one more interface used for internal router communication.
+
+					Interface vlan = new Interface( "INTRA0", app.getProjectId(), null,
+					                                new IpAddress( "200.0.0." + i++, 24 ) );
+					router.addInterface( vlan );
+
+					toreg.add( vlan );
+					actions.put( vlan, action );
+					assignments.put( vlan, target );
+
+					toreg.add( router );
+					actions.put( router, action );
+					assignments.put( router, target );
+
+					vlans.add( vlan );
 
 				}
+
+				torem.add( app );
 
 			}
 
@@ -221,34 +223,25 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 	}
 
 
-	void createVlanAssignments( Collection< Map< Interface, String > > parts, Actions actions, Assignments assignments ) {
+	void createVlanAssignments( Map< Appliance, Collection< Interface > > parts,
+	                            Actions actions, Assignments assignments ) {
 
-		for ( Map< Interface, String > vlan : parts ) {
+		for ( Map.Entry< Appliance, Collection< Interface > > entry : parts.entrySet() ) {
 
-			// if ( Actions.Action.ADD.equals( actions.get( vlan ) ) ) {
+			ApplianceAnnotation annotation = assignments.getAnnotation( entry.getKey() );
 
-				int tag = -1;
-				VlanInterfaceAssignment assign = null;
+			if ( null == annotation ) {
+				assignments.putAnnotation( entry.getKey(),
+				                           new VlanApplianceAnnotation( tagProvider.provide() ) );
+			}
 
-				for ( Map.Entry< Interface, String > entry : vlan.entrySet() ) {
+			InterfaceAssignment interfaceAssignment = new VlanInterfaceAssignment(
+				( ( VlanApplianceAnnotation ) assignments.getAnnotation( entry.getKey() ) ).getTag()
+			);
 
-					Interface iface = entry.getKey();
-
-					if ( null == assignments.getAnnotation( iface ) ) {
-
-						if ( -1 == tag ) {
-							tag = 905;  // TODO  < this is temporary
-							// tag = tagProvider.provide();  // TODO  uncomment
-							assign = new VlanInterfaceAssignment( tag );  // nulls are default and set by the worker
-						}
-
-						assignments.putAnnotation( iface, assign );
-
-					}
-
-				}
-
-			// }
+			for ( Interface iface : entry.getValue() ) {
+				assignments.putAnnotation( iface, interfaceAssignment );
+			}
 
 		}
 
@@ -263,6 +256,10 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 		this.assigner = assigner;
 	}
 
+	public void setTagProvider( VlanTagProvider tagProvider ) {
+		this.tagProvider = tagProvider;
+	}
+
 	void addWorker( String id, WorkerMBean worker ) {
 		workers.put( id, worker );
 	}
@@ -271,6 +268,7 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 	private AssignerMBean assigner;
 	private WorkerProvider workerProvider;
 	private final Map< String, WorkerMBean > workers = new HashMap< String, WorkerMBean >();
+	private VlanTagProvider tagProvider;
 
 	private static final Logger logger = Logger.getLogger( Supervisor.class );
 

@@ -703,10 +703,16 @@ public class Worker implements WorkerMBean {
 
 				VlanInterfaceAssignment assign = ( VlanInterfaceAssignment ) annotation;
 
-				logger.info( "VLAN interface instantiation (name: " + "TODO"
-				             + ", tag: " + assign.getTag() + ")." );
+				if ( null != assign.getName() ) {
+					logger.warn( "Ignoring annotation field name (name: " + assign.getName() + ")." );
+				}
 
-				// TODO  for now, only default names are supported (and it's sufficient)
+				if ( null != assign.getLink() ) {
+					logger.warn( "Ignoring annotation field line (linek: " + assign.getLink() + ")." );
+				}
+
+				logger.info( "VLAN interface instantiation (name: " + NameHelper.interfaceName( iface )
+				             + ", tag: " + assign.getTag() + ")." );
 
 				try {
 

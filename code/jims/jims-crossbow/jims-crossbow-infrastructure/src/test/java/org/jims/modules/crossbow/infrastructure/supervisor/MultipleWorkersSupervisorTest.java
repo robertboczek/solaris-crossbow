@@ -1,5 +1,6 @@
 package org.jims.modules.crossbow.infrastructure.supervisor;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Collection;
 import java.util.HashMap;
@@ -12,7 +13,10 @@ import org.jims.modules.crossbow.objectmodel.Actions;
 import org.jims.modules.crossbow.infrastructure.helper.model.ModelHelper;
 import org.jims.modules.crossbow.objectmodel.Assignments;
 import org.jims.modules.crossbow.objectmodel.ObjectModel;
+import org.jims.modules.crossbow.objectmodel.VlanApplianceAnnotation;
 import org.jims.modules.crossbow.objectmodel.VlanInterfaceAssignment;
+import org.jims.modules.crossbow.objectmodel.resources.Appliance;
+import org.jims.modules.crossbow.objectmodel.resources.ApplianceType;
 import org.jims.modules.crossbow.objectmodel.resources.Interface;
 import org.junit.Before;
 import org.junit.Test;
@@ -108,34 +112,32 @@ public class MultipleWorkersSupervisorTest {
 	@Test
 	public void testAnnotationsApplied() {
 
-		Collection< Map< Interface, String > > parts = new LinkedList< Map< Interface, String > >();
+		Map< Appliance, Collection< Interface > > parts = new HashMap< Appliance, Collection< Interface > >();
+
+		Appliance router = new Appliance( "aaa", "bbb", ApplianceType.ROUTER );
 
 		Interface i0 = new Interface( "my-int", "my-pro" );
 		Interface i1 = new Interface( "my-int2", "my-pro" );
 
-		Map< Interface, String > ifaces = new HashMap< Interface, String >();
-		ifaces.put( i0, W0 );
-		ifaces.put( i1, W1 );
-
-		parts.add( ifaces );
+		parts.put( router, Arrays.asList( i0, i1 ) );
 
 		Assignments assignments = new Assignments();
+
+		assignments.putAnnotation( router, new VlanApplianceAnnotation( TAG ) );
 
 		assert ( null == assignments.getAnnotation( i0 ) );
 		assert ( null == assignments.getAnnotation( i1 ) );
 
-		assignments.putAnnotation( i0, new VlanInterfaceAssignment( 13 ) );
-
-		assert ( null != assignments.getAnnotation( i0 ) );
-
 		supervisor.createVlanAssignments( parts, null, assignments );
 
-		assert ( null != assignments.getAnnotation( i1 ) );
+		assert ( TAG == ( ( VlanInterfaceAssignment ) assignments.getAnnotation( i0 ) ).getTag() );
+		assert ( TAG == ( ( VlanInterfaceAssignment ) assignments.getAnnotation( i1 ) ).getTag() );
 
 	}
 
 
 	private static final String W0 = "w0", W1 = "w1";
+	private static final int TAG = 13;
 
 	private WorkerMBean firstWorker, secondWorker;
 	private Actions actions;
