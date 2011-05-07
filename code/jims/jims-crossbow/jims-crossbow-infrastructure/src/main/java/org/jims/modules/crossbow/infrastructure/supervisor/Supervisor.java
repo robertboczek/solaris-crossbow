@@ -4,6 +4,7 @@ import org.jims.modules.crossbow.infrastructure.supervisor.vlan.VlanTagProvider;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -147,10 +148,12 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 		// Inspect the routers to see if they connect subnets with different assignments.
 		// E.g.  [subnet A; assign: w0] -- R -- [subnet B; assign: w1]
 
-		List< Appliance > torem = new LinkedList< Appliance >();
 		List< Object > toreg = new LinkedList< Object >();
 
-		for ( Appliance app : model.getRouters() ) {
+		Iterator< Appliance > it = model.getRouters().iterator();
+		while ( it.hasNext() ) {
+
+			Appliance app = it.next();
 
 			Set< String > targets = new HashSet< String >();
 			Actions.Action action = actions.get( app );
@@ -202,16 +205,14 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 
 				}
 
-				torem.add( app );
+				it.remove();
+				actions.remove( app );
+				assignments.remove( app );
+
+				res.put( app, vlans );
 
 			}
 
-		}
-
-		for ( Appliance app : torem ) {
-			model.remove( app );
-			actions.remove( app );
-			assignments.remove( app );
 		}
 
 		model.registerAll( toreg );
