@@ -150,6 +150,8 @@
     \section{Lightweight OS-level virtualization with Solaris Containers}
 
     \section{Crossbow - network virtualization technology}
+	
+		\subsection{Crossbow architecture}
 
         One of the most important condition in terms of network virtualization is that network traffic should be insulated between virtual machines.
         This kind of isolation can be achieved by having a dedicated physical NIC, network cable and port from the switch to the virtual machine itself. 
@@ -165,29 +167,95 @@
         which VNIC was created. Each lane has a dedicated buffer for Transmit (Tx) and Receive (Rx) ring. In case when load exceeds assigned limit packets
          must be dropped as it is wiser to dop them then to expend OS CPU resources. 
 
-	\begin{figure}[H]
-		\includegraphics[width=\textwidth]{img/crossbow-traffic-line.jpg}
-		\caption{Dedicated lines in the Crossbow architecture}
-	\end{figure}
+		\begin{figure}[H]
+			\includegraphics[width=\textwidth]{img/crossbow-traffic-dedicated-line.jpg}
+			\caption{Dedicated lines in the Crossbow architecture}
+		\end{figure}
+		
+		\subsection{Virtualization lines}
 
-        A virtualization lane can be one of two types, hardware-based or software-based.
-        @todo dopisac Hardware-based virtualization lanes i Software-based virtualization lanes
+			Virtualization is the most key component in the Crossbow architecture. Each lane consists some hardware resources as well as software resources which may be 
+			used to some concrete type of traffic. It usually would be composed of: 
+			\begin{enumerate}
+				\item{NIC resources( receive and transmit rings, interrupts, MAC address slots )}
+				\item{Driver resources( DMA bindings )}
+				\item{MAC layer resources ( data structures, execution threads, locks )}
+			\end{enumerate}
+			
+			A virtualization lane can be one of two types, hardware-based or software-based.
+			
+			\subsubsection{Hardware-based virtualization lanes}
+			
+			This type requires ability to partitioning resources from NIC. The minimum requirement is that a hardware-based lane should must have a dedicated receive ring.
+			Other resources such as transmit lane can be exclusive or shared between lanes. Each virtual machine could have one or more lanes assigned and the incoming packets
+			would be distributed among them based on even scheduling unless some administrative polices where created, such as priority or bandwidth limit.		
+			
+			\subsubsection{Software-based virtualization lanes}
+			
+			In case when NIC runs out of hardware-based virtualization lane, receive and transmit rings may be shared by multiple VNICs. The number of software-based virtualization 
+			lanes also often called softrings is unlimited. The main disadvantage of software-based lanes is the lack of fairness and isolation which in fact is provided in hardware-based
+			lanes. The received and sent rings may work also in mix mode, whereas some of the rings may be assigned to software and some may be assigned to hardware based lanes.	
+			
+		\subsection{Dynamic polling}	
+			
+			The Crossbow architecture proposed two types of working mode. Currently used mode is determined by traffic and load. Under low load, where the rate of arraving packets is lower than
+			time of packet processing, lane works in the interrupt mode which means that receive ring generates an interrupt when new packet arrives. However, when the backlog grows, the line 
+			switches to dynamic polling mode in which a kernel thread goes down to the receive ring in the NIC hardware to extract all outstanding packets in a single chain. Key aspect is that 
+			every virtualization lane works independently and transparently from each other. Usually only three threads are used per lane:
+			
+			\begin{enumeration}
+				\item{Poll thread which goes to the NIC hardware to get all packet chain}
+				\item{Woker thread which is responsible for protocol processing (IP and above) or delivers packets to virtual machine. Thread performs also any additional transmit work which is a natural 
+				requirement some concrete protocol, such as processing TCP packets that require sending ACK packets.}
+				\item{Transmit thread that is activated when if packets are being sent after transmit side flow control relief discharge, or after retreiving transmit descriptor. Application or virtual 
+				machine can transmit any packets without performing queuing because of flow control or context switching.}
+			\end{enumeration}
 
+		
+		\subsection{Crossbow elements}
 
-        @todo opisac szczegoly VNIC'ow
+			\subsubsection{VNics}
+			Virtual NICs (VNICs) that are related to their own lane are the key element in crossbow architecture. There is no
+			difference between NIC and VNIC in administration, they are all treated as data links. Every VNIC has an assigned
+			lane and flow classifier which classifies received packets by VNIC's MAC address and sometimes by the VLAN tag.
+			If created with a VLAN tag, protocols like GVRP or MVRP may be used to register the VLAN tag with the physical switches
+			too.	
 
-        @todo opisac Dynamic Polling and Packet Scheduling
+			In terms of sharing bandwidth, Crossbow enables administrative control of bandwidth for every single VNIC. The bandwidth of the link
+			is implemented by regulating the periodic intake of incoming packets per dedicated lane. The network stack allows only as many packets as it was 
+			assigned to specific VNIC. The lane picks more packets when the next period begins. In case of regulating the speed of transmited bandwidth it is much
+			easier as the network stack can either control the application that is generating the stream of packets or just drop the excessive amount of packets.
+			These mechanisms are also used in flows QoS described and discussed later in this paper.
 
-        @todo opisac bandwidth partitioning
+			\subsubsection{Virtual switching}
+			
+			Virtual switches created always implicitly when the first VNIC is defined under existing NIC could never be accessed directly nor be visible by
+			any user ( even administrator ). 
+			
+			\begin{figure}[H]
+				\includegraphics[width=\textwidth]{img/physical_and_virtual_switches_mapping.jpg}
+				\caption{Mapping between physical and virtual network building elements}
+			\end{figure}
+			
+			Semantics assured by virtual switches are the same as provided by physical switches: 
+			\begin{enumerate}
+				\item{VNICs created on top of the same NIC can send ehterstub packets to each other}
+				\item{Broadcast packets received by the underlying NIC are distributed to every single VNIC that was defined on the top of this NIC}
+				\item{Broadcast packets sent by one of the VNICs is distributed to all VNICs defined on the top of the same NIC and to the NIC for further transmission as well}
+				\item{In terms of multicast network traffic multicast group membership is monitored and used for distributing packets to appropriate VNIC}
+			\end{enumerate}
 
-        Etherstubs
+			Connectivity between VNICs is available only when they were defined on the top of the same NIC. 
 
-        As it was mentioned above, the MAC layer provides the virtual switching capabilities which allow VNICs to be created over existing physical NICs.
+			\subsubsection{Etherstubs}
+
+        As it was mentioned before, the MAC layer provides the virtual switching capabilities which allow VNICs to be created over existing physical NICs.
         In some cases, creating virtual networks without the use of a physical NIC is more welcomed than creating over physical NICs. In that case VNICs 
         would be defined on the top of pseudo NICs. The Crossbow provides these kind of elements which are called Etherstubs. These components could be used
         instead of NICs during creation of VNICs.
+		
+			\subsubsection{Examples}
 
-        @todo examples of creating vnic and etherstubs
         \textbf{dladm} is the admin command for managing NICs, VNICs and Etherstubs. Below we present a few examples of creating VNICs, Etherstbus and how
         to assigned bandwidth and priority to theses elements.
 
@@ -205,6 +273,7 @@
     \section{Resource access control}
 
     \section*{Summary}
+	
 
 
   \chapter{The system architecture}
@@ -281,21 +350,29 @@
   \chapter{Summary}
 
     \section*{Chapter overview}
+	
+		
 
     \section{Conclusions}
+	
+		
 
     \section{Achieved goals}
+	
+		
 
     \section{Further work}
+	
+		
 
 
   \begin{thebibliography}{some-label}
-
-    % TODO bibtex
     
-    \bibitem[1]{} Crossbow: From Hardware Virtualized NICS To Virtualized Networks, http://conferences.sigcomm.org/sigcomm/2009/workshops/visa/papers/p53.pdf
-    \bibitem[2]{} Virtual switching in Solaris, http://hub.opensolaris.org/bin/download/Project+crossbow/Docs/virtualswitch.pdf
-    \bibitem[3]{} Oracle Solaris 11 Express Network Virtualization and Network Resource Management, http://www.oracle.com/technetwork/articles/servers-storage-admin/sol11ecrossbow-186794.pdf
+    \bibitem[1]{ Crossbow: From Hardware Virtualized NICS To Virtualized Networks, http://conferences.sigcomm.org/sigcomm/2009/workshops/visa/papers/p53.pdf }
+    \bibitem[2]{ Virtual switching in Solaris, http://hub.opensolaris.org/bin/download/Project+crossbow/Docs/virtualswitch.pdf }
+    \bibitem[3]{ Oracle Solaris 11 Express Network Virtualization and Network Resource Management, http://www.oracle.com/technetwork/articles/servers-storage-admin/sol11ecrossbow-186794.pdf }
+	\bibitem[4]{http://itnewscast.com/servers-storage/flow-control-solaris-11-express-network-virtualization}
+	
 
   \end{thebibliography}
 
