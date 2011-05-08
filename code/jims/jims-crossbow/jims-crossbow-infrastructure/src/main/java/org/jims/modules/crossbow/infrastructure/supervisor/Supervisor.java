@@ -124,7 +124,10 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 					Assignments assignments = projects.get( project ).second;
 
 					model.addAll( entry.getValue().first );
-					assignments.putAll( entry.getValue().second );
+
+					if ( null != entry.getValue().second ) {
+						assignments.putAll( entry.getValue().second );
+					}
 
 					for ( Object o : new LinkedList< Object >() {{ addAll( model.getAppliances() );
 					                                               addAll( model.getInterfaces() );
