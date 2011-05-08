@@ -278,6 +278,7 @@ public class Gui extends Shell {
 					logger.trace("Restoring network structure from file");
 
 					new ModelToGraphTranslator().translate(graph, objectModel,
+							new Assignments(),  // TODO  < is that OK? it should be...
 							networkStructureHelper, graphConnectionDataList);
 				}
 			}

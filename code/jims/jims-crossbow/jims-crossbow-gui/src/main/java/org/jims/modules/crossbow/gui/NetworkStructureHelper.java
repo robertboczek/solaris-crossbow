@@ -374,8 +374,13 @@ public class NetworkStructureHelper {
 
 		for (Object object : graph.getConnections())
 			((GraphConnection) object).setVisible(false);
-		for (Object object : graph.getNodes())
-			((GraphItem) object).setVisible(false);
+		
+		for (Object object : graph.getNodes()) {
+			// Hide all but containers.
+			if ( ! ( object instanceof GraphContainer ) ) {
+				((GraphItem) object).setVisible(false);
+			}
+		}
 	}
 
 	public Set<Object> getNewObjects() {

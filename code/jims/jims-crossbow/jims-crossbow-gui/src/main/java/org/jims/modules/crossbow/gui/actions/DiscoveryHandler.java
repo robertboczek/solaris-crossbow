@@ -11,7 +11,9 @@ import org.eclipse.zest.core.widgets.Graph;
 import org.jims.modules.crossbow.gui.NetworkStructureHelper;
 import org.jims.modules.crossbow.gui.data.GraphConnectionData;
 import org.jims.modules.crossbow.gui.dialogs.SelectDiscoverProjectDialog;
+import org.jims.modules.crossbow.infrastructure.Pair;
 import org.jims.modules.crossbow.infrastructure.supervisor.SupervisorMBean;
+import org.jims.modules.crossbow.objectmodel.Assignments;
 import org.jims.modules.crossbow.objectmodel.ObjectModel;
 
 public class DiscoveryHandler {
@@ -42,13 +44,10 @@ public class DiscoveryHandler {
 			MessageDialog.openError(null, "Connection problem",
 					"You must be connected to discover");
 		}
-		Map<String, ObjectModel> models = supervisorMBean.discover();
+		Map<String, Pair< ObjectModel, Assignments > > models = supervisorMBean.discover();
 
-		String[] projecNames = new String[models.size()];
-		int i = 0;
-		for (Map.Entry<String, ObjectModel> entry : models.entrySet()) {
-			projecNames[i++] = entry.getKey();
-		}
+		String[] projecNames = models.keySet().toArray( new String[ 0 ] );
+			
 		SelectDiscoverProjectDialog dialog = new SelectDiscoverProjectDialog(
 				graph.getShell(), projecNames, this);
 		dialog.create();
@@ -56,7 +55,7 @@ public class DiscoveryHandler {
 			if (models.get(selectedProject) != null) {
 				logger.trace("Starting restoring project: " + selectedProject
 						+ " structure");
-				translator.translate(graph, models.get(selectedProject),
+				translator.translate(graph, models.get(selectedProject).first, models.get(selectedProject).second,
 						networkStructureHelper, graphConnectionDataList);
 				projectId.setText(selectedProject);
 			} else {

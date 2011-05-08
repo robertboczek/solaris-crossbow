@@ -113,6 +113,7 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 				for ( Map.Entry< String, Pair< ObjectModel, Assignments > > entry : worker.discover().entrySet() ) {
 
 					String project = entry.getKey();
+					final ObjectModel part = entry.getValue().first;
 
 					logger.info( project + " discovered on " + workerId );
 
@@ -120,19 +121,19 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 						projects.put( project, new Pair< ObjectModel, Assignments >( new ObjectModel(), new Assignments() ) );
 					}
 
-					final ObjectModel model = projects.get( project ).first;
+					ObjectModel model = projects.get( project ).first;
 					Assignments assignments = projects.get( project ).second;
 
-					model.addAll( entry.getValue().first );
+					model.addAll( part );
 
 					if ( null != entry.getValue().second ) {
 						assignments.putAll( entry.getValue().second );
 					}
 
-					for ( Object o : new LinkedList< Object >() {{ addAll( model.getAppliances() );
-					                                               addAll( model.getInterfaces() );
-					                                               addAll( model.getPolicies() );
-					                                               addAll( model.getSwitches() ); }} ) {
+					for ( Object o : new LinkedList< Object >() {{ addAll( part.getAppliances() );
+					                                               addAll( part.getInterfaces() );
+					                                               addAll( part.getPolicies() );
+					                                               addAll( part.getSwitches() ); }} ) {
 						assignments.put( o, workerId );
 					}
 
