@@ -15,9 +15,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
+import org.jims.modules.crossbow.enums.LinkStatisticTimePeriod;
 import org.jims.modules.crossbow.enums.LinkStatistics;
 import org.jims.modules.crossbow.gui.chart.ChartDisplayer;
-import org.jims.modules.crossbow.gui.chart.ChartTimeType;
 import org.jims.modules.crossbow.gui.data.GraphConnectionData;
 import org.jims.modules.crossbow.gui.statistics.StatisticAnalyzer.EndpointStatistic;
 import org.jims.modules.crossbow.objectmodel.resources.Interface;
@@ -41,8 +41,10 @@ public class InterfaceStatisticsDetailsDialog extends TitleAreaDialog {
 	private Text sentBytesLabel;
 	private Text sentPacketsLabel;
 	private Text avgBytesSent;
-	
+
 	private Combo chartType;
+
+	private Interface interf = null;
 
 	private GraphConnectionData graphConnectionData;
 
@@ -55,18 +57,23 @@ public class InterfaceStatisticsDetailsDialog extends TitleAreaDialog {
 
 	public void setControlsValues() {
 
-		if (graphConnectionData.getEndp1() != null && graphConnectionData.getEndp1() instanceof Interface) {
+		if (graphConnectionData.getEndp1() != null
+				&& graphConnectionData.getEndp1() instanceof Interface) {
 			endpoints.add(((Interface) graphConnectionData.getEndp1())
 					.getIpAddress().toString());
 			endpoints.setData(((Interface) graphConnectionData.getEndp1())
-					.getIpAddress().toString(), graphConnectionData.getStatistic1());
+					.getIpAddress().toString(), graphConnectionData
+					.getStatistic1());
+
 		}
 
-		if (graphConnectionData.getEndp2() != null && graphConnectionData.getEndp2() instanceof Interface) {
+		if (graphConnectionData.getEndp2() != null
+				&& graphConnectionData.getEndp2() instanceof Interface) {
 			endpoints.add(((Interface) graphConnectionData.getEndp2())
 					.getIpAddress().toString());
 			endpoints.setData(((Interface) graphConnectionData.getEndp2())
-					.getIpAddress().toString(), graphConnectionData.getStatistic2());
+					.getIpAddress().toString(), graphConnectionData
+					.getStatistic2());
 		}
 
 	}
@@ -111,9 +118,13 @@ public class InterfaceStatisticsDetailsDialog extends TitleAreaDialog {
 				logger.debug(endpoints.getSelectionIndex());
 
 				if (endpoints.getSelectionIndex() == 0) {
-					actualizeLabels((EndpointStatistic)endpoints.getData(endpoints.getText()));
+					actualizeLabels((EndpointStatistic) endpoints
+							.getData(endpoints.getText()));
+					interf = ((Interface) graphConnectionData.getEndp1());
 				} else if (endpoints.getSelectionIndex() == 1) {
-					actualizeLabels((EndpointStatistic)endpoints.getData(endpoints.getText()));
+					actualizeLabels((EndpointStatistic) endpoints
+							.getData(endpoints.getText()));
+					interf = ((Interface) graphConnectionData.getEndp2());
 				}
 
 			}
@@ -160,20 +171,21 @@ public class InterfaceStatisticsDetailsDialog extends TitleAreaDialog {
 		avgBytesSent = new Text(parent, SWT.NONE);
 		avgBytesSent.setText("");
 		avgBytesSent.setEnabled(false);
-		
+
 		Label label7 = new Label(parent, SWT.NONE);
 		label7.setText("Select chart type: ");
 
 		chartType = new Combo(parent, SWT.NONE);
 		chartType.add("Last minute");
-		chartType.setData("Last minute", ChartTimeType.MINUTELY);
+		chartType.setData("Last minute", LinkStatisticTimePeriod.MINUTELY);
 		chartType.add("Last 5 minutes");
-		chartType.setData("Last 5 minutes", ChartTimeType.FIVE_MINUTELY);
+		chartType.setData("Last 5 minutes",
+				LinkStatisticTimePeriod.FIVE_MINUTELY);
 		chartType.add("Last hour");
-		chartType.setData("Last hour", ChartTimeType.HOURLY);
+		chartType.setData("Last hour", LinkStatisticTimePeriod.HOURLY);
 		chartType.add("Last day");
-		chartType.setData("Last day", ChartTimeType.DAILY);
-		
+		chartType.setData("Last day", LinkStatisticTimePeriod.DAILY);
+
 		chartType.addSelectionListener(new SelectionListener() {
 
 			@Override
@@ -185,7 +197,9 @@ public class InterfaceStatisticsDetailsDialog extends TitleAreaDialog {
 			public void widgetSelected(SelectionEvent arg0) {
 				logger.debug("Opening chart");
 
-				new ChartDisplayer((ChartTimeType) chartType.getData(chartType.getText()), null);
+				new ChartDisplayer((LinkStatisticTimePeriod) chartType
+						.getData(chartType.getText()),
+						new Interface[] { interf }, null);
 			}
 		});
 
