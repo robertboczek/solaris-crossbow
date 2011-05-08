@@ -80,6 +80,23 @@ public class VlanManager implements VlanManagerMBean, NotificationListener {
 
 
 	@Override
+	public VlanMBean getByName( String name ) {
+
+		VlanMBean res = null;
+
+		for ( VlanMBean vlan : publisher.getPublished() ) {
+			if ( name.equals( vlan.getName() ) ) {
+				res = vlan;
+				break;
+			}
+		}
+
+		return res;
+
+	}
+
+
+	@Override
 	public void discover() {
 
 		if ( null != publisher ) {
@@ -144,7 +161,7 @@ public class VlanManager implements VlanManagerMBean, NotificationListener {
 	}
 
 
-	private Publisher publisher;
+	private Publisher< VlanMBean > publisher;
 	private VlanHelper vlanHelper;
 
 	private final static Logger logger = Logger.getLogger( VlanManager.class );

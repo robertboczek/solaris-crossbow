@@ -19,4 +19,6 @@ public interface VlanManagerMBean {
 
 	List< String > getVlans();
 
+	VlanMBean getByName( String name );
+
 }

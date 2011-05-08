@@ -96,9 +96,13 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 	@Override
 	public Map< String, ObjectModel > discover() {
 
-		WorkerMBean worker = workers.values().iterator().next();
+		// TODO  do nothing for a moment
 
-		return worker.discover();
+		// WorkerMBean worker = workers.values().iterator().next();
+
+//		return worker.discover();
+
+		return null;
 
 	}
 

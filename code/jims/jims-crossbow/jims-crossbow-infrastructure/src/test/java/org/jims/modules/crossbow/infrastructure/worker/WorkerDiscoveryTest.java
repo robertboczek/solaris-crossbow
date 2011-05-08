@@ -1,5 +1,7 @@
 package org.jims.modules.crossbow.infrastructure.worker;
 
+import org.jims.modules.crossbow.objectmodel.Assignments;
+import org.jims.modules.crossbow.infrastructure.Pair;
 import org.jims.modules.crossbow.objectmodel.policy.Policy;
 import java.util.Map;
 import org.jims.modules.crossbow.etherstub.EtherstubManagerMBean;
@@ -47,10 +49,10 @@ public class WorkerDiscoveryTest {
 
 		WorkerDiscoveryHelper.stubQosModelMocks( etherstubManager, vNicManager, flowManager, zoneManager );
 
-		Map< String, ObjectModel > projects = worker.discover();
+		Map< String, Pair< ObjectModel, Assignments > > projects = worker.discover();
 
 		String pn = projects.keySet().iterator().next();
-		ObjectModel om = projects.get( pn );
+		ObjectModel om = projects.get( pn ).first;
 		Policy policy = om.getPolicies().get( 0 );
 
 		assert ( 1 == projects.size() );

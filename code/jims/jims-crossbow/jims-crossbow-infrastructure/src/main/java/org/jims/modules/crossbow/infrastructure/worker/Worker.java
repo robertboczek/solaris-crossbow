@@ -24,6 +24,7 @@ import org.jims.modules.crossbow.flow.FlowMBean;
 import org.jims.modules.crossbow.flow.FlowManagerMBean;
 import org.jims.modules.crossbow.flow.enums.FlowAttribute;
 import org.jims.modules.crossbow.flow.enums.FlowProperty;
+import org.jims.modules.crossbow.infrastructure.Pair;
 import org.jims.modules.crossbow.infrastructure.worker.exception.ActionException;
 import org.jims.modules.crossbow.infrastructure.worker.exception.ModelInstantiationException;
 import org.jims.modules.crossbow.link.VNic;
@@ -47,6 +48,7 @@ import org.jims.modules.crossbow.objectmodel.resources.Appliance;
 import org.jims.modules.crossbow.objectmodel.resources.ApplianceType;
 import org.jims.modules.crossbow.objectmodel.resources.Interface;
 import org.jims.modules.crossbow.objectmodel.resources.Switch;
+import org.jims.modules.crossbow.vlan.VlanMBean;
 import org.jims.modules.crossbow.vlan.VlanManagerMBean;
 import org.jims.modules.solaris.commands.CreateZoneFromSnapshotCommand;
 import org.jims.modules.solaris.commands.ModifyZoneCommand;
@@ -177,17 +179,18 @@ public class Worker implements WorkerMBean {
 
 
 	@Override
-	public Map< String, ObjectModel > discover() {
+	public Map< String, Pair< ObjectModel, Assignments > > discover() {
 
 		logger.info( "Discovering instantiated projects." );
 
-		Map< String, ObjectModel > res = new HashMap< String, ObjectModel >();
+		Map< String, Pair< ObjectModel, Assignments > > res = new HashMap< String, Pair< ObjectModel, Assignments > >();
 
 		Map< String, Object > ids = new HashMap< String, Object >();
+		Map< String, Assignments > assignments = new HashMap< String, Assignments >();
 
 		Map< String, List< Appliance > > apps = discoverAppliances( ids );
 		Map< String, List< Switch > > switches = discoverSwitches( ids );
-		Map< String, List< Interface > > ifaces = discoverInterfaces( ids );
+		Map< String, List< Interface > > ifaces = discoverInterfaces( ids, assignments );
 		Map< String, List< Policy > > policies = discoverPolicies( ids );
 
 		Set< String > projects = new HashSet< String >();
@@ -200,7 +203,7 @@ public class Worker implements WorkerMBean {
 
 			ObjectModel om = new ObjectModel();
 
-			res.put( project, om );
+			res.put( project, new Pair< ObjectModel, Assignments >( om, assignments.get( project ) ) );
 
 			for ( List l : new List[] { apps.get( project ),
 			                            switches.get( project ),
@@ -284,7 +287,8 @@ public class Worker implements WorkerMBean {
 	}
 
 
-	private Map< String, List< Interface > > discoverInterfaces( Map< String, Object > ids ) {
+	private Map< String, List< Interface > > discoverInterfaces( Map< String, Object > ids,
+	                                                             Map< String, Assignments > assignments ) {
 
 		Map< String, List< Interface > > res = new HashMap< String, List< Interface > >();
 
@@ -325,6 +329,40 @@ public class Worker implements WorkerMBean {
 
 				} else {
 					logger.warn( "Ignoring dangling interface (name: " + m.group() + ")." );
+				}
+
+			}
+
+			// Now, discover router-internal (VLAN) interfaces.
+
+			for ( Matcher m : filterNames( vlanManager.getVlans(), NameHelper.REG_INTERFACE_NAME_CG ) ) {
+
+				String project = m.group( 1 );
+
+				logger.info( "Found a VLAN interface (name: " + m.group( 4 ) + ", project: " + project + ")" );
+
+				Interface iface = new Interface( m.group( 4 ), project );
+
+				VlanMBean vlan = vlanManager.getByName( m.group() );
+
+				if ( ! assignments.containsKey( project ) ) {
+					assignments.put( project, new Assignments() );
+				}
+
+				assignments.get( project ).putAnnotation( iface, new VlanInterfaceAssignment( vlan.getTag() ) );
+
+				Appliance app = ( Appliance ) ids.get( NameHelper.extractAppliance( m.group() ) );
+
+				if ( null != app ) {
+
+					if ( ! res.containsKey( project ) ) {
+						res.put( project, new LinkedList< Interface >() );
+					}
+
+					app.addInterface( iface );
+
+				} else {
+					logger.warn( "Ignoring dangling VLAN interface (name: " + m.group() + ")." );
 				}
 
 			}

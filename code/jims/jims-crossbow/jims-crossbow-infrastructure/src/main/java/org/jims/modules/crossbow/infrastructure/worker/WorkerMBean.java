@@ -1,6 +1,7 @@
 package org.jims.modules.crossbow.infrastructure.worker;
 
 import java.util.Map;
+import org.jims.modules.crossbow.infrastructure.Pair;
 import org.jims.modules.crossbow.infrastructure.worker.exception.ModelInstantiationException;
 import org.jims.modules.crossbow.objectmodel.Actions;
 import org.jims.modules.crossbow.objectmodel.Assignments;
@@ -20,7 +21,7 @@ public interface WorkerMBean {
 	 *
 	 * @return  project -> object-model map
 	 */
-	public Map< String, ObjectModel > discover();
+	public Map< String, Pair< ObjectModel, Assignments > > discover();
 
 
 	public void _discover();
