@@ -50,7 +50,7 @@ public class RouterJoinTest {
 
 		assertEquals( 2, model.getAppliances( ApplianceType.ROUTER ).size() );
 
-		supervisor.joinRouters( model, assignments );
+		supervisor.joinRouters( "PRO", model, assignments );
 
 		assertEquals( 1, model.getAppliances( ApplianceType.ROUTER ).size() );  // redundant routers removed
 		assertEquals( 2, model.getInterfaces().size() );                        // no VLAN interfaces
