@@ -374,7 +374,6 @@ public class Gui extends Shell {
 			public void widgetSelected(SelectionEvent e) {
 				// @todo dorobic wyswietlanie okienka z informacja o systemie i
 				// autorach
-				new ChartDisplayer(ChartTimeType.HOURLY, null);
 			}
 		});
 
