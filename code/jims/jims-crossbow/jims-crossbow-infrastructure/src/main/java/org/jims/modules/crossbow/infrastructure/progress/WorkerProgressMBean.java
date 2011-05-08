@@ -10,4 +10,6 @@ public interface WorkerProgressMBean extends Serializable, NotificationBroadcast
 	
 	public void sendTaskCompletedNotification();
 
+	public void clearListeners();
+
 }

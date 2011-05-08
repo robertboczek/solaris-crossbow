@@ -105,11 +105,13 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 
 		server.registerMBean( worker, new ObjectName( "Crossbow:type=XBowWorker" ) );
 
+		WNDelegateMBean wnDelegate = JMX.newMBeanProxy(
+			server, new ObjectName( "Core:name=WNDelegate" ), WNDelegateMBean.class
+		);
+
 		// StatisticsGatherer MBean
 
-		StatisticsGatherer gatherer = new StatisticsGatherer();
-		gatherer.setvNicManager( vnicManager );
-
+		StatisticsGatherer gatherer = new StatisticsGatherer(wnDelegate);
 		server.registerMBean( gatherer, new ObjectName( "Crossbow:type=StatisticsGatherer" ) );
 
 		// Crossbow notification MBean
@@ -118,16 +120,12 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 
 		// Crossbow notification MBean - @todo crossbowNotification musi sie 
 		//zarejestrowac u kazdego WorkerProgressMBean'a
-		CrossbowNotificationMBean crossbowNotification = new CrossbowNotification(3); //3 etapy (usuniecie, instlacja, update ) * ilosc workerwow - narazie 1
+		CrossbowNotificationMBean crossbowNotification = new CrossbowNotification(wnDelegate);
 		server.registerMBean(crossbowNotification, new ObjectName( "Crossbow:type=CrossbowNotification" ) );
 
 		Assigner assigner = new Assigner();
 
 		// Supervisor MBean
-
-		WNDelegateMBean wnDelegate = JMX.newMBeanProxy(
-			server, new ObjectName( "Core:name=WNDelegate" ), WNDelegateMBean.class
-		);
 
 		Supervisor supervisor = new Supervisor( new JmxWorkerProvider( wnDelegate ), assigner );
 

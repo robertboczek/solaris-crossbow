@@ -2,8 +2,13 @@ package org.jims.modules.crossbow.infrastructure.progress;
 
 import java.util.List;
 import java.util.LinkedList;
+import java.rmi.RemoteException;
 
 import javax.management.ListenerNotFoundException;
+import javax.management.JMX;
+import javax.management.remote.JMXConnectorFactory;
+import javax.management.remote.JMXServiceURL;
+import javax.management.MBeanServerConnection;
 import javax.management.MBeanNotificationInfo;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -11,6 +16,8 @@ import javax.management.Notification;
 import javax.management.NotificationFilter;
 import javax.management.NotificationListener;
 
+import org.jims.modules.sg.service.wnservice.WNDelegateMBean;
+import org.jims.modules.crossbow.infrastructure.progress.WorkerProgressMBean;
 import org.jims.modules.crossbow.infrastructure.progress.notification.ProgressNotification;
 import org.jims.modules.crossbow.infrastructure.progress.notification.LogNotification;
 import org.jims.modules.crossbow.infrastructure.progress.notification.TaskCompletedNotification;
@@ -21,7 +28,7 @@ import org.apache.log4j.Logger;
 
 public class CrossbowNotification implements CrossbowNotificationMBean {
 
-	private int totalTasks;
+	private int totalTasks = Integer.MAX_VALUE;
 
 	private int index;
 
@@ -30,11 +37,12 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 	private StringBuilder sb = new StringBuilder();
 	private ProgressNotification progressNotification = null;
 
-	public CrossbowNotification(int totalTasks) {
-		this.index = 0;
-		this.totalTasks = totalTasks;
+	private final WNDelegateMBean delegate;
 
-		registerNotificationListener();
+	public CrossbowNotification(WNDelegateMBean delegate) {
+
+		this.index = 0;
+		this.delegate = delegate;
 	}
 
 	/**
@@ -42,12 +50,11 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 	 */
 	private static final long serialVersionUID = 4845007778991652486L;
 
-	//@todo dopisac rejestrowanie we wszystkich WorkerProgressMBEan'ach - narazie jest tylko jeden
 	private void registerNotificationListener() {
 
-		log.debug("Registering worker progress listener");
+		log.debug("Reseting and registering at all WorkerProgressMBeans as listener");
 
-		MBeanServer server = JimsMBeanServer.findJimsMBeanServer();
+		/*MBeanServer server = JimsMBeanServer.findJimsMBeanServer();
 		if(server != null) {
 			try{
 				server.addNotificationListener(new ObjectName( "Crossbow:type=WorkerProgress" ), this,
@@ -57,6 +64,42 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 				log.error("Couldn't register WorkerProgress Listener");
 			}
 
+		}*/
+
+		try {
+
+			totalTasks =  delegate.scGetAllMBeanServers().length;
+			for ( String url : delegate.scGetAllMBeanServers() ) {
+
+				try {
+
+					MBeanServerConnection mbsc = JMXConnectorFactory.connect(
+						new JMXServiceURL( url )
+					).getMBeanServerConnection();
+
+					WorkerProgressMBean worker = JMX.newMBeanProxy(
+						mbsc,
+						new ObjectName( "Crossbow:type=WorkerProgress" ),
+						WorkerProgressMBean.class
+					);
+
+					if(worker != null) {
+						worker.clearListeners();
+					}
+
+					mbsc.addNotificationListener(new ObjectName( "Crossbow:type=WorkerProgress" ), this,
+						null, null);
+
+					log.info( "CrosbowNotification successfully registered lestener at WorkerProgressMBean (url: " + url + ")" );
+
+				} catch ( Exception ex ) {
+					log.error( "Error while querying MBean server (url: " + url + ")", ex );
+				}
+
+			}
+
+		} catch ( RemoteException ex ) {
+			log.error( "Error while getting MBean servers list.", ex );
 		}
 
 	}
@@ -122,6 +165,8 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 		sb = new StringBuilder();
 		progressNotification = new ProgressNotification(0, totalTasks,
 					WorkerProgress.getIpAddress());
+		registerNotificationListener();
+		
 
 	}
 }

@@ -50,6 +50,11 @@ public class WorkerProgress implements WorkerProgressMBean {
 	}
 
 	@Override
+	public void clearListeners() {
+		listeners.clear();
+	}
+
+	@Override
 	public void sendLogNotification(String log) {
 		
 		LogNotification logNotification = new LogNotification(log, getIpAddress());

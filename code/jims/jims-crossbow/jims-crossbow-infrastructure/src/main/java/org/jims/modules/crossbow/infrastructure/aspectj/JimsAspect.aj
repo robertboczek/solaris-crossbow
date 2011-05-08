@@ -8,6 +8,11 @@ import org.jims.modules.crossbow.infrastructure.worker.Worker;
 import org.jims.modules.crossbow.infrastructure.progress.WorkerProgressMBean;
 import org.jims.modules.crossbow.infrastructure.JimsMBeanServer;
 
+import org.jims.modules.crossbow.link.VNicManager;
+import org.jims.modules.crossbow.link.VNicMBean;
+import org.jims.modules.crossbow.etherstub.EtherstubManager;
+import org.jims.modules.crossbow.etherstub.EtherstubMBean;
+
 import org.apache.log4j.Logger;
 
 public aspect JimsAspect {
@@ -18,6 +23,14 @@ public aspect JimsAspect {
 	pointcut addMethod() : myClass() && execution(* instantiateADD(..)) ;
 	pointcut remMethod() : myClass() && execution(* instantiateREM(..)) ;
 	pointcut updMethod() : myClass() && execution(* instantiateUPD(..)) ;
+	
+	pointcut myClass2() : within(VNicManager);
+	pointcut addVNic() : myClass2() && execution(* create(..)) ;
+	pointcut deleteVNic() : myClass2() && execution(* delete(..)) ;
+
+	pointcut myClass3() : within(EtherstubManager);
+	pointcut addEtherstub() : myClass3() && execution(* create(..)) ;
+	pointcut deleteEtherstub() : myClass3() && execution(* delete(..)) ;
 
 	private WorkerProgressMBean workerProgressMBean;
 	private MBeanServer server = null;
@@ -123,4 +136,115 @@ public aspect JimsAspect {
 		return this.workerProgressMBean;
 	}
 
+	before (): addVNic() {
+
+		if(workerProgressMBean == null) {
+			getWorkerProgressMBean();
+		}
+
+		Object[] args = thisJoinPoint.getArgs();
+
+		if(workerProgressMBean != null && args.length == 1 && args[0] instanceof VNicMBean) {
+			log.info("Sending notification");
+			workerProgressMBean.sendLogNotification("Starting creating new VNic " + ((VNicMBean)args[0]).getName());
+		}
+	}
+
+	after (): addVNic() {
+
+		if(workerProgressMBean == null) {
+			getWorkerProgressMBean();
+		}
+
+		Object[] args = thisJoinPoint.getArgs();
+
+		if(workerProgressMBean != null && args.length == 1 && args[0] instanceof VNicMBean) {
+			log.info("Sending notification");
+			workerProgressMBean.sendLogNotification("Finished creating new VNic " + ((VNicMBean)args[0]).getName());
+		}	
+	}
+
+	before (): deleteVNic() {
+
+		if(workerProgressMBean == null) {
+			getWorkerProgressMBean();
+		}
+
+		Object[] args = thisJoinPoint.getArgs();
+
+		if(workerProgressMBean != null && args.length == 2 && args[0] instanceof String) {
+			log.info("Sending notification");
+			workerProgressMBean.sendLogNotification("Starting removing new VNic " + ((String)args[0]));
+		}
+	}
+
+	after (): deleteVNic() {
+
+		if(workerProgressMBean == null) {
+			getWorkerProgressMBean();
+		}
+
+		Object[] args = thisJoinPoint.getArgs();
+
+		if(workerProgressMBean != null && args.length == 2 && args[0] instanceof String) {
+			log.info("Sending notification");
+			workerProgressMBean.sendLogNotification("Finished removing new VNic " + ((String)args[0]));
+		}	
+	}
+	
+	before (): addEtherstub() {
+
+		if(workerProgressMBean == null) {
+			getWorkerProgressMBean();
+		}
+
+		Object[] args = thisJoinPoint.getArgs();
+
+		if(workerProgressMBean != null && args.length == 1 && args[0] instanceof EtherstubMBean) {
+			log.info("Sending notification");
+			workerProgressMBean.sendLogNotification("Starting creating new Etherstub " + ((VNicMBean)args[0]).getName());
+		}
+	}
+
+	after (): addEtherstub() {
+
+		if(workerProgressMBean == null) {
+			getWorkerProgressMBean();
+		}
+
+		Object[] args = thisJoinPoint.getArgs();
+
+		if(workerProgressMBean != null && args.length == 1 && args[0] instanceof EtherstubMBean) {
+			log.info("Sending notification");
+			workerProgressMBean.sendLogNotification("Finished creating new Etherstub " + ((EtherstubMBean)args[0]).getName());
+		}	
+	}
+
+	before (): deleteEtherstub() {
+
+		if(workerProgressMBean == null) {
+			getWorkerProgressMBean();
+		}
+
+		Object[] args = thisJoinPoint.getArgs();
+
+		if(workerProgressMBean != null && args.length == 2 && args[0] instanceof String) {
+			log.info("Sending notification");
+			workerProgressMBean.sendLogNotification("Starting removing new Etherstub " + ((String)args[0]));
+		}
+	}
+
+	after (): deleteEtherstub() {
+
+		if(workerProgressMBean == null) {
+			getWorkerProgressMBean();
+		}
+
+		Object[] args = thisJoinPoint.getArgs();
+
+		if(workerProgressMBean != null && args.length == 2 && args[0] instanceof String) {
+			log.info("Sending notification");
+			workerProgressMBean.sendLogNotification("Finished removing new Etherstub " + ((String)args[0]));
+		}	
+	}
 }
