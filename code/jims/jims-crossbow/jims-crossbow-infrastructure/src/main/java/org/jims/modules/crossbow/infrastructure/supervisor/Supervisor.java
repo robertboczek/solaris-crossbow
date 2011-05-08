@@ -143,7 +143,7 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 		}
 
 		for ( Map.Entry< String, Pair< ObjectModel, Assignments > > entry : projects.entrySet() ) {
-			joinRouters( entry.getValue().first, entry.getValue().second );
+			joinRouters( entry.getKey(), entry.getValue().first, entry.getValue().second );
 		}
 
 		return projects;
@@ -185,7 +185,7 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 	}
 
 
-	void joinRouters( ObjectModel model, Assignments assignments ) {
+	void joinRouters( String project, ObjectModel model, Assignments assignments ) {
 
 		Multimap< Integer, Interface > vlans = HashMultimap.create();
 
@@ -205,7 +205,12 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 
 		}
 
-		logger.info( vlans.keySet().size() + " VLAN(s) / router(s) identified." );
+		if ( 0 < vlans.size() ) {
+			logger.info( vlans.keySet().size() + " VLAN(s) / router(s) identified (project: "
+			             + project + ")." );
+		} else {
+			logger.debug( "No VLAN / router indentified (project: " + project + ")." );
+		}
 
 		// We're now able to join the routers and remove VLAN interfaces entirely.
 
