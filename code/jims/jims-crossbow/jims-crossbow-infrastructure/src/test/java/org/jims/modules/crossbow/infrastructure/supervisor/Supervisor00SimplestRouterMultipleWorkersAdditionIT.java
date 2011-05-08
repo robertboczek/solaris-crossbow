@@ -5,6 +5,7 @@ import org.jims.modules.crossbow.infrastructure.helper.model.ModelHelper;
 import org.jims.modules.crossbow.objectmodel.Actions;
 import org.jims.modules.crossbow.objectmodel.Assignments;
 import org.jims.modules.crossbow.objectmodel.ObjectModel;
+import org.jims.modules.crossbow.objectmodel.resources.ApplianceType;
 import org.junit.Test;
 
 
@@ -33,7 +34,7 @@ public class Supervisor00SimplestRouterMultipleWorkersAdditionIT extends Supervi
 
 		Assignments assignments = new Assignments();
 
-		assignments.put( model.getRouters().get( 0 ), workers.get( 0 ) );
+		assignments.put( model.getAppliances( ApplianceType.ROUTER ).get( 0 ), workers.get( 0 ) );
 
 		assignments.put( model.getInterfaces().get( 0 ), workers.get( 0 ) );
 		assignments.put( model.getInterfaces().get( 1 ), workers.get( 1 ) );

@@ -1,5 +1,7 @@
 package org.jims.modules.crossbow.infrastructure.supervisor;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import org.jims.modules.crossbow.infrastructure.supervisor.vlan.VlanTagProvider;
 import java.util.Collection;
 import java.util.HashMap;
@@ -12,6 +14,7 @@ import java.util.Set;
 import javax.management.Notification;
 import javax.management.NotificationListener;
 import org.apache.log4j.Logger;
+import org.jims.modules.crossbow.infrastructure.Pair;
 import org.jims.modules.crossbow.infrastructure.assigner.AssignerMBean;
 import org.jims.modules.crossbow.infrastructure.worker.WorkerMBean;
 import org.jims.modules.crossbow.infrastructure.worker.exception.ModelInstantiationException;
@@ -24,6 +27,7 @@ import org.jims.modules.crossbow.objectmodel.VlanApplianceAnnotation;
 import org.jims.modules.crossbow.objectmodel.VlanInterfaceAssignment;
 import org.jims.modules.crossbow.objectmodel.filters.address.IpAddress;
 import org.jims.modules.crossbow.objectmodel.resources.Appliance;
+import org.jims.modules.crossbow.objectmodel.resources.ApplianceType;
 import org.jims.modules.crossbow.objectmodel.resources.Interface;
 import org.jims.modules.crossbow.objectmodel.resources.Switch;
 import org.jims.modules.gds.notification.WorkerNodeAddedNotification;
@@ -94,15 +98,52 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 
 
 	@Override
-	public Map< String, ObjectModel > discover() {
+	public Map< String, Pair< ObjectModel, Assignments > > discover() {
 
-		// TODO  do nothing for a moment
+		Map< String, Pair< ObjectModel, Assignments > > projects
+			= new HashMap< String, Pair< ObjectModel, Assignments > >();
 
-		// WorkerMBean worker = workers.values().iterator().next();
+		synchronized ( workers ) {
 
-//		return worker.discover();
+			for ( Map.Entry< String, WorkerMBean > workerEntry : workers.entrySet() ) {
 
-		return null;
+				WorkerMBean worker = workerEntry.getValue();
+				String workerId = workerEntry.getKey();
+
+				for ( Map.Entry< String, Pair< ObjectModel, Assignments > > entry : worker.discover().entrySet() ) {
+
+					String project = entry.getKey();
+
+					logger.info( project + " discovered on " + workerId );
+
+					if ( null == projects.get( project ) ) {
+						projects.put( project, new Pair< ObjectModel, Assignments >( new ObjectModel(), new Assignments() ) );
+					}
+
+					final ObjectModel model = projects.get( project ).first;
+					Assignments assignments = projects.get( project ).second;
+
+					model.addAll( entry.getValue().first );
+					assignments.putAll( entry.getValue().second );
+
+					for ( Object o : new LinkedList< Object >() {{ addAll( model.getAppliances() );
+					                                               addAll( model.getInterfaces() );
+					                                               addAll( model.getPolicies() );
+					                                               addAll( model.getSwitches() ); }} ) {
+						assignments.put( o, workerId );
+					}
+
+				}
+
+			}
+
+		}
+
+		for ( Map.Entry< String, Pair< ObjectModel, Assignments > > entry : projects.entrySet() ) {
+			joinRouters( entry.getValue().first, entry.getValue().second );
+		}
+
+		return projects;
 
 	}
 
@@ -141,6 +182,67 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 	}
 
 
+	void joinRouters( ObjectModel model, Assignments assignments ) {
+
+		Multimap< Integer, Interface > vlans = HashMultimap.create();
+
+		for ( Appliance app : model.getAppliances( ApplianceType.ROUTER ) ) {
+
+			for ( Interface iface : app.getInterfaces() ) {
+
+				InterfaceAssignment annotation = assignments.getAnnotation( iface );
+
+				if ( ( null != annotation ) && ( annotation instanceof VlanInterfaceAssignment ) ) {
+					// The router is going to be joined.
+					vlans.put( ( ( VlanInterfaceAssignment ) annotation ).getTag(), iface );
+					assignments.removeAnnotation( iface );
+				}
+
+			}
+
+		}
+
+		logger.info( vlans.keySet().size() + " VLAN(s) / router(s) identified." );
+
+		// We're now able to join the routers and remove VLAN interfaces entirely.
+
+		for ( Map.Entry< Integer, Collection< Interface > > entry : vlans.asMap().entrySet() ) {
+
+			Collection< Interface > ifaces = entry.getValue();
+			Appliance part = ifaces.iterator().next().getAppliance();
+
+			// Create new, consolidated router (the assignment doesn't matter)...
+
+			Appliance router = new Appliance( part.getResourceId(), part.getProjectId(),
+			                                  ApplianceType.ROUTER, part.getRepoId() );
+			model.register( router );
+
+			// ... mark it with annotation (VLAN tag assignment) ...
+
+			assignments.putAnnotation( router, new VlanApplianceAnnotation( entry.getKey() ) );
+
+			// ... and steal the interfaces.
+
+			for ( Interface vlan : ifaces ) {
+
+				// Iterate through the VLAN interfaces, retrieve the router and then
+				// reassign all non-VLAN interfaces to the joined router.
+
+				for ( Interface iface : vlan.getAppliance().getInterfaces() ) {
+					if ( vlan != iface ) {
+						router.addInterface( iface );
+					}
+				}
+
+				model.remove( vlan.getAppliance() );
+
+			}
+
+		}
+
+	}
+
+
 	Map< Appliance, Collection< Interface > > splitRouters( ObjectModel model, Actions actions, Assignments assignments ) {
 
 		logger.debug( "Splitting routers connecting multiple workers." );
@@ -153,7 +255,7 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 		List< Object > toreg = new LinkedList< Object >();
 		List< Object > torem = new LinkedList< Object >();
 
-		Iterator< Appliance > it = model.getRouters().iterator();
+		Iterator< Appliance > it = model.getAppliances( ApplianceType.ROUTER ).iterator();
 		while ( it.hasNext() ) {
 
 			Appliance app = it.next();

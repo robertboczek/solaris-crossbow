@@ -70,10 +70,10 @@ public class MultipleWorkersSupervisorTest {
 
 		Assignments assignments = new Assignments();
 
-		assignments.put( model.getMachines().get( 0 ), W0 );
-		assignments.put( model.getMachines().get( 1 ), W1 );
+		assignments.put( model.getAppliances( ApplianceType.MACHINE ).get( 0 ), W0 );
+		assignments.put( model.getAppliances( ApplianceType.MACHINE ).get( 1 ), W1 );
 
-		assignments.put( model.getRouters().get( 0 ), W1 );  // It doesn't matter.
+		assignments.put( model.getAppliances( ApplianceType.ROUTER ).get( 0 ), W1 );  // It doesn't matter.
 
 		assignments.put( model.getSwitches().get( 0 ), W0 );
 		assignments.put( model.getSwitches().get( 1 ), W1 );
@@ -88,10 +88,10 @@ public class MultipleWorkersSupervisorTest {
 
 		supervisor.instantiate( model, actions, assignments );
 
-		assert ( 2 == model.getRouters().size() );
+		assert ( 2 == model.getAppliances( ApplianceType.ROUTER ).size() );
 
-		String firstRouterAssign = assignments.get( model.getRouters().get( 0 ) );
-		String secondRouterAssign = assignments.get( model.getRouters().get( 1 ) );
+		String firstRouterAssign = assignments.get( model.getAppliances( ApplianceType.ROUTER ).get( 0 ) );
+		String secondRouterAssign = assignments.get( model.getAppliances( ApplianceType.ROUTER ).get( 1 ) );
 
 		assert ( ( ! firstRouterAssign.equals( secondRouterAssign ) ) && ( null != secondRouterAssign ) );
 

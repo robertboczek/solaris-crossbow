@@ -77,15 +77,15 @@ public class RouterSplitTest {
 
 		supervisor.splitRouters( model, actions, assignments );
 
-		assertEquals( 2, model.getRouters().size() );
+		assertEquals( 2, model.getAppliances( ApplianceType.ROUTER ).size() );
 
-		assert ( Actions.Action.ADD.equals( actions.get( model.getRouters().get( 0 ) ) ) );
-		assert ( Actions.Action.ADD.equals( actions.get( model.getRouters().get( 1 ) ) ) );
+		assert ( Actions.Action.ADD.equals( actions.get( model.getAppliances( ApplianceType.ROUTER ).get( 0 ) ) ) );
+		assert ( Actions.Action.ADD.equals( actions.get( model.getAppliances( ApplianceType.ROUTER ).get( 1 ) ) ) );
 
 		assert ( null == assignments.get( router ) );
 
-		assert ( ! assignments.get( model.getRouters().get( 0 ) ).equals(
-			assignments.get( model.getRouters().get( 1 ) )
+		assert ( ! assignments.get( model.getAppliances( ApplianceType.ROUTER ).get( 0 ) ).equals(
+			assignments.get( model.getAppliances( ApplianceType.ROUTER ).get( 1 ) )
 		) );
 
 	}

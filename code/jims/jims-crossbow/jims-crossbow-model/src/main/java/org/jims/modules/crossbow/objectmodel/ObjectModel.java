@@ -17,6 +17,13 @@ import org.jims.modules.crossbow.objectmodel.resources.Switch;
  */
 public class ObjectModel implements Serializable {
 
+	public void addAll( ObjectModel model ) {
+		this.switches.addAll( model.switches );
+		this.ports.addAll( model.ports );
+		this.appliances.addAll( model.appliances );
+		this.policies.addAll( model.policies );
+	}
+
 	public Switch register( Switch entity ) {
 		this.switches.add( entity );
 		return entity;
@@ -85,26 +92,12 @@ public class ObjectModel implements Serializable {
 		return appliances;
 	}
 
-	public List< Appliance > getRouters() {
+	public List< Appliance > getAppliances( ApplianceType type ) {
 
 		List< Appliance > res = new LinkedList< Appliance >();
 
 		for ( Appliance app : appliances ) {
-			if ( ApplianceType.ROUTER.equals( app.getType() ) ) {
-				res.add( app );
-			}
-		}
-
-		return res;
-
-	}
-
-	public List< Appliance > getMachines() {
-
-		List< Appliance > res = new LinkedList< Appliance >();
-
-		for ( Appliance app : appliances ) {
-			if ( ApplianceType.MACHINE.equals( app.getType() ) ) {
+			if ( type.equals( app.getType() ) ) {
 				res.add( app );
 			}
 		}

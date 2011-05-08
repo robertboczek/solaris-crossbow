@@ -15,6 +15,11 @@ import org.jims.modules.crossbow.objectmodel.resources.Interface;
  */
 public class Assignments implements Serializable {
 
+	public void putAll( Assignments assignments ) {
+		this.assignments.putAll( assignments.assignments );
+		this.annotations.putAll( assignments.annotations );
+	}
+
 	public void put( Object o, String s ) {
 		assignments.put( o, s );
 	}
@@ -40,6 +45,9 @@ public class Assignments implements Serializable {
 		return ( ApplianceAnnotation ) annotations.get( app );
 	}
 
+	public void removeAnnotation( Object o ) {
+		annotations.remove( o );
+	}
 
 	public Object remove( Object o ) {
 		return assignments.remove( o );
