@@ -213,6 +213,7 @@ public void translate( Graph graph, ObjectModel om, Assignments assignments,
 		graphConnection.setData(graphConnectionData);
 		graphConnection.setLineWidth(2);
 		graphConnection.setLineColor( colors.get( Element.GRAPH_EDGE ) );
+		graphConnection.setVisible( true );
 		
 	}
 	
