@@ -25,6 +25,7 @@ import org.jims.modules.crossbow.objectmodel.Assignments;
 import org.jims.modules.sg.service.wnservice.WNDelegateMBean;
 
 import org.jims.modules.crossbow.enums.LinkStatisticTimePeriod;
+import org.jims.modules.crossbow.link.VNicMBean;
 
 
 /**
@@ -52,7 +53,8 @@ public class StatisticsGatherer implements StatisticsGathererMBean {
 		Map< LinkStatistics, String > stats = null;
 
 		try {
-			stats = vNicManager.getByName( NameHelper.interfaceName( iface ) ).getStatistics();
+			stats = getProxy( url, "Crossbow:type=VNic,name=" + NameHelper.interfaceName( iface ) + ",*", VNicMBean.class ).getStatistics();
+			// stats = vNicManager.getByName( NameHelper.interfaceName( iface ) ).getStatistics();
 		} catch ( LinkException ex ) {
 			// TODO-DAWID
 		}
@@ -151,6 +153,25 @@ public class StatisticsGatherer implements StatisticsGathererMBean {
 
 			vnicManager = JMX.newMBeanProxy(
 				mbsc, new ObjectName( "Crossbow:type=VNicManager" ), VNicManagerMBean.class
+		);
+		} catch ( Exception ex ) {
+			logger.error( "Error while querying MBean server (url: " + url + ")", ex );
+		}
+
+		return vnicManager;
+	}
+
+	public < T > T getProxy( String url, String oname, Class< T > klass ) {
+
+		T vnicManager = null;
+
+		try {
+			MBeanServerConnection mbsc = JMXConnectorFactory.connect(
+				new JMXServiceURL( url )
+			).getMBeanServerConnection();
+
+			vnicManager = JMX.newMBeanProxy(
+				mbsc, new ObjectName( oname ), klass
 		);
 		} catch ( Exception ex ) {
 			logger.error( "Error while querying MBean server (url: " + url + ")", ex );
