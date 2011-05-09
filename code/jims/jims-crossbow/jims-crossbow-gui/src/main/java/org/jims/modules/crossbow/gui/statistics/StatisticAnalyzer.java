@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.jims.modules.crossbow.enums.LinkStatistics;
+import org.jims.modules.crossbow.gui.NetworkStructureHelper;
 import org.jims.modules.crossbow.gui.actions.ComponentProxyFactory;
 import org.jims.modules.crossbow.gui.data.GraphConnectionData;
 import org.jims.modules.crossbow.infrastructure.gatherer.StatisticsGathererMBean;
+import org.jims.modules.crossbow.objectmodel.Assignments;
 import org.jims.modules.crossbow.objectmodel.resources.Interface;
 
 public class StatisticAnalyzer {
@@ -19,8 +21,10 @@ public class StatisticAnalyzer {
 
 	private ComponentProxyFactory componentProxyFactory;
 
+	private Assignments assignments;
+
 	public StatisticAnalyzer(List<GraphConnectionData> graphConnectionDataList,
-			ComponentProxyFactory componentProxyFactory) {
+			ComponentProxyFactory componentProxyFactory, NetworkStructureHelper networkStructureHelper) {
 
 		this.graphConnectionDataList = graphConnectionDataList;
 		this.componentProxyFactory = componentProxyFactory;
@@ -63,7 +67,9 @@ public class StatisticAnalyzer {
 	/**
 	 * Uruchamia wszystkie watki zbierajace statystyki
 	 */
-	public void startGatheringStatistics() {
+	public void startGatheringStatistics(Assignments assignments) {
+		
+		this.assignments = assignments;
 
 		System.out.println(interfacesMap.size());
 		for (Map.Entry<Interface, EndpointStatistic> entry : interfacesMap
@@ -136,9 +142,9 @@ public class StatisticAnalyzer {
 						continue;
 					}
 
-					if (statisticGatherer != null) {
+					if (statisticGatherer != null && assignments != null) {
 						Map<LinkStatistics, Long> statistics = statisticGatherer
-								.getInterfaceStatistics(interfac);
+								.getInterfaceStatistics(interfac, assignments);
 						updateStatistics(statistics);
 					}
 					Thread.sleep(REFRESH_TIME);

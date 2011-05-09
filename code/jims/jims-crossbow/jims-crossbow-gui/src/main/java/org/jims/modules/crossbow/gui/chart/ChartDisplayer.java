@@ -1,21 +1,13 @@
 package org.jims.modules.crossbow.gui.chart;
 
-import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
-import javax.management.JMX;
-import javax.management.MBeanServerConnection;
-import javax.management.ObjectName;
-import javax.swing.ImageIcon;
-
 import org.jims.modules.crossbow.enums.LinkStatisticTimePeriod;
 import org.jims.modules.crossbow.enums.LinkStatistics;
-import org.jims.modules.crossbow.gui.jmx.JmxConnector;
-import org.jims.modules.crossbow.infrastructure.gatherer.StatisticsGatherer;
 import org.jims.modules.crossbow.infrastructure.gatherer.StatisticsGathererMBean;
+import org.jims.modules.crossbow.objectmodel.Assignments;
 import org.jims.modules.crossbow.objectmodel.policy.Policy;
 import org.jims.modules.crossbow.objectmodel.resources.Interface;
 
@@ -28,11 +20,10 @@ import org.jims.modules.crossbow.objectmodel.resources.Interface;
 public class ChartDisplayer {
 
 	private static int chartNumber = 0;
-	private static final String OBJECT_NAME = "Crossbow:type=StatisticsGatherer";
-
 	private static ChartWindow chartWindow;
 
 	private StatisticsGathererMBean statisticsGatherer;
+	private Assignments assignments;
 
 	private void createWindow() {
 		chartWindow = new ChartWindow();
@@ -50,11 +41,14 @@ public class ChartDisplayer {
 	 *            Array of flows to display on the chart
 	 */
 	public ChartDisplayer(LinkStatisticTimePeriod linkStatisticTimePeriod,
-			Policy[] policies, StatisticsGathererMBean statisticsGatherer) {
+			Policy[] policies, StatisticsGathererMBean statisticsGatherer,
+			Assignments assignments
+			) {
 		
 		try {
 
 			this.statisticsGatherer = statisticsGatherer;
+			this.assignments = assignments;
 
 			List<List<Map<LinkStatistics, Long>>> list = new LinkedList<List<Map<LinkStatistics, Long>>>();
 			String names[] = new String[policies.length]; int i = 0;
@@ -104,7 +98,7 @@ public class ChartDisplayer {
 
 		try {
 			List<Map<LinkStatistics, Long>> list = statisticsGatherer
-					.getPolicyStatistics(policy, linkStatisticTimePeriod);
+					.getPolicyPeriodStatistics(policy, linkStatisticTimePeriod, assignments);
 			
 			return list;
 
@@ -120,7 +114,7 @@ public class ChartDisplayer {
 
 		try {
 			List<Map<LinkStatistics, Long>> list = statisticsGatherer
-					.getInterfaceStatistics(interfac, linkStatisticTimePeriod);
+					.getInterfacePeriodStatistics(interfac, linkStatisticTimePeriod, assignments);
 			
 			return list;
 

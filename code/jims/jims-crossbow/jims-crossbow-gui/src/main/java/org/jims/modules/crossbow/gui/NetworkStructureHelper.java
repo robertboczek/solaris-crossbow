@@ -24,6 +24,7 @@ import org.eclipse.zest.core.widgets.GraphNode;
 import org.eclipse.zest.core.widgets.IContainer;
 import org.jims.modules.crossbow.gui.data.GraphConnectionData;
 import org.jims.modules.crossbow.objectmodel.Actions;
+import org.jims.modules.crossbow.objectmodel.Assignments;
 import org.jims.modules.crossbow.objectmodel.Actions.Action;
 import org.jims.modules.crossbow.objectmodel.policy.Policy;
 import org.jims.modules.crossbow.objectmodel.resources.Appliance;
@@ -53,6 +54,8 @@ public class NetworkStructureHelper {
 
 	private Graph graph;
 	private Text projectId;
+
+	private Assignments assignments;
 	
 	public NetworkStructureHelper(Graph graph, Text projectId) {
 		this.graph = graph;
@@ -113,8 +116,11 @@ public class NetworkStructureHelper {
 
 		if (obj != null) {
 			graphNode = createGraphItem(obj, iconFileName);
+			System.err.println("obiekt: " + obj);
 			newObjects.put(obj, graphNode);
 		}
+		
+		System.err.println("SIZEEEEEEEEEEEE " + newObjects.size());
 
 	}
 
@@ -416,6 +422,9 @@ public class NetworkStructureHelper {
 	}
 
 	private Action getAction(Object obj) {
+		
+		System.err.println("FSDSDFDFAS " + newObjects.size() + " " + obj);
+		
 		if (newObjects.containsKey(obj)) {
 			return Actions.Action.ADD;
 		} else if (deployedObjects.containsKey(obj)) {
@@ -560,6 +569,14 @@ public class NetworkStructureHelper {
 	
 	public static interface NetworkStateListener{
 		public void stateChanged(NetworkState networkState);
+	}
+
+	public void setAssignments(Assignments assignments) {
+		this.assignments = assignments;
+	}
+	
+	public Assignments getAssignments() {
+		return assignments;
 	}
 	
 }

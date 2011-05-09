@@ -16,6 +16,7 @@ import org.jims.modules.crossbow.gui.chart.ChartDisplayer;
 import org.jims.modules.crossbow.gui.jmx.JmxConnector;
 import org.jims.modules.crossbow.infrastructure.gatherer.StatisticsGatherer;
 import org.jims.modules.crossbow.infrastructure.gatherer.StatisticsGathererMBean;
+import org.jims.modules.crossbow.objectmodel.Assignments;
 import org.jims.modules.crossbow.objectmodel.ObjectModel;
 import org.jims.modules.crossbow.objectmodel.filters.AnyFilter;
 import org.jims.modules.crossbow.objectmodel.policy.Policy;
@@ -29,13 +30,16 @@ import org.jims.modules.crossbow.objectmodel.policy.Policy;
 public class SelectFlowForChart extends Shell {
 
 	private final StatisticsGathererMBean statisticsGatherer;
+	
+	private final Assignments assignments;
 
 	public SelectFlowForChart(Shell parentShell, ObjectModel objectModel,
-			StatisticsGathererMBean statisticsGatherer) {
+			StatisticsGathererMBean statisticsGatherer, Assignments assignments) {
 		super(parentShell);
 		setSize(450, 324);
 
 		this.statisticsGatherer = statisticsGatherer;
+		this.assignments = assignments;
 
 		final Button addButton = new Button(this, SWT.NONE);
 		final Button removeButton = new Button(this, SWT.NONE);
@@ -168,7 +172,8 @@ public class SelectFlowForChart extends Shell {
 
 				new ChartDisplayer((LinkStatisticTimePeriod) chartTimeType
 						.getData(chartTimeType.getText()), policies,
-						SelectFlowForChart.this.statisticsGatherer);
+						SelectFlowForChart.this.statisticsGatherer,
+						SelectFlowForChart.this.assignments);
 			}
 
 		});
