@@ -6,6 +6,7 @@ import java.util.List;
 import org.jims.modules.crossbow.enums.LinkStatistics;
 import org.jims.modules.crossbow.objectmodel.policy.Policy;
 import org.jims.modules.crossbow.objectmodel.resources.Interface;
+import org.jims.modules.crossbow.objectmodel.Assignments;
 
 import org.jims.modules.crossbow.enums.LinkStatisticTimePeriod;
 
@@ -20,9 +21,9 @@ public interface StatisticsGathererMBean {
 	 *
 	 * @return  usage statistics for the specified interface
 	 */
-	public Map< LinkStatistics, Long > getInterfaceStatistics( Interface iface );
+	public Map< LinkStatistics, Long > getInterfaceStatistics( Interface iface, Assignments assignments );
 
-	public List<Map< LinkStatistics, Long >> getInterfaceStatistics( Interface iface, LinkStatisticTimePeriod period );
+	public List<Map< LinkStatistics, Long >> getInterfacePeriodStatistics( Interface iface, LinkStatisticTimePeriod period, Assignments assignments );
 
 
 	/**
@@ -33,11 +34,11 @@ public interface StatisticsGathererMBean {
 	 *
 	 * @return  usage statistics for the specified interface
 	 */
-	public Map< LinkStatistics, Long > getPolicyStatistics( Policy policy );
+	public Map< LinkStatistics, Long > getPolicyStatistics( Policy policy, Assignments assignments );
 
-	public List<Map< LinkStatistics, Long >> getPolicyStatistics( Policy policy, LinkStatisticTimePeriod period );
+	public List<Map< LinkStatistics, Long >> getPolicyPeriodStatistics( Policy policy, LinkStatisticTimePeriod period, Assignments assignments );
 
 
-	public Map< String, String > get_InterfaceStatistics( String projectId, String appliance, String resourceId );
+	public Map< String, String > get_InterfaceStatistics( String projectId, String appliance, String resourceId, Assignments assignments  );
 
 }

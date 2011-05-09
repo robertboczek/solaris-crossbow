@@ -34,7 +34,6 @@ import org.jims.modules.crossbow.link.VNicMBean;
  */
 public class StatisticsGatherer implements StatisticsGathererMBean {
 
-	private Assignments assignments = null;
 	private WNDelegateMBean wnDelegate;
 
 	private static final Logger logger = Logger.getLogger( StatisticsGatherer.class );
@@ -44,7 +43,7 @@ public class StatisticsGatherer implements StatisticsGathererMBean {
 	}
 
 	@Override
-	public Map< LinkStatistics, Long > getInterfaceStatistics( Interface iface ) {
+	public Map< LinkStatistics, Long > getInterfaceStatistics( Interface iface, Assignments assignments ) {
 
 		String url = assignments.get(iface);
 		VNicManagerMBean vNicManager = getVNicManager( url );
@@ -70,7 +69,7 @@ public class StatisticsGatherer implements StatisticsGathererMBean {
 	}
 
 	@Override
-	public List< Map<LinkStatistics, Long> > getInterfaceStatistics( Interface iface, LinkStatisticTimePeriod period ) {
+	public List< Map<LinkStatistics, Long> > getInterfacePeriodStatistics( Interface iface, LinkStatisticTimePeriod period, Assignments assignments ) {
 
 		String url = assignments.get(iface);
 		VNicManagerMBean vNicManager = getVNicManager( url );
@@ -87,7 +86,7 @@ public class StatisticsGatherer implements StatisticsGathererMBean {
 	}
 
 	@Override
-	public List< Map<LinkStatistics, Long> > getPolicyStatistics( Policy policy, LinkStatisticTimePeriod period ) {
+	public List< Map<LinkStatistics, Long> > getPolicyPeriodStatistics( Policy policy, LinkStatisticTimePeriod period, Assignments assignments ) {
 
 		Map< LinkStatistics, Long > res = new HashMap< LinkStatistics, Long >();
 
@@ -109,7 +108,7 @@ public class StatisticsGatherer implements StatisticsGathererMBean {
 	}
 
 	@Override
-	public Map< LinkStatistics, Long > getPolicyStatistics( Policy policy ) {
+	public Map< LinkStatistics, Long > getPolicyStatistics( Policy policy, Assignments assignments ) {
 
 		Map< LinkStatistics, Long > res = new HashMap< LinkStatistics, Long >();
 
@@ -186,7 +185,7 @@ public class StatisticsGatherer implements StatisticsGathererMBean {
 	 */
 
 	@Override
-	public Map< String, String > get_InterfaceStatistics( String projectId, String appliance, String resourceId ) {
+	public Map< String, String > get_InterfaceStatistics( String projectId, String appliance, String resourceId, Assignments assignments  ) {
 
 		Map< String, String > res = new HashMap< String, String >();
 
@@ -195,7 +194,7 @@ public class StatisticsGatherer implements StatisticsGathererMBean {
 		Appliance app = new Appliance( appliance, projectId, ApplianceType.MACHINE );
 		app.addInterface( iface );
 
-		for ( Map.Entry< LinkStatistics, Long > s : getInterfaceStatistics( iface ).entrySet() ) {
+		for ( Map.Entry< LinkStatistics, Long > s : getInterfaceStatistics( iface, assignments ).entrySet() ) {
 			res.put( s.getKey().toString(), s.getValue().toString() );
 		}
 
