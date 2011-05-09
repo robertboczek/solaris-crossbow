@@ -38,7 +38,7 @@ public class BasicWorkerTest {
 		flowManager = mock( FlowManagerMBean.class );
 		commandFactory = mock( SolarisCommandFactory.class );
 
-		worker = new Worker( vNicManager, etherstubManager, null, null, commandFactory );
+		worker = new Worker( vNicManager, etherstubManager, null, null, null, commandFactory );
 
 	}
 
@@ -46,9 +46,9 @@ public class BasicWorkerTest {
 	@Test
 	public void testExceptionPropagationOnError() throws Exception {
 
-		actions.insert( model.getPorts().get( 0 ), Actions.ACTION.REM );
-		actions.insert( model.getSwitches().get( 0 ), Actions.ACTION.ADD );
-		actions.insert( model.getAppliances().get( 0 ), Actions.ACTION.ADD );
+		actions.put( model.getInterfaces().get( 0 ), Actions.Action.REM );
+		actions.put( model.getSwitches().get( 0 ), Actions.Action.ADD );
+		actions.put( model.getAppliances().get( 0 ), Actions.Action.ADD );
 
 		ActionException actionException = new ActionException( "" );
 		EtherstubException etherstubException = new EtherstubException( "" );
@@ -73,8 +73,8 @@ public class BasicWorkerTest {
 
 		model = ModelHelper.getSimpleQoSAnyFilter( "SOME-PROJECT", ".." );
 
-		actions.insert( model.getPorts().get( 0 ), Actions.ACTION.ADD );
-		actions.insert( model.getPolicies().get( 0 ), Actions.ACTION.ADD );
+		actions.put( model.getInterfaces().get( 0 ), Actions.Action.ADD );
+		actions.put( model.getPolicies().get( 0 ), Actions.Action.ADD );
 
 		PriorityPolicy policy = ( PriorityPolicy ) model.getPolicies().get( 0 );
 

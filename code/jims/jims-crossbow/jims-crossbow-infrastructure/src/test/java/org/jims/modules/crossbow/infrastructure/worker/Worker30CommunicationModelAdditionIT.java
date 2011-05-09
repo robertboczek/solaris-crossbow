@@ -19,12 +19,12 @@ public class Worker30CommunicationModelAdditionIT extends WorkerITBase {
 		ObjectModel model = ModelHelper.getSimpleSwitchAndPolicyModel( "COMM" );
 
 		Actions actions = new Actions();
-		actions.insert( model.getAppliances().get( 0 ), Actions.ACTION.ADD );
-		actions.insert( model.getAppliances().get( 1 ), Actions.ACTION.ADD );
-		actions.insert( model.getPorts().get( 0 ), Actions.ACTION.ADD );
-		actions.insert( model.getPorts().get( 1 ), Actions.ACTION.ADD );
-		actions.insert( model.getSwitches().get( 0 ), Actions.ACTION.ADD );
-		actions.insert( model.getPolicies().get( 0 ), Actions.ACTION.ADD );
+		actions.put( model.getAppliances().get( 0 ), Actions.Action.ADD );
+		actions.put( model.getAppliances().get( 1 ), Actions.Action.ADD );
+		actions.put( model.getInterfaces().get( 0 ), Actions.Action.ADD );
+		actions.put( model.getInterfaces().get( 1 ), Actions.Action.ADD );
+		actions.put( model.getSwitches().get( 0 ), Actions.Action.ADD );
+		actions.put( model.getPolicies().get( 0 ), Actions.Action.ADD );
 
 		worker.instantiate( model, actions, new Assignments() );
 

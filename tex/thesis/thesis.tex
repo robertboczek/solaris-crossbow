@@ -46,6 +46,7 @@
 \usepackage{listings} 
 \usepackage{caption}
 \usepackage{color}
+\usepackage{hyperref}
 % \usepackage[toc,acronym]{glossaries}
 
 \newcommand{\code}[1]{\begin{tt}{#1}\end{tt}}
@@ -280,6 +281,8 @@
 
     \section*{Chapter overview}
 
+      The \nameref{sec:domain-model} section describes the transformations performed by the system's components in order to instantiate/deploy an object model. These include simple one-node instantiation as well as more complex multi-node instantiations.
+
       % tutaj tez kilka slow i JIMSie i integracji + co to daje
 
 
@@ -298,7 +301,7 @@
     \section{Crossbow resources instrumentation}
 
 
-    \section{Domain model and data flows}
+    \section{Domain model and data flows} \label{sec:domain-model}
 
 
     \section*{Summary}

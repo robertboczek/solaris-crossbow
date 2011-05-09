@@ -57,7 +57,7 @@ public class ModelHelper {
 
 		// Add QoS parameters
 
-		model.getPorts().get( 0 ).addPolicy( model.register(
+		model.getInterfaces().get( 0 ).addPolicy( model.register(
 			new PriorityPolicy( "APOLICY0",
 			                    PriorityPolicy.Priority.HIGH,
 			                    new IpFilter( new IpAddress( "1.2.3.4", 24 ), IpFilter.Location.LOCAL ) )
@@ -72,7 +72,7 @@ public class ModelHelper {
 
 		ObjectModel model = getSimpleModel( projectId, SEP );
 
-		model.getPorts().get( 0 ).addPolicy( model.register(
+		model.getInterfaces().get( 0 ).addPolicy( model.register(
 			new PriorityPolicy( "somepolicy13", PriorityPolicy.Priority.LOW, new AnyFilter() )
 		) );
 
@@ -124,16 +124,52 @@ public class ModelHelper {
 	}
 
 
-	public static ObjectModel getSimpleRouterModel( String projectId ) {
+	/**
+	 *      ROUTER
+	 *     /      \
+	 *  IFACE0   IFACE1
+	 *    |        |
+	 *  SWITCH0  SWITCH1
+	 *
+	 * @param projectId
+	 * @return
+	 */
+	public static ObjectModel getSimplestRouterModel( String projectId ) {
 
 		Switch s0 = new Switch( "SWITCH0", projectId );
 		Switch s1 = new Switch( "SWITCH1", projectId );
 
-		Interface firstIface = new Interface( "IFACE0", projectId, s0, new IpAddress( "192.168.18.2", 24 ) );
-
 		Interface routerFirstIface = new Interface( "IFACE0", projectId, s0, new IpAddress( "192.168.18.1", 24 ) );
 		Interface routerSecondIface = new Interface( "IFACE1", projectId, s1, new IpAddress( "192.168.19.1", 24 ) );
 
+		Appliance router = new Appliance( "ROUTER", projectId, ApplianceType.ROUTER, "dummy" );
+		router.addInterface( routerFirstIface );
+		router.addInterface( routerSecondIface );
+
+		ObjectModel model = new ObjectModel();
+
+		model.registerAll( s0, s1, routerFirstIface, routerSecondIface, router );
+
+		return model;
+
+	}
+
+
+	/**
+	 *  FIRST         ROUTER         SECOND
+	 *    |          /      \          |
+	 *  IFACE0    IFACE0   IFACE1    IFACE1
+	 *     \       /          \       /
+	 *      SWITCH0            SWITCH1
+	 */
+	public static ObjectModel getSimpleRouterModel( String projectId ) {
+
+		ObjectModel model = getSimplestRouterModel( projectId );
+
+		Switch s0 = model.getSwitches().get( 0 );
+		Switch s1 = model.getSwitches().get( 1 );
+
+		Interface firstIface = new Interface( "IFACE0", projectId, s0, new IpAddress( "192.168.18.2", 24 ) );
 		Interface secondIface = new Interface( "IFACE0", projectId, s1, new IpAddress( "192.168.19.2", 24 ) );
 
 		Appliance first = new Appliance( "FIRST", projectId, ApplianceType.MACHINE, "dummy" );
@@ -142,22 +178,22 @@ public class ModelHelper {
 		Appliance second = new Appliance( "SECOND", projectId, ApplianceType.MACHINE, "dummy" );
 		second.addInterface( secondIface );
 
-		Appliance router = new Appliance( "ROUTER", projectId, ApplianceType.ROUTER, "dummy" );
-		router.addInterface( routerFirstIface );
-		router.addInterface( routerSecondIface );
-
-		ObjectModel model = new ObjectModel();
-		model.register( s0 );
-		model.register( s1 );
-		model.register( firstIface );
-		model.register( secondIface );
-		model.register( routerFirstIface );
-		model.register( routerSecondIface );
-		model.register( first );
-		model.register( second );
-		model.register( router );
+		model.registerAll( firstIface, secondIface, first, second );
 
 		return model;
+
+	}
+
+
+	public static Appliance anyRouter( ObjectModel model ) {
+
+		for ( Appliance app : model.getAppliances() ) {
+			if ( ApplianceType.ROUTER.equals( app.getType() ) ) {
+				return app;
+			}
+		}
+
+		return null;
 
 	}
 

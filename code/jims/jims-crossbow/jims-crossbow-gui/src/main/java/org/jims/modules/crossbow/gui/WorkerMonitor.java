@@ -115,6 +115,7 @@ public class WorkerMonitor implements ConnectionTester.ConnectionStatusListener 
 					GraphContainer container = new GraphContainer( g, SWT.NONE );
 					container.setLayoutAlgorithm( new TreeLayoutAlgorithm( LayoutStyles.NO_LAYOUT_NODE_RESIZING ), false );
 					container.setText( worker );
+					container.setData( worker );
 					container.open( true );
 					
 					// Add an item to the popup menu.

@@ -78,8 +78,42 @@ public class Appliance extends Resource {
 	}
 
 
+	@Override
+	public boolean equals( Object o ) {
+
+		boolean res = false;
+
+		if ( this == o ) {
+
+			res = true;
+
+		} else if ( o instanceof Appliance ) {
+
+			Appliance app = ( Appliance ) o;
+
+			res = ( type.equals( app.type ) && repoId.equals( app.repoId )
+			        && getResourceId().equals( app.getResourceId() )
+			        && getProjectId().equals( app.getProjectId() )
+			        && uuid.equals( app.getUUID() ) );
+
+		}
+
+		return res;
+
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 97 * hash + (this.type != null ? this.type.hashCode() : 0);
+		hash = 97 * hash + (this.repoId != null ? this.repoId.hashCode() : 0);
+		hash = 97 * hash + (this.uuid != null ? this.uuid.hashCode() : 0);
+		return hash;
+	}
+
+
 	private ApplianceType type;
-	private String repoId;
+	private String repoId = "";  // TODO  this is temporary and should be removed (GUI issue)
 	private List< Interface > interfaces = new LinkedList< Interface >();
 	private UUID uuid = UUID.randomUUID();
 

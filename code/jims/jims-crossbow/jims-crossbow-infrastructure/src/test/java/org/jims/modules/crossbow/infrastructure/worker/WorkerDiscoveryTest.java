@@ -1,5 +1,7 @@
 package org.jims.modules.crossbow.infrastructure.worker;
 
+import org.jims.modules.crossbow.objectmodel.Assignments;
+import org.jims.modules.crossbow.infrastructure.Pair;
 import org.jims.modules.crossbow.objectmodel.policy.Policy;
 import java.util.Map;
 import org.jims.modules.crossbow.etherstub.EtherstubManagerMBean;
@@ -10,6 +12,7 @@ import org.jims.modules.crossbow.link.VNicManagerMBean;
 import org.jims.modules.crossbow.objectmodel.ObjectModel;
 import org.jims.modules.crossbow.objectmodel.filters.TransportFilter;
 import org.jims.modules.crossbow.objectmodel.policy.BandwidthPolicy;
+import org.jims.modules.crossbow.vlan.VlanManagerMBean;
 import org.jims.modules.solaris.commands.SolarisCommandFactory;
 import org.jims.modules.solaris.solaris10.mbeans.GlobalZoneManagementMBean;
 import org.junit.Before;
@@ -31,10 +34,12 @@ public class WorkerDiscoveryTest {
 		etherstubManager = mock( EtherstubManagerMBean.class );
 		vNicManager = mock( VNicManagerMBean.class );
 		flowManager = mock( FlowManagerMBean.class );
+		vlanManager = mock( VlanManagerMBean.class );
 		zoneManager = mock( GlobalZoneManagementMBean.class );
 		commandFactory = mock( SolarisCommandFactory.class );
 
-		worker = new Worker( vNicManager, etherstubManager, flowManager, zoneManager, commandFactory );
+		worker = new Worker( vNicManager, etherstubManager, flowManager, vlanManager,
+		                     zoneManager, commandFactory );
 
 	}
 
@@ -44,10 +49,10 @@ public class WorkerDiscoveryTest {
 
 		WorkerDiscoveryHelper.stubQosModelMocks( etherstubManager, vNicManager, flowManager, zoneManager );
 
-		Map< String, ObjectModel > projects = worker.discover();
+		Map< String, Pair< ObjectModel, Assignments > > projects = worker.discover();
 
 		String pn = projects.keySet().iterator().next();
-		ObjectModel om = projects.get( pn );
+		ObjectModel om = projects.get( pn ).first;
 		Policy policy = om.getPolicies().get( 0 );
 
 		assert ( 1 == projects.size() );
@@ -67,6 +72,7 @@ public class WorkerDiscoveryTest {
 	private EtherstubManagerMBean etherstubManager;
 	private VNicManagerMBean vNicManager;
 	private FlowManagerMBean flowManager;
+	private VlanManagerMBean vlanManager;
 	private GlobalZoneManagementMBean zoneManager;
 	private SolarisCommandFactory commandFactory;
 

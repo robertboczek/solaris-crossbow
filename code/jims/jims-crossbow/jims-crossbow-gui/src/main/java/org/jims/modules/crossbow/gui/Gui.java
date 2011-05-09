@@ -81,8 +81,9 @@ import org.jims.modules.crossbow.infrastructure.progress.CrossbowNotificationMBe
 import org.jims.modules.crossbow.infrastructure.supervisor.SupervisorMBean;
 import org.jims.modules.crossbow.infrastructure.worker.exception.ModelInstantiationException;
 import org.jims.modules.crossbow.objectmodel.Actions;
+import org.jims.modules.crossbow.objectmodel.Assignments;
 import org.jims.modules.crossbow.objectmodel.ObjectModel;
-import org.jims.modules.crossbow.objectmodel.Actions.ACTION;
+import org.jims.modules.crossbow.objectmodel.Actions.Action;
 import org.jims.modules.crossbow.objectmodel.resources.Appliance;
 import org.jims.modules.crossbow.objectmodel.resources.ApplianceType;
 import org.jims.modules.crossbow.objectmodel.resources.Endpoint;
@@ -277,6 +278,7 @@ public class Gui extends Shell {
 					logger.trace("Restoring network structure from file");
 
 					new ModelToGraphTranslator().translate(graph, objectModel,
+							new Assignments(),  // TODO  < is that OK? it should be...
 							networkStructureHelper, graphConnectionDataList);
 				}
 			}
@@ -489,20 +491,41 @@ public class Gui extends Shell {
 			 ProgressShell progressShell = new ProgressShell(Gui.this,
 			 componentProxyFactory, display); progressShell.create(); if
 			 (progressShell.open() == Window.OK) { }
-			 new Thread() {
-			 public void run() { try { Actions actions = new
-			 GraphToModelTranslator() .createActions(objModel,
-			 networkStructureHelper);
-			 for(Map.Entry<Object, ACTION> entry :
-			 actions.getAll().entrySet()) {
-			 logger.debug("Object with action - " + entry.getKey() + " " +
-			 entry.getValue());
-			 }
-			 logger.info("Starting deployment");
-			 supervisor.instantiate(objModel, actions);
-			 networkStructureHelper.deployed();
-			 } catch (ModelInstantiationException e) { e.printStackTrace(); }
-			 } }.start();
+			 
+			new Thread() {
+				public void run() {
+					// try {
+						final GraphToModelTranslator translator = new GraphToModelTranslator();
+						
+						Actions actions = translator.createActions( objModel, networkStructureHelper );
+						
+						class AssignmentCreator implements Runnable {
+
+							@Override
+							public void run() {
+								assignments = translator.createAssignments( graph );
+							}
+							
+							volatile Assignments assignments;
+							
+						};
+						
+						AssignmentCreator assignmentCreator = new AssignmentCreator();
+						display.syncExec( assignmentCreator );
+						
+						for (Map.Entry<Object, Action> entry : actions.getAll().entrySet()) {
+							logger.debug("Object with action - " + entry.getKey() + " "
+									+ entry.getValue());
+						}
+						logger.info("Starting deployment");
+						supervisor.instantiate(objModel, actions, assignmentCreator.assignments);
+						networkStructureHelper.deployed();
+//					} catch (ModelInstantiationException e) {
+//						e.printStackTrace();
+//					}
+						// TODO  ^ uncomment
+				}
+			}.start();
 			 
 			 
 			 } catch (Exception e) {

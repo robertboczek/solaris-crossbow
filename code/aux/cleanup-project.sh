@@ -29,3 +29,8 @@ for E in `dladm show-etherstub -p | egrep "$REGEXP"`; do
 	dladm delete-etherstub $E
 done
 
+for E in `dladm show-vlan -p -o link | egrep "$REGEXP"`; do
+	echo "Removing $E"
+	dladm delete-vlan $E
+done
+

@@ -7,7 +7,9 @@
 
 <mlet
 	code="org.jims.modules.crossbow.infrastructure.CrossbowStarter"
-	archive="jims-crossbow-package-3.0.0.jar, jims-solaris-base-3.0.0.jar, jims-solaris-model-3.0.0.jar"
+	archive="jims-crossbow-package-3.0.0.jar, jims-solaris-base-3.0.0.jar, jims-solaris-model-3.0.0.jar,
+	         guava-annotations-r03.jar, guava-base-r03.jar,
+	         guava-collections-r03.jar, guava-primitives-r03.jar"
 	name="Crossbow:type=CrossbowInfrastructureStarter"
 	version="1.0">
 </mlet>

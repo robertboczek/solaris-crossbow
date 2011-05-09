@@ -1,13 +1,19 @@
 package org.jims.modules.crossbow.gui.actions;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import org.eclipse.zest.core.widgets.Graph;
+import org.eclipse.zest.core.widgets.GraphContainer;
+import org.eclipse.zest.core.widgets.GraphNode;
 import org.jims.modules.crossbow.gui.NetworkStructureHelper;
 import org.jims.modules.crossbow.objectmodel.Actions;
+import org.jims.modules.crossbow.objectmodel.Assignments;
 import org.jims.modules.crossbow.objectmodel.ObjectModel;
 import org.jims.modules.crossbow.objectmodel.policy.Policy;
 import org.jims.modules.crossbow.objectmodel.resources.Appliance;
+import org.jims.modules.crossbow.objectmodel.resources.Endpoint;
 import org.jims.modules.crossbow.objectmodel.resources.Interface;
 import org.jims.modules.crossbow.objectmodel.resources.Switch;
 
@@ -73,19 +79,56 @@ public class GraphToModelTranslator {
 		Actions actions = new Actions();
 
 		for (Appliance app : om.getAppliances()) {
-			actions.insert(app, networkStructureHelper.getApplianceAction(app));
+			actions.put(app, networkStructureHelper.getApplianceAction(app));
 		}
-		for (Interface interf : om.getPorts()) {
-			actions.insert(interf, networkStructureHelper.getInterfaceAction(interf));
+		for (Interface interf : om.getInterfaces()) {
+			actions.put(interf, networkStructureHelper.getInterfaceAction(interf));
 		}
 		for (Switch swit : om.getSwitches()) {
-			actions.insert(swit, networkStructureHelper.getSwitchAction(swit));
+			actions.put(swit, networkStructureHelper.getSwitchAction(swit));
 		}
 		for (Policy policy : om.getPolicies()) {
-			actions.insert(policy, networkStructureHelper.getPolicyAction(policy));
+			actions.put(policy, networkStructureHelper.getPolicyAction(policy));
 		}
 
 		return actions;
+	}
+	
+	public Assignments createAssignments( Graph g ) {
+		
+		Assignments res = new Assignments();
+		
+		for ( Object node : g.getNodes() ) {
+			
+			if ( node instanceof GraphContainer ) {
+				
+				GraphContainer container = ( GraphContainer ) node;
+				String workerId = ( String ) container.getData();
+				
+				for ( Object inner : container.getNodes() ) {
+					
+					Object entity = ( ( GraphNode ) inner ).getData();
+					
+					res.put( entity, workerId );
+					
+					// Further processing, if needed.
+					
+					if ( entity instanceof Switch ) {
+						for ( Endpoint e :  ( ( Switch ) entity ).getEndpoints() ) {
+							res.put( e, workerId );
+						}
+					}
+					
+					// TODO  policies (at least. anything more?)
+					
+				}
+				
+			}
+			
+		}
+		
+		return res;
+		
 	}
 
 	public void updateProjectIdName(

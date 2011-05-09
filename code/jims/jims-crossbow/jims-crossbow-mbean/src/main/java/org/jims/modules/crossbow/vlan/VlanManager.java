@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.management.Notification;
 import javax.management.NotificationListener;
 import org.apache.log4j.Logger;
+import org.jims.modules.crossbow.exception.XbowException;
 import org.jims.modules.crossbow.lib.VlanHelper;
 import org.jims.modules.crossbow.publisher.Publisher;
 import org.jims.modules.crossbow.publisher.exception.NotPublishedException;
@@ -20,7 +21,7 @@ import org.jims.modules.crossbow.vlan.util.VlanToVlanInfoTranslator;
 public class VlanManager implements VlanManagerMBean, NotificationListener {
 
 	@Override
-	public void create( VlanMBean vlan ) {
+	public void create( VlanMBean vlan ) throws XbowException {
 
 		vlanHelper.create( VlanToVlanInfoTranslator.translate( vlan ) );
 
@@ -32,7 +33,7 @@ public class VlanManager implements VlanManagerMBean, NotificationListener {
 
 
 	@Override
-	public void create( String name, String link, int tag ) {
+	public void create( String name, String link, int tag ) throws XbowException {
 		create( new Vlan( name, link, tag ) );
 	}
 
@@ -71,6 +72,23 @@ public class VlanManager implements VlanManagerMBean, NotificationListener {
 
 		for ( VlanInfo info : vlanInfos ) {
 			res.add( info.getName() );
+		}
+
+		return res;
+
+	}
+
+
+	@Override
+	public VlanMBean getByName( String name ) {
+
+		VlanMBean res = null;
+
+		for ( VlanMBean vlan : publisher.getPublished() ) {
+			if ( name.equals( vlan.getName() ) ) {
+				res = vlan;
+				break;
+			}
 		}
 
 		return res;
@@ -143,7 +161,7 @@ public class VlanManager implements VlanManagerMBean, NotificationListener {
 	}
 
 
-	private Publisher publisher;
+	private Publisher< VlanMBean > publisher;
 	private VlanHelper vlanHelper;
 
 	private final static Logger logger = Logger.getLogger( VlanManager.class );

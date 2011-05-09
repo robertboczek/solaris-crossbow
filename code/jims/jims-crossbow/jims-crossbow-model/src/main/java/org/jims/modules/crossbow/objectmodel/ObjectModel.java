@@ -1,10 +1,12 @@
 package org.jims.modules.crossbow.objectmodel;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import org.jims.modules.crossbow.objectmodel.policy.Policy;
 import org.jims.modules.crossbow.objectmodel.resources.Appliance;
+import org.jims.modules.crossbow.objectmodel.resources.ApplianceType;
 import org.jims.modules.crossbow.objectmodel.resources.Interface;
 import org.jims.modules.crossbow.objectmodel.resources.Switch;
 
@@ -14,6 +16,13 @@ import org.jims.modules.crossbow.objectmodel.resources.Switch;
  * @author cieplik
  */
 public class ObjectModel implements Serializable {
+
+	public void addAll( ObjectModel model ) {
+		this.switches.addAll( model.switches );
+		this.ports.addAll( model.ports );
+		this.appliances.addAll( model.appliances );
+		this.policies.addAll( model.policies );
+	}
 
 	public Switch register( Switch entity ) {
 		this.switches.add( entity );
@@ -54,16 +63,47 @@ public class ObjectModel implements Serializable {
 
 	}
 
+	public void registerAll( Object ... entities ) {
+		for ( Object entity : entities ) {
+			register( entity );
+		}
+	}
+
+	public void registerAll( Collection< Object > entities ) {
+		for ( Object entity : entities ) {
+			register( entity );
+		}
+	}
+
+	public void remove( Appliance app ) {
+		appliances.remove( app );
+	}
+
+
 	public List< Switch > getSwitches() {
 		return switches;
 	}
 
-	public List< Interface > getPorts() {
+	public List< Interface > getInterfaces() {
 		return ports;
 	}
 
 	public List< Appliance > getAppliances() {
 		return appliances;
+	}
+
+	public List< Appliance > getAppliances( ApplianceType type ) {
+
+		List< Appliance > res = new LinkedList< Appliance >();
+
+		for ( Appliance app : appliances ) {
+			if ( type.equals( app.getType() ) ) {
+				res.add( app );
+			}
+		}
+
+		return res;
+
 	}
 
 	public List< Policy > getPolicies() {

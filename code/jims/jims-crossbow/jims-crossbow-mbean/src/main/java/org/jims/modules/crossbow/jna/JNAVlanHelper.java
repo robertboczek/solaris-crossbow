@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.jims.modules.crossbow.exception.XbowException;
 import org.jims.modules.crossbow.jna.mapping.VlanHandle;
 import org.jims.modules.crossbow.lib.VlanHelper;
 import org.jims.modules.crossbow.vlan.VlanInfo;
@@ -28,8 +29,14 @@ public class JNAVlanHelper implements VlanHelper {
 
 
 	@Override
-	public void create( VlanInfo info ) {
-		handle.vlan_create( new VlanHandle.VlanInfoStruct( info ) );
+	public void create( VlanInfo info ) throws XbowException {
+
+		int rc = handle.vlan_create( new VlanHandle.VlanInfoStruct( info ) );
+
+		if ( XbowStatus.XBOW_STATUS_OK.ordinal() != rc ) {
+			throw new XbowException( "Could not create VLAN (rc: " + rc + ")." );
+		}
+
 	}
 
 

@@ -11,10 +11,13 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.zest.core.widgets.Graph;
 import org.eclipse.zest.core.widgets.GraphConnection;
+import org.eclipse.zest.core.widgets.GraphContainer;
 import org.eclipse.zest.core.widgets.GraphItem;
 import org.eclipse.zest.core.widgets.GraphNode;
+import org.eclipse.zest.core.widgets.IContainer;
 import org.jims.modules.crossbow.gui.NetworkStructureHelper;
 import org.jims.modules.crossbow.gui.data.GraphConnectionData;
+import org.jims.modules.crossbow.objectmodel.Assignments;
 import org.jims.modules.crossbow.objectmodel.ObjectModel;
 import org.jims.modules.crossbow.objectmodel.policy.Policy;
 import org.jims.modules.crossbow.objectmodel.resources.Appliance;
@@ -33,7 +36,35 @@ public class ModelToGraphTranslator {
 	
 	private List<GraphConnectionData> graphConnectionDataList;
 	
-public void translate( Graph graph, ObjectModel om, NetworkStructureHelper networkStructureHelper, List<GraphConnectionData> graphConnectionDataList ) {
+	// TODO  v it has to be factored out from here!!!
+	private IContainer getContainer( Graph g, String id ) {
+		
+		IContainer res = g;
+		
+		if ( null != id ) {
+		
+			for ( Object o : g.getNodes() ) {
+			
+				if ( ( o instanceof GraphContainer )
+						&& ( id.equals( ( ( GraphContainer ) o ).getText() ) ) ) {
+					
+					res = ( GraphContainer ) o;
+					break;
+					
+				}
+				
+			}
+			
+		}
+		
+		return res;
+		
+	}
+	
+	
+public void translate( Graph graph, ObjectModel om, Assignments assignments,
+                       NetworkStructureHelper networkStructureHelper,
+                       List< GraphConnectionData > graphConnectionDataList ) {
 		
 		this.graphConnectionDataList = graphConnectionDataList;
 		
@@ -42,22 +73,22 @@ public void translate( Graph graph, ObjectModel om, NetworkStructureHelper netwo
 		Map< Object, GraphNode > nodes = new HashMap< Object, GraphNode >();
 		
 		logger.debug("Restoring deployed appliances in total number : " + om.getAppliances().size());
-		for ( Appliance app : om.getAppliances() ) {
-			if ( ApplianceType.MACHINE.equals( app.getType() ) ) {
-				logger.debug("Restoring deployed Appliance");
-				GraphItem item = createGraphItem( graph, app, "icons/resource.jpg", nodes );
-				networkStructureHelper.addDeployedElement(app, item);
-			} else if ( ApplianceType.ROUTER.equals( app.getType() ) ) {
-				logger.debug("Restoring deployed Router");
-				GraphItem item = createGraphItem( graph, app, "icons/router.jpg", nodes );
-				networkStructureHelper.addDeployedElement(app, item);
-			}
-			
+		
+		for ( Appliance machine : om.getAppliances( ApplianceType.MACHINE ) ) {
+			logger.debug( "Restoring deployed Appliance (name: " + machine.getResourceId() + ")." );
+			GraphItem item = createGraphItem( graph, machine, "icons/resource.jpg", nodes );
+			networkStructureHelper.addDeployedElement( machine, item );
+		}
+		
+		for ( Appliance router : om.getAppliances( ApplianceType.ROUTER ) ) {
+			logger.debug( "Restoring deployed Router (name: " + router.getResourceId() + ")." );
+			GraphItem item = createGraphItem( graph, router, "icons/router.jpg", nodes );
+			networkStructureHelper.addDeployedElement( router, item );
 		}
 		
 		for ( Switch s : om.getSwitches() ) {
 			logger.debug("Restoring deployed Switch");
-			GraphItem item = createGraphItem( graph, s, "icons/switch.jpg", nodes );
+			GraphItem item = createGraphItem( getContainer( graph, assignments.get( s ) ), s, "icons/switch.jpg", nodes );
 			networkStructureHelper.addDeployedElement(s, item);
 		}
 		
@@ -79,10 +110,10 @@ public void translate( Graph graph, ObjectModel om, NetworkStructureHelper netwo
 	}
 	
 	
-	private GraphItem createGraphItem( Graph graph, Object g, String iconPath,
+	private GraphItem createGraphItem( IContainer container, Object g, String iconPath,
 	                              Map< Object, GraphNode > nodes ) {
 
-		GraphNode graphNode = new GraphNode(graph, SWT.NONE, "");
+		GraphNode graphNode = new GraphNode( container, SWT.NONE, "");
 		graphNode.setBackgroundColor( colors.get( Element.GRAPH_NODE ) );
 				
 		graphNode.setImage(loadImage(iconPath));
@@ -182,6 +213,7 @@ public void translate( Graph graph, ObjectModel om, NetworkStructureHelper netwo
 		graphConnection.setData(graphConnectionData);
 		graphConnection.setLineWidth(2);
 		graphConnection.setLineColor( colors.get( Element.GRAPH_EDGE ) );
+		graphConnection.setVisible( true );
 		
 	}
 	
