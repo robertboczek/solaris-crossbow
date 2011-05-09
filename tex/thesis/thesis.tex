@@ -151,31 +151,34 @@
     \section{Lightweight OS-level virtualization with Solaris Containers}
 
     \section{Crossbow - network virtualization technology}
-	
-		\subsection{Crossbow architecture}
 
-        One of the most important condition in terms of network virtualization is that network traffic should be insulated between virtual machines.
-        This kind of isolation can be achieved by having a dedicated physical NIC, network cable and port from the switch to the virtual machine itself. 
-        Moreover, switch must also ensure sustainability on every port. In every other case virtual machines will definately interfere between each other.
-        In a particular case when we have to share physical NIC between virtual machines the most promising solution is to virtualize NIC hardware and the
-         second layer of the OSI/ISO stack where sharing is fair and interferences will be avoided. These approach was adapted in the Crossbow architecture
-         in OpenSolaris OS.
-        Traffic separation is achieved by fundamental blocks of new architecture which are Virtual NICs (VNICs) created by dividing NIC into many VNICs. 
-        A VNIC can be created over NIC or Etherstub ( more about them later ) and be dynamically controlled by the bandwidth and CPU resources assigned to
-        it.
-        The crossbow architecture has introduced fully paralized network stack structure. Each stack could be seen as fully independent lane (without
-        any shared locks, queues, and CPUs) therefore network isolation is guaranteed. Key concept is hardware classification performed by the NIC over 
-        which VNIC was created. Each lane has a dedicated buffer for Transmit (Tx) and Receive (Rx) ring. In case when load exceeds assigned limit packets
-         must be dropped as it is wiser to dop them then to expend OS CPU resources. 
+    \subsection{Crossbow architecture}
 
-		\begin{figure}[H]
-			\includegraphics[width=\textwidth]{img/crossbow-traffic-dedicated-line.jpg}
-			\caption{Dedicated lines in the Crossbow architecture}
-		\end{figure}
+      One of the most important condition in terms of network virtualization is that network traffic
+      should be insulated between virtual machines. This kind of isolation can be achieved by having
+      a dedicated physical NIC, network cable and port from the switch to the virtual machine
+      itself.  Moreover, switch must also ensure sustainability on every port. In every other case
+      virtual machines will definitely interfere between each other. In a particular case when we
+      have to share physical NIC between virtual machines the most promising solution is to
+      virtualize NIC hardware and the second layer of the OSI/ISO stack where sharing is fair and
+      interferences will be avoided. These approach was adapted in the Crossbow architecture in
+      OpenSolaris OS. Traffic separation is achieved by fundamental blocks of new architecture
+      which are Virtual NICs (VNICs) created by dividing NIC into many VNICs.  A VNIC can be
+      created over NIC or Etherstub ( more about them later ) and be dynamically controlled by the
+      bandwidth and CPU resources assigned to it. The crossbow architecture has introduced fully
+      paralized network stack structure. Each stack could be seen as fully independent lane (without
+      any shared locks, queues, and CPUs) therefore network isolation is guaranteed. Key concept is
+      hardware classification performed by the NIC over which VNIC was created. Each lane has a
+      dedicated buffer for Transmit (Tx) and Receive (Rx) ring. In case when load exceeds assigned
+      limit packets must be dropped as it is wiser to dop them then to expend OS CPU resources. 
+
+       \begin{figure}[H]
+      \includegraphics[width=\textwidth]{img/crossbow-traffic-dedicated-line.jpeg}
+      \caption{Dedicated lines in the Crossbow architecture} \end{figure}
 		
 		\subsection{Virtualization lines}
 
-			Virtualization is the most key component in the Crossbow architecture. Each lane consists some hardware resources as well as software resources which may be 
+      Virtualization is the most key component in the Crossbow architecture. Each lane consists some
 			used to some concrete type of traffic. It usually would be composed of: 
 			\begin{enumerate}
 				\item{NIC resources( receive and transmit rings, interrupts, MAC address slots )}
@@ -204,13 +207,13 @@
 			switches to dynamic polling mode in which a kernel thread goes down to the receive ring in the NIC hardware to extract all outstanding packets in a single chain. Key aspect is that 
 			every virtualization lane works independently and transparently from each other. Usually only three threads are used per lane:
 			
-			\begin{enumeration}
+			\begin{enumerate}
 				\item{Poll thread which goes to the NIC hardware to get all packet chain}
 				\item{Woker thread which is responsible for protocol processing (IP and above) or delivers packets to virtual machine. Thread performs also any additional transmit work which is a natural 
 				requirement some concrete protocol, such as processing TCP packets that require sending ACK packets.}
 				\item{Transmit thread that is activated when if packets are being sent after transmit side flow control relief discharge, or after retreiving transmit descriptor. Application or virtual 
 				machine can transmit any packets without performing queuing because of flow control or context switching.}
-			\end{enumeration}
+			\end{enumerate}
 
 		
 		\subsection{Crossbow elements}
@@ -234,7 +237,7 @@
 			any user ( even administrator ). 
 			
 			\begin{figure}[H]
-				\includegraphics[width=\textwidth]{img/physical_and_virtual_switches_mapping.jpg}
+				\includegraphics[width=\textwidth]{img/physical_and_virtual_switches_mapping.jpeg}
 				\caption{Mapping between physical and virtual network building elements}
 			\end{figure}
 			
@@ -382,4 +385,4 @@
 
 \end{document}
 
-% vim: et : spelllang=en_us,pl : spell :
+% vim: et : tw=100 : spelllang=en_us,pl : spell :

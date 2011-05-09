@@ -43,6 +43,8 @@ public class WorkerDiscoveryHelper {
 
 		VNicMBean vnic = mock( VNicMBean.class );
 		when( vnic.getParent() ).thenReturn( switchName );
+		when( vnic.getIpAddress() ).thenReturn( "1.1.1.1" );
+		when( vnic.getIpMask() ).thenReturn( "24" );
 
 		String ifaceName = "PROJ..MMINE..IFACE0";
 		when( vnicManager.getVNicsNames() ).thenReturn( Arrays.asList( ifaceName ) );

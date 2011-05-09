@@ -370,17 +370,29 @@ public class NetworkStructureHelper {
 
 	private void hideItems() {
 
-		logger.trace("Hiding all items");
+		logger.trace( "Hiding/disposing all items" );
+		
+		List< GraphNode > torem = new LinkedList< GraphNode >();
 
 		for (Object object : graph.getConnections())
 			((GraphConnection) object).setVisible(false);
 		
+		// Hide all but containers.
+		
 		for (Object object : graph.getNodes()) {
-			// Hide all but containers.
-			if ( ! ( object instanceof GraphContainer ) ) {
+			if ( object instanceof GraphContainer ) {
+				for ( Object node : ( ( GraphContainer ) object ).getNodes() ) {
+					torem.add( ( GraphNode ) node );
+				}
+			} else {
 				((GraphItem) object).setVisible(false);
 			}
 		}
+		
+		for ( GraphNode node : torem ) {
+			node.dispose();
+		}
+		
 	}
 
 	public Set<Object> getNewObjects() {
@@ -549,6 +561,7 @@ public class NetworkStructureHelper {
 	public static interface NetworkStateListener{
 		public void stateChanged(NetworkState networkState);
 	}
+	
 }
 
 enum NetworkState {

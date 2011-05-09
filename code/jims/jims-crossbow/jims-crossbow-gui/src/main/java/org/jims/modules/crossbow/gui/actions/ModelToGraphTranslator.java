@@ -72,17 +72,17 @@ public void translate( Graph graph, ObjectModel om, Assignments assignments,
 		
 		Map< Object, GraphNode > nodes = new HashMap< Object, GraphNode >();
 		
-		logger.debug("Restoring deployed appliances in total number : " + om.getAppliances().size());
+		logger.debug("Restoring deployed appliances in total number: " + om.getAppliances().size());
 		
 		for ( Appliance machine : om.getAppliances( ApplianceType.MACHINE ) ) {
 			logger.debug( "Restoring deployed Appliance (name: " + machine.getResourceId() + ")." );
-			GraphItem item = createGraphItem( graph, machine, "icons/resource.jpg", nodes );
+			GraphItem item = createGraphItem( getContainer( graph, assignments.get( machine ) ), machine, "icons/resource.jpg", nodes );
 			networkStructureHelper.addDeployedElement( machine, item );
 		}
 		
 		for ( Appliance router : om.getAppliances( ApplianceType.ROUTER ) ) {
 			logger.debug( "Restoring deployed Router (name: " + router.getResourceId() + ")." );
-			GraphItem item = createGraphItem( graph, router, "icons/router.jpg", nodes );
+			GraphItem item = createGraphItem( getContainer( graph, assignments.get( router ) ), router, "icons/router.jpg", nodes );
 			networkStructureHelper.addDeployedElement( router, item );
 		}
 		
@@ -111,7 +111,7 @@ public void translate( Graph graph, ObjectModel om, Assignments assignments,
 	
 	
 	private GraphItem createGraphItem( IContainer container, Object g, String iconPath,
-	                              Map< Object, GraphNode > nodes ) {
+	                                   Map< Object, GraphNode > nodes ) {
 
 		GraphNode graphNode = new GraphNode( container, SWT.NONE, "");
 		graphNode.setBackgroundColor( colors.get( Element.GRAPH_NODE ) );

@@ -304,12 +304,11 @@ public class Worker implements WorkerMBean {
 
 				Interface iface = new Interface( m.group( 4 ), m.group( 1 ) );
 
-				iface.setIpAddress( new IpAddress( "1.1.1.1", 24 ) );
-
 				// Discover details.
 
 				VNicMBean vnic = vNicManager.getByName( m.group() );
 
+				iface.setIpAddress( new IpAddress( vnic.getIpAddress(), 24 ) );  // TODO  real netmask retrieval!
 				iface.setEndpoint( ( Switch ) ids.get( vnic.getParent() ) );
 				
 				Appliance app = ( Appliance ) ids.get( NameHelper.extractAppliance( m.group() ) );

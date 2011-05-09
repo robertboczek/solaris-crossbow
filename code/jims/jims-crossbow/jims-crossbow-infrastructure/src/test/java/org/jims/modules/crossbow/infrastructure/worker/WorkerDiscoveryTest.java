@@ -18,6 +18,7 @@ import org.jims.modules.solaris.solaris10.mbeans.GlobalZoneManagementMBean;
 import org.junit.Before;
 import org.junit.Test;
 import static org.mockito.Mockito.*;
+import static org.junit.Assert.*;
 
 
 /**
@@ -55,12 +56,12 @@ public class WorkerDiscoveryTest {
 		ObjectModel om = projects.get( pn ).first;
 		Policy policy = om.getPolicies().get( 0 );
 
-		assert ( 1 == projects.size() );
+		assertEquals( 1, projects.size() );
 		assert ( "PROJ".equals( pn ) );
 
-		assert ( policy instanceof BandwidthPolicy );
-		assert ( policy.getFilter() instanceof TransportFilter );
-		assert ( TransportFilter.Transport.ICMPV6.equals( ( ( TransportFilter ) policy.getFilter() ).getTransport() ) );
+		assertTrue( policy instanceof BandwidthPolicy );
+		assertTrue( policy.getFilter() instanceof TransportFilter );
+		assertEquals( TransportFilter.Transport.ICMPV6, ( ( TransportFilter ) policy.getFilter() ).getTransport() );
 
 	}
 
