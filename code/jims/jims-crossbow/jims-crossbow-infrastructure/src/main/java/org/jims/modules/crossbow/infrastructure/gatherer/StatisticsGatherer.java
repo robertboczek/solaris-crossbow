@@ -26,6 +26,7 @@ import org.jims.modules.sg.service.wnservice.WNDelegateMBean;
 
 import org.jims.modules.crossbow.enums.LinkStatisticTimePeriod;
 import org.jims.modules.crossbow.link.VNicMBean;
+import org.jims.modules.crossbow.objectmodel.resources.Switch;
 
 
 /**
@@ -51,8 +52,11 @@ public class StatisticsGatherer implements StatisticsGathererMBean {
 		Map< LinkStatistics, Long > res = new HashMap< LinkStatistics, Long >();
 		Map< LinkStatistics, String > stats = null;
 
+		;
+
+
 		try {
-			stats = getProxy( url, "Crossbow:type=VNic,name=" + NameHelper.interfaceName( iface ) + ",*", VNicMBean.class ).getStatistics();
+			stats = getProxy( url, "Crossbow:type=VNic,name=" + NameHelper.interfaceName( iface ) + ",parent=" + NameHelper.switchName( ( Switch ) iface.getEndpoint() ), VNicMBean.class ).getStatistics();
 			// stats = vNicManager.getByName( NameHelper.interfaceName( iface ) ).getStatistics();
 		} catch ( LinkException ex ) {
 			// TODO-DAWID
