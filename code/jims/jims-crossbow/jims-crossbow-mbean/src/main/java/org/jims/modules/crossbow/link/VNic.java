@@ -81,7 +81,14 @@ public class VNic extends Link implements VNicMBean {
 				res = new BufferedReader( new InputStreamReader( proc.getInputStream() ) ).readLine();
 
 			} catch ( Exception ex ) {
+
 				logger.error( "Exception while getting IP address.", ex );
+
+				try {
+					res = super.getIpAddress();
+				} catch ( Exception e ) {
+					logger.error( "No way getting the IP address.", e );
+				}
 			}
 
 			return res;

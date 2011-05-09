@@ -105,8 +105,6 @@ public class Appliance extends Resource {
 	@Override
 	public int hashCode() {
 		int hash = 7;
-		hash = 97 * hash + (this.type != null ? this.type.hashCode() : 0);
-		hash = 97 * hash + (this.repoId != null ? this.repoId.hashCode() : 0);
 		hash = 97 * hash + (this.uuid != null ? this.uuid.hashCode() : 0);
 		return hash;
 	}
