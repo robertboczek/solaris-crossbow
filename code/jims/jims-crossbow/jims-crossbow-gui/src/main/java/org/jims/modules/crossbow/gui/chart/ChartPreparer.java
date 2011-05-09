@@ -1,5 +1,11 @@
 package org.jims.modules.crossbow.gui.chart;
 
+import java.util.List;
+import java.util.Map;
+
+import org.jims.modules.crossbow.enums.LinkStatisticTimePeriod;
+import org.jims.modules.crossbow.enums.LinkStatistics;
+
 import com.googlecode.charts4j.AxisLabels;
 import com.googlecode.charts4j.AxisLabelsFactory;
 import com.googlecode.charts4j.AxisStyle;
@@ -23,35 +29,49 @@ public class ChartPreparer {
 	 * Return url to chart based on the data
 	 * and time to be presented
 	 * 
-	 * @param data Array of data to be presented on the chart (max 3)
-	 * @param legend array of chart legends
-	 * @param chartTimeType Determines X_AXIS legend
+	 * @param list List of ChartData elements (max 3)
+	 * @param linkStatisticTimePeriod Determines X_AXIS legend
+	 * @param chartType 
 	 * 
 	 * @return Returns String url
 	 */
-	public String prepareChart(double [][]data, String []legend, String chartTitle, ChartTimeType chartTimeType) {
+	public String prepareChart(List<List<Map<LinkStatistics, Long>>> list, String[] chartNames, String chartTitle,
+			LinkStatisticTimePeriod linkStatisticTimePeriod, ChartType chartType, 
+			LinkStatistics linkStatistics) {
 		
 		Line line1 = null, line2 = null, line3 = null;
 		Color c1 = Color.newColor("CA3D05"), c2 = SKYBLUE, c3 = GREEN;
 		
-		double max = roundMaxiumValue(data);
+		String legendSuffix = null;
+		if(ChartType.flows.equals(chartType)) {
+			legendSuffix = " flow";
+		} else if(ChartType.interfaces.equals(chartType)) {
+			legendSuffix = " interface";
+		}
 		
-		if(data.length > 0) {
-			line1 = Plots.newLine(DataUtil.scaleWithinRange(0.0, max, data[0]), c1, legend[0]);
+		double max = roundMaxiumValue(list, linkStatistics);
+		
+		
+		
+		if(list.size() > 0) {
+			double data[] = getData(list.get(0), linkStatistics);
+			line1 = Plots.newLine(DataUtil.scaleWithinRange(0.0, max, data), c1, chartNames[0] + legendSuffix);
 			line1.setLineStyle(LineStyle.newLineStyle(3, 1, 0));
 			line1.addShapeMarkers(Shape.DIAMOND, c1, 12);
 			line1.addShapeMarkers(Shape.DIAMOND, Color.WHITE, 8);
 		}
 		
-		if(data.length > 1) {
-			line2 = Plots.newLine(DataUtil.scaleWithinRange(0.0, max, data[1]), c2, legend[1]);
+		if(list.size() > 1) {
+			double data[] = getData(list.get(1), linkStatistics);
+			line2 = Plots.newLine(DataUtil.scaleWithinRange(0.0, max, data), c2, chartNames[1] + legendSuffix);
 			line2.setLineStyle(LineStyle.newLineStyle(3, 1, 0));
 			line2.addShapeMarkers(Shape.DIAMOND, c2, 12);
 			line2.addShapeMarkers(Shape.DIAMOND, Color.WHITE, 8);
 		}
 		
-		if(data.length > 2) {
-			line3 = Plots.newLine(DataUtil.scaleWithinRange(0.0, max, data[2]), c3, legend[2]);
+		if(list.size() > 2) {
+			double data[] = getData(list.get(2), linkStatistics);
+			line3 = Plots.newLine(DataUtil.scaleWithinRange(0.0, max, data), c3, chartNames[2] + legendSuffix);
 			line3.setLineStyle(LineStyle.newLineStyle(3, 1, 0));
 			line3.addShapeMarkers(Shape.DIAMOND, c3, 12);
 			line3.addShapeMarkers(Shape.DIAMOND, Color.WHITE, 8);
@@ -74,13 +94,14 @@ public class ChartPreparer {
         // Defining axis info and styles
         AxisStyle axisStyle = AxisStyle.newAxisStyle(WHITE, 12, AxisTextAlignment.CENTER);
         AxisLabels xAxis = null;
-        if(chartTimeType.equals(ChartTimeType.MINUTELY)) {
+        
+        if(linkStatisticTimePeriod.equals(LinkStatisticTimePeriod.MINUTELY)) {
         	xAxis = AxisLabelsFactory.newAxisLabels(ChartDescription.MINUTE_CHART_X_AXIS);
-        } else if(chartTimeType.equals(ChartTimeType.FIVE_MINUTELY)) {
+        } else if(linkStatisticTimePeriod.equals(LinkStatisticTimePeriod.FIVE_MINUTELY)) {
         	xAxis = AxisLabelsFactory.newAxisLabels(ChartDescription.FIVE_MINUTES_CHART_X_AXIS);
-        } else if(chartTimeType.equals(ChartTimeType.HOURLY)) {
+        } else if(linkStatisticTimePeriod.equals(LinkStatisticTimePeriod.HOURLY)) {
         	xAxis = AxisLabelsFactory.newAxisLabels(ChartDescription.HOUR_CHART_X_AXIS);
-        } else if(chartTimeType.equals(ChartTimeType.DAILY)) {
+        } else if(linkStatisticTimePeriod.equals(LinkStatisticTimePeriod.DAILY)) {
         	xAxis = AxisLabelsFactory.newAxisLabels(ChartDescription.DAY_CHART_X_AXIS);
         }
         
@@ -113,11 +134,22 @@ public class ChartPreparer {
 	}
 	
 	
-	private double roundMaxiumValue(double data[][]) {
+	private double[] getData(List<Map<LinkStatistics, Long>> list, LinkStatistics linkStatistics) {
+		double [] data = new double[list.size()];
+		int i = 0;
+		for(Map<LinkStatistics, Long> map : list) {
+			data[i++] = map.get(linkStatistics); 
+		}
+		return null;
+	}
+
+
+	private double roundMaxiumValue(List<List<Map<LinkStatistics, Long>>> list, LinkStatistics linkStatistics) {
+		
 		double max = Double.MIN_VALUE;
-		for(double[] t : data){
-			for(double a : t){
-				max = Math.max(max, a); 
+		for(List<Map<LinkStatistics, Long>> l : list) {
+			for(Map<LinkStatistics, Long> map : l) {
+				max = Math.max(max, map.get(linkStatistics));
 			}
 		}
 		

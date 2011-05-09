@@ -78,6 +78,7 @@ import org.jims.modules.crossbow.gui.worker.StatsManager.ConnectionProvider;
 import org.jims.modules.crossbow.gui.worker.TooltipStatsHandler.ContainerProvider;
 import org.jims.modules.crossbow.infrastructure.appliance.RepoManagerMBean;
 import org.jims.modules.crossbow.infrastructure.progress.CrossbowNotificationMBean;
+import org.jims.modules.crossbow.infrastructure.gatherer.StatisticsGathererMBean;
 import org.jims.modules.crossbow.infrastructure.supervisor.SupervisorMBean;
 import org.jims.modules.crossbow.infrastructure.worker.exception.ModelInstantiationException;
 import org.jims.modules.crossbow.objectmodel.Actions;
@@ -373,7 +374,6 @@ public class Gui extends Shell {
 			public void widgetSelected(SelectionEvent e) {
 				// @todo dorobic wyswietlanie okienka z informacja o systemie i
 				// autorach
-				new ChartDisplayer(ChartTimeType.HOURLY, null);
 			}
 		});
 
@@ -798,7 +798,7 @@ public class Gui extends Shell {
 			public void handleEvent(Event event) {
 
 				SelectFlowForChart s = new SelectFlowForChart(Gui.this,
-						objectModel);
+						objectModel, componentProxyFactory.createProxy(StatisticsGathererMBean.class));
 				s.open();
 			}
 
