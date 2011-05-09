@@ -45,7 +45,7 @@ public class StatisticsGatherer implements StatisticsGathererMBean {
 	@Override
 	public Map< LinkStatistics, Long > getInterfaceStatistics( Interface iface ) {
 
-		String url = assignments.getAssignment(iface);
+		String url = assignments.get(iface);
 		VNicManagerMBean vNicManager = getVNicManager( url );
 
 		Map< LinkStatistics, Long > res = new HashMap< LinkStatistics, Long >();
@@ -70,7 +70,7 @@ public class StatisticsGatherer implements StatisticsGathererMBean {
 	@Override
 	public List< Map<LinkStatistics, Long> > getInterfaceStatistics( Interface iface, LinkStatisticTimePeriod period ) {
 
-		String url = assignments.getAssignment(iface);
+		String url = assignments.get(iface);
 		VNicManagerMBean vNicManager = getVNicManager( url );
 
 		try {
@@ -89,7 +89,7 @@ public class StatisticsGatherer implements StatisticsGathererMBean {
 
 		Map< LinkStatistics, Long > res = new HashMap< LinkStatistics, Long >();
 
-		String url = assignments.getAssignment(policy);
+		String url = assignments.get(policy);
 		FlowManagerMBean flowManager = getFlowManager( url );
 
 		List< Map<LinkStatistics, Long> > list = new LinkedList< Map<LinkStatistics, Long> >();
@@ -111,7 +111,7 @@ public class StatisticsGatherer implements StatisticsGathererMBean {
 
 		Map< LinkStatistics, Long > res = new HashMap< LinkStatistics, Long >();
 
-		String url = assignments.getAssignment(policy);
+		String url = assignments.get(policy);
 		FlowManagerMBean flowManager = getFlowManager( url );
 
 		for ( Map.Entry< FlowStatistics, Long > s : flowManager.getByName( NameHelper.policyName( policy ) ).getStatistics().entrySet() ) {

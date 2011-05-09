@@ -137,10 +137,6 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 
 		// Supervisor MBean
 
-		WNDelegateMBean wnDelegate = JMX.newMBeanProxy(
-			server, new ObjectName( "Core:name=WNDelegate" ), WNDelegateMBean.class
-		);
-
 		final Supervisor supervisor = new Supervisor( new JmxWorkerProvider( wnDelegate ), assigner );
 
 		VlanTagProvider tagProvider = new ContiguousVlanTagProvider( 900, 931,  new ContiguousVlanTagProvider.UsedTagsProvider() {
