@@ -188,6 +188,7 @@ public class VNicManager extends BaseManager implements VNicManagerMBean, Notifi
         }
 
         if(vNicMBean instanceof Link) {
+            logger.info("Start gathering statistics for VNic " + vNicMBean.getName());
             ((Link)vNicMBean).startGatheringStatistics();
         }
     }

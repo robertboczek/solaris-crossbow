@@ -48,6 +48,8 @@ public class LinkStatisticsGatherer {
 
         Map<LinkStatistics, Long> map = getEmtpyMap();
 
+        final LinkHelper helper = linkHelper;
+
         for (int i = 0; i < 10; i++) {
             minuteValueList.add(map);
             fiveMinutesValueList.add(map);
@@ -55,13 +57,12 @@ public class LinkStatisticsGatherer {
             dayValueList.add(map);
         }
 
-
         timer.schedule(new TimerTask() {
 
             @Override
             public void run() {
 
-                updateStatistics(minuteValueList);
+                updateStatistics(minuteValueList, helper);
                 logger.trace("Minute statistics for etherstub " + linkName + " updated");
 
             }
@@ -71,7 +72,7 @@ public class LinkStatisticsGatherer {
 
             @Override
             public void run() {
-                updateStatistics(fiveMinutesValueList);
+                updateStatistics(fiveMinutesValueList, helper);
                 logger.trace("Five-minute statistics for etherstub " + linkName + " updated");
             }
         }, 0, 3000);//zawiera 10 wartosci
@@ -80,7 +81,7 @@ public class LinkStatisticsGatherer {
 
             @Override
             public void run() {
-                updateStatistics(hourValueList);
+                updateStatistics(hourValueList, helper);
                 logger.trace("Hourly statistics for etherstub " + linkName + " updated");
             }
         }, 0, 36000);//zawiera 10 wartosci
@@ -89,22 +90,21 @@ public class LinkStatisticsGatherer {
 
             @Override
             public void run() {
-                updateStatistics(dayValueList);
+                updateStatistics(dayValueList, helper);
                 logger.trace("Daily statistics for etherstub " + linkName + " updated");
             }
         }, 0, 864000);//zawiera 10 wartosci
 
-
     }
 
-    private void updateStatistics(LinkedList<Map<LinkStatistics, Long>> valueList) {
+    private void updateStatistics(LinkedList<Map<LinkStatistics, Long>> valueList, final LinkHelper helper) {
 
         Map<LinkStatistics, Long> map = null;
         if (linkHelper != null) {
             map = new HashMap<LinkStatistics, Long>();
             for (LinkStatistics linkStatistics : LinkStatistics.values()) {
                 try {
-                    map.put(linkStatistics, Long.valueOf(linkHelper.getLinkStatistic(linkName, linkStatistics)));
+                    map.put(linkStatistics, Long.valueOf(helper.getLinkStatistic(linkName, linkStatistics)));
 
                 } catch (LinkException ex) {
                     logger.error("Couldn't read etherstubs statistic", ex);
@@ -116,6 +116,7 @@ public class LinkStatisticsGatherer {
             }
 
         } else {
+            logger.info("Couldn't read statistics as linkHelper was null");
             map = getEmtpyMap();
         }
         valueList.removeFirst();
