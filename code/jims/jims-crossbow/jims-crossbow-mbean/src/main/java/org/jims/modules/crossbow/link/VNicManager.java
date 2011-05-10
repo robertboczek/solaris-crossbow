@@ -58,7 +58,7 @@ public class VNicManager extends BaseManager implements VNicManagerMBean, Notifi
             this.vnicHelper.createVNic(vNicMBean.getName(), vNicMBean.isTemporary(), vNicMBean.getParent());
 
 						// TODO: this is temporary. investigate (vnicHelper was not injected)
-						( ( VNic ) vNicMBean ).setVNicHelper( vnicHelper );
+						( ( VNic ) vNicMBean ).setLinkHelper( vnicHelper );
             registerNewVNicMBean(vNicMBean);
             discover();
 
@@ -148,7 +148,7 @@ public class VNicManager extends BaseManager implements VNicManagerMBean, Notifi
             for (VNicMBean vNicMBean : currentMBeans) {
                 if (vnicSet.contains(vNicMBean) == false) {
                     //create and register new VnicMBean
-                    ( ( VNic ) vNicMBean ).setVNicHelper( vnicHelper );
+                    ( ( VNic ) vNicMBean ).setLinkHelper( vnicHelper );
                     registerNewVNicMBean(vNicMBean);
                 }
             }

@@ -126,9 +126,4 @@ public class VNic extends Link implements VNicMBean {
     public String toString() {
         return this.name;
     }
-
-    public void setVNicHelper(VNicHelper vNicHelper) {
-        this.vNicHelper = vNicHelper;
-        super.linkHelper = vNicHelper;
-    }
 }
