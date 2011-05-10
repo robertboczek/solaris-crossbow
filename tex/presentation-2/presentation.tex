@@ -99,15 +99,31 @@
 
 	\begin{frame}{Components (simplified)}
 
-		go here
+		\begin{enumerate}
+			\item CrossbowStarter - starts all necassary components (mbeans)
+			\item Supervisor - distributes network object model elements to proper Workers and instantiates them
+			\item Worker - instantiates received part of object model network structure
+			\item CrossbowNotification - returns information about deployment progress
+			\item StatisticsGatherer - gathers statistics of flows and interfaces single values and progress during requested time
+		\end{enumerate}
 	
 	\end{frame}
 
+	\begin{frame}{Gui}
+
+		\begin{enumerate}
+			\item Vizualises created network structures
+			\item Displays deployment progress and network interface, flow statistics
+			\item Simplifies creating desired network
+		\end{enumerate}
+	
+	\end{frame}
 
 	\begin{frame}{Remaining work}
 
 		\begin{enumerate}
 			\item statistics, charts (ongoing)
+			\item distributed progress notifications (ongoing)
 			\item parallelization
 			\item usability improvements
 			\item bug fixing
