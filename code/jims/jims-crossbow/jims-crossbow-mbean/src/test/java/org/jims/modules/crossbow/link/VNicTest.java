@@ -30,7 +30,7 @@ public class VNicTest {
 
         vnicHelper = mock(JNAVNicHelper.class);
         vnic = new VNic("vnic1", false, "e1000g0");
-        vnic.setVNicHelper(vnicHelper);
+        vnic.setLinkHelper(vnicHelper);
     }
 
     @After

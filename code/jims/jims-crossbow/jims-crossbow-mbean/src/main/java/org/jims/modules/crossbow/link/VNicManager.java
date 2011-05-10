@@ -142,7 +142,7 @@ public class VNicManager extends BaseManager implements VNicManagerMBean, Notifi
         Set<VNicMBean> currentMBeans = convertToSet(vnicHelper.getLinkNames(true));
 
         if (publisher != null) {
-            Set<Object> vnicSet = new HashSet<Object>(publisher.getPublished());
+            Set<VNicMBean> vnicSet = new HashSet<VNicMBean>(publisher.getPublished());
 
             //check for new vnic's
             for (VNicMBean vNicMBean : currentMBeans) {
@@ -155,10 +155,10 @@ public class VNicManager extends BaseManager implements VNicManagerMBean, Notifi
 
             List<VNicMBean> vNicMBeansToRemove = new LinkedList<VNicMBean>();
             //remove etherstubs that don't exist anymore
-            for (Object object : vnicSet) {
-                if (object instanceof VNicMBean && currentMBeans.contains((VNicMBean) object) == false) {
+            for (VNicMBean vNic : vnicSet) {
+                if (currentMBeans.contains((VNicMBean) vNic) == false) {
                     //save this etherstub as one to be removed
-                    vNicMBeansToRemove.add(((VNicMBean) object));
+                    vNicMBeansToRemove.add(vNic);
                 }
             }
             removeNoMoreExistingVNicMBeans(vNicMBeansToRemove);
