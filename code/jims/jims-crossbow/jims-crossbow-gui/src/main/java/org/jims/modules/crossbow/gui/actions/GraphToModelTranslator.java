@@ -115,11 +115,17 @@ public class GraphToModelTranslator {
 					
 					if ( entity instanceof Switch ) {
 						for ( Endpoint e :  ( ( Switch ) entity ).getEndpoints() ) {
+							
 							res.put( e, workerId );
+							
+							if ( e instanceof Interface ) {
+								for ( Policy p : ( ( Interface ) e ).getPoliciesList() ) {
+									res.put( p, workerId );
+								}
+							}
+								
 						}
 					}
-					
-					// TODO  policies (at least. anything more?)
 					
 				}
 				

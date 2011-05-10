@@ -524,10 +524,18 @@ public class Gui extends Shell {
 //						e.printStackTrace();
 //					}
 						// TODO  ^ uncomment
+						
+						display.asyncExec( new Runnable() {
+							@Override
+							public void run() {
+								deployButton.setEnabled(false);
+								chartsButton.setEnabled(true);
+							}
+						} );
+						
 				}
 			}.start();
-			 
-			 
+			
 			 } catch (Exception e) {
 			MessageDialog.openError(null, "Connection problem",
 					"Couldn't get Supervisor.class");
@@ -536,8 +544,6 @@ public class Gui extends Shell {
 			return;
 		}
 
-		deployButton.setEnabled(false);
-		chartsButton.setEnabled(true);
 		logger.info("Starting new threads gathering statistics");
 		resetStatisticAnalyzer();
 	}

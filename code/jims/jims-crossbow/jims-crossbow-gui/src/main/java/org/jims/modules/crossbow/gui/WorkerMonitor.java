@@ -70,25 +70,25 @@ public class WorkerMonitor implements ConnectionTester.ConnectionStatusListener 
 		
 		// TODO? the GraphContiner crap is broken
 		
-//		g.addListener( SWT.MouseWheel, new Listener() {
-//			
-//			@Override
-//			public void handleEvent( Event event ) {
-//				
-//				if ( ( 1 == WorkerMonitor.this.g.getSelection().size() ) ) {
-//					
-//					double scale = ( event.count > 0 ) ? 1.1 : 1 / 1.1;
-//					
-//					GraphContainer container = ( GraphContainer ) WorkerMonitor.this.g.getSelection().get( 0 );
-//					
-//					Dimension dim = container.getSize();
-//					container.setSize( dim.width * scale, dim.height * scale );
-//					container.setScale( 1 );
-//				
-//				}
-//				
-//			}
-//		} );
+		g.addListener( SWT.MouseWheel, new Listener() {
+			
+			@Override
+			public void handleEvent( Event event ) {
+				
+				if ( ( 1 == WorkerMonitor.this.g.getSelection().size() ) ) {
+					
+					double scale = ( event.count > 0 ) ? 1.1 : 1 / 1.1;
+					
+					GraphContainer container = ( GraphContainer ) WorkerMonitor.this.g.getSelection().get( 0 );
+					
+					Dimension dim = container.getSize();
+					container.setSize( dim.width * scale, dim.height * scale );
+					container.setScale( 1 / scale );
+				
+				}
+				
+			}
+		} );
 		
 	}
 	
