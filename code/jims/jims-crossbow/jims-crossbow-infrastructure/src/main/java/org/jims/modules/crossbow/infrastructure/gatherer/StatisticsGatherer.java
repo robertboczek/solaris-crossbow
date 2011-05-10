@@ -78,14 +78,13 @@ public class StatisticsGatherer implements StatisticsGathererMBean {
 		String url = assignments.get(iface);
 		VNicManagerMBean vNicManager = getVNicManager( url );
 
-		try {
-			return vNicManager.getByName( NameHelper.interfaceName( iface ) ).getStatistics(period);
-		} catch ( LinkException ex ) {
+		//try {
+			return getProxy( url, "Crossbow:type=VNic,name=" + NameHelper.interfaceName( iface ) + ",parent=" + NameHelper.switchName( ( Switch ) iface.getEndpoint() ), VNicMBean.class ).getStatistics(period);
+			//return vNicManager.getByName( NameHelper.interfaceName( iface ) ).getStatistics(period);
+		//} catch ( LinkException ex ) {
 			// TODO-DAWID
-			ex.printStackTrace();
-		}
-
-		return null;
+		//	ex.printStackTrace();
+		//}
 
 	}
 
