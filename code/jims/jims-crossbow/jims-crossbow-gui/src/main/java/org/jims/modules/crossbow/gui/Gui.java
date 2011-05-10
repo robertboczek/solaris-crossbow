@@ -488,8 +488,6 @@ public class Gui extends Shell {
 			crossbowNotificationMBean.reset();
 			logger.trace("Reseting progress state before deployment");
 			
-			final Object monitor = new Object();
-
 //			 ProgressShell progressShell = new ProgressShell(Gui.this, componentProxyFactory, display);
 //			 progressShell.create();
 //			 if (progressShell.open() == Window.OK) { }
