@@ -18,6 +18,7 @@
 	<modules>
 		<module>jims-crossbow-native</module>
 		<module>jims-crossbow-mbean</module>
+		<module>jims-crossbow-model</module>
 		<module>jims-crossbow-package</module>
 		<module>jims-crossbow-infrastructure</module>
   </modules>
