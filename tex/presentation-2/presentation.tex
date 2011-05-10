@@ -17,7 +17,7 @@
 \title{Component-based system for management of multilevel virtualization of networking resources}
 \subtitle{System komponentowy wspomagający wielopoziomową wirtualizację zasobów sieciowych}
 \author{Robert Boczek \and Dawid Ciepliński \\ ~ \\ prof. dr hab. inż Krzysztof Zieliński}
-\date{29.03.2011}
+\date{10.05.2011}
 
 \begin{document}
 
@@ -30,28 +30,27 @@
 
 		\begin{enumerate}
 
-			\item Physical
+			\item ,,Physical''
 
 				5 Logical Domains connected with a vswitch:
 
 				\begin{itemize}
-					\item dedicated NFS server node
+					\item dedicated NFS server node (virtual appliance snapshot storage)
 					\item 4 worker nodes
 				\end{itemize}
 
+				\begin{center}
 				\includegraphics[scale=.2]{img/env.pdf}
+				\end{center}
 
+				\pause
 
-				% TODO  image here
-
-			\item Software
-
-				JIMS features \& work done:
+			\item Software = JMX-enabled Monitoring System (JIMS)
 
 				\begin{itemize}
-					\item node discovery
-					\item Solaris resource management \& monitoring
-					\item common codebase
+					\item Solaris resource monitoring \& management (containers)
+					\item peer discovery
+					\item shared codebase
 				\end{itemize}
 		
 		\end{enumerate}
@@ -59,11 +58,16 @@
 	\end{frame}
 
 
-	\begin{frame}{Wrappers}
+	\begin{frame}{Native libraries}
 
 		\texttt{libdladm}- and \texttt{libflowadm}-based native libraries.
 
-		\medskip
+		\begin{itemize}
+			\item lib-link
+			\item lib-etherstub
+			\item lib-flow
+			\item lib-vlan
+		\end{itemize}
 
 		Allow for higher-level operations (CRUD) for etherstubs, (V)NICs, VLANs and flows. Still native, with minimum external dependencies.
 	
@@ -94,9 +98,10 @@
 	\begin{frame}{Remaining work}
 
 		\begin{enumerate}
-			\item charts
+			\item statistics, charts (ongoing)
 			\item parallelization
-			\item refactoring \& bug fixing
+			\item usability improvements
+			\item bug fixing
 		\end{enumerate}
 	
 	\end{frame}
