@@ -48,10 +48,10 @@ public class StatisticsGatherer implements StatisticsGathererMBean {
 			stats = vNicManager.getProxyByName( NameHelper.interfaceName( iface ) ).getStatistics();
 		} catch ( EntityNotFoundException ex ) {
 			logger.error( "Error while getting statistics for interface (name: "
-			              + NameHelper.interfaceName( iface ) + ")." );
+			              + NameHelper.interfaceName( iface ) + ").", ex );
 		} catch ( LinkException ex ) {
 			logger.error( "Error while getting statistics for interface (name: "
-			              + NameHelper.interfaceName( iface ) + ")." );
+			              + NameHelper.interfaceName( iface ) + ").", ex );
 		}
 
 		if ( null != stats ) {
@@ -81,7 +81,7 @@ public class StatisticsGatherer implements StatisticsGathererMBean {
 			res = vNicManager.getProxyByName( NameHelper.interfaceName( iface ) ).getStatistics( period );
 		} catch ( EntityNotFoundException ex ) {
 			logger.error( "Error while getting statistics for interface (name: "
-			              + NameHelper.interfaceName( iface ) + ")." );
+			              + NameHelper.interfaceName( iface ) + ").", ex );
 		}
 
 		return res;
