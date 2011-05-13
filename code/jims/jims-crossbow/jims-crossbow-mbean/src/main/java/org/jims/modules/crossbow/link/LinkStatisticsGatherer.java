@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 import org.apache.log4j.Logger;
 import org.jims.modules.crossbow.enums.LinkStatisticTimePeriod;
 import org.jims.modules.crossbow.enums.LinkStatistics;
@@ -20,7 +18,6 @@ import org.jims.modules.crossbow.lib.LinkHelper;
 public class LinkStatisticsGatherer {
 
     private LinkHelper linkHelper;
-    private Timer timer = new Timer();
     private final String linkName;
     private static final Logger logger = Logger.getLogger(LinkStatisticsGatherer.class);
 
@@ -31,6 +28,7 @@ public class LinkStatisticsGatherer {
     void setLinkHelper(LinkHelper linkHelper) {
         this.linkHelper = linkHelper;
     }
+    private Thread minuteThread, fiveMinuteThread, hourThread, dayThread;
     private final LinkedList<Map<LinkStatistics, Long>> minuteValueList = new LinkedList<Map<LinkStatistics, Long>>();
     private final LinkedList<Map<LinkStatistics, Long>> fiveMinutesValueList = new LinkedList<Map<LinkStatistics, Long>>();
     private final LinkedList<Map<LinkStatistics, Long>> hourValueList = new LinkedList<Map<LinkStatistics, Long>>();
@@ -45,7 +43,7 @@ public class LinkStatisticsGatherer {
     }
 
     private void initContent() {
-
+        
         Map<LinkStatistics, Long> map = getEmtpyMap();
 
         final LinkHelper helper = linkHelper;
@@ -57,44 +55,81 @@ public class LinkStatisticsGatherer {
             dayValueList.add(map);
         }
 
-        timer.schedule(new TimerTask() {
+        minuteThread = new Thread() {
 
             @Override
             public void run() {
+                try {
+                    while (true) {
+                        updateStatistics(minuteValueList, helper);
+                        logger.trace("Minute statistics for etherstub " + linkName + " updated");
+                        Thread.sleep(6000);
 
-                updateStatistics(minuteValueList, helper);
-                logger.trace("Minute statistics for etherstub " + linkName + " updated");
+                    }
+                } catch (Exception e) {
+                    logger.error(e);
+                }
 
             }
-        }, 0, 6000);//zawiera 10 wartosci
+        };//zawiera 10 wartosci
+        minuteThread.start();
 
-        timer.schedule(new TimerTask() {
+        fiveMinuteThread = new Thread() {
 
             @Override
             public void run() {
-                updateStatistics(fiveMinutesValueList, helper);
-                logger.trace("Five-minute statistics for etherstub " + linkName + " updated");
-            }
-        }, 0, 3000);//zawiera 10 wartosci
+                try {
+                    while (true) {
+                        updateStatistics(fiveMinutesValueList, helper);
+                        logger.trace("Five-minute statistics for etherstub " + linkName + " updated");
+                        Thread.sleep(30000);
 
-        timer.schedule(new TimerTask() {
+                    }
+                } catch (Exception e) {
+                    logger.error(e);
+                }
+
+            }
+        };//zawiera 10 wartosci
+        fiveMinuteThread.start();
+
+        hourThread = new Thread() {
 
             @Override
             public void run() {
-                updateStatistics(hourValueList, helper);
-                logger.trace("Hourly statistics for etherstub " + linkName + " updated");
-            }
-        }, 0, 36000);//zawiera 10 wartosci
+                try {
+                    while (true) {
+                        updateStatistics(hourValueList, helper);
+                        logger.trace("Hourly statistics for etherstub " + linkName + " updated");
+                        Thread.sleep(360000);
 
-        timer.schedule(new TimerTask() {
+                    }
+                } catch (Exception e) {
+                    logger.error(e);
+                }
+
+            }
+        };//zawiera 10 wartosci
+        hourThread.start();
+
+        dayThread = new Thread() {
 
             @Override
             public void run() {
-                updateStatistics(dayValueList, helper);
-                logger.trace("Daily statistics for etherstub " + linkName + " updated");
-            }
-        }, 0, 864000);//zawiera 10 wartosci
+                try {
+                    while (true) {
+                        updateStatistics(dayValueList, helper);
+                        logger.trace("Daily statistics for etherstub " + linkName + " updated");
+                        Thread.sleep(8640000);
 
+                    }
+                } catch (Exception e) {
+                    logger.error(e);
+                }
+
+            }
+        };//zawiera 10 wartosci
+        dayThread.start();
     }
 
     private void updateStatistics(LinkedList<Map<LinkStatistics, Long>> valueList, final LinkHelper helper) {
@@ -129,7 +164,11 @@ public class LinkStatisticsGatherer {
     }
 
     public void stop() {
-        timer.cancel();
+        
+        interrupt(minuteThread);
+        interrupt(fiveMinuteThread);
+        interrupt(hourThread);
+        interrupt(dayThread);
     }
 
     public List<Map<LinkStatistics, Long>> getStatistics(LinkStatisticTimePeriod period) {
@@ -146,6 +185,12 @@ public class LinkStatisticsGatherer {
         }
 
         return map;
+    }
+
+    private void interrupt(Thread thread) {
+        if(thread != null && thread.isAlive()) {
+            thread.interrupt();
+        }
     }
 }
 
