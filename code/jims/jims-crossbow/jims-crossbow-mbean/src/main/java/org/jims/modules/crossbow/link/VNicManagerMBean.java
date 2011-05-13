@@ -2,13 +2,14 @@ package org.jims.modules.crossbow.link;
 
 import org.jims.modules.crossbow.exception.LinkException;
 import java.util.List;
+import org.jims.modules.crossbow.manager.GenericManager;
 
 /**
  * Interface VNicManagerMBean defines possible operation to be used in terms of VNic's management
  *
  * @author robert boczek
  */
-public interface VNicManagerMBean {
+public interface VNicManagerMBean extends GenericManager< VNicMBean > {
 
     /**
      * Creates new vnic

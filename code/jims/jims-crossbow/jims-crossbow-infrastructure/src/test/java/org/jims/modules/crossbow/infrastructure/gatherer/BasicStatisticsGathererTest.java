@@ -28,7 +28,7 @@ public class BasicStatisticsGathererTest {
 		vnic = mock( VNicMBean.class );
 		wNDelegateMBean = mock( WNDelegateMBean.class );
 
-		statisticsGatherer = new StatisticsGatherer(wNDelegateMBean);
+		statisticsGatherer = new StatisticsGatherer();
 
 	}
 

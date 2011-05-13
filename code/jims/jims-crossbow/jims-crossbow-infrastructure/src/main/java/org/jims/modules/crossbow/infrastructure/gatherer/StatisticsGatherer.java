@@ -1,5 +1,6 @@
 package org.jims.modules.crossbow.infrastructure.gatherer;
 
+import java.util.EnumMap;
 import javax.management.JMX;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
@@ -22,11 +23,9 @@ import org.jims.modules.crossbow.objectmodel.resources.Appliance;
 import org.jims.modules.crossbow.objectmodel.resources.ApplianceType;
 import org.jims.modules.crossbow.objectmodel.resources.Interface;
 import org.jims.modules.crossbow.objectmodel.Assignments;
-import org.jims.modules.sg.service.wnservice.WNDelegateMBean;
 
 import org.jims.modules.crossbow.enums.LinkStatisticTimePeriod;
-import org.jims.modules.crossbow.link.VNicMBean;
-import org.jims.modules.crossbow.objectmodel.resources.Switch;
+import org.jims.modules.crossbow.manager.exception.EntityNotFoundException;
 
 
 /**
@@ -35,31 +34,24 @@ import org.jims.modules.crossbow.objectmodel.resources.Switch;
  */
 public class StatisticsGatherer implements StatisticsGathererMBean {
 
-	private WNDelegateMBean wnDelegate;
-
-	private static final Logger logger = Logger.getLogger( StatisticsGatherer.class );
-
-	public StatisticsGatherer( WNDelegateMBean wnDelegate ) {
-		this.wnDelegate = wnDelegate;
-	}
-
 	@Override
-	public Map< LinkStatistics, Long > getInterfaceStatistics( Interface iface, Assignments assignments ) {
+	public Map< LinkStatistics, Long > getInterfaceStatistics( Interface iface,
+	                                                           Assignments assignments ) {
 
-		String url = assignments.get(iface);
+		String url = assignments.get( iface );
 		VNicManagerMBean vNicManager = getVNicManager( url );
 
-		Map< LinkStatistics, Long > res = new HashMap< LinkStatistics, Long >();
+		Map< LinkStatistics, Long > res = new EnumMap< LinkStatistics, Long >( LinkStatistics.class );
 		Map< LinkStatistics, String > stats = null;
 
-		;
-
-
 		try {
-			stats = getProxy( url, "Crossbow:type=VNic,name=" + NameHelper.interfaceName( iface ) + ",parent=" + NameHelper.switchName( ( Switch ) iface.getEndpoint() ), VNicMBean.class ).getStatistics();
-			// stats = vNicManager.getByName( NameHelper.interfaceName( iface ) ).getStatistics();
+			stats = vNicManager.getProxyByName( NameHelper.interfaceName( iface ) ).getStatistics();
+		} catch ( EntityNotFoundException ex ) {
+			logger.error( "Error while getting statistics for interface (name: "
+			              + NameHelper.interfaceName( iface ) + ")." );
 		} catch ( LinkException ex ) {
-			// TODO-DAWID
+			logger.error( "Error while getting statistics for interface (name: "
+			              + NameHelper.interfaceName( iface ) + ")." );
 		}
 
 		if ( null != stats ) {
@@ -72,59 +64,94 @@ public class StatisticsGatherer implements StatisticsGathererMBean {
 
 	}
 
-	@Override
-	public List< Map<LinkStatistics, Long> > getInterfacePeriodStatistics( Interface iface, LinkStatisticTimePeriod period, Assignments assignments ) {
 
-		String url = assignments.get(iface);
+	@Override
+	public List< Map< LinkStatistics, Long > > getInterfacePeriodStatistics(
+		Interface iface,
+		LinkStatisticTimePeriod period,
+		Assignments assignments
+	) {
+
+		List< Map< LinkStatistics, Long > > res = new LinkedList< Map< LinkStatistics, Long > >();
+
+		String url = assignments.get( iface );
 		VNicManagerMBean vNicManager = getVNicManager( url );
 
-		//try {
-			return getProxy( url, "Crossbow:type=VNic,name=" + NameHelper.interfaceName( iface ) + ",parent=" + NameHelper.switchName( ( Switch ) iface.getEndpoint() ), VNicMBean.class ).getStatistics(period);
-			//return vNicManager.getByName( NameHelper.interfaceName( iface ) ).getStatistics(period);
-		//} catch ( LinkException ex ) {
-			// TODO-DAWID
-		//	ex.printStackTrace();
-		//}
-
-	}
-
-	@Override
-	public List< Map<LinkStatistics, Long> > getPolicyPeriodStatistics( Policy policy, LinkStatisticTimePeriod period, Assignments assignments ) {
-
-		Map< LinkStatistics, Long > res = new HashMap< LinkStatistics, Long >();
-
-		String url = assignments.get(policy);
-		FlowManagerMBean flowManager = getFlowManager( url );
-
-		List< Map<LinkStatistics, Long> > list = new LinkedList< Map<LinkStatistics, Long> >();
-		List<Map< FlowStatistics, Long >> flowList = flowManager.getByName( NameHelper.policyName( policy ) ).getStatistics(period);
-
-		for( Map<FlowStatistics, Long> map : flowList ) {
-			Map<LinkStatistics, Long> linkMap = new HashMap<LinkStatistics, Long>();
-			for ( Map.Entry< FlowStatistics, Long > s : map.entrySet() ) {
-				linkMap.put( convert( s.getKey() ), s.getValue() );
-			}
-			list.add(linkMap);
-		}
-		return list;
-
-	}
-
-	@Override
-	public Map< LinkStatistics, Long > getPolicyStatistics( Policy policy, Assignments assignments ) {
-
-		Map< LinkStatistics, Long > res = new HashMap< LinkStatistics, Long >();
-
-		String url = assignments.get(policy);
-		FlowManagerMBean flowManager = getFlowManager( url );
-
-		for ( Map.Entry< FlowStatistics, Long > s : flowManager.getByName( NameHelper.policyName( policy ) ).getStatistics().entrySet() ) {
-			res.put( convert( s.getKey() ), s.getValue() );
+		try {
+			res = vNicManager.getProxyByName( NameHelper.interfaceName( iface ) ).getStatistics( period );
+		} catch ( EntityNotFoundException ex ) {
+			logger.error( "Error while getting statistics for interface (name: "
+			              + NameHelper.interfaceName( iface ) + ")." );
 		}
 
 		return res;
 
 	}
+
+
+	@Override
+	public List< Map< LinkStatistics, Long > > getPolicyPeriodStatistics(
+		Policy policy,
+		LinkStatisticTimePeriod period,
+		Assignments assignments
+	) {
+
+		Map< LinkStatistics, Long > res = new EnumMap< LinkStatistics, Long >( LinkStatistics.class );
+
+		String url = assignments.get( policy );
+		FlowManagerMBean flowManager = getFlowManager( url );
+
+		List< Map< LinkStatistics, Long > > list = new LinkedList< Map< LinkStatistics, Long > >();
+
+		try {
+
+			for( Map< FlowStatistics, Long > map : flowManager.getProxyByName( NameHelper.policyName( policy ) )
+			                                                  .getStatistics( period ) ) {
+
+				Map< LinkStatistics, Long > linkMap = new EnumMap< LinkStatistics, Long >( LinkStatistics.class );
+				for ( Map.Entry< FlowStatistics, Long > s : map.entrySet() ) {
+					linkMap.put( convert( s.getKey() ), s.getValue() );
+				}
+
+				list.add( linkMap );
+
+			}
+
+		} catch ( EntityNotFoundException ex ) {
+
+			// TODO
+
+		}
+
+		return list;
+
+	}
+
+
+	@Override
+	public Map< LinkStatistics, Long > getPolicyStatistics( Policy policy, Assignments assignments ) {
+
+		Map< LinkStatistics, Long > res = new EnumMap< LinkStatistics, Long >( LinkStatistics.class );
+
+		String url = assignments.get( policy );
+		FlowManagerMBean flowManager = getFlowManager( url );
+		String name = NameHelper.policyName( policy );
+
+		try {
+
+			for ( Map.Entry<FlowStatistics, Long> s : flowManager.getProxyByName( name )
+			                                                     .getStatistics().entrySet() ) {
+				res.put( convert( s.getKey() ), s.getValue() );
+			}
+
+		} catch ( EntityNotFoundException ex ) {
+			logger.error( "Error while getting statistics for policy (name: " + name + ")" );
+		}
+
+		return res;
+
+	}
+
 
 	public FlowManagerMBean getFlowManager( String url ) {
 
@@ -155,25 +182,6 @@ public class StatisticsGatherer implements StatisticsGathererMBean {
 
 			vnicManager = JMX.newMBeanProxy(
 				mbsc, new ObjectName( "Crossbow:type=VNicManager" ), VNicManagerMBean.class
-		);
-		} catch ( Exception ex ) {
-			logger.error( "Error while querying MBean server (url: " + url + ")", ex );
-		}
-
-		return vnicManager;
-	}
-
-	public < T > T getProxy( String url, String oname, Class< T > klass ) {
-
-		T vnicManager = null;
-
-		try {
-			MBeanServerConnection mbsc = JMXConnectorFactory.connect(
-				new JMXServiceURL( url )
-			).getMBeanServerConnection();
-
-			vnicManager = JMX.newMBeanProxy(
-				mbsc, new ObjectName( oname ), klass
 		);
 		} catch ( Exception ex ) {
 			logger.error( "Error while querying MBean server (url: " + url + ")", ex );
@@ -216,5 +224,8 @@ public class StatisticsGatherer implements StatisticsGathererMBean {
 		}
 
 	}
+
+
+	private static final Logger logger = Logger.getLogger( StatisticsGatherer.class );
 
 }

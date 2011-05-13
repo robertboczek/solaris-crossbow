@@ -34,4 +34,15 @@ public interface Publisher < T > {
 	 */
 	public List< T > getPublished();
 
+	/**
+	 * Returns serializable proxy for published object.
+	 *
+	 * @param  object ID
+	 *
+	 * @throws  NotPublishedException  if the object isn't published
+	 *
+	 * @return  serializable object proxy
+	 */
+	public T getProxy( Object id ) throws NotPublishedException;
+
 }

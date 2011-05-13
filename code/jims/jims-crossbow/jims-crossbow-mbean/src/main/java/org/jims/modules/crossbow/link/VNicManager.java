@@ -3,7 +3,6 @@ package org.jims.modules.crossbow.link;
 import org.jims.modules.crossbow.exception.InvalidLinkNameException;
 import org.jims.modules.crossbow.exception.LinkException;
 import org.jims.modules.crossbow.lib.VNicHelper;
-import org.jims.modules.crossbow.publisher.Publisher;
 import org.jims.modules.crossbow.publisher.exception.NotPublishedException;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -22,11 +21,10 @@ import org.jims.modules.crossbow.manager.BaseManager;
  *
  * @author robert boczek
  */
-public class VNicManager extends BaseManager implements VNicManagerMBean, NotificationListener {
+public class VNicManager extends BaseManager< VNicMBean > implements VNicManagerMBean, NotificationListener {
 
     /** Logger */
     private static final Logger logger = Logger.getLogger(VNicManager.class);
-    private Publisher publisher;
     private VNicHelper vnicHelper;
 
     /**
@@ -165,14 +163,6 @@ public class VNicManager extends BaseManager implements VNicManagerMBean, Notifi
         }
     }
 
-    /**
-     * Sets publisher instance
-     *
-     * @param publisher Instance of publisher to be used for publishing MBeans
-     */
-    public void setPublisher(Publisher publisher) {
-        this.publisher = publisher;
-    }
 
     /**
      * Registers  new VNicMBean to MBeanServer
@@ -245,4 +235,5 @@ public class VNicManager extends BaseManager implements VNicManagerMBean, Notifi
     public void _create( String name, boolean temporary, String parent ) throws LinkException {
 			create( new VNic( name, temporary, parent ) );
 		}
+
 }
