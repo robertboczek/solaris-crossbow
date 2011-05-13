@@ -25,7 +25,7 @@ public class FlowMBeanPublisher extends MBeanPublisher< FlowMBean > {
 
 	@Override
 	protected boolean identifies( Object id, FlowMBean o ) {
-		return ( ( FlowMBean ) o ).getName().equals( id );
+		return o.getName().equals( id );
 	}
 
 

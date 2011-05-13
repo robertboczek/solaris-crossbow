@@ -57,6 +57,6 @@ public class VNicMBeanPublisher extends MBeanPublisher< VNicMBean > {
      */
     @Override
     protected boolean identifies(Object id, VNicMBean o) {
-        return id.equals(o);
+        return id.equals( o.getName() );
     }
 }
