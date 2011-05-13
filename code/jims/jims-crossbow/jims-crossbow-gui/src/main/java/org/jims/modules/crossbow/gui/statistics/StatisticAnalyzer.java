@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.jims.modules.crossbow.enums.LinkStatistics;
 import org.jims.modules.crossbow.gui.NetworkStructureHelper;
 import org.jims.modules.crossbow.gui.actions.ComponentProxyFactory;
@@ -193,5 +194,8 @@ public class StatisticAnalyzer {
 		}
 
 	}
+	
+	
+	private static final Logger logger = Logger.getLogger( StatisticAnalyzer.class );
 
 }

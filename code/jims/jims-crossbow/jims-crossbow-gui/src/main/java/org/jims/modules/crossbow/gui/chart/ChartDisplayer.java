@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.jims.modules.crossbow.enums.LinkStatisticTimePeriod;
 import org.jims.modules.crossbow.enums.LinkStatistics;
 import org.jims.modules.crossbow.infrastructure.gatherer.StatisticsGathererMBean;
@@ -24,6 +25,8 @@ public class ChartDisplayer {
 
 	private StatisticsGathererMBean statisticsGatherer;
 	private Assignments assignments;
+	
+	private static final Logger logger = Logger.getLogger( ChartDisplayer.class );
 
 	private void createWindow() {
 		chartWindow = new ChartWindow();

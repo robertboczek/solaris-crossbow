@@ -92,11 +92,9 @@ public void translate( Graph graph, ObjectModel om, Assignments assignments,
 			networkStructureHelper.addDeployedElement(s, item);
 		}
 		
-		for(Policy policy : om.getPolicies()) {
-			
-		}
-		
 		restoreGraphNodeConnections( graph, om, nodes );
+		
+		networkStructureHelper.setAssignments(assignments);
 		
 		networkStructureHelper.deployed();
 		

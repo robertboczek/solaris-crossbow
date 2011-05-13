@@ -12,13 +12,10 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.zest.core.widgets.CGraphNode;
 import org.eclipse.zest.core.widgets.Graph;
 import org.eclipse.zest.core.widgets.GraphContainer;
 import org.eclipse.zest.core.widgets.GraphNode;
-import org.eclipse.zest.layouts.LayoutAlgorithm;
 import org.eclipse.zest.layouts.LayoutStyles;
-import org.eclipse.zest.layouts.algorithms.SpringLayoutAlgorithm;
 import org.eclipse.zest.layouts.algorithms.TreeLayoutAlgorithm;
 import org.jims.modules.crossbow.gui.actions.ComponentProxyFactory;
 import org.jims.modules.crossbow.gui.threads.ConnectionTester;
@@ -75,11 +72,14 @@ public class WorkerMonitor implements ConnectionTester.ConnectionStatusListener 
 			@Override
 			public void handleEvent( Event event ) {
 				
-				if ( ( 1 == WorkerMonitor.this.g.getSelection().size() ) ) {
+				List selection = WorkerMonitor.this.g.getSelection();
+				
+				if ( ( 1 == selection.size() )
+				     && ( GraphNode.CONTAINER == ( ( GraphNode ) selection.get( 0 ) ).getItemType() ) ) {
 					
 					double scale = ( event.count > 0 ) ? 1.1 : 1 / 1.1;
 					
-					GraphContainer container = ( GraphContainer ) WorkerMonitor.this.g.getSelection().get( 0 );
+					GraphContainer container = ( GraphContainer ) selection.get( 0 );
 					
 					Dimension dim = container.getSize();
 					container.setSize( dim.width * scale, dim.height * scale );

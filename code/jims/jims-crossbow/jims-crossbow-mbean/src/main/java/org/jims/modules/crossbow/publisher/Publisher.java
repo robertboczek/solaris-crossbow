@@ -2,6 +2,7 @@ package org.jims.modules.crossbow.publisher;
 
 import org.jims.modules.crossbow.publisher.exception.NotPublishedException;
 import java.util.List;
+import org.jims.modules.crossbow.manager.ProxyFactory;
 
 
 /**
@@ -43,6 +44,6 @@ public interface Publisher < T > {
 	 *
 	 * @return  serializable object proxy
 	 */
-	public T getProxy( Object id ) throws NotPublishedException;
+	public ProxyFactory< T > getProxyFactory( Object id, Class< T > klass ) throws NotPublishedException;
 
 }

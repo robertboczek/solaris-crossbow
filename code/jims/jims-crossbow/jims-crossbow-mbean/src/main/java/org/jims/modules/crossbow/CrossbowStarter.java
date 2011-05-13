@@ -26,7 +26,9 @@ import java.util.Date;
 import java.util.Iterator;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
+import javax.management.MBeanServerInvocationHandler;
 import javax.management.ObjectName;
+import javax.management.remote.JMXConnectorServerMBean;
 import javax.management.timer.Timer;
 import org.apache.log4j.Logger;
 import org.jims.modules.crossbow.flow.FlowAccounting;
@@ -35,8 +37,6 @@ import org.jims.modules.crossbow.jna.JNAVlanHelper;
 import org.jims.modules.crossbow.lib.VlanHelper;
 import org.jims.modules.crossbow.publisher.VlanMBeanPublisher;
 import org.jims.modules.crossbow.vlan.VlanManager;
-import org.jims.modules.crossbow.zones.ZoneCopier;
-import org.jims.modules.crossbow.zones.ZoneCopierMBean;
 
 
 /**
@@ -113,27 +113,53 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 		EtherstubHelper etherstubHelper = new JNAEtherstubHelper( libraryPath );
 		VlanHelper vlanHelper = new JNAVlanHelper( libraryPath );
 
+		// Create publishers.
+
+		JMXConnectorServerMBean connectorServer = MBeanServerInvocationHandler.newProxyInstance(
+			server,
+			new ObjectName( "Connector:name=RMIConnectorServer" ),
+			JMXConnectorServerMBean.class,
+			false
+		);
+
+		String url = connectorServer.getAddress().toString();
+
+		FlowMBeanPublisher flowPublisher = new FlowMBeanPublisher( server );
+		flowPublisher.setUrl( url );
+
+		NicMBeanPublisher nicPublisher = new NicMBeanPublisher( server );
+		nicPublisher.setUrl( url );
+
+		VNicMBeanPublisher vnicPublisher = new VNicMBeanPublisher( server );
+		vnicPublisher.setUrl( url );
+
+		EtherstubMBeanPublisher etherstubPublisher = new EtherstubMBeanPublisher( server );
+		etherstubPublisher.setUrl( url );
+
+		VlanMBeanPublisher vlanPublisher = new VlanMBeanPublisher( server );
+		vlanPublisher.setUrl( url );
+
 		// Create managers.
 
 		FlowManager flowManager = new FlowManager();
 		flowManager.setFlowadm( flowadm );
-		flowManager.setPublisher( new FlowMBeanPublisher( server ) );
+		flowManager.setPublisher( flowPublisher );
 
 		NicManager nicManager = new NicManager();
 		nicManager.setNicHelper( nicHelper );
-		nicManager.setPublisher( new NicMBeanPublisher( server ) );
+		nicManager.setPublisher( nicPublisher );
 
 		VNicManager vNicManager = new VNicManager();
 		vNicManager.setVNicHelper( vnicHelper );
-		vNicManager.setPublisher( new VNicMBeanPublisher( server ) );
+		vNicManager.setPublisher( vnicPublisher );
 
 		EtherstubManager etherstubManager = new EtherstubManager();
 		etherstubManager.setEtherstHelper( etherstubHelper );
-		etherstubManager.setPublisher( new EtherstubMBeanPublisher( server ) );
+		etherstubManager.setPublisher( etherstubPublisher );
 
 		VlanManager vlanManager = new VlanManager();
 		vlanManager.setVlanHelper( vlanHelper );
-		vlanManager.setPublisher( new VlanMBeanPublisher( server ) );
+		vlanManager.setPublisher( vlanPublisher );
 
 		// Create FlowAccounting.
 
@@ -151,9 +177,6 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 		timer.addNotificationListener(vlanManager, null, null);
 		timer.start();
 
-                // Create ZoneCopier MBean
-                ZoneCopierMBean zoneCopier = new ZoneCopier();
-
 		// Register MBeans.
 
 		server.registerMBean(flowManager, new ObjectName("Crossbow:type=FlowManager"));
@@ -163,7 +186,6 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 		server.registerMBean(etherstubManager, new ObjectName("Crossbow:type=EtherstubManager"));
 		server.registerMBean(vlanManager, new ObjectName("Crossbow:type=VlanManager"));
 		server.registerMBean(timer, new ObjectName("Crossbow:type=Timer"));
-                server.registerMBean(zoneCopier, new ObjectName("Crossbow:type=ZoneCopier"));
 
 	}
 

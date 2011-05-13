@@ -9,6 +9,6 @@ import org.jims.modules.crossbow.manager.exception.EntityNotFoundException;
  */
 public interface GenericManager< T > {
 
-	T getProxyByName( String name ) throws EntityNotFoundException;
+	ProxyFactory< T > getProxyFactory( String name, Class< T > klass ) throws EntityNotFoundException;
 
 }

@@ -1,6 +1,7 @@
  package org.jims.modules.crossbow.infrastructure.worker;
 
 import java.util.Collection;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -612,7 +613,7 @@ public class Worker implements WorkerMBean {
 
 			} else {
 
-				Map< FlowAttribute, String > attrs = new HashMap< FlowAttribute, String >();
+				Map< FlowAttribute, String > attrs = new EnumMap< FlowAttribute, String >( FlowAttribute.class );
 
 				if ( filter instanceof IpFilter ) {
 
