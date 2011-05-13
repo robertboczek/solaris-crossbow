@@ -1,6 +1,5 @@
 package org.jims.modules.crossbow.flow;
 
-import org.jims.modules.crossbow.publisher.Publisher;
 import org.jims.modules.crossbow.exception.XbowException;
 import org.jims.modules.crossbow.flow.enums.FlowAttribute;
 import org.jims.modules.crossbow.flow.enums.FlowProperty;
@@ -24,7 +23,7 @@ import org.jims.modules.crossbow.manager.BaseManager;
  *
  * @author cieplik
  */
-public class FlowManager extends BaseManager implements FlowManagerMBean, NotificationListener {
+public class FlowManager extends BaseManager< FlowMBean > implements FlowManagerMBean, NotificationListener {
 
     /**
      * @see  FlowManagerMBean#getFlows()
@@ -65,6 +64,7 @@ public class FlowManager extends BaseManager implements FlowManagerMBean, Notifi
 			return res;
 
 		}
+
 
     /**
      * Discovers flows present in the system and, if a publisher has been set,
@@ -202,15 +202,6 @@ public class FlowManager extends BaseManager implements FlowManagerMBean, Notifi
         this.flowadm = flowadm;
     }
 
-    /**
-     * @brief  Publisher setter method.
-     *
-     * @param  publisher  object responsible for registering discovered and created flows
-     */
-    public void setPublisher(Publisher publisher) {
-        this.publisher = publisher;
-    }
-
 
     /*
      * jconsole only
@@ -234,7 +225,9 @@ public class FlowManager extends BaseManager implements FlowManagerMBean, Notifi
         create(flow);
 
     }
+
+
     private FlowHelper flowadm = null;
-    private Publisher publisher = null;
     private static final Logger logger = Logger.getLogger(FlowManager.class);
+
 }

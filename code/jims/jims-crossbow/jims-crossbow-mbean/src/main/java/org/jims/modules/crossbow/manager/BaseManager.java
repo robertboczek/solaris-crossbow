@@ -1,47 +1,53 @@
 package org.jims.modules.crossbow.manager;
 
-import javax.management.MBeanServer;
-import javax.management.MBeanServerFactory;
 import org.apache.log4j.Logger;
+import org.jims.modules.crossbow.manager.exception.EntityNotFoundException;
+import org.jims.modules.crossbow.publisher.Publisher;
+import org.jims.modules.crossbow.publisher.exception.NotPublishedException;
+
 
 /**
- * Base abstract class for whole crossbow managers
+ * Base abstract class for crossbow managers
  *
  * @author robert boczek
  */
-public abstract class BaseManager {
+public abstract class BaseManager< T > implements GenericManager< T > {
 
-    protected MBeanServer server;
+	@Override
+	public T getProxyByName( String name ) throws EntityNotFoundException {
 
-    private static final Logger logger = Logger.getLogger(BaseManager.class);
+		T res = null;
 
-    /**
-     * Default constructor searches for jims MBean server
-     */
-    public BaseManager() {
+		if ( null != publisher ) {
 
-        server = MBeanServerFactory.newMBeanServer();
+			try {
+				res = publisher.getProxy( name );
+			} catch ( NotPublishedException ex ) {
+			}
 
-        // get the JIMS MBean server
-        /*ArrayList servers = MBeanServerFactory.findMBeanServer(null);
-        Iterator it = servers.iterator();
+		}
 
-        while (it.hasNext()) {
-            MBeanServer testedServer = (MBeanServer) it.next();
-            try {
-                if (testedServer.isRegistered(new ObjectName("Information:class=OSCommon"))) {
-                    this.server = testedServer;
-                    break;
-                }
-            } catch (Exception ex) {
-                logger.error("Error occured: "+ex.getMessage());
-                ex.printStackTrace();
-            }
-        }
-        if (this.server == null) {
-            return;
-        }*/
-        
-    }
+		if ( null == res ) {
+			throw new EntityNotFoundException( name + " not found." );
+		}
+
+		return res;
+
+	}
+
+
+	/**
+	 * @brief  Publisher setter method.
+	 *
+	 * @param  publisher  object responsible for registering discovered and created flows
+	 */
+	public void setPublisher( Publisher< T > publisher ) {
+		this.publisher = publisher;
+	}
+
+
+	protected Publisher< T > publisher;
+
+	private static final Logger logger = Logger.getLogger( BaseManager.class );
 
 }

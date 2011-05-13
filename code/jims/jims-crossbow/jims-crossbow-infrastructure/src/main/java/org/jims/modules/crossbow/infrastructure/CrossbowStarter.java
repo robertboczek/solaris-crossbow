@@ -4,19 +4,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Set;
 import javax.management.InstanceNotFoundException;
 import javax.management.JMX;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.MBeanServerInvocationHandler;
-import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 import org.apache.log4j.Logger;
 import org.jims.modules.crossbow.etherstub.EtherstubManagerMBean;
 import org.jims.modules.crossbow.flow.FlowManagerMBean;
 import org.jims.modules.crossbow.infrastructure.appliance.RepoManager;
-import org.jims.modules.crossbow.infrastructure.appliance.RepoManagerMBean;
 import org.jims.modules.crossbow.infrastructure.assigner.Assigner;
 import org.jims.modules.crossbow.infrastructure.gatherer.StatisticsGatherer;
 import org.jims.modules.crossbow.infrastructure.supervisor.Supervisor;
@@ -27,7 +24,6 @@ import org.jims.modules.crossbow.infrastructure.progress.WorkerProgress;
 import org.jims.modules.crossbow.infrastructure.supervisor.vlan.ContiguousVlanTagProvider;
 import org.jims.modules.crossbow.infrastructure.supervisor.vlan.VlanTagProvider;
 import org.jims.modules.crossbow.infrastructure.worker.Worker;
-import org.jims.modules.crossbow.infrastructure.worker.WorkerMBean;
 import org.jims.modules.crossbow.link.VNicManagerMBean;
 import org.jims.modules.crossbow.vlan.VlanManagerMBean;
 import org.jims.modules.crossbow.zones.ZoneCopierMBean;
@@ -121,7 +117,7 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 
 		// StatisticsGatherer MBean
 
-		StatisticsGatherer gatherer = new StatisticsGatherer(wnDelegate);
+		StatisticsGatherer gatherer = new StatisticsGatherer();
 		server.registerMBean( gatherer, new ObjectName( "Crossbow:type=StatisticsGatherer" ) );
 
 		// Crossbow notification MBean

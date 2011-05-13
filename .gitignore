@@ -1,5 +1,6 @@
 target/
 code/gui/org.jims.modules.crossbow.gui/bin/
+code/jims/jims-crossbow/jims-crossbow-gui/META-INF/
 code/xbow/xbow-native/xbow-native-lib/xbow-native-lib-*/src/test/c/mock
 code/xbow/xbow-native/xbow-native-lib/xbow-native-lib-*/src/test/include/mock
 code/sync.sh
@@ -18,3 +19,4 @@ tags
 .classpath
 .project
 build.properties
+gui.log

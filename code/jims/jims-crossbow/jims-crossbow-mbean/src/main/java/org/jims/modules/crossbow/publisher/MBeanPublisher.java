@@ -3,6 +3,7 @@ package org.jims.modules.crossbow.publisher;
 import org.jims.modules.crossbow.publisher.exception.NotPublishedException;
 import java.util.LinkedList;
 import java.util.List;
+import javax.management.JMX;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
@@ -115,6 +116,31 @@ public abstract class MBeanPublisher < T > implements Publisher< T > {
 	@Override
 	public List< T > getPublished() {
 		return published;
+	}
+
+
+	/**
+	 * @see  Publisher#getProxy(java.lang.Object)
+	 */
+	@Override
+	public T getProxy( Object id ) throws NotPublishedException {
+
+		for ( T object : published ) {
+
+			if ( identifies( id, object ) ) {
+
+				try {
+					return ( T ) JMX.newMBeanProxy( mBeanServer, createObjectName( object ), Object.class );
+				} catch ( MalformedObjectNameException ex ) {
+					break;
+				}
+
+			}
+
+		}
+
+		throw new NotPublishedException( "Object not published (id: " + id + ")" );
+	
 	}
 
 

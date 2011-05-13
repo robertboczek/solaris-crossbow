@@ -2,6 +2,7 @@ package org.jims.modules.crossbow.flow;
 
 import org.jims.modules.crossbow.exception.XbowException;
 import java.util.List;
+import org.jims.modules.crossbow.manager.GenericManager;
 
 
 /**
@@ -11,7 +12,7 @@ import java.util.List;
  *
  * @author cieplik
  */
-public interface FlowManagerMBean {
+public interface FlowManagerMBean extends GenericManager< FlowMBean > {
 
 	/**
 	 * @brief  Returns names of all flows.
