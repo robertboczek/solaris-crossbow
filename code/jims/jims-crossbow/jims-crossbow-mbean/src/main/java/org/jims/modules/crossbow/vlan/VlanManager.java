@@ -9,6 +9,7 @@ import javax.management.NotificationListener;
 import org.apache.log4j.Logger;
 import org.jims.modules.crossbow.exception.XbowException;
 import org.jims.modules.crossbow.lib.VlanHelper;
+import org.jims.modules.crossbow.manager.BaseManager;
 import org.jims.modules.crossbow.publisher.Publisher;
 import org.jims.modules.crossbow.publisher.exception.NotPublishedException;
 import org.jims.modules.crossbow.vlan.util.VlanToVlanInfoTranslator;
@@ -18,7 +19,7 @@ import org.jims.modules.crossbow.vlan.util.VlanToVlanInfoTranslator;
  *
  * @author cieplik
  */
-public class VlanManager implements VlanManagerMBean, NotificationListener {
+public class VlanManager extends BaseManager< VlanMBean > implements VlanManagerMBean, NotificationListener {
 
 	@Override
 	public void create( VlanMBean vlan ) throws XbowException {

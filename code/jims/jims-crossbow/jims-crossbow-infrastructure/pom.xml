@@ -92,6 +92,11 @@
       <artifactId>guava-collections</artifactId>
       <version>r03</version>
     </dependency>
+    <dependency>
+      <groupId>jims</groupId>
+      <artifactId>jims-crossbow-util</artifactId>
+      <version>3.0.0</version>
+    </dependency>
   </dependencies>
 
 </project>
