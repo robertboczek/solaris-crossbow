@@ -37,7 +37,7 @@ public class ContiguousVlanTagProvider implements VlanTagProvider {
 
 	@Override
 	public int provide() {
-		return provide( false );
+		return provide( true );
 	}
 
 	public int provide( boolean refresh ) {
