@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Level;
 import javax.management.InstanceNotFoundException;
 import javax.management.JMX;
@@ -188,7 +190,7 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 				
 				}
 
-				logger.info( res.size() + " VLAN tags have already been reserved." );
+				logger.info( res.size() + " VLAN tag(s) have already been reserved." );
 
 				return res;
 
@@ -220,7 +222,7 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 
 		MBeanProxyHelperFactory simpleProxyHelperFactory = new SimpleMBeanProxyHelperFactory();
 
-		InfrastructureVlanTagProvider usedTagsProvider = new InfrastructureVlanTagProvider(
+		final InfrastructureVlanTagProvider usedTagsProvider = new InfrastructureVlanTagProvider(
 			simpleProxyHelperFactory.getManagerProxyFactory(), workerProvider
 		);
 

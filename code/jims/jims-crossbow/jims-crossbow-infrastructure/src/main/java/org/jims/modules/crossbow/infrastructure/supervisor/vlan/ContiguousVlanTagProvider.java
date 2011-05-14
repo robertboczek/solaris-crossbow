@@ -32,6 +32,8 @@ public class ContiguousVlanTagProvider implements VlanTagProvider {
 			availableTags.add( i );
 		}
 
+		provider.provide();
+
 	}
 
 
