@@ -220,11 +220,12 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 
 		MBeanProxyHelperFactory simpleProxyHelperFactory = new SimpleMBeanProxyHelperFactory();
 
+		InfrastructureVlanTagProvider usedTagsProvider = new InfrastructureVlanTagProvider(
+			simpleProxyHelperFactory.getManagerProxyFactory(), workerProvider
+		);
 
 		VlanTagProvider tagProvider = new ContiguousVlanTagProvider(
-			900, 931,
-			new InfrastructureVlanTagProvider( simpleProxyHelperFactory.getManagerProxyFactory(),
-			                                   workerProvider )
+			900, 931, usedTagsProvider
 		);
 
 		// TODO  ^ read the range from properties file!
@@ -234,7 +235,10 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 		server.registerMBean( supervisor, new ObjectName( "Crossbow:type=Supervisor" ) );
 
 		try {
+
 			server.addNotificationListener( new ObjectName( "Core:name=GWEmitter" ), supervisor, null, null );
+			server.addNotificationListener( new ObjectName( "Core:name=GWEmitter" ), usedTagsProvider, null, null );
+
 		} catch ( InstanceNotFoundException ex ) {
 			logger.info( "Ignoring InstanceNotFoundException. Probably not a gateway." );
 		}

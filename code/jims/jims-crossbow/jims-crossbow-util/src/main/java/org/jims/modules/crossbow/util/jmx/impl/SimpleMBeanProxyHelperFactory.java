@@ -26,7 +26,7 @@ public class SimpleMBeanProxyHelperFactory implements MBeanProxyHelperFactory {
 
 		try {
 
-			objectNames.put( Class.forName( XBOW_INFRASTRUCTURE_PREFIX + ".?supervisor.SupervisorMBean" ), "Crossbow:type=Supervisor" );
+			objectNames.put( Class.forName( XBOW_INFRASTRUCTURE_PREFIX + ".supervisor.SupervisorMBean" ), "Crossbow:type=Supervisor" );
 			objectNames.put( Class.forName( XBOW_INFRASTRUCTURE_PREFIX + ".appliance.RepoManagerMBean" ), "Crossbow:type=RepoManager" );
 			objectNames.put( Class.forName( XBOW_INFRASTRUCTURE_PREFIX + ".progress.CrossbowNotificationMBean" ), "Crossbow:type=CrossbowNotification" );
 			objectNames.put( Class.forName( XBOW_INFRASTRUCTURE_PREFIX + ".gatherer.StatisticsGathererMBean" ), "Crossbow:type=StatisticsGatherer" );
@@ -67,7 +67,7 @@ public class SimpleMBeanProxyHelperFactory implements MBeanProxyHelperFactory {
 	}
 
 
-	private static final String XBOW_INFRASTRUCTURE_PREFIX = "org.?jims.?modules.?crossbow.?infrastructure";
+	private static final String XBOW_INFRASTRUCTURE_PREFIX = "org.jims.modules.crossbow.infrastructure";
 	// private static final String XBOW_MBEAN_PREFIX = "org.?jims.?modules.?crossbow.?infrastructure";
 
 	private static final Logger logger = Logger.getLogger( SimpleMBeanProxyHelperFactory.class );
