@@ -52,6 +52,7 @@ public class ChartPreparer {
 		}
 
 		double max = roundMaxiumValue(list, linkStatistics);
+		double min = roundMinimumValue(list, max, linkStatistics);
 
 		System.err.println(list);
 		if (list != null) {
@@ -67,7 +68,7 @@ public class ChartPreparer {
 
 		if (list.size() > 0) {
 			double data[] = getData(list.get(0), linkStatistics);
-			line1 = Plots.newLine(DataUtil.scaleWithinRange(0.0, max, data),
+			line1 = Plots.newLine(DataUtil.scaleWithinRange(min, max, data),
 					c1, chartNames[0] + legendSuffix);
 			line1.setLineStyle(LineStyle.newLineStyle(3, 1, 0));
 			line1.addShapeMarkers(Shape.DIAMOND, c1, 12);
@@ -76,7 +77,7 @@ public class ChartPreparer {
 
 		if (list.size() > 1) {
 			double data[] = getData(list.get(1), linkStatistics);
-			line2 = Plots.newLine(DataUtil.scaleWithinRange(0.0, max, data),
+			line2 = Plots.newLine(DataUtil.scaleWithinRange(min, max, data),
 					c2, chartNames[1] + legendSuffix);
 			line2.setLineStyle(LineStyle.newLineStyle(3, 1, 0));
 			line2.addShapeMarkers(Shape.DIAMOND, c2, 12);
@@ -85,7 +86,7 @@ public class ChartPreparer {
 
 		if (list.size() > 2) {
 			double data[] = getData(list.get(2), linkStatistics);
-			line3 = Plots.newLine(DataUtil.scaleWithinRange(0.0, max, data),
+			line3 = Plots.newLine(DataUtil.scaleWithinRange(min, max, data),
 					c3, chartNames[2] + legendSuffix);
 			line3.setLineStyle(LineStyle.newLineStyle(3, 1, 0));
 			line3.addShapeMarkers(Shape.DIAMOND, c3, 12);
@@ -130,9 +131,10 @@ public class ChartPreparer {
 
 		xAxis.setAxisStyle(axisStyle);
 
-		AxisLabels yAxis2 = AxisLabelsFactory.newAxisLabels("0.0", String
-				.valueOf(max / 4), String.valueOf(max / 2), String
-				.valueOf(3 * max / 4), String.valueOf(max));
+		AxisLabels yAxis2 = AxisLabelsFactory.newAxisLabels(
+				String.valueOf(min), String.valueOf(min + ((max - min) / 4)),
+				String.valueOf(min + ((max - min) / 4)), String.valueOf(min + 3
+						* ((max - min) / 4)), String.valueOf(max));
 		yAxis2.setAxisStyle(axisStyle);
 		/*
 		 * AxisLabels xAxis3 = AxisLabelsFactory.newAxisLabels("Month", 50.0);
@@ -158,6 +160,29 @@ public class ChartPreparer {
 		chart.setAreaFill(fill);
 
 		return chart.toURLString();
+	}
+
+	private double roundMinimumValue(
+			List<List<Map<LinkStatistics, Long>>> list, double max, 
+			LinkStatistics linkStatistics) {
+
+		double min = max;
+		for (List<Map<LinkStatistics, Long>> l : list) {
+			for (Map<LinkStatistics, Long> map : l) {
+				if (!(linkStatistics.equals(LinkStatistics.IERRORS)
+						|| linkStatistics.equals(LinkStatistics.OERRORS) || map.get(linkStatistics) > 0)) {
+					min = Math.min(min, map.get(linkStatistics));
+				}
+			}
+		}
+
+		if (min > 0.0) {
+			min = 0.5 * min;
+		}
+
+		System.err.println("Minimum value " + min);
+
+		return min;
 	}
 
 	private double[] getData(List<Map<LinkStatistics, Long>> list,
