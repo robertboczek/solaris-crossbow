@@ -64,6 +64,8 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 				              + workerId + ")", ex );
 			}
 
+			logger.info( "Instantiation finished (worker: " + workerId + ")." );
+
 		}
 
 		private final WorkerMBean worker;
