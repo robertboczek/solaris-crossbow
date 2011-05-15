@@ -404,7 +404,8 @@ public class Flow implements FlowMBean {
 
         LinkedList<Map<FlowStatistics, Long>> list = new LinkedList<Map<FlowStatistics, Long>>();
         for(int i=0; i<10; i++) {
-            list.addFirst(flowadm.getUsage(name, sdf.format(new Date(date-diff)), sdf.format(date)));
+            logger.info("Flow asking for statistics for period <" + sdf.format(new Date(date-diff)) + " to " + sdf.format(new Date(date) ));
+            list.addFirst(flowadm.getUsage(name, sdf.format(new Date(date-diff)), sdf.format(new Date(date))));
             date -= diff;
         }
         
