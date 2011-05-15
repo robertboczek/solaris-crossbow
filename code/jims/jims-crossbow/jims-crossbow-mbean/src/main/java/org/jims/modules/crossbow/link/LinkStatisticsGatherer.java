@@ -62,7 +62,7 @@ public class LinkStatisticsGatherer {
                 try {
                     while (true) {
                         updateStatistics(minuteValueList, helper);
-                        logger.trace("Minute statistics for etherstub " + linkName + " updated");
+                        logger.info("Minute statistics for etherstub " + linkName + " updated");
                         Thread.sleep(6000);
 
                     }
@@ -81,7 +81,7 @@ public class LinkStatisticsGatherer {
                 try {
                     while (true) {
                         updateStatistics(fiveMinutesValueList, helper);
-                        logger.trace("Five-minute statistics for etherstub " + linkName + " updated");
+                        logger.info("Five-minute statistics for etherstub " + linkName + " updated");
                         Thread.sleep(30000);
 
                     }
@@ -100,7 +100,7 @@ public class LinkStatisticsGatherer {
                 try {
                     while (true) {
                         updateStatistics(hourValueList, helper);
-                        logger.trace("Hourly statistics for etherstub " + linkName + " updated");
+                        logger.info("Hourly statistics for etherstub " + linkName + " updated");
                         Thread.sleep(360000);
 
                     }
@@ -119,7 +119,7 @@ public class LinkStatisticsGatherer {
                 try {
                     while (true) {
                         updateStatistics(dayValueList, helper);
-                        logger.trace("Daily statistics for etherstub " + linkName + " updated");
+                        logger.info("Daily statistics for etherstub " + linkName + " updated");
                         Thread.sleep(8640000);
 
                     }

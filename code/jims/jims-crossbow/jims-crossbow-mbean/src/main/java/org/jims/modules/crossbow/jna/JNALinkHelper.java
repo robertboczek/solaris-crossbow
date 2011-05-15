@@ -105,7 +105,7 @@ public class JNALinkHelper implements LinkHelper {
     @Override
     public String getLinkParameter(String name, LinkParameters parameter) throws LinkException {
 
-        logger.info("Trying to read links's : " + name + ", parameter : " + parameter);
+        logger.debug("Trying to read links's : " + name + ", parameter : " + parameter);
 
         Pointer p = handle.get_link_parameter(name, parameter.toString());
         return getStringFromPointer(p);
@@ -118,7 +118,7 @@ public class JNALinkHelper implements LinkHelper {
     @Override
     public String getLinkStatistic(String name, LinkStatistics statistic) throws LinkException {
 
-        logger.info("Trying to read links's : " + name + ", statistic : " + statistic);
+        logger.debug("Trying to read links's : " + name + ", statistic : " + statistic);
 
         Pointer p = handle.get_link_statistic(name, statistic.toString());
         return getStringFromPointer(p);
@@ -131,7 +131,7 @@ public class JNALinkHelper implements LinkHelper {
     @Override
     public void setLinkProperty(String name, LinkProperties property, String value) throws LinkException {
 
-        logger.info("Trying to set links's : " + name + ", property : " + property + " value : " + value);
+        logger.debug("Trying to set links's : " + name + ", property : " + property + " value : " + value);
 
         int returnValue = handle.set_link_property(name, property.toString(), value);
 
@@ -162,7 +162,7 @@ public class JNALinkHelper implements LinkHelper {
     @Override
     public String getLinkProperty(String name, LinkProperties property) throws LinkException {
 
-        logger.info("Trying to read link's : " + name + ", property : " + property);
+        logger.debug("Trying to read link's : " + name + ", property : " + property);
 
         Pointer p = handle.get_link_property(name, property.toString());
         return getStringFromPointer(p);
@@ -172,7 +172,7 @@ public class JNALinkHelper implements LinkHelper {
     @Override
     public void plumb( String link ) throws LinkException {
 
-			logger.info( "Plumbing " + link );
+			logger.debug( "Plumbing " + link );
 
 			int rc = handle.plumb( link );
 
@@ -196,7 +196,7 @@ public class JNALinkHelper implements LinkHelper {
     public void setNetmask(String name, String mask) throws ValidationException,
             LinkException {
 
-        logger.info("Setting " + name + " mask to " + mask);
+        logger.debug("Setting " + name + " mask to " + mask);
 
         int rc = handle.set_netmask(name, mask);
 
@@ -303,7 +303,7 @@ public class JNALinkHelper implements LinkHelper {
 
         int upDownProp = (up) ? 1 : 0;
         int result = handle.ifconfig_up(link, upDownProp);
-        System.out.println("fds:" + result + " " + XbowStatus.XBOW_STATUS_OK.ordinal());
+        //System.out.println("fds:" + result + " " + XbowStatus.XBOW_STATUS_OK.ordinal());
 
         if (result != XbowStatus.XBOW_STATUS_OK.ordinal()) {
             String message = "Couldn't put link " + link + " ";

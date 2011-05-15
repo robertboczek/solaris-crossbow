@@ -128,11 +128,11 @@ public class EtherstubStatisticsGatherer {
     }
 
     public void start() {
-        initContent();
+        //initContent();
     }
 
     public void stop() {
-        timer.cancel();
+        //timer.cancel();
     }
 
     public List<Map<LinkStatistics, Long>> getStatistics(LinkStatisticTimePeriod period) {
