@@ -417,11 +417,13 @@ flow_statistics_t* get_statistics( char* flow, char* stime, char* etime )
 		}
 		else
 		{
-			const char* etime = "now";
 			char* end_time = ( 0 == strcmp( "now", etime ) ) ? NULL : etime;
 
-			dladm_walk_usage_res( &get_usage, DLADM_LOGTYPE_FLOW, file,
-			                      flow, stime, end_time, stats );
+			if ( DLADM_STATUS_OK != dladm_walk_usage_res( &get_usage, DLADM_LOGTYPE_FLOW, file,
+			                                              flow, stime, end_time, stats ) )
+			{
+				*stats = stats_zero;
+			}
 		}
 	}
 
