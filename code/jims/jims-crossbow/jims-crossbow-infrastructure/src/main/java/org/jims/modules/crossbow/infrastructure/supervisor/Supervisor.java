@@ -383,6 +383,9 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 
 				// Now, refine routing tables.
 
+				logger.info( "ifaceToVlanMap size: " + ifaceToVlanMap.size() );
+				logger.info( "subRouters size: " + subRouters.size() );
+
 				for ( Appliance subRouter : subRouters ) {
 
 					RoutingTable routingTable = subRouter.getRoutingTable();
@@ -391,11 +394,15 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 
 						Interface iface = entry.getKey();
 						Interface vlan = entry.getValue();
+
+						logger.info( assignments.get( iface ) );
+						logger.info( assignments.get( subRouter ) );
 					
 						if ( ! assignments.get( subRouter ).equals( assignments.get( iface ) ) ) {
 							routingTable.routeAdd( iface.getIpAddress(), vlan.getIpAddress() );
-							logger.debug( "Route to " + iface.getIpAddress() + " added (gateway: "
-							              + vlan.getIpAddress() + ")." );
+							// TODO  v make it at most debug
+							logger.info( "Route to " + iface.getIpAddress() + " added (gateway: "
+							             + vlan.getIpAddress() + ")." );
 						}
 					
 					}
