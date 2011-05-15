@@ -72,4 +72,12 @@ public class ModifyZoneSolaris10Command extends AbstractSolaris10ZoneCommand
 
 	}
 
+	@Override
+	public void routeAdd( String zoneName, List< String > dests, List< String > gateways ) throws CommandException {
+
+		String[] cmdarray = this.createRouteAddCommand( zoneName, dests, gateways );
+		this.invokeOsCommand( cmdarray );
+
+	}
+
 }

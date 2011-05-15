@@ -874,6 +874,23 @@ public class Worker implements WorkerMBean {
 
 				modifyCmd.configureInterfaces( name, ifaces, addresses );
 
+				// Routing table entries.
+
+				List< String > dests = new LinkedList< String >();
+				List< String > gateways = new LinkedList< String >();
+
+				for ( Map.Entry< IpAddress, IpAddress > route : app.getRoutingTable().getRoutes().entrySet() ) {
+
+					IpAddress dest = route.getKey();
+					IpAddress gate = route.getValue();
+
+					dests.add( dest.getAddress() + "/" + dest.getNetmask() );
+					gateways.add( gate.getAddress() );
+
+				}
+
+				modifyCmd.routeAdd( name, dests, gateways );
+
 				// For ROUTER appliance only, enable IP forwarding.
 
 				if ( ApplianceType.ROUTER.equals( app.getType() ) ) {
@@ -881,9 +898,7 @@ public class Worker implements WorkerMBean {
 				}
 
 			} catch ( CommandException ex ) {
-
 				throw new ActionException( "Appliance ADD error", ex );
-
 			}
 
 		}

@@ -146,21 +146,22 @@ public class ZoneAgent extends SolarisManagementCommons
 	private void extractHelpers() throws Exception
     {
 	    final String[] helpers = {"/zone/jims_svcwait.sh",
-                                  "/zone/jims_sysidwait_zhalt.sh",
-                                  "/zone/jims_zattach.sh",
-                                  "/zone/jims_zattach_ifaces.sh",
-                                  "/zone/jims_zboot.sh",
-                                  "/zone/jims_zconfig_ifaces.sh",
-                                  "/zone/jims_zcreate.sh",
-                                  "/zone/jims_zcreate_from_clone.sh",
-                                  "/zone/jims_zdelete.sh",
-                                  "/zone/jims_zdetach.sh",
-                                  "/zone/jims_zhalt.sh",
-                                  "/zone/jims_zinstall.sh",
-                                  "/zone/jims_zjimsagent.sh",
-                                  "/zone/jims_zmatch.sh",                                
-                                  "/zone/jims_zsetup_forwarding.sh",
-                                  "/accounting/jims_switchexacct.sh"};
+                                "/zone/jims_sysidwait_zhalt.sh",
+                                "/zone/jims_zattach.sh",
+                                "/zone/jims_zattach_ifaces.sh",
+                                "/zone/jims_zboot.sh",
+                                "/zone/jims_zconfig_ifaces.sh",
+                                "/zone/jims_zcreate.sh",
+                                "/zone/jims_zcreate_from_clone.sh",
+                                "/zone/jims_zdelete.sh",
+                                "/zone/jims_zdetach.sh",
+                                "/zone/jims_zhalt.sh",
+                                "/zone/jims_zinstall.sh",
+                                "/zone/jims_zjimsagent.sh",
+                                "/zone/jims_zmatch.sh",
+                                "/zone/jims_zsetup_forwarding.sh",
+                                "/zone/jims_zmanage_routes.sh",
+                                "/accounting/jims_switchexacct.sh"};
 		
 	    String destDir = ManagementCommons.getJimsTemporaryDir();
 	    

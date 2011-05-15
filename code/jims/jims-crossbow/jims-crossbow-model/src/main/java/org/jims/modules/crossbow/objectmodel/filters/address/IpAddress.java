@@ -22,8 +22,7 @@ public class IpAddress implements Serializable {
 
 		public static IpAddress fromString( String s ) {
 
-			Pattern p = Pattern.compile( "((?:\\d{1,3}\\.){3}\\d{1,3})(?:/(\\d{1,2}))?" );
-			Matcher m = p.matcher( s );
+			Matcher m = addrPattern.matcher( s );
 
 			if ( m.matches() ) {
 				return new IpAddress( m.group( 1 ), Integer.parseInt( m.group( 2 ) ) );
@@ -75,8 +74,42 @@ public class IpAddress implements Serializable {
      *
      * @return String representation of address
      */
+		@Override
     public String toString() {
 	return address + "/" + netmask;
     }
+	
+
+	@Override
+	public boolean equals( Object o ) {
+
+		if ( this == o ) {
+
+			return true;
+
+		} else if ( o instanceof IpAddress ) {
+
+			IpAddress addr = ( IpAddress ) o;
+			return this.address.equals( addr.address ) && ( this.netmask == addr.netmask );
+		
+		} else {
+
+			return false;
+
+		}
+	
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 3;
+		hash = 29 * hash + (this.address != null ? this.address.hashCode() : 0);
+		hash = 29 * hash + this.netmask;
+		return hash;
+	}
+
+
+	private static Pattern addrPattern
+		= Pattern.compile( "((?:\\d{1,3}\\.){3}\\d{1,3})(?:/(\\d{1,2}))?" );
 
 }
