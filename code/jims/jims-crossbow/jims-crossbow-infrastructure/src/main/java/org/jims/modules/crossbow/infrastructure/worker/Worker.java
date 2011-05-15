@@ -25,7 +25,7 @@ import org.jims.modules.crossbow.flow.FlowMBean;
 import org.jims.modules.crossbow.flow.FlowManagerMBean;
 import org.jims.modules.crossbow.flow.enums.FlowAttribute;
 import org.jims.modules.crossbow.flow.enums.FlowProperty;
-import org.jims.modules.crossbow.infrastructure.Pair;
+import org.jims.modules.crossbow.util.struct.Pair;
 import org.jims.modules.crossbow.infrastructure.worker.exception.ActionException;
 import org.jims.modules.crossbow.infrastructure.worker.exception.ModelInstantiationException;
 import org.jims.modules.crossbow.link.VNic;

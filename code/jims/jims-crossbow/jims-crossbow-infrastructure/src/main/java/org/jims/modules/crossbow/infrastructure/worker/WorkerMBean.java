@@ -1,7 +1,7 @@
 package org.jims.modules.crossbow.infrastructure.worker;
 
 import java.util.Map;
-import org.jims.modules.crossbow.infrastructure.Pair;
+import org.jims.modules.crossbow.util.struct.Pair;
 import org.jims.modules.crossbow.infrastructure.worker.exception.ModelInstantiationException;
 import org.jims.modules.crossbow.objectmodel.Actions;
 import org.jims.modules.crossbow.objectmodel.Assignments;

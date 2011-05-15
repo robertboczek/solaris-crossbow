@@ -14,7 +14,7 @@ import java.util.Set;
 import javax.management.Notification;
 import javax.management.NotificationListener;
 import org.apache.log4j.Logger;
-import org.jims.modules.crossbow.infrastructure.Pair;
+import org.jims.modules.crossbow.util.struct.Pair;
 import org.jims.modules.crossbow.infrastructure.assigner.AssignerMBean;
 import org.jims.modules.crossbow.infrastructure.worker.WorkerMBean;
 import org.jims.modules.crossbow.infrastructure.worker.exception.ModelInstantiationException;
