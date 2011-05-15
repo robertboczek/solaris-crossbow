@@ -362,7 +362,7 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 							router.addInterface( iface );
 						}
 
-						if ( target.equals( assignments.get( iface ) ) ) {
+						if ( target.equals( assignments.get( ( Switch ) iface.getEndpoint() ) ) ) {
 							ifaceToVlanMap.put( iface, vlan );
 						}
 
