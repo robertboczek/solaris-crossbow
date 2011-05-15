@@ -21,6 +21,7 @@
 		<module>jims-crossbow-model</module>
 		<module>jims-crossbow-package</module>
 		<module>jims-crossbow-infrastructure</module>
+		<module>jims-crossbow-util</module>
   </modules>
 
 	<developers>

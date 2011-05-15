@@ -3,11 +3,11 @@ package org.jims.modules.crossbow.publisher;
 import org.jims.modules.crossbow.publisher.exception.NotPublishedException;
 import java.util.LinkedList;
 import java.util.List;
-import javax.management.JMX;
 import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import org.apache.log4j.Logger;
+import org.jims.modules.crossbow.manager.ProxyFactory;
 
 
 /**
@@ -123,16 +123,16 @@ public abstract class MBeanPublisher < T > implements Publisher< T > {
 	 * @see  Publisher#getProxy(java.lang.Object)
 	 */
 	@Override
-	public T getProxy( Object id ) throws NotPublishedException {
+	public ProxyFactory< T > getProxyFactory( Object id, Class< T > klass ) throws NotPublishedException {
 
 		for ( T object : published ) {
 
 			if ( identifies( id, object ) ) {
 
 				try {
-					return ( T ) JMX.newMBeanProxy( mBeanServer, createObjectName( object ), Object.class );
+					return new MBeanProxyFactory< T >( url, createObjectName( object ), klass );
 				} catch ( MalformedObjectNameException ex ) {
-					break;
+					logger.error( "Error while creating object name.", ex );
 				}
 
 			}
@@ -141,6 +141,11 @@ public abstract class MBeanPublisher < T > implements Publisher< T > {
 
 		throw new NotPublishedException( "Object not published (id: " + id + ")" );
 	
+	}
+
+
+	public void setUrl( String url ) {
+		this.url = url;
 	}
 
 
@@ -159,6 +164,7 @@ public abstract class MBeanPublisher < T > implements Publisher< T > {
 
 
 	private MBeanServer mBeanServer = null;
+	private String url;
 	private List< T > published = new LinkedList< T >();
 
 	private static final Logger logger = Logger.getLogger( MBeanPublisher.class );

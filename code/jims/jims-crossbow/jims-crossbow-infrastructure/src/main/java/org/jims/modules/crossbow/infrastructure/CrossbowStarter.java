@@ -1,9 +1,7 @@
 package org.jims.modules.crossbow.infrastructure;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedList;
 import javax.management.InstanceNotFoundException;
 import javax.management.JMX;
 import javax.management.MBeanServer;
@@ -21,10 +19,14 @@ import org.jims.modules.crossbow.infrastructure.progress.CrossbowNotificationMBe
 import org.jims.modules.crossbow.infrastructure.progress.CrossbowNotification;
 import org.jims.modules.crossbow.infrastructure.progress.WorkerProgressMBean;
 import org.jims.modules.crossbow.infrastructure.progress.WorkerProgress;
+import org.jims.modules.crossbow.infrastructure.supervisor.WorkerProvider;
 import org.jims.modules.crossbow.infrastructure.supervisor.vlan.ContiguousVlanTagProvider;
+import org.jims.modules.crossbow.infrastructure.supervisor.vlan.InfrastructureVlanTagProvider;
 import org.jims.modules.crossbow.infrastructure.supervisor.vlan.VlanTagProvider;
 import org.jims.modules.crossbow.infrastructure.worker.Worker;
 import org.jims.modules.crossbow.link.VNicManagerMBean;
+import org.jims.modules.crossbow.util.jmx.MBeanProxyHelperFactory;
+import org.jims.modules.crossbow.util.jmx.impl.SimpleMBeanProxyHelperFactory;
 import org.jims.modules.crossbow.vlan.VlanManagerMBean;
 import org.jims.modules.crossbow.zones.ZoneCopierMBean;
 import org.jims.modules.sg.service.wnservice.WNDelegateMBean;
@@ -67,10 +69,13 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 
 		if ( null == server ) {
 
-			logger.warn( "JIMS mbean servered was not found" );
+			logger.fatal( "JIMS mbean servered was not found" );
 			return;
 
 		}
+
+
+		MBeanProxyHelperFactory simpleProxyHelperFactory = new SimpleMBeanProxyHelperFactory();
 
 		GlobalZoneManagementMBean globalZoneManagement = MBeanServerInvocationHandler.newProxyInstance(
 			server,
@@ -133,26 +138,29 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 
 		// Supervisor MBean
 
-		final Supervisor supervisor = new Supervisor( new JmxWorkerProvider( wnDelegate ), assigner );
+		WorkerProvider workerProvider = new JmxWorkerProvider( wnDelegate );
 
-		VlanTagProvider tagProvider = new ContiguousVlanTagProvider( 900, 931,  new ContiguousVlanTagProvider.UsedTagsProvider() {
+		final Supervisor supervisor = new Supervisor( workerProvider, assigner );
 
-			// TODO  implement it properly!
+		final InfrastructureVlanTagProvider usedTagsProvider = new InfrastructureVlanTagProvider(
+			simpleProxyHelperFactory.getManagerProxyFactory(), workerProvider
+		);
 
-			@Override
-			public Collection< Integer > provide() {
-				Collection< Integer > tags = new LinkedList< Integer >();
-				return tags;
-			}
+		VlanTagProvider tagProvider = new ContiguousVlanTagProvider(
+			900, 931, usedTagsProvider
+		);
 
-		} );  // TODO  read the range from properties file!
+		// TODO  ^ read the range from properties file!
 
 		supervisor.setTagProvider( tagProvider );
 
 		server.registerMBean( supervisor, new ObjectName( "Crossbow:type=Supervisor" ) );
 
 		try {
+
 			server.addNotificationListener( new ObjectName( "Core:name=GWEmitter" ), supervisor, null, null );
+			server.addNotificationListener( new ObjectName( "Core:name=GWEmitter" ), usedTagsProvider, null, null );
+
 		} catch ( InstanceNotFoundException ex ) {
 			logger.info( "Ignoring InstanceNotFoundException. Probably not a gateway." );
 		}

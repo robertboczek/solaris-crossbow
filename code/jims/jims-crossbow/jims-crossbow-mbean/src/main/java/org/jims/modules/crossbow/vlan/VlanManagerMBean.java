@@ -2,13 +2,14 @@ package org.jims.modules.crossbow.vlan;
 
 import java.util.List;
 import org.jims.modules.crossbow.exception.XbowException;
+import org.jims.modules.crossbow.manager.GenericManager;
 
 
 /**
  *
  * @author cieplik
  */
-public interface VlanManagerMBean {
+public interface VlanManagerMBean extends GenericManager< VlanMBean > {
 
 	void discover();
 

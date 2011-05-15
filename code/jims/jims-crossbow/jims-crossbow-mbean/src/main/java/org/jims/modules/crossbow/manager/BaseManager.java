@@ -14,15 +14,16 @@ import org.jims.modules.crossbow.publisher.exception.NotPublishedException;
 public abstract class BaseManager< T > implements GenericManager< T > {
 
 	@Override
-	public T getProxyByName( String name ) throws EntityNotFoundException {
+	public ProxyFactory< T > getProxyFactory( String name, Class< T > klass ) throws EntityNotFoundException {
 
-		T res = null;
+		ProxyFactory< T > res = null;
 
 		if ( null != publisher ) {
 
 			try {
-				res = publisher.getProxy( name );
+				res = publisher.getProxyFactory( name, klass );
 			} catch ( NotPublishedException ex ) {
+				logger.error( "Proxy could not be created (" + name + ").", ex );
 			}
 
 		}

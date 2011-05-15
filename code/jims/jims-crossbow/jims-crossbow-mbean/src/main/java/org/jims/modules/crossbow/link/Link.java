@@ -1,5 +1,6 @@
 package org.jims.modules.crossbow.link;
 
+import java.util.EnumMap;
 import org.jims.modules.crossbow.enums.LinkParameters;
 import org.jims.modules.crossbow.enums.LinkProperties;
 import org.jims.modules.crossbow.enums.LinkStatistics;
@@ -23,9 +24,9 @@ public abstract class Link implements LinkMBean {
 
     protected String name;
     protected LinkHelper linkHelper;
-    protected Map<LinkStatistics, String> statisticsMap = new HashMap<LinkStatistics, String>();
-    protected Map<LinkProperties, String> propertiesMap = new HashMap<LinkProperties, String>();
-    protected Map<LinkParameters, String> parametersMap = new HashMap<LinkParameters, String>();
+    protected Map<LinkStatistics, String> statisticsMap = new EnumMap< LinkStatistics, String >( LinkStatistics.class );
+    protected Map<LinkProperties, String> propertiesMap = new EnumMap< LinkProperties, String >( LinkProperties.class );
+    protected Map<LinkParameters, String> parametersMap = new EnumMap< LinkParameters, String>( LinkParameters.class );
     private static final Logger logger = Logger.getLogger(Link.class);
 
     protected LinkStatisticsGatherer linkStatisticsGatherer;
@@ -152,7 +153,7 @@ public abstract class Link implements LinkMBean {
 
         logger.info("Getting properties for " + this.name);
 
-        Map<LinkProperties, String> properties = new HashMap<LinkProperties, String>();
+        Map<LinkProperties, String> properties = new EnumMap<LinkProperties, String>( LinkProperties.class );
 
         for (LinkProperties property : LinkProperties.values()) {
             properties.put(property, linkHelper.getLinkProperty(name, property));

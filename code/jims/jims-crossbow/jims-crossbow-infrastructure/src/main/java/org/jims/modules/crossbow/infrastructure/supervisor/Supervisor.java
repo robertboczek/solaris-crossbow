@@ -14,7 +14,7 @@ import java.util.Set;
 import javax.management.Notification;
 import javax.management.NotificationListener;
 import org.apache.log4j.Logger;
-import org.jims.modules.crossbow.infrastructure.Pair;
+import org.jims.modules.crossbow.util.struct.Pair;
 import org.jims.modules.crossbow.infrastructure.assigner.AssignerMBean;
 import org.jims.modules.crossbow.infrastructure.worker.WorkerMBean;
 import org.jims.modules.crossbow.infrastructure.worker.exception.ModelInstantiationException;
@@ -40,6 +40,40 @@ import org.jims.modules.gds.notification.WorkerNodeRemovedNotification;
  */
 public class Supervisor implements SupervisorMBean, NotificationListener {
 
+	private static class InstantiationTask implements Runnable {
+
+		public InstantiationTask( WorkerMBean worker, String workerId,
+		                          ObjectModel model, Actions actions, Assignments assignments ) {
+			this.worker = worker;
+			this.workerId = workerId;
+			this.model = model;
+			this.actions = actions;
+			this.assignments = assignments;
+		}
+
+
+		@Override
+		public void run() {
+
+			try {
+				worker.instantiate( model, actions, assignments );
+			} catch ( ModelInstantiationException ex ) {
+				logger.error( "Error while instantiating the model. (worker: "
+				              + workerId + ")", ex );
+			}
+
+		}
+
+		private final WorkerMBean worker;
+		private final String workerId;
+
+		private final ObjectModel model;
+		private final Actions actions;
+		private final Assignments assignments;
+
+	}
+
+
 	public Supervisor( WorkerProvider workerProvider, AssignerMBean assigner ) {
 		this.workerProvider = workerProvider;
 		this.assigner = assigner;
@@ -60,8 +94,6 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 	@Override
 	public void instantiate( ObjectModel model, Actions actions, Assignments assignments ) {
 
-		// TODO  concurrent instantiation
-
 		// Adjust the model.
 
 		Map< Appliance, Collection< Interface > > parts = splitRouters( model, actions, assignments );
@@ -76,20 +108,38 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 
 			// Send parts of the model to corresponding workers.
 
+			List< Thread > threads = new LinkedList< Thread >();
+
 			for ( Map.Entry< String, WorkerMBean > entry : workers.entrySet() ) {
 
-				try {
+				String workerId = entry.getKey();
+				WorkerMBean worker = entry.getValue();
 
-					List< Object > objs = assignments.filterByTarget( entry.getKey() );
-					entry.getValue().instantiate( model, actions.filterByKeys( objs ), assignments );
+				List< Object > objs = assignments.filterByTarget( entry.getKey() );
 
-				} catch ( ModelInstantiationException ex ) {
+				if ( 0 < objs.size() ) {
 
-					logger.error( "Error while instantiating the model. (worker: "
-					              + entry.getKey() + ")", ex );
+					Thread t = new Thread( new InstantiationTask(
+						worker, workerId, model, actions.filterByKeys( objs ), assignments ) );
 
+					t.start();
+
+					threads.add( t );
+
+				} else {
+					logger.debug( "No model to instantiate for " + workerId );
 				}
 
+			}
+
+			// Wait for all the workers till they finish instantiation.
+
+			for ( Thread t : threads ) {
+				try {
+					t.join();
+				} catch ( InterruptedException ex ) {
+					logger.error( "Exception while joining thread.", ex );
+				}
 			}
 
 		}

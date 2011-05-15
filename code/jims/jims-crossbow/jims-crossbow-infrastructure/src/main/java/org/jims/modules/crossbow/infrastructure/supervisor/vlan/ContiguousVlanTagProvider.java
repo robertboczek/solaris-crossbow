@@ -32,12 +32,14 @@ public class ContiguousVlanTagProvider implements VlanTagProvider {
 			availableTags.add( i );
 		}
 
+		provider.provide();
+
 	}
 
 
 	@Override
 	public int provide() {
-		return provide( false );
+		return provide( true );
 	}
 
 	public int provide( boolean refresh ) {

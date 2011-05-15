@@ -1,4 +1,4 @@
-package org.jims.modules.crossbow.gui.actions;
+package org.jims.modules.crossbow.util.jmx;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,24 +8,13 @@ import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 
 import org.apache.log4j.Logger;
-import org.jims.modules.crossbow.gui.jmx.JmxConnector;
-import org.jims.modules.crossbow.infrastructure.appliance.RepoManagerMBean;
-import org.jims.modules.crossbow.infrastructure.gatherer.StatisticsGathererMBean;
-import org.jims.modules.crossbow.infrastructure.progress.CrossbowNotificationMBean;
-import org.jims.modules.crossbow.infrastructure.supervisor.SupervisorMBean;
-import org.jims.modules.solaris.solaris10.mbeans.GlobalZoneMonitoringMBean;
 
-public class ComponentProxyFactory {
+
+public class MBeanProxyHelper {
 	
-	public ComponentProxyFactory() {
-		
-		objectNames.put( SupervisorMBean.class, "Crossbow:type=Supervisor" );
-		objectNames.put( RepoManagerMBean.class, "Crossbow:type=RepoManager" );
-		objectNames.put( CrossbowNotificationMBean.class, "Crossbow:type=CrossbowNotification" );
-		objectNames.put( StatisticsGathererMBean.class, "Crossbow:type=StatisticsGatherer" );
-		
-		objectNames.put( GlobalZoneMonitoringMBean.class, "solaris10.monitoring.global:type=ZoneMonitor,role=monitoring" );
-		
+	public MBeanProxyHelper( String url, Map< Class< ? extends Object >, String > mappings ) {
+		this.mbUrl = url;
+		objectNames.putAll( mappings );
 	}
 	
 	
@@ -60,11 +49,12 @@ public class ComponentProxyFactory {
 
 		boolean actuallyRefreshed = false;
 
-		if ((!ruMbServer.equals(mbServer)) || (!ruMbPort.equals(mbPort))) {
+		if ( connectionDirty ) {
 
 			// JMX address or port changed. Refresh server connection.
 
-			jmxConnector = new JmxConnector(mbServer, Integer.parseInt(mbPort));
+			jmxConnector = ( null != mbUrl ) ? new JmxConnector( mbUrl )
+			                                 : new JmxConnector(mbServer, Integer.parseInt(mbPort));
 
 			try {
 				mbsc = jmxConnector.getMBeanServerConnection();
@@ -72,6 +62,7 @@ public class ComponentProxyFactory {
 				logger.error( "Couldn't get MBeanServerConnection", e );
 			}
 
+			connectionDirty = false;
 			actuallyRefreshed = true;
 
 		}
@@ -80,12 +71,18 @@ public class ComponentProxyFactory {
 
 	}
 
+	public void setUrl( String url ) {
+		mbUrl = url;
+		connectionDirty = true;
+	}
+
 	public String getMbServer() {
 		return mbServer;
 	}
 
 	public void setMbServer(String mbServer) {
 		this.mbServer = mbServer;
+		connectionDirty = true;
 	}
 
 	public String getMbPort() {
@@ -94,6 +91,7 @@ public class ComponentProxyFactory {
 
 	public void setMbPort(String mbPort) {
 		this.mbPort = mbPort;
+		connectionDirty = true;
 	}
 	
 	public JmxConnector getJmxConnector() {
@@ -101,7 +99,9 @@ public class ComponentProxyFactory {
 	}
 
 	private String mbServer = "", mbPort = "";
-	private String ruMbServer = "", ruMbPort = ""; // Recently used values
+	private String mbUrl;
+
+	private boolean connectionDirty = true;
 
 	private JmxConnector jmxConnector;
 	private MBeanServerConnection mbsc;
@@ -112,6 +112,6 @@ public class ComponentProxyFactory {
 		= new HashMap< Class< ? extends Object >, String >();
 
 	private static final Logger logger = Logger
-		.getLogger(ComponentProxyFactory.class);
+		.getLogger(MBeanProxyHelper.class);
 
 }

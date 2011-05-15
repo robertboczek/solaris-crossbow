@@ -1,6 +1,7 @@
  package org.jims.modules.crossbow.infrastructure.worker;
 
 import java.util.Collection;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -24,7 +25,7 @@ import org.jims.modules.crossbow.flow.FlowMBean;
 import org.jims.modules.crossbow.flow.FlowManagerMBean;
 import org.jims.modules.crossbow.flow.enums.FlowAttribute;
 import org.jims.modules.crossbow.flow.enums.FlowProperty;
-import org.jims.modules.crossbow.infrastructure.Pair;
+import org.jims.modules.crossbow.util.struct.Pair;
 import org.jims.modules.crossbow.infrastructure.worker.exception.ActionException;
 import org.jims.modules.crossbow.infrastructure.worker.exception.ModelInstantiationException;
 import org.jims.modules.crossbow.link.VNic;
@@ -612,7 +613,7 @@ public class Worker implements WorkerMBean {
 
 			} else {
 
-				Map< FlowAttribute, String > attrs = new HashMap< FlowAttribute, String >();
+				Map< FlowAttribute, String > attrs = new EnumMap< FlowAttribute, String >( FlowAttribute.class );
 
 				if ( filter instanceof IpFilter ) {
 

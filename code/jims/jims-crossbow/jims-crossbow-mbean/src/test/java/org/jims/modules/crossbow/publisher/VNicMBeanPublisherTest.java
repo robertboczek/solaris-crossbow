@@ -1,8 +1,6 @@
 package org.jims.modules.crossbow.publisher;
 
 
-import org.jims.modules.crossbow.publisher.VNicMBeanPublisher;
-import org.jims.modules.crossbow.publisher.Publisher;
 import org.jims.modules.crossbow.link.VNic;
 import org.jims.modules.crossbow.link.VNicMBean;
 import org.jims.modules.crossbow.publisher.exception.NotPublishedException;
@@ -57,7 +55,7 @@ public class VNicMBeanPublisherTest {
 
         assertEquals(2, publisher.getPublished().size());
 
-        publisher.unpublish(vnic);
+        publisher.unpublish( "vnic1" );
 
         assertEquals(1, publisher.getPublished().size());
     }

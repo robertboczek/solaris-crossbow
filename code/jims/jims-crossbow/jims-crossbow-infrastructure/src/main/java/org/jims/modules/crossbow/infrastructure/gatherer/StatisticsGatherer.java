@@ -25,6 +25,8 @@ import org.jims.modules.crossbow.objectmodel.resources.Interface;
 import org.jims.modules.crossbow.objectmodel.Assignments;
 
 import org.jims.modules.crossbow.enums.LinkStatisticTimePeriod;
+import org.jims.modules.crossbow.flow.FlowMBean;
+import org.jims.modules.crossbow.link.VNicMBean;
 import org.jims.modules.crossbow.manager.exception.EntityNotFoundException;
 
 
@@ -45,13 +47,14 @@ public class StatisticsGatherer implements StatisticsGathererMBean {
 		Map< LinkStatistics, String > stats = null;
 
 		try {
-			stats = vNicManager.getProxyByName( NameHelper.interfaceName( iface ) ).getStatistics();
+			VNicMBean proxy = vNicManager.getProxyFactory( NameHelper.interfaceName( iface ), VNicMBean.class ).create();
+			stats = proxy.getStatistics();
 		} catch ( EntityNotFoundException ex ) {
 			logger.error( "Error while getting statistics for interface (name: "
-			              + NameHelper.interfaceName( iface ) + ")." );
+			              + NameHelper.interfaceName( iface ) + ").", ex );
 		} catch ( LinkException ex ) {
 			logger.error( "Error while getting statistics for interface (name: "
-			              + NameHelper.interfaceName( iface ) + ")." );
+			              + NameHelper.interfaceName( iface ) + ").", ex );
 		}
 
 		if ( null != stats ) {
@@ -78,10 +81,13 @@ public class StatisticsGatherer implements StatisticsGathererMBean {
 		VNicManagerMBean vNicManager = getVNicManager( url );
 
 		try {
-			res = vNicManager.getProxyByName( NameHelper.interfaceName( iface ) ).getStatistics( period );
+
+			VNicMBean proxy = vNicManager.getProxyFactory( NameHelper.interfaceName( iface ), VNicMBean.class ).create();
+			res = proxy.getStatistics( period );
+
 		} catch ( EntityNotFoundException ex ) {
 			logger.error( "Error while getting statistics for interface (name: "
-			              + NameHelper.interfaceName( iface ) + ")." );
+			              + NameHelper.interfaceName( iface ) + ").", ex );
 		}
 
 		return res;
@@ -105,8 +111,8 @@ public class StatisticsGatherer implements StatisticsGathererMBean {
 
 		try {
 
-			for( Map< FlowStatistics, Long > map : flowManager.getProxyByName( NameHelper.policyName( policy ) )
-			                                                  .getStatistics( period ) ) {
+			for ( Map< FlowStatistics, Long > map : flowManager.getProxyFactory( NameHelper.policyName( policy ), FlowMBean.class ).create()
+			                                                   .getStatistics( period ) ) {
 
 				Map< LinkStatistics, Long > linkMap = new EnumMap< LinkStatistics, Long >( LinkStatistics.class );
 				for ( Map.Entry< FlowStatistics, Long > s : map.entrySet() ) {
@@ -139,7 +145,7 @@ public class StatisticsGatherer implements StatisticsGathererMBean {
 
 		try {
 
-			for ( Map.Entry<FlowStatistics, Long> s : flowManager.getProxyByName( name )
+			for ( Map.Entry<FlowStatistics, Long> s : flowManager.getProxyFactory( name, FlowMBean.class ).create()
 			                                                     .getStatistics().entrySet() ) {
 				res.put( convert( s.getKey() ), s.getValue() );
 			}

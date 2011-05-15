@@ -1,4 +1,4 @@
-package org.jims.modules.crossbow.infrastructure;
+package org.jims.modules.crossbow.util.struct;
 
 
 /**

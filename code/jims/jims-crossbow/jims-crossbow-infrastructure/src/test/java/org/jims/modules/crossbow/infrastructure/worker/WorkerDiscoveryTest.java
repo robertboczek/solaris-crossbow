@@ -1,7 +1,7 @@
 package org.jims.modules.crossbow.infrastructure.worker;
 
 import org.jims.modules.crossbow.objectmodel.Assignments;
-import org.jims.modules.crossbow.infrastructure.Pair;
+import org.jims.modules.crossbow.util.struct.Pair;
 import org.jims.modules.crossbow.objectmodel.policy.Policy;
 import java.util.Map;
 import org.jims.modules.crossbow.etherstub.EtherstubManagerMBean;
