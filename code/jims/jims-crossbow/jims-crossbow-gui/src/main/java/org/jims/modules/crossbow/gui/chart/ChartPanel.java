@@ -15,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
+import org.apache.log4j.Logger;
 import org.jims.modules.crossbow.enums.LinkStatisticTimePeriod;
 import org.jims.modules.crossbow.enums.LinkStatistics;
 
@@ -26,7 +27,6 @@ public class ChartPanel extends JPanel{
 	private static final long serialVersionUID = -6036298192418208360L;
 	
 	private List<List<Map<LinkStatistics, Long>>> list;
-	private JLabel jLabel;
 	
 	private JPanel centerPanel = new JPanel();
 	private JPanel rightPanel = new JPanel();
@@ -37,14 +37,17 @@ public class ChartPanel extends JPanel{
 
 	private ChartType chartType;
 	
+	private static final Logger logger = Logger.getLogger(ChartPanel.class);
+	
 	public ChartPanel() {
 		super();
 		
 		this.setLayout(new BorderLayout());
-		this.add(centerPanel, BorderLayout.CENTER);
-		this.add(rightPanel, BorderLayout.EAST);
+		this.add(centerPanel, BorderLayout.LINE_START);
+		this.add(rightPanel, BorderLayout.LINE_END);
 		
 		rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.PAGE_AXIS));
+		centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.PAGE_AXIS));
 		
 		JRadioButton inputPacketsButton = new JRadioButton();
 		inputPacketsButton.setText("Input packtes");
@@ -108,13 +111,20 @@ public class ChartPanel extends JPanel{
 		
 		try {
 			//add(new JLabel(new ImageIcon(ImageIO.read(new URL("http://chart.apis.google.com/chart?cht=lc&chxt=y,x&chs=600x450&chts=FFFFFF,14&chls=3,1,0|3,1,0&chg=25.0,25.0,3,2&chco=CA3D05,87CEEB&chd=e:UCkOHH,fq7kGe&chdl=interface1|interface2&chxs=0,FFFFFF,12,0|1,FFFFFF,12,0&chf=bg,s,1F1D1D|c,lg,0,363433,1.0,2E2B2A,0.0&chtt=Average+bandwidth+on+selected+interfaces+and+flows&chxl=0:|0.0|275.0|550.0|825.0|1100.0|1:|-1h|-45min|-30min|-15min|now&chm=d,CA3D05,0,-1,12,0|d,FFFFFF,0,-1,8,0|d,87CEEB,1,-1,12,0|d,FFFFFF,1,-1,8,0")))));
-			JLabel label = new JLabel(new ImageIcon(new ChartPreparer().prepareChart(list, titles, ChartDescription.CHART_TITLE, linkStatisticTimePeriod, chartType, linkStatistics)));
-			if(this.jLabel != null) {
-				this.jLabel.setVisible(false);
-			}
+			String url = new ChartPreparer().prepareChart(list, titles, ChartDescription.CHART_TITLE, linkStatisticTimePeriod, chartType, linkStatistics);
+			logger.debug("Getting image from url " + url);
+			JLabel label = new JLabel(new ImageIcon(ImageIO
+					.read(new URL(url))));
 			
-			this.jLabel = label;
-			centerPanel.add(jLabel);
+			this.remove(centerPanel);
+			centerPanel = new JPanel();
+			centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.PAGE_AXIS));
+			this.add(centerPanel, BorderLayout.LINE_START);
+			
+			centerPanel.add(label);
+			
+			this.validate();
+			this.repaint();
 			
 		} catch (Exception e) {
 			e.printStackTrace();

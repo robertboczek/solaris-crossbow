@@ -20,6 +20,8 @@ import org.jims.modules.crossbow.enums.LinkStatistics;
 import org.jims.modules.crossbow.gui.chart.ChartDisplayer;
 import org.jims.modules.crossbow.gui.data.GraphConnectionData;
 import org.jims.modules.crossbow.gui.statistics.StatisticAnalyzer.EndpointStatistic;
+import org.jims.modules.crossbow.infrastructure.gatherer.StatisticsGathererMBean;
+import org.jims.modules.crossbow.objectmodel.Assignments;
 import org.jims.modules.crossbow.objectmodel.resources.Interface;
 
 /**
@@ -46,13 +48,21 @@ public class InterfaceStatisticsDetailsDialog extends TitleAreaDialog {
 
 	private Interface interf = null;
 
-	private GraphConnectionData graphConnectionData;
+	private final GraphConnectionData graphConnectionData;
+
+	private final StatisticsGathererMBean statisticsGatherer;
+
+	private final Assignments assignments;
 
 	public InterfaceStatisticsDetailsDialog(Shell parentShell,
-			GraphConnectionData graphConnectionData) {
+			GraphConnectionData graphConnectionData, StatisticsGathererMBean statisticsGatherer,
+			Assignments assignments) {
 		super(parentShell);
 
 		this.graphConnectionData = graphConnectionData;
+		this.assignments = assignments;
+		
+		this.statisticsGatherer = statisticsGatherer;
 	}
 
 	public void setControlsValues() {
@@ -152,7 +162,7 @@ public class InterfaceStatisticsDetailsDialog extends TitleAreaDialog {
 		avgBytesReceived.setEnabled(false);
 
 		Label label4 = new Label(parent, SWT.NONE);
-		label4.setText("Bytes received");
+		label4.setText("Bytes sent");
 
 		sentBytesLabel = new Text(parent, SWT.NONE);
 		sentBytesLabel.setText("");
@@ -195,11 +205,16 @@ public class InterfaceStatisticsDetailsDialog extends TitleAreaDialog {
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				logger.debug("Opening chart");
 
-				new ChartDisplayer((LinkStatisticTimePeriod) chartType
-						.getData(chartType.getText()),
-						new Interface[] { interf }, null);
+				logger.debug("Opening chart for interface " + interf);
+
+				if (interf == null) {
+					setMessage("Select interface first", IMessageProvider.ERROR);
+				} else {
+					new ChartDisplayer((LinkStatisticTimePeriod) chartType
+							.getData(chartType.getText()),
+							new Interface[] { interf }, statisticsGatherer, assignments);
+				}
 			}
 		});
 

@@ -803,10 +803,18 @@ public class Gui extends Shell {
 			@Override
 			public void handleEvent(Event event) {
 
-				SelectFlowForChart s = new SelectFlowForChart(Gui.this,
+				objectModel = new GraphToModelTranslator()
+					.translate(networkStructureHelper);
+
+				if(objectModel != null) {
+
+					SelectFlowForChart s = new SelectFlowForChart(Gui.this,
 						objectModel, componentProxyFactory.createProxy(StatisticsGathererMBean.class),
 						networkStructureHelper.getAssignments());
-				s.open();
+					s.open();
+				} else {
+					MessageDialog.openError(null, "Error", "Network structure must be validated first");
+				}
 			}
 
 		});
@@ -934,7 +942,10 @@ public class Gui extends Shell {
 					InterfaceStatisticsDetailsDialog dlg = new InterfaceStatisticsDetailsDialog(
 							null,
 							(GraphConnectionData) (((GraphConnection) list
-									.get(0)).getData()));
+									.get(0)).getData()),
+							componentProxyFactory
+									.createProxy(StatisticsGathererMBean.class),
+										networkStructureHelper.getAssignments());
 					dlg.create();
 					if (dlg.open() == Window.OK) {
 					}

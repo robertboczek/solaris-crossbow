@@ -25,8 +25,8 @@ public class ChartDisplayer {
 
 	private StatisticsGathererMBean statisticsGatherer;
 	private Assignments assignments;
-	
-	private static final Logger logger = Logger.getLogger( ChartDisplayer.class );
+
+	private static final Logger logger = Logger.getLogger(ChartDisplayer.class);
 
 	private void createWindow() {
 		chartWindow = new ChartWindow();
@@ -45,19 +45,22 @@ public class ChartDisplayer {
 	 */
 	public ChartDisplayer(LinkStatisticTimePeriod linkStatisticTimePeriod,
 			Policy[] policies, StatisticsGathererMBean statisticsGatherer,
-			Assignments assignments
-			) {
-		
+			Assignments assignments) {
+
 		try {
 
 			this.statisticsGatherer = statisticsGatherer;
 			this.assignments = assignments;
 
 			List<List<Map<LinkStatistics, Long>>> list = new LinkedList<List<Map<LinkStatistics, Long>>>();
-			String names[] = new String[policies.length]; int i = 0;
-			for(Policy policy : policies) {
-				names[i] = policy.getName();
-				list.add(getData(policy, linkStatisticTimePeriod));
+			String names[] = new String[policies.length];
+			int i = 0;
+			for (Policy policy : policies) {
+				List<Map<LinkStatistics, Long>> data = getData(policy, linkStatisticTimePeriod);
+				if(data != null) {
+					names[i++] = policy.getName();
+					list.add(data);
+				}
 			}
 
 			displayChart(list, names, linkStatisticTimePeriod, ChartType.flows);
@@ -66,7 +69,7 @@ public class ChartDisplayer {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Constructor
 	 * 
@@ -76,20 +79,24 @@ public class ChartDisplayer {
 	 *            Array of flows to display on the chart
 	 */
 	public ChartDisplayer(LinkStatisticTimePeriod linkStatisticTimePeriod,
-			Interface[] interfaces, StatisticsGathererMBean statisticsGatherer) {
-		
+			Interface[] interfaces, StatisticsGathererMBean statisticsGatherer,
+			Assignments assignments) {
+
 		try {
 
 			this.statisticsGatherer = statisticsGatherer;
+			this.assignments = assignments;
 
 			List<List<Map<LinkStatistics, Long>>> list = new LinkedList<List<Map<LinkStatistics, Long>>>();
-			String names[] = new String[interfaces.length]; int i = 0;
-			for(Interface interfac : interfaces) {
-				names[i] = interfac.getIpAddress().getAddress();
+			String names[] = new String[interfaces.length];
+			int i = 0;
+			for (Interface interfac : interfaces) {
+				names[i++] = interfac.getIpAddress().getAddress();
 				list.add(getData(interfac, linkStatisticTimePeriod));
 			}
 
-			displayChart(list, names, linkStatisticTimePeriod, ChartType.interfaces);
+			displayChart(list, names, linkStatisticTimePeriod,
+					ChartType.interfaces);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -100,9 +107,13 @@ public class ChartDisplayer {
 			LinkStatisticTimePeriod linkStatisticTimePeriod) {
 
 		try {
+			logger.trace("Asking for flow statistics for " + policy.getName()
+					+ " from the last " + linkStatisticTimePeriod
+					+ " and assigmnets " + assignments);
 			List<Map<LinkStatistics, Long>> list = statisticsGatherer
-					.getPolicyPeriodStatistics(policy, linkStatisticTimePeriod, assignments);
-			
+					.getPolicyPeriodStatistics(policy, linkStatisticTimePeriod,
+							assignments);
+
 			return list;
 
 		} catch (Exception e) {
@@ -116,9 +127,13 @@ public class ChartDisplayer {
 			LinkStatisticTimePeriod linkStatisticTimePeriod) {
 
 		try {
+			logger.trace("Asking for interface statistics for "
+					+ interfac.getIpAddress().getAddress() + " from the last "
+					+ linkStatisticTimePeriod);
 			List<Map<LinkStatistics, Long>> list = statisticsGatherer
-					.getInterfacePeriodStatistics(interfac, linkStatisticTimePeriod, assignments);
-			
+					.getInterfacePeriodStatistics(interfac,
+							linkStatisticTimePeriod, assignments);
+
 			return list;
 
 		} catch (Exception e) {
@@ -128,8 +143,9 @@ public class ChartDisplayer {
 		return null;
 	}
 
-	public void displayChart(List<List<Map<LinkStatistics, Long>>> list, String []titles, 
-			LinkStatisticTimePeriod linkStatisticTimePeriod, ChartType chartType) throws Exception {
+	public void displayChart(List<List<Map<LinkStatistics, Long>>> list,
+			String[] titles, LinkStatisticTimePeriod linkStatisticTimePeriod,
+			ChartType chartType) throws Exception {
 
 		if (chartWindow == null) {
 			createWindow();
@@ -139,10 +155,9 @@ public class ChartDisplayer {
 			chartWindow.setVisible(true);
 		}
 
-		chartWindow.addChart("Chart number " + ++chartNumber + " ",
-				list, titles, linkStatisticTimePeriod, chartType);
-	}	
-	
+		chartWindow.addChart("Chart number " + ++chartNumber + " ", list,
+				titles, linkStatisticTimePeriod, chartType);
+	}
 
 	public static void close() {
 		if (chartWindow != null) {
