@@ -29,8 +29,10 @@ import org.jims.modules.crossbow.objectmodel.filters.address.IpAddress;
 import org.jims.modules.crossbow.objectmodel.resources.Appliance;
 import org.jims.modules.crossbow.objectmodel.resources.ApplianceType;
 import org.jims.modules.crossbow.objectmodel.resources.Interface;
+import org.jims.modules.crossbow.objectmodel.resources.RoutingTable;
 import org.jims.modules.crossbow.objectmodel.resources.Switch;
 import org.jims.modules.gds.notification.WorkerNodeAddedNotification;
+
 import org.jims.modules.gds.notification.WorkerNodeRemovedNotification;
 
 
@@ -61,6 +63,8 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 				logger.error( "Error while instantiating the model. (worker: "
 				              + workerId + ")", ex );
 			}
+
+			logger.info( "Instantiation finished (worker: " + workerId + ")." );
 
 		}
 
@@ -104,11 +108,11 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 
 		// The model has been adjusted, instantiate the topology.
 
+		List< Thread > threads = new LinkedList< Thread >();
+
 		synchronized ( workers ) {
 
 			// Send parts of the model to corresponding workers.
-
-			List< Thread > threads = new LinkedList< Thread >();
 
 			for ( Map.Entry< String, WorkerMBean > entry : workers.entrySet() ) {
 
@@ -132,16 +136,16 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 
 			}
 
-			// Wait for all the workers till they finish instantiation.
+		}
 
-			for ( Thread t : threads ) {
-				try {
-					t.join();
-				} catch ( InterruptedException ex ) {
-					logger.error( "Exception while joining thread.", ex );
-				}
+		// Wait for all the workers till they finish instantiation.
+
+		for ( Thread t : threads ) {
+			try {
+				t.join();
+			} catch ( InterruptedException ex ) {
+				logger.error( "Exception while joining thread.", ex );
 			}
-
 		}
 
 	}
@@ -338,24 +342,33 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 
 				Collection< Interface > vlans = new LinkedList< Interface >();
 
+				Map< Interface, Interface > ifaceToVlanMap = new HashMap< Interface, Interface >();
+				List< Appliance > subRouters = new LinkedList< Appliance >();
+
 				int i = 1;
 				for ( String target : targets ) {
 
 					Appliance router = new Appliance( app.getResourceId(), app.getProjectId(),
 					                                  app.getType(), app.getRepoId() );
 
-					for ( Interface iface : app.getInterfaces() ) {
-						if ( ( iface.getEndpoint() instanceof Switch )
-						     && ( target.equals( assignments.get( ( Switch ) iface.getEndpoint() ) ) ) ) {
-							router.addInterface( iface );
-						}
-					}
-
 					// Add one more interface used for internal router communication.
 
 					Interface vlan = new Interface( "INTRA0", app.getProjectId(), null,
 					                                new IpAddress( "200.0.0." + i++, 24 ) );
 					router.addInterface( vlan );
+
+					for ( Interface iface : app.getInterfaces() ) {
+
+						if ( ( iface.getEndpoint() instanceof Switch )
+						     && ( target.equals( assignments.get( ( Switch ) iface.getEndpoint() ) ) ) ) {
+							router.addInterface( iface );
+						}
+
+						if ( target.equals( assignments.get( ( Switch ) iface.getEndpoint() ) ) ) {
+							ifaceToVlanMap.put( iface, vlan );
+						}
+
+					}
 
 					toreg.add( vlan );
 					actions.put( vlan, action );
@@ -366,6 +379,35 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 					assignments.put( router, target );
 
 					vlans.add( vlan );
+					subRouters.add( router );
+
+				}
+
+				// Now, refine routing tables.
+
+				logger.info( "ifaceToVlanMap size: " + ifaceToVlanMap.size() );
+				logger.info( "subRouters size: " + subRouters.size() );
+
+				for ( Appliance subRouter : subRouters ) {
+
+					RoutingTable routingTable = subRouter.getRoutingTable();
+
+					for ( Map.Entry< Interface, Interface > entry : ifaceToVlanMap.entrySet() ) {
+
+						Interface iface = entry.getKey();
+						Interface vlan = entry.getValue();
+
+						logger.info( assignments.get( iface ) );
+						logger.info( assignments.get( subRouter ) );
+					
+						if ( ! assignments.get( subRouter ).equals( assignments.get( iface ) ) ) {
+							routingTable.routeAdd( iface.getIpAddress(), vlan.getIpAddress() );
+							// TODO  v make it at most debug
+							logger.info( "Route to " + iface.getIpAddress() + " added (gateway: "
+							             + vlan.getIpAddress() + ")." );
+						}
+					
+					}
 
 				}
 

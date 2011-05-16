@@ -69,6 +69,14 @@ public class Appliance extends Resource {
 		return type;
 	}
 
+	public RoutingTable getRoutingTable() {
+		return routingTable;
+	}
+
+	public void setRoutingTable( RoutingTable routingTable ) {
+		this.routingTable = routingTable;
+	}
+
 	public void setInterfaces(List< Interface > interfaces) {
 		this.interfaces = interfaces;
 	}
@@ -113,6 +121,8 @@ public class Appliance extends Resource {
 	private ApplianceType type;
 	private String repoId = "";  // TODO  this is temporary and should be removed (GUI issue)
 	private List< Interface > interfaces = new LinkedList< Interface >();
+	private RoutingTable routingTable = new RoutingTable();
+
 	private UUID uuid = UUID.randomUUID();
 
 }

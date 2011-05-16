@@ -369,6 +369,20 @@ public class Flow implements FlowMBean {
 	}
 
 
+	@Override
+	public Map< String, String > get_Statistics( String stime, String etime ) {
+
+		Map< String, String > res = new HashMap< String, String >();
+
+		for ( Map.Entry< FlowStatistics, Long > entry : flowadm.getUsage( name, stime, etime ).entrySet() ) {
+			res.put( entry.getKey().toString(), entry.getValue().toString() );
+		}
+
+		return res;
+
+	}
+
+
 	protected String name;
 	protected String link;
 	protected Map< FlowAttribute, String > attrs = new HashMap< FlowAttribute, String >();
@@ -383,7 +397,7 @@ public class Flow implements FlowMBean {
     public List<Map<FlowStatistics, Long>> getStatistics(LinkStatisticTimePeriod period) {
 
         Date now = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd,hh:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat( "dd/MM/yyyy,hh:mm:ss" );
 
         if(flowadm == null) {
             return null;
