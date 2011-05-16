@@ -119,4 +119,6 @@ public interface FlowMBean {
 
 	public Map< String, String > get_Statistics();
 
+	public Map< String, String > get_Statistics( String stime, String etime );
+
 }

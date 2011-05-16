@@ -108,11 +108,11 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 
 		// The model has been adjusted, instantiate the topology.
 
+		List< Thread > threads = new LinkedList< Thread >();
+
 		synchronized ( workers ) {
 
 			// Send parts of the model to corresponding workers.
-
-			List< Thread > threads = new LinkedList< Thread >();
 
 			for ( Map.Entry< String, WorkerMBean > entry : workers.entrySet() ) {
 
@@ -136,16 +136,16 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 
 			}
 
-			// Wait for all the workers till they finish instantiation.
+		}
 
-			for ( Thread t : threads ) {
-				try {
-					t.join();
-				} catch ( InterruptedException ex ) {
-					logger.error( "Exception while joining thread.", ex );
-				}
+		// Wait for all the workers till they finish instantiation.
+
+		for ( Thread t : threads ) {
+			try {
+				t.join();
+			} catch ( InterruptedException ex ) {
+				logger.error( "Exception while joining thread.", ex );
 			}
-
 		}
 
 	}
