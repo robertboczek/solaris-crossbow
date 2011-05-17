@@ -392,7 +392,6 @@ int disable_accounting()
 flow_statistics_t* get_statistics( char* flow, char* stime, char* etime )
 {
 	flow_statistics_t stats_zero = { 0 };
-	flow_statistics_t stats_error = { .rbytes = -1 };
 	flow_statistics_t* stats = malloc_flow_stats();
 
 	// Initialize all fields with zeros.
@@ -423,7 +422,7 @@ flow_statistics_t* get_statistics( char* flow, char* stime, char* etime )
 			if ( DLADM_STATUS_OK != dladm_walk_usage_res( &get_usage, DLADM_LOGTYPE_FLOW, file,
 			                                              flow, stime, end_time, stats ) )
 			{
-				*stats = stats_error;
+				*stats = stats_zero;
 			}
 		}
 	}
