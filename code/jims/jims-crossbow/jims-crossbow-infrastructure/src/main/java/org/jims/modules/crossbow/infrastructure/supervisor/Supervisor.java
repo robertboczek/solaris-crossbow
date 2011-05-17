@@ -360,11 +360,11 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 					for ( Interface iface : app.getInterfaces() ) {
 
 						if ( ( iface.getEndpoint() instanceof Switch )
-						     && ( target.equals( assignments.get( ( Switch ) iface.getEndpoint() ) ) ) ) {
+						     && ( target.equals( assignments.get( iface.getEndpoint() ) ) ) ) {
 							router.addInterface( iface );
 						}
 
-						if ( target.equals( assignments.get( ( Switch ) iface.getEndpoint() ) ) ) {
+						if ( target.equals( assignments.get( iface.getEndpoint() ) ) ) {
 							ifaceToVlanMap.put( iface, vlan );
 						}
 
@@ -400,7 +400,7 @@ public class Supervisor implements SupervisorMBean, NotificationListener {
 						logger.info( assignments.get( iface ) );
 						logger.info( assignments.get( subRouter ) );
 					
-						if ( ! assignments.get( subRouter ).equals( assignments.get( iface ) ) ) {
+						if ( ! assignments.get( subRouter ).equals( assignments.get( iface.getEndpoint() ) ) ) {
 							routingTable.routeAdd( iface.getIpAddress(), vlan.getIpAddress() );
 							// TODO  v make it at most debug
 							logger.info( "Route to " + iface.getIpAddress() + " added (gateway: "
