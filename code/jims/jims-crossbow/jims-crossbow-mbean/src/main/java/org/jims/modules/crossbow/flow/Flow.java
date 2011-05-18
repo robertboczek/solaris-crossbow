@@ -10,6 +10,7 @@ import org.jims.modules.crossbow.flow.enums.FlowProperty;
 import org.jims.modules.crossbow.lib.FlowHelper;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -385,8 +386,8 @@ public class Flow implements FlowMBean {
 
 	protected String name;
 	protected String link;
-	protected Map< FlowAttribute, String > attrs = new HashMap< FlowAttribute, String >();
-	protected Map< FlowProperty, String > props = new HashMap< FlowProperty, String >();
+	protected Map< FlowAttribute, String > attrs = new EnumMap< FlowAttribute, String >( FlowAttribute.class );
+	protected Map< FlowProperty, String > props = new EnumMap< FlowProperty, String >( FlowProperty.class );
 	protected boolean temporary;
 
 	private FlowHelper flowadm;
@@ -397,7 +398,7 @@ public class Flow implements FlowMBean {
     public List<Map<FlowStatistics, Long>> getStatistics(LinkStatisticTimePeriod period) {
 
         Date now = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat( "dd/MM/yyyy,hh:mm:ss" );
+        SimpleDateFormat sdf = new SimpleDateFormat( "MM/dd/yyyy,hh:mm:ss" );
 
         if(flowadm == null) {
             return null;
