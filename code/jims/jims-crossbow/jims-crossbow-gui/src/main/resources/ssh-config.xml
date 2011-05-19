@@ -1,0 +1,17 @@
+<hosts>
+	<host>
+		<address>172.19.66.10</address>
+		<user>root</user>
+		<password>boczek_cieplin_10</password>
+	</host>
+	<host>
+		<address>172.19.66.20</address>
+		<user>root</user>
+		<password>boczek_cieplin_20</password>
+	</host>
+	<host>
+		<address>172.19.66.30</address>
+		<user>root</user>
+		<password>boczek_cieplin_30</password>
+	</host>
+</hosts>

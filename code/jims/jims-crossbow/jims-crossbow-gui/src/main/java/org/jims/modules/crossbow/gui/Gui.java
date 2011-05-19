@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.management.MBeanServerConnection;
 
+import org.apache.commons.net.telnet.TerminalTypeOptionHandler;
 import org.apache.log4j.Logger;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.PojoObservables;
@@ -67,6 +68,7 @@ import org.jims.modules.crossbow.gui.dialogs.ProgressShell;
 import org.jims.modules.crossbow.gui.dialogs.SelectFlowForChart;
 import org.jims.modules.crossbow.gui.dialogs.SelectNetworkInterfacesDialog;
 import org.jims.modules.crossbow.gui.jmx.JmxConnector;
+import org.jims.modules.crossbow.gui.ssh.SshTerminalWindow;
 import org.jims.modules.crossbow.gui.statistics.StatisticAnalyzer;
 import org.jims.modules.crossbow.gui.threads.ConnectionTester;
 import org.jims.modules.crossbow.gui.validation.FieldValidatorFactory;
@@ -144,6 +146,7 @@ public class Gui extends Shell {
 	private ObjectModel objectModel;
 
 	private Display display;
+	private SshTerminalWindow sshTerminal = new SshTerminalWindow();
 	
 	private ValidationToolkitFactory validationToolkitFactory;
 	private StringValidationToolkit strToolkit;
@@ -401,6 +404,9 @@ public class Gui extends Shell {
 				// autorach
 			}
 		});
+		
+		sshTerminal.setAlwaysOnTop(true);
+		sshTerminal.setSize(800, 600);
 
 		createContents();
 	}
@@ -420,6 +426,8 @@ public class Gui extends Shell {
 					.info("Interrupting thread responsible for updating network statistics");
 			connectionLabelUpdater.interrupt();
 		}
+		
+		sshTerminal.closeWindow();
 	}
 
 	private void stopStatisticAnalyzer() {
