@@ -1,5 +1,10 @@
 package org.jims.modules.crossbow.gui.dialogs;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -28,7 +33,9 @@ import org.jims.modules.crossbow.objectmodel.filters.address.IpAddress;
 import org.jims.modules.crossbow.objectmodel.resources.Appliance;
 import org.jims.modules.crossbow.objectmodel.resources.ApplianceType;
 import org.jims.modules.crossbow.objectmodel.resources.Interface;
+import org.jims.modules.crossbow.objectmodel.resources.RoutingTable;
 import org.jims.modules.crossbow.objectmodel.resources.Switch;
+import org.jims.modules.crossbow.util.struct.Pair;
 
 /**
  * Dialog allowing user to specify resource properties
@@ -49,9 +56,14 @@ public class EditResourceDialog extends TitleAreaDialog {
 	private Label interfaceLabel;
 	private RepoManagerProxyFactory repoManagerProxyFactory;
 	private NetworkStructureHelper networkStructureHelper;
+	private Shell parentShell;
+	
+	private static final Logger logger = Logger.getLogger( EditResourceDialog.class );
 
 	public EditResourceDialog(Shell parentShell, Object object, RepoManagerProxyFactory repoManagerProxyFactory, NetworkStructureHelper networkStructureHelper ) {
 		super(parentShell);
+		
+		this.parentShell = parentShell;
 
 		this.object = object;
 		this.repoManagerProxyFactory = repoManagerProxyFactory;
@@ -234,7 +246,7 @@ public class EditResourceDialog extends TitleAreaDialog {
 	}
 
 	@Override
-	protected void createButtonsForButtonBar(Composite parent) {
+	protected void createButtonsForButtonBar( final Composite parent ) {
 		GridData gridData = new GridData();
 		gridData.verticalAlignment = GridData.FILL;
 		gridData.horizontalSpan = 3;
@@ -253,6 +265,40 @@ public class EditResourceDialog extends TitleAreaDialog {
 				close();
 			}
 		});
+		
+		if ( object instanceof Appliance ) {
+		
+			Button rtButton = new Button( parent, SWT.NONE );
+			rtButton.setText( "RTables" );
+			
+			// Add a SelectionListener
+			rtButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					
+					Appliance app = ( Appliance ) object;
+					
+					List< Pair< String, String > > entries = new LinkedList< Pair< String, String > >();
+					
+					for ( Map.Entry< IpAddress, IpAddress > entry : app.getRoutingTable().getRoutes().entrySet() ) {
+						entries.add( new Pair< String, String >( entry.getKey().toString(), entry.getValue().toString() ) );
+					}
+						
+					RoutingTableDialog dialog = new RoutingTableDialog( parentShell, SWT.NONE, entries );
+					dialog.open();
+						
+					RoutingTable routingTable = new RoutingTable();
+					for ( Pair< String, String > entry : entries ) {
+						routingTable.routeAdd( IpAddress.fromString( entry.first ),
+						                       IpAddress.fromString( entry.second ) );
+					}
+					
+					app.setRoutingTable( routingTable );
+				
+				}
+			});
+		
+		}
+		
 	}
 
 	protected Button createOkButton(Composite parent, int id, String label,

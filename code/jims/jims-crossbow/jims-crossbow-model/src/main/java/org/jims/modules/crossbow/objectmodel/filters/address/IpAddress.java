@@ -25,7 +25,8 @@ public class IpAddress implements Serializable {
 			Matcher m = addrPattern.matcher( s );
 
 			if ( m.matches() ) {
-				return new IpAddress( m.group( 1 ), Integer.parseInt( m.group( 2 ) ) );
+				int mask = ( null == m.group( 2 ) ) ? 32 : Integer.parseInt( m.group( 2 ) );
+				return new IpAddress( m.group( 1 ), mask );
 			}
 
 			return null;

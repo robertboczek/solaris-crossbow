@@ -23,7 +23,7 @@ public class ConnectionTester extends Thread {
 	private static final Logger logger = Logger
 			.getLogger(ConnectionTester.class);
 
-	private boolean run = true;
+	private volatile boolean run = true;
 	private boolean connected = false;
 
 	private JmxConnector jmxConnector;

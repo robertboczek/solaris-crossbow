@@ -886,7 +886,7 @@ public class Gui extends Shell {
 
 					GraphNode graphNode = (GraphNode) list.get(0);
 
-					EditResourceDialog dialog = new EditResourceDialog(null,
+					EditResourceDialog dialog = new EditResourceDialog(Gui.this,
 							graphNode.getData(), new RepoManagerProxyFactory() {
 
 								@Override
