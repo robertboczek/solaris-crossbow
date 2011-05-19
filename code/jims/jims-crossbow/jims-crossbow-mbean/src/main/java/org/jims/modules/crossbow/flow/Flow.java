@@ -398,7 +398,7 @@ public class Flow implements FlowMBean {
     public List<Map<FlowStatistics, Long>> getStatistics(LinkStatisticTimePeriod period) {
 
         Date now = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat( "MM/dd/yyyy,hh:mm:ss" );
+        SimpleDateFormat sdf = new SimpleDateFormat( "MM/dd/yyyy,HH:mm:ss" );
 
         if(flowadm == null) {
             return null;
