@@ -123,6 +123,6 @@ public class WorkerTest {
 	private String projectId = "MYPROJECT";
 	private Worker worker;
 
-	private final String SEP = NameHelper.SEP;
+	private final String SEP = Character.toString( NameHelper.SEP );
 
 }

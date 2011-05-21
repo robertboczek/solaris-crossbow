@@ -44,7 +44,7 @@ public class WorkerITBase {
 	private MBeanServerConnection connection;
 	protected WorkerMBean worker;
 	protected String projectId = "ANOTHER.PROJECT";
-	protected final String SEP = NameHelper.SEP;
+	protected final String SEP = Character.toString( NameHelper.SEP );
 
 	private static final Logger logger = Logger.getLogger( WorkerITBase.class );
 

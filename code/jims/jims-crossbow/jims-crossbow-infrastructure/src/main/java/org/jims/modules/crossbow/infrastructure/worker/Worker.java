@@ -1,6 +1,5 @@
- package org.jims.modules.crossbow.infrastructure.worker;
+package org.jims.modules.crossbow.infrastructure.worker;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,8 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 import org.jims.agent.exception.CommandException;
 import org.jims.model.solaris.solaris10.ZoneInfo;
@@ -233,22 +230,30 @@ public class Worker implements WorkerMBean {
 		Map< String, List< Appliance > > res = new HashMap< String, List< Appliance > >();
 		List< String > zones = globalZoneManagement.getZones();
 
-		for ( Matcher m : filterNames( zones, NameHelper.REG_APPLIANCE_NAME_CG ) ) {
+		for ( String zone : zones ) {
 
-			String project = m.group( 1 ), type = m.group( 2 ), name = m.group( 3 );
+			Map< NameHelper.NamePart, String > parts = NameHelper.splitAppliance( zone );
 
-			ApplianceType appType = NameHelper.ROUTER.equals( type ) ? ApplianceType.ROUTER : ApplianceType.MACHINE;
+			if ( null != parts ) {
 
-			logger.info( "Found a " + appType + " (name: " + name + ", project: " + project + ")" );
+				String project = parts.get( NameHelper.NamePart.PROJECT );
+				String type = parts.get( NameHelper.NamePart.APPLIANCE_TYPE );
+				String name = parts.get( NameHelper.NamePart.APPLIANCE );
 
-			Appliance app = new Appliance( name, project, appType, "dummy" );  // TODO-DAWID  repo id!
+				ApplianceType appType = NameHelper.ROUTER.equals( type ) ? ApplianceType.ROUTER : ApplianceType.MACHINE;
 
-			if ( ! res.containsKey( project ) ) {
-				res.put( project, new LinkedList< Appliance >() );
+				logger.info( "Found a " + appType + " (name: " + name + ", project: " + project + ")" );
+
+				Appliance app = new Appliance( name, project, appType, "dummy" );  // TODO-DAWID  repo id!
+
+				if ( ! res.containsKey( project ) ) {
+					res.put( project, new LinkedList< Appliance >() );
+				}
+
+				res.get( project ).add( app );
+				ids.put( zone, app );
+
 			}
-
-			res.get( project ).add( app );
-			ids.put( m.group(), app );
 
 		}
 
@@ -263,20 +268,27 @@ public class Worker implements WorkerMBean {
 
 		try {
 
-			for ( Matcher m : filterNames( etherstubManager.getEtherstubsNames(), NameHelper.REG_SWITCH_NAME_CG ) ) {
+			for ( String estub : etherstubManager.getEtherstubsNames() ) {
 
-				String project = m.group( 1 ), name = m.group( 2 );
+				Map< NameHelper.NamePart, String > parts = nameHelper.splitSwitch( estub );
 
-				logger.info( "Found a switch (name: " + name + ", project: " + project + ")" );
+				if ( null != parts ) {
 
-				Switch s = new Switch( name, project );
+					String project = parts.get( NameHelper.NamePart.PROJECT );
+					String name = parts.get( NameHelper.NamePart.SWITCH );
 
-				if ( ! res.containsKey( project ) ) {
-					res.put( project, new LinkedList< Switch >() );
+					logger.info( "Found a switch (name: " + name + ", project: " + project + ")" );
+
+					Switch s = new Switch( name, project );
+
+					if ( ! res.containsKey( project ) ) {
+						res.put( project, new LinkedList< Switch >() );
+					}
+
+					res.get( project ).add( s );
+					ids.put( estub, s );
+
 				}
-
-				res.get( project ).add( s );
-				ids.put( m.group(), s );
 
 			}
 
@@ -295,74 +307,88 @@ public class Worker implements WorkerMBean {
 
 		try {
 
-			for ( Matcher m : filterNames( vNicManager.getVNicsNames(), NameHelper.REG_INTERFACE_NAME_CG ) ) {
+			for ( String vnicName : vNicManager.getVNicsNames() ) {
 
-				String project = m.group( 1 );
+				Map< NameHelper.NamePart, String > parts = nameHelper.splitInterface( vnicName );
 
-				logger.info( "Found an interface (name: " + m.group( 4 ) + ", project: " + project + ")" );
+				if ( null != parts ) {
 
-				// Basic setup.
+					String project = parts.get( NameHelper.NamePart.PROJECT );
+					String name = parts.get( NameHelper.NamePart.INTERFACE );
 
-				Interface iface = new Interface( m.group( 4 ), m.group( 1 ) );
+					logger.info( "Found an interface (name: " + name + ", project: " + project + ")" );
 
-				// Discover details.
+					// Basic setup.
 
-				VNicMBean vnic = vNicManager.getByName( m.group() );
+					Interface iface = new Interface( name, project );
 
-				iface.setIpAddress( new IpAddress( vnic.getIpAddress(), 24 ) );  // TODO  real netmask retrieval!
-				iface.setEndpoint( ( Switch ) ids.get( vnic.getParent() ) );
-				
-				Appliance app = ( Appliance ) ids.get( NameHelper.extractAppliance( m.group() ) );
+					// Discover details.
 
-				if ( null != app ) {
+					VNicMBean vnic = vNicManager.getByName( vnicName );
 
-					if ( ! res.containsKey( project ) ) {
-						res.put( project, new LinkedList< Interface >() );
+					iface.setIpAddress( new IpAddress( vnic.getIpAddress(), 24 ) );  // TODO  real netmask retrieval!
+					iface.setEndpoint( ( Switch ) ids.get( vnic.getParent() ) );
+
+					Appliance app = ( Appliance ) ids.get( NameHelper.extractAppliance( vnicName ) );
+
+					if ( null != app ) {
+
+						if ( ! res.containsKey( project ) ) {
+							res.put( project, new LinkedList< Interface >() );
+						}
+
+						res.get( project ).add( iface );
+						ids.put( vnicName, iface );
+
+						// Attach the interface to an appliance.
+
+						app.addInterface( iface );
+
+					} else {
+						logger.warn( "Ignoring dangling interface (name: " + vnicName + ")." );
 					}
 
-					res.get( project ).add( iface );
-					ids.put( m.group(), iface );
-
-					// Attach the interface to an appliance.
-
-					app.addInterface( iface );
-
-				} else {
-					logger.warn( "Ignoring dangling interface (name: " + m.group() + ")." );
 				}
 
 			}
 
 			// Now, discover router-internal (VLAN) interfaces.
 
-			for ( Matcher m : filterNames( vlanManager.getVlans(), NameHelper.REG_INTERFACE_NAME_CG ) ) {
+			for ( String vlanName : vlanManager.getVlans() ) {
 
-				String project = m.group( 1 );
+				Map< NameHelper.NamePart, String > parts = nameHelper.splitInterface( vlanName );
 
-				logger.info( "Found a VLAN interface (name: " + m.group( 4 ) + ", project: " + project + ")" );
+				if ( null != parts ) {
 
-				Interface iface = new Interface( m.group( 4 ), project );
+					String project = parts.get( NameHelper.NamePart.PROJECT );
+					String name = parts.get( NameHelper.NamePart.INTERFACE );
 
-				VlanMBean vlan = vlanManager.getByName( m.group() );
+					logger.info( "Found a VLAN interface (name: " + name + ", project: " + project + ")" );
 
-				if ( ! assignments.containsKey( project ) ) {
-					assignments.put( project, new Assignments() );
-				}
+					Interface iface = new Interface( name, project );
 
-				assignments.get( project ).putAnnotation( iface, new VlanInterfaceAssignment( vlan.getTag() ) );
+					VlanMBean vlan = vlanManager.getByName( vlanName );
 
-				Appliance app = ( Appliance ) ids.get( NameHelper.extractAppliance( m.group() ) );
-
-				if ( null != app ) {
-
-					if ( ! res.containsKey( project ) ) {
-						res.put( project, new LinkedList< Interface >() );
+					if ( ! assignments.containsKey( project ) ) {
+						assignments.put( project, new Assignments() );
 					}
 
-					app.addInterface( iface );
+					assignments.get( project ).putAnnotation( iface, new VlanInterfaceAssignment( vlan.getTag() ) );
 
-				} else {
-					logger.warn( "Ignoring dangling VLAN interface (name: " + m.group() + ")." );
+					Appliance app = ( Appliance ) ids.get( NameHelper.extractAppliance( vlanName ) );
+
+					if ( null != app ) {
+
+						if ( ! res.containsKey( project ) ) {
+							res.put( project, new LinkedList< Interface >() );
+						}
+
+						app.addInterface( iface );
+
+					} else {
+						logger.warn( "Ignoring dangling VLAN interface (name: " + vlanName + ")." );
+					}
+
 				}
 
 			}
@@ -381,11 +407,13 @@ public class Worker implements WorkerMBean {
 
 		try {
 
-			for ( Matcher m : filterNames( flowManager.getFlows(), NameHelper.REG_POLICY_NAME_CG ) ) {
+			for ( String flowName : flowManager.getFlows() ) {
 
-				String name = m.group();
+				Map< NameHelper.NamePart, String > parts = nameHelper.splitPolicy( flowName );
 
-				FlowMBean flow = flowManager.getByName( name );
+				if ( null != parts ) {
+
+				FlowMBean flow = flowManager.getByName( flowName );
 
 				Map< FlowAttribute, String > attrs = flow.getAttributes();
 
@@ -452,13 +480,13 @@ public class Worker implements WorkerMBean {
 					Policy policy = null;
 					Map< FlowProperty, String > props = flow.getProperties();
 
-					String policyName = m.group( 5 );
+					String name = parts.get( NameHelper.NamePart.POLICY );
 
 					String maxbw;
 					if ( ( null != ( maxbw = props.get( FlowProperty.MAXBW ) ) )
 					     && ( ! "".equals( maxbw.trim() ) ) ) {
 
-						policy = new BandwidthPolicy( policyName, Integer.parseInt( maxbw.trim() ), filter );
+						policy = new BandwidthPolicy( name, Integer.parseInt( maxbw.trim() ), filter );
 
 					}
 
@@ -467,7 +495,7 @@ public class Worker implements WorkerMBean {
 					     && ( ! "".equals( priority ) ) ) {
 
 						policy = new PriorityPolicy(
-							policyName,
+							name,
 							PriorityPolicy.Priority.valueOf( priority.toUpperCase() ),
 							filter
 						);
@@ -476,7 +504,7 @@ public class Worker implements WorkerMBean {
 
 					if ( null != policy ) {
 
-						Interface iface = ( Interface ) ids.get( NameHelper.extractInterface( m.group() ) );
+						Interface iface = ( Interface ) ids.get( NameHelper.extractInterface( flowName ) );
 							
 						if ( null != iface ) {
 
@@ -484,19 +512,19 @@ public class Worker implements WorkerMBean {
 
 							iface.addPolicy( policy );
 
-							String project = m.group( 1 );
+							String project = parts.get( NameHelper.NamePart.PROJECT );
 
 							if ( ! res.containsKey( project ) ) {
 								res.put( project, new LinkedList< Policy >() );
 							}
 
 							res.get( project ).add( policy );
-							ids.put( m.group( 0 ), policy );
+							ids.put( flowName, policy );
 
 						} else {
 
 							logger.warn( "Could not find parent interface for policy (name: "
-							             + m.group() + ")" );
+							             + flowName + ")" );
 
 						}
 
@@ -504,29 +532,11 @@ public class Worker implements WorkerMBean {
 
 				}
 
+				}
+
 			}
 
 		} catch ( NoSuchFlowException ex ) {
-		}
-
-		return res;
-
-	}
-
-
-	private List< Matcher > filterNames( Collection< String > names, String regexp ) {
-
-		List< Matcher > res = new LinkedList< Matcher >();
-		Pattern p = Pattern.compile( regexp );
-
-		for ( String name : names ) {
-
-			Matcher m = p.matcher( name );
-
-			if ( m.matches() ) {
-				res.add( m );
-			}
-
 		}
 
 		return res;
@@ -643,7 +653,7 @@ public class Worker implements WorkerMBean {
 
 				}
 
-				Map< FlowProperty, String > props = new HashMap< FlowProperty, String >();
+				Map< FlowProperty, String > props = new EnumMap< FlowProperty, String >( FlowProperty.class );
 
 				if ( p instanceof PriorityPolicy ) {
 					props.put( FlowProperty.PRIORITY, ( ( PriorityPolicy ) p ).getPriorityAsString() );
@@ -928,6 +938,8 @@ public class Worker implements WorkerMBean {
 	private final VlanManagerMBean vlanManager;
 
 	private final SolarisCommandFactory commandFactory;
+
+	private static final NameHelper nameHelper = new NameHelper();
 
 	private final boolean TEMPORARY = false;
 

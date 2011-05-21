@@ -45,7 +45,7 @@ public class SupervisorITBase {
 	private MBeanServerConnection connection;
 	protected SupervisorMBean supervisor;
 	protected String projectId = "MULTI";
-	protected final String SEP = NameHelper.SEP;
+	protected final String SEP = Character.toString( NameHelper.SEP );
 
 	private static final Logger logger = Logger.getLogger( SupervisorITBase.class );
 

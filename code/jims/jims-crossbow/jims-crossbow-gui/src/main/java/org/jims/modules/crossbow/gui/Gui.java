@@ -69,6 +69,9 @@ import org.jims.modules.crossbow.gui.dialogs.SelectNetworkInterfacesDialog;
 import org.jims.modules.crossbow.gui.jmx.JmxConnector;
 import org.jims.modules.crossbow.gui.statistics.StatisticAnalyzer;
 import org.jims.modules.crossbow.gui.threads.ConnectionTester;
+import org.jims.modules.crossbow.gui.validation.RegexpStringFieldValidator;
+import org.jims.modules.crossbow.gui.validation.ValidationToolkitFactory;
+import org.jims.modules.crossbow.gui.validation.RegexpStringFieldValidator.Descriptor;
 import org.jims.modules.crossbow.gui.validator.NetworkValidator;
 import org.jims.modules.crossbow.gui.worker.ActiveContainerProvider;
 import org.jims.modules.crossbow.gui.worker.JmxConnectionProvider;
@@ -90,6 +93,9 @@ import org.jims.modules.crossbow.objectmodel.resources.ApplianceType;
 import org.jims.modules.crossbow.objectmodel.resources.Endpoint;
 import org.jims.modules.crossbow.objectmodel.resources.Interface;
 import org.jims.modules.crossbow.objectmodel.resources.Switch;
+
+import com.richclientgui.toolbox.validation.ValidatingField;
+import com.richclientgui.toolbox.validation.string.StringValidationToolkit;
 
 /**
  * Main view in our GUI allows creating network structure with certain QoS
@@ -122,9 +128,9 @@ public class Gui extends Shell {
 
 	private List<GraphConnectionData> graphConnectionDataList = new LinkedList<GraphConnectionData>();
 
-	private Text projectId;
-	private Text supervisorAddress;
-	private Text supervisorPort;
+	private ValidatingField<String> projectId;
+	private ValidatingField< String > supervisorAddress;
+	private ValidatingField< String > supervisorPort;
 
 	private NetworkStructureHelper networkStructureHelper;
 
@@ -136,6 +142,17 @@ public class Gui extends Shell {
 	private ObjectModel objectModel;
 
 	private Display display;
+	
+	private ValidationToolkitFactory validationToolkitFactory;
+	private StringValidationToolkit strToolkit;
+	
+	private static final Descriptor VAL_SUPERVISOR_HOST
+		= new Descriptor( ".+", "", "- must not be empty" );
+	private static final Descriptor VAL_SUPERVISOR_PORT
+		= new Descriptor( "\\d+", "", "- only numeric values allowed" );
+	private static final Descriptor VAL_PROJECT_ID
+		= new Descriptor( "[a-zA-Z][a-zA-Z0-9]*", "", "- has to start with a letter" );
+	
 
 	/**
 	 * Launch the application.
@@ -207,6 +224,9 @@ public class Gui extends Shell {
 
 		this.discoveryHandler = discoveryHandler;
 		this.windowTitleManager = new WindowTitleManager(this, display);
+		this.validationToolkitFactory = new ValidationToolkitFactory();
+		
+		this.strToolkit = validationToolkitFactory.createStringValidationToolkit();
 
 		Menu menu = new Menu(this, SWT.BAR);
 		setMenuBar(menu);
@@ -240,8 +260,8 @@ public class Gui extends Shell {
 					objectModel = new GraphToModelTranslator()
 							.translate(networkStructureHelper);
 					ConfigurationUtil.saveNetwork(selected, new NetworkInfo(
-							objectModel, supervisorAddress.getText(),
-							supervisorPort.getText(), projectId.getText()));
+							objectModel, supervisorAddress.getContents(),
+							supervisorPort.getContents(), projectId.getContents()));
 				}
 			}
 		});
@@ -267,14 +287,14 @@ public class Gui extends Shell {
 
 					clearAllGraphItems();
 
-					projectId.setText("");
+					projectId.setContents("");
 
 					NetworkInfo networkInfo = ConfigurationUtil
 							.loadNetwork(selected);
 					objectModel = networkInfo.getObjectModel();
-					projectId.setText(networkInfo.getProjectId());
-					supervisorPort.setText(networkInfo.getPort());
-					supervisorAddress.setText(networkInfo.getAddress());
+					projectId.setContents(networkInfo.getProjectId());
+					supervisorPort.setContents(networkInfo.getPort());
+					supervisorAddress.setContents(networkInfo.getAddress());
 
 					logger.trace("Restoring network structure from file");
 
@@ -427,7 +447,7 @@ public class Gui extends Shell {
 				.translate(networkStructureHelper);
 
 		NetworkValidator networkValidator = new NetworkValidator();
-		String result = networkValidator.validate(projectId.getText(),
+		String result = networkValidator.validate(projectId.getContents(),
 				objectModel);
 
 		if (result != null) {
@@ -436,7 +456,7 @@ public class Gui extends Shell {
 		}
 
 		try {
-			int i = Integer.parseInt(supervisorPort.getText());
+			int i = Integer.parseInt(supervisorPort.getContents());
 			if (i <= 0) {
 				throw new Exception();
 			}
@@ -589,13 +609,13 @@ public class Gui extends Shell {
 		buttonGroup.setText("Create requested resources");
 		buttonGroup.setLayout(new FormLayout());
 
-		projectId = new Text(buttonGroup, SWT.NONE);
+		projectId = strToolkit.createTextField( buttonGroup, new RegexpStringFieldValidator( VAL_PROJECT_ID ), false, "" );
+			
 		FormData fd_projectId = new FormData();
 		fd_projectId.top = new FormAttachment(0, 7);
-		fd_projectId.left = new FormAttachment(0, 67);
-		projectId.setLayoutData(fd_projectId);
-		projectId.setText("");
-		projectId.pack();
+		fd_projectId.left = new FormAttachment(0, 87);
+		projectId.getControl().setLayoutData(fd_projectId);
+		projectId.getControl().pack();
 
 		Label label = new Label(buttonGroup, SWT.NONE);
 		FormData fd_label = new FormData();
@@ -920,6 +940,8 @@ public class Gui extends Shell {
 								}
 
 							}, networkStructureHelper);
+					
+					dialog.setValidationToolkitFactory( validationToolkitFactory );
 
 					dialog.create();
 					if (dialog.open() == Window.OK) {
@@ -979,13 +1001,18 @@ public class Gui extends Shell {
 		label2.setText("Deployment address:  ");
 		label2.pack();
 
-		supervisorAddress = new Text(buttonGroup, SWT.NONE);
+		supervisorAddress = strToolkit.createTextField(
+			buttonGroup,
+			new RegexpStringFieldValidator( VAL_SUPERVISOR_HOST ),
+			false,
+			""
+		);
+		
 		FormData fd_projectId1 = new FormData();
 		fd_projectId1.top = new FormAttachment(5, 317);
 		fd_projectId1.left = new FormAttachment(15, 55);
-		supervisorAddress.setLayoutData(fd_projectId1);
-		supervisorAddress.setText("");
-		supervisorAddress.pack();
+		supervisorAddress.getControl().setLayoutData(fd_projectId1);
+		supervisorAddress.getControl().pack();
 
 		Label label3 = new Label(buttonGroup, SWT.NONE);
 		FormData fd_label3 = new FormData();
@@ -995,13 +1022,18 @@ public class Gui extends Shell {
 		label3.setText("Deployment port:  ");
 		label3.pack();
 
-		supervisorPort = new Text(buttonGroup, SWT.NONE);
+		supervisorPort = strToolkit.createTextField(
+			buttonGroup,
+			new RegexpStringFieldValidator( VAL_SUPERVISOR_PORT ),
+			false,
+			""
+		);
+		
 		FormData fd_projectId2 = new FormData();
 		fd_projectId2.top = new FormAttachment(5, 357);
 		fd_projectId2.left = new FormAttachment(15, 55);
-		supervisorPort.setLayoutData(fd_projectId2);
-		supervisorPort.setText("");
-		supervisorPort.pack();
+		supervisorPort.getControl().setLayoutData(fd_projectId2);
+		supervisorPort.getControl().pack();
 
 		Button discoverBtn = new Button(buttonGroup, SWT.PUSH);
 		FormData fd_discoverBtn = new FormData();
@@ -1018,14 +1050,14 @@ public class Gui extends Shell {
 
 			@Override
 			public void handleEvent(Event event) {
-				discoveryHandler.handle(graph, projectId,
+				discoveryHandler.handle(graph, ( Text ) projectId.getControl(),
 						networkStructureHelper, graphConnectionDataList);
 				resetStatisticAnalyzer();
 			}
 
 		});
 
-		networkStructureHelper = new NetworkStructureHelper(graph, projectId);
+		networkStructureHelper = new NetworkStructureHelper(graph, ( Text ) projectId.getControl());
 		networkStructureHelper
 				.addNetworkStateListener(new NetworkStructureHelper.NetworkStateListener() {
 
@@ -1392,28 +1424,28 @@ public class Gui extends Shell {
 		DataBindingContext bindingContext = new DataBindingContext();
 		//
 		IObservableValue supervisorsAddressObserveTextObserveWidget = SWTObservables
-				.observeText(supervisorAddress, SWT.Modify);
+				.observeText(supervisorAddress.getControl(), SWT.Modify);
 		IObservableValue componentProxyFactoryMbServerObserveValue = PojoObservables
 				.observeValue(componentProxyFactory, "mbServer");
 		bindingContext.bindValue(supervisorsAddressObserveTextObserveWidget,
 				componentProxyFactoryMbServerObserveValue, null, null);
 		//
 		IObservableValue supervisorPortObserveTextObserveWidget = SWTObservables
-				.observeText(supervisorPort, SWT.Modify);
+				.observeText( supervisorPort.getControl(), SWT.Modify);
 		IObservableValue componentProxyFactoryMbPortObserveValue = PojoObservables
 				.observeValue(componentProxyFactory, "mbPort");
 		bindingContext.bindValue(supervisorPortObserveTextObserveWidget,
 				componentProxyFactoryMbPortObserveValue, null, null);
 		//
 		IObservableValue supervisorAddressObserveTextObserveWidget = SWTObservables
-				.observeText(supervisorAddress, SWT.Modify);
+				.observeText(supervisorAddress.getControl(), SWT.Modify);
 		IObservableValue connectionTesterAddressObserveValue = PojoObservables
 				.observeValue(connectionTester, "address");
 		bindingContext.bindValue(supervisorAddressObserveTextObserveWidget,
 				connectionTesterAddressObserveValue, null, null);
 		//
 		IObservableValue supervisorPortObserveTextObserveWidget_1 = SWTObservables
-				.observeText(supervisorPort, SWT.Modify);
+				.observeText( supervisorPort.getControl(), SWT.Modify);
 		IObservableValue connectionTesterPortObserveValue = PojoObservables
 				.observeValue(connectionTester, "port");
 		bindingContext.bindValue(supervisorPortObserveTextObserveWidget_1,

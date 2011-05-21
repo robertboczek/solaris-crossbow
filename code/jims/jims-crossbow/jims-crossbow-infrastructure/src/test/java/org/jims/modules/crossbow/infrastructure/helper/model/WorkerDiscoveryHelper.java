@@ -31,12 +31,12 @@ public class WorkerDiscoveryHelper {
 
 		// One appliance.
 
-		String appName = "PROJ..MMINE";
+		String appName = "PROJ_MMINE";
 		when( zoneManager.getZones() ).thenReturn( Arrays.asList( appName ) );
 
 		// One switch.
 
-		String switchName = "PROJ..SMINE0";
+		String switchName = "PROJ_SMINE0";
 		when( etherstubManager.getEtherstubsNames() ).thenReturn( Arrays.asList( switchName ) );
 
 		// One interface.
@@ -46,7 +46,7 @@ public class WorkerDiscoveryHelper {
 		when( vnic.getIpAddress() ).thenReturn( "1.1.1.1" );
 		when( vnic.getIpMask() ).thenReturn( "24" );
 
-		String ifaceName = "PROJ..MMINE..IFACE0";
+		String ifaceName = "PROJ_MMINE_IFACE0";
 		when( vnicManager.getVNicsNames() ).thenReturn( Arrays.asList( ifaceName ) );
 		when( vnicManager.getByName( ifaceName ) ).thenReturn( vnic );
 
@@ -62,7 +62,7 @@ public class WorkerDiscoveryHelper {
 		when( flow.getProperties() ).thenReturn( props );
 		when( flow.getAttributes() ).thenReturn( attrs );
 
-		String policyName = "PROJ..MMINE..IFACE0..MYPOLICY";
+		String policyName = "PROJ_MMINE_IFACE0_MYPOLICY";
 		when( flowManager.getFlows() ).thenReturn( Arrays.asList( policyName ) );
 		when( flowManager.getByName( policyName ) ).thenReturn( flow );
 

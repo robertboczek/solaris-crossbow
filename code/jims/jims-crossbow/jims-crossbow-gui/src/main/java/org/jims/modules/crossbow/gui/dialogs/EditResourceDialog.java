@@ -11,8 +11,6 @@ import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -26,9 +24,11 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 import org.jims.modules.crossbow.gui.NetworkStructureHelper;
 import org.jims.modules.crossbow.gui.actions.RepoManagerProxyFactory;
+import org.jims.modules.crossbow.gui.validation.RegexpStringFieldValidator;
+import org.jims.modules.crossbow.gui.validation.ValidationToolkitFactory;
+import org.jims.modules.crossbow.gui.validation.RegexpStringFieldValidator.Descriptor;
 import org.jims.modules.crossbow.objectmodel.filters.address.IpAddress;
 import org.jims.modules.crossbow.objectmodel.resources.Appliance;
 import org.jims.modules.crossbow.objectmodel.resources.ApplianceType;
@@ -36,6 +36,9 @@ import org.jims.modules.crossbow.objectmodel.resources.Interface;
 import org.jims.modules.crossbow.objectmodel.resources.RoutingTable;
 import org.jims.modules.crossbow.objectmodel.resources.Switch;
 import org.jims.modules.crossbow.util.struct.Pair;
+
+import com.richclientgui.toolbox.validation.ValidatingField;
+import com.richclientgui.toolbox.validation.string.StringValidationToolkit;
 
 /**
  * Dialog allowing user to specify resource properties
@@ -45,8 +48,9 @@ import org.jims.modules.crossbow.util.struct.Pair;
  */
 public class EditResourceDialog extends TitleAreaDialog {
 
-	private Combo repoId;
-	private Text resourceId;
+	private ValidatingField< String > repoId;
+	// private Text resourceId;
+	private ValidatingField< String > resourceId;
 	private Combo interfaces;
 
 	private Object object;
@@ -57,6 +61,14 @@ public class EditResourceDialog extends TitleAreaDialog {
 	private RepoManagerProxyFactory repoManagerProxyFactory;
 	private NetworkStructureHelper networkStructureHelper;
 	private Shell parentShell;
+	
+	private StringValidationToolkit strToolkit;
+	private ValidationToolkitFactory validationToolkitFactory;
+	
+	private static final Descriptor VAL_RESOURCE_ID_DESC
+		= new Descriptor( "[a-zA-Z][.a-zA-Z0-9]*", "", "- must not be empty\n- has to start with a letter\n- must not contain underscores" );
+	private static final Descriptor VAL_REPO_ID
+		= new Descriptor( "[a-zA-Z]+", "", "- only letters are allowed" );
 	
 	private static final Logger logger = Logger.getLogger( EditResourceDialog.class );
 
@@ -82,9 +94,9 @@ public class EditResourceDialog extends TitleAreaDialog {
 				interfaces.add(ipAddress.toString());
 				interfaces.setData(ipAddress.toString(), interfac);
 			}
-			resourceId.setText(prepareData(((Appliance) object).getResourceId()));
+			resourceId.setContents( prepareData(((Appliance) object).getResourceId()));
 		} else {
-			resourceId.setText(prepareData(((Switch) object).getResourceId()));
+			resourceId.setContents( prepareData(((Switch) object).getResourceId()));
 		}
 		
 
@@ -95,7 +107,7 @@ public class EditResourceDialog extends TitleAreaDialog {
 		}
 
 		if (hasAMachine) {
-			repoId.setText(prepareData(((Appliance)object).getRepoId()));
+			repoId.setContents(prepareData(((Appliance)object).getRepoId()));
 		}
 	}
 
@@ -116,6 +128,9 @@ public class EditResourceDialog extends TitleAreaDialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
+		
+		strToolkit = validationToolkitFactory.createStringValidationToolkit();
+		
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		parent.setLayout(layout);
@@ -128,52 +143,20 @@ public class EditResourceDialog extends TitleAreaDialog {
 			Label label3 = new Label(parent, SWT.NONE);
 			label3.setText("Repo Id:");
 			
-			repoId = new Combo( parent, SWT.NONE );
-			repoId.setLayoutData( gridData );
+			repoId = strToolkit.createComboField(
+				parent, new RegexpStringFieldValidator( VAL_REPO_ID ), true, "",
+				repoManagerProxyFactory.getRepoManager().getIds().toArray( new String[ 0 ] )
+			);
 			
-			repoId.setItems( repoManagerProxyFactory.getRepoManager().getIds().toArray( new String[ 0 ] ) );
-			
-			repoId.addFocusListener(new FocusListener() {
-
-				@Override
-				public void focusGained(FocusEvent arg0) {
-				}
-
-				@Override
-				public void focusLost(FocusEvent arg0) {
-					if (!repoId.getText().equals("")) {
-						setInformation();
-					} else {
-						setMessage("Repo id can't be empty",
-								IMessageProvider.ERROR);
-					}
-				}
-			});
-
+			repoId.getControl().setLayoutData( gridData );
 		}
 
 		Label label4 = new Label(parent, SWT.NONE);
 		label4.setText("Resource Id:");
-
-		resourceId = new Text(parent, SWT.NONE);
-		resourceId.setLayoutData(gridData);
-		resourceId.addFocusListener(new FocusListener() {
-
-			@Override
-			public void focusGained(FocusEvent arg0) {
-			}
-
-			@Override
-			public void focusLost(FocusEvent arg0) {
-				if (!resourceId.getText().equals("")) {
-					setInformation();
-				} else {
-					setMessage("Resource id can't be empty",
-							IMessageProvider.ERROR);
-				}
-			}
-		});
-
+		
+		resourceId = strToolkit.createTextField( parent, new RegexpStringFieldValidator( VAL_RESOURCE_ID_DESC ), true, "" );
+		resourceId.getControl().setLayoutData(gridData);
+		
 		interfaceLabel = new Label(parent, SWT.NONE);
 		interfaceLabel.setText("Select interface:");
 
@@ -331,12 +314,12 @@ public class EditResourceDialog extends TitleAreaDialog {
 
 		String errorMessage = "";
 
-		if (hasAMachine && repoId.getText().equals("")) {
+		if (hasAMachine && repoId.getContents().equals("")) {
 			valid = false;
 			errorMessage += "RepoId can't be empty \n";
 		}
 
-		if (resourceId.getText().equals("")) {
+		if (resourceId.getContents().equals("")) {
 			valid = false;
 			errorMessage += "ResourceId can't be empty \n";
 		}
@@ -360,12 +343,16 @@ public class EditResourceDialog extends TitleAreaDialog {
 
 	private void saveInput() {
 		if(hasAMachine) {
-			((Appliance)object).setRepoId(repoId.getText());
+			((Appliance)object).setRepoId(repoId.getContents());
 		}
 		if(isAddressable) {
-			((Appliance)object).setResourceId(resourceId.getText());
+			((Appliance)object).setResourceId(resourceId.getContents());
 		} else {
-			((Switch)object).setResourceId(resourceId.getText());
+			((Switch)object).setResourceId(resourceId.getContents());
 		}
 	}
+
+	public void setValidationToolkitFactory( ValidationToolkitFactory validationToolkitFactory ) {
+  	this.validationToolkitFactory = validationToolkitFactory;
+  }
 }
