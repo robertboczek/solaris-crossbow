@@ -40,15 +40,20 @@ elif [ "x$ACTION" = x ]; then
 	print_usage_and_exit
 fi
 
+WAITPERIOD=20
+WAITCMD="( ( ps -fe | grep configd | grep -v grep > /dev/null ) || echo 'configd not found. Waiting (${WAITPERIOD}s)...' || sleep $WAITPERIOD )"
+
+STDIN="true"
+
+STDIN="$STDIN && $WAITCMD"
+
 if [ "$ACTION" = up ]; then
-	STDIN="svcadm enable svc:/network/ipv4-forwarding:default"
-	# STDIN="routeadm -e ipv4-forwarding"
+	STDIN="$STDIN && routeadm -e ipv4-forwarding"
 else
-	STDIN="svcadm disable svc:/network/ipv4-forwarding:default"
-	# STDIN="routeadm -d ipv4-forwarding"
+	STDIN="$STDIN && routeadm -d ipv4-forwarding"
 fi
 
-# STDIN="$STDIN && routeadm -u"
+STDIN="$STDIN && routeadm -u"
 STDIN="$STDIN && exit"
 
 STDIN="$STDIN \\n"
