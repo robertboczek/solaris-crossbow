@@ -41,7 +41,7 @@ elif [ "x$ACTION" = x ]; then
 fi
 
 WAITPERIOD=20
-WAITCMD="( ( ps -fe | grep configd | grep -v grep > /dev/null ) || echo 'configd not found. Waiting (${WAITPERIOD}s)...' || sleep $WAITPERIOD )"
+WAITCMD="( ( ps -fe | grep [c]onfigd > /dev/null ) || echo 'configd not found. Waiting (${WAITPERIOD}s)...' || sleep $WAITPERIOD )"
 
 STDIN="true"
 
