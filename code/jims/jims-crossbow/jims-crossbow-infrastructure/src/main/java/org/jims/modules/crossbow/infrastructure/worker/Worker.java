@@ -916,6 +916,13 @@ public class Worker implements WorkerMBean {
 	}
 
 
+	@Override
+	public String getInstantiatedName( Appliance app ) {
+		return NameHelper.machineName( app );
+	}
+
+
+
 	private String getDefaultPhysical() {
 		return "vnet0";  // TODO  change it to return the interface with proper IP.
 	}

@@ -6,6 +6,7 @@ import org.jims.modules.crossbow.infrastructure.worker.exception.ModelInstantiat
 import org.jims.modules.crossbow.objectmodel.Actions;
 import org.jims.modules.crossbow.objectmodel.Assignments;
 import org.jims.modules.crossbow.objectmodel.ObjectModel;
+import org.jims.modules.crossbow.objectmodel.resources.Appliance;
 
 
 /**
@@ -22,6 +23,8 @@ public interface WorkerMBean {
 	 * @return  project -> object-model map
 	 */
 	public Map< String, Pair< ObjectModel, Assignments > > discover();
+
+	public String getInstantiatedName( Appliance app );
 
 
 	public void _discover();
