@@ -41,7 +41,7 @@ elif [ "x$ACTION" = x ]; then
 fi
 
 WAITPERIOD=20
-WAITCMD="( ( routeadm > /dev/null ) || echo 'configd not found. Waiting (${WAITPERIOD}s)...' || sleep $WAITPERIOD )"
+WAITCMD="( ( routeadm > /dev/null ) || ( echo 'configd not found. Waiting (${WAITPERIOD}s)...' && sleep $WAITPERIOD ) )"
 
 STDIN="true"
 
