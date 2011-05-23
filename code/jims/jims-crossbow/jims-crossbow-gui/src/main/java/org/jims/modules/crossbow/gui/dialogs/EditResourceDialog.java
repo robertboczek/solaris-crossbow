@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.jims.modules.crossbow.gui.NetworkStructureHelper;
 import org.jims.modules.crossbow.gui.actions.RepoManagerProxyFactory;
+import org.jims.modules.crossbow.gui.validation.FieldValidatorFactory;
 import org.jims.modules.crossbow.gui.validation.RegexpStringFieldValidator;
 import org.jims.modules.crossbow.gui.validation.ValidationToolkitFactory;
 import org.jims.modules.crossbow.gui.validation.RegexpStringFieldValidator.Descriptor;
@@ -65,17 +66,22 @@ public class EditResourceDialog extends TitleAreaDialog {
 	private StringValidationToolkit strToolkit;
 	private ValidationToolkitFactory validationToolkitFactory;
 	
-	private static final Descriptor VAL_RESOURCE_ID_DESC
-		= new Descriptor( "[a-zA-Z][.a-zA-Z0-9]*", "", "- must not be empty\n- has to start with a letter\n- must not contain underscores" );
+	private FieldValidatorFactory fieldValidatorFactory;
+	
 	private static final Descriptor VAL_REPO_ID
 		= new Descriptor( "[a-zA-Z]+", "", "- only letters are allowed" );
 	
 	private static final Logger logger = Logger.getLogger( EditResourceDialog.class );
 
-	public EditResourceDialog(Shell parentShell, Object object, RepoManagerProxyFactory repoManagerProxyFactory, NetworkStructureHelper networkStructureHelper ) {
+	public EditResourceDialog(Shell parentShell, FieldValidatorFactory fieldValidatorFactory,
+	                          Object object,
+	                          RepoManagerProxyFactory repoManagerProxyFactory, NetworkStructureHelper networkStructureHelper ) {
+		
 		super(parentShell);
 		
 		this.parentShell = parentShell;
+		
+		this.fieldValidatorFactory = fieldValidatorFactory;
 
 		this.object = object;
 		this.repoManagerProxyFactory = repoManagerProxyFactory;
@@ -154,7 +160,16 @@ public class EditResourceDialog extends TitleAreaDialog {
 		Label label4 = new Label(parent, SWT.NONE);
 		label4.setText("Resource Id:");
 		
-		resourceId = strToolkit.createTextField( parent, new RegexpStringFieldValidator( VAL_RESOURCE_ID_DESC ), true, "" );
+		resourceId = strToolkit.createTextField(
+			parent,
+			fieldValidatorFactory.createNameValidator(
+				hasAMachine ? Appliance.class : Switch.class,
+				"",
+				"- must not be empty\n- has to start with a letter\n- must not contain underscores"
+			),
+			true, ""
+		);
+				
 		resourceId.getControl().setLayoutData(gridData);
 		
 		interfaceLabel = new Label(parent, SWT.NONE);

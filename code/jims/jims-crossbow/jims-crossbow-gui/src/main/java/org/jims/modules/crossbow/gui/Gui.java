@@ -69,6 +69,7 @@ import org.jims.modules.crossbow.gui.dialogs.SelectNetworkInterfacesDialog;
 import org.jims.modules.crossbow.gui.jmx.JmxConnector;
 import org.jims.modules.crossbow.gui.statistics.StatisticAnalyzer;
 import org.jims.modules.crossbow.gui.threads.ConnectionTester;
+import org.jims.modules.crossbow.gui.validation.FieldValidatorFactory;
 import org.jims.modules.crossbow.gui.validation.RegexpStringFieldValidator;
 import org.jims.modules.crossbow.gui.validation.ValidationToolkitFactory;
 import org.jims.modules.crossbow.gui.validation.RegexpStringFieldValidator.Descriptor;
@@ -83,6 +84,7 @@ import org.jims.modules.crossbow.infrastructure.appliance.RepoManagerMBean;
 import org.jims.modules.crossbow.infrastructure.progress.CrossbowNotificationMBean;
 import org.jims.modules.crossbow.infrastructure.gatherer.StatisticsGathererMBean;
 import org.jims.modules.crossbow.infrastructure.supervisor.SupervisorMBean;
+import org.jims.modules.crossbow.infrastructure.validation.impl.SolarisEntityValidatorFactory;
 import org.jims.modules.crossbow.infrastructure.worker.exception.ModelInstantiationException;
 import org.jims.modules.crossbow.objectmodel.Actions;
 import org.jims.modules.crossbow.objectmodel.Assignments;
@@ -145,6 +147,7 @@ public class Gui extends Shell {
 	
 	private ValidationToolkitFactory validationToolkitFactory;
 	private StringValidationToolkit strToolkit;
+	private FieldValidatorFactory fieldValidatorFactory;
 	
 	private static final Descriptor VAL_SUPERVISOR_HOST
 		= new Descriptor( ".+", "", "- must not be empty" );
@@ -227,6 +230,8 @@ public class Gui extends Shell {
 		this.validationToolkitFactory = new ValidationToolkitFactory();
 		
 		this.strToolkit = validationToolkitFactory.createStringValidationToolkit();
+		
+		this.fieldValidatorFactory = new FieldValidatorFactory( new SolarisEntityValidatorFactory() );
 
 		Menu menu = new Menu(this, SWT.BAR);
 		setMenuBar(menu);
@@ -907,6 +912,7 @@ public class Gui extends Shell {
 					GraphNode graphNode = (GraphNode) list.get(0);
 
 					EditResourceDialog dialog = new EditResourceDialog(Gui.this,
+							fieldValidatorFactory,
 							graphNode.getData(), new RepoManagerProxyFactory() {
 
 								@Override
