@@ -2,7 +2,7 @@
 
 
 PRO=$1
-REGEXP="^$PRO\.\."
+REGEXP="^${PRO}_"
 
 for E in `zoneadm list -i | egrep "$REGEXP"`; do
 	echo "Removing $E"

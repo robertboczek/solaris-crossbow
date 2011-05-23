@@ -41,12 +41,14 @@ elif [ "x$ACTION" = x ]; then
 fi
 
 if [ "$ACTION" = up ]; then
-	STDIN="routeadm -e ipv4-forwarding"
+	STDIN="svcadm enable svc:/network/ipv4-forwarding:default"
+	# STDIN="routeadm -e ipv4-forwarding"
 else
-	STDIN="routeadm -d ipv4-forwarding"
+	STDIN="svcadm disable svc:/network/ipv4-forwarding:default"
+	# STDIN="routeadm -d ipv4-forwarding"
 fi
 
-STDIN="$STDIN && routeadm -u"
+# STDIN="$STDIN && routeadm -u"
 STDIN="$STDIN && exit"
 
 STDIN="$STDIN \\n"
