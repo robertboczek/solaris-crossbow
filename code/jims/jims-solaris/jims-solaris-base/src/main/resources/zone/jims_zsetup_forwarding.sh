@@ -41,15 +41,15 @@ elif [ "x$ACTION" = x ]; then
 fi
 
 if [ "$ACTION" = up ]; then
-	STDIN="routeadm -e ipv4-forwarding\\n"
+	STDIN="routeadm -e ipv4-forwarding"
 else
-	STDIN="routeadm -d ipv4-forwarding\\n"
+	STDIN="routeadm -d ipv4-forwarding"
 fi
 
-STDIN="$STDIN routeadm -u\\n"
-STDIN="$STDIN exit\\n"
+STDIN="$STDIN && routeadm -u"
+STDIN="$STDIN && exit"
+
+STDIN="$STDIN \\n"
 
 echo $STDIN | zlogin $ZONE_NAME sh
-
-exit 0
 

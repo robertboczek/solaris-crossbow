@@ -62,7 +62,7 @@ public class LinkStatisticsGatherer {
                 try {
                     while (true) {
                         updateStatistics(minuteValueList, helper);
-                        logger.info("Minute statistics for etherstub " + linkName + " updated");
+                        logger.debug("Minute statistics for etherstub " + linkName + " updated");
                         Thread.sleep(6000);
 
                     }
@@ -81,7 +81,7 @@ public class LinkStatisticsGatherer {
                 try {
                     while (true) {
                         updateStatistics(fiveMinutesValueList, helper);
-                        logger.info("Five-minute statistics for etherstub " + linkName + " updated");
+                        logger.debug("Five-minute statistics for etherstub " + linkName + " updated");
                         Thread.sleep(30000);
 
                     }
@@ -100,7 +100,7 @@ public class LinkStatisticsGatherer {
                 try {
                     while (true) {
                         updateStatistics(hourValueList, helper);
-                        logger.info("Hourly statistics for etherstub " + linkName + " updated");
+                        logger.debug("Hourly statistics for etherstub " + linkName + " updated");
                         Thread.sleep(360000);
 
                     }
@@ -119,7 +119,7 @@ public class LinkStatisticsGatherer {
                 try {
                     while (true) {
                         updateStatistics(dayValueList, helper);
-                        logger.info("Daily statistics for etherstub " + linkName + " updated");
+                        logger.debug("Daily statistics for etherstub " + linkName + " updated");
                         Thread.sleep(8640000);
 
                     }
@@ -151,7 +151,7 @@ public class LinkStatisticsGatherer {
             }
 
         } else {
-            logger.info("Couldn't read statistics as linkHelper was null");
+            logger.error("Couldn't read statistics as linkHelper was null");
             map = getEmtpyMap();
         }
         valueList.removeFirst();

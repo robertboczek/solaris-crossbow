@@ -841,7 +841,7 @@ public class Gui extends Shell {
 
 		buttonGroup.pack();
 
-		graph = new Graph(this, SWT.NONE);
+		graph = new Graph(this, SWT.BORDER);
 		graph.setLayout(new FormLayout());
 		FormData fd_graph = new FormData();
 		fd_graph.left = new FormAttachment(buttonGroup, 6);
