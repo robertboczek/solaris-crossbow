@@ -953,7 +953,7 @@ public class Gui extends Shell {
 									return repoManager;
 								}
 
-							}, networkStructureHelper);
+							}, networkStructureHelper, sshTerminal);
 					
 					dialog.setValidationToolkitFactory( validationToolkitFactory );
 

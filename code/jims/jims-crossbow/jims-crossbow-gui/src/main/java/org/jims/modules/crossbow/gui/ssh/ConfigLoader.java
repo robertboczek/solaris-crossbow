@@ -1,7 +1,6 @@
 package org.jims.modules.crossbow.gui.ssh;
 
 import java.io.InputStream;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.parsers.SAXParser;

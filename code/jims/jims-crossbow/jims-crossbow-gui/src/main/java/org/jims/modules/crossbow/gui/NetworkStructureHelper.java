@@ -23,6 +23,8 @@ import org.eclipse.zest.core.widgets.GraphItem;
 import org.eclipse.zest.core.widgets.GraphNode;
 import org.eclipse.zest.core.widgets.IContainer;
 import org.jims.modules.crossbow.gui.data.GraphConnectionData;
+import org.jims.modules.crossbow.gui.ssh.ConfigLoader;
+import org.jims.modules.crossbow.gui.ssh.Host;
 import org.jims.modules.crossbow.objectmodel.Actions;
 import org.jims.modules.crossbow.objectmodel.Assignments;
 import org.jims.modules.crossbow.objectmodel.Actions.Action;
@@ -51,6 +53,7 @@ public class NetworkStructureHelper {
 	private Set<Policy> modifiedPolicies = new HashSet<Policy>();
 	
 	private List<NetworkStateListener> networkStateListeners = new LinkedList<NetworkStateListener>();
+	private List<Host> hosts = null;
 
 	private Graph graph;
 	private Text projectId;
@@ -60,6 +63,16 @@ public class NetworkStructureHelper {
 	public NetworkStructureHelper(Graph graph, Text projectId) {
 		this.graph = graph;
 		this.projectId = projectId;
+		
+		loadHostsConfiguration();
+	}
+
+	private void loadHostsConfiguration() {
+	
+		logger.debug("Loading hosts configuration...");
+		hosts = new ConfigLoader().getSshHostsConfig();
+		logger.debug("Loaded " + hosts.size() + " configuration");
+		
 	}
 
 	public NetworkState getNetworkState() {
@@ -244,6 +257,7 @@ public class NetworkStructureHelper {
 			logger.debug( "Creating new graph item (project: " + app.getProjectId()
 			              + ", resource: " + app.getResourceId()
 			              + ", repo: " + app.getRepoId() + ")." );
+			
 		}
 		
 		setNetworkState(NetworkState.UNDEPLOYED);

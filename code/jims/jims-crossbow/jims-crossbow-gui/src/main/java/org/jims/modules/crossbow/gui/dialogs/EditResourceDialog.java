@@ -26,10 +26,12 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.jims.modules.crossbow.gui.NetworkStructureHelper;
 import org.jims.modules.crossbow.gui.actions.RepoManagerProxyFactory;
+import org.jims.modules.crossbow.gui.ssh.SshTerminalWindow;
 import org.jims.modules.crossbow.gui.validation.FieldValidatorFactory;
 import org.jims.modules.crossbow.gui.validation.RegexpStringFieldValidator;
 import org.jims.modules.crossbow.gui.validation.ValidationToolkitFactory;
 import org.jims.modules.crossbow.gui.validation.RegexpStringFieldValidator.Descriptor;
+import org.jims.modules.crossbow.objectmodel.Actions.Action;
 import org.jims.modules.crossbow.objectmodel.filters.address.IpAddress;
 import org.jims.modules.crossbow.objectmodel.resources.Appliance;
 import org.jims.modules.crossbow.objectmodel.resources.ApplianceType;
@@ -49,45 +51,53 @@ import com.richclientgui.toolbox.validation.string.StringValidationToolkit;
  */
 public class EditResourceDialog extends TitleAreaDialog {
 
-	private ValidatingField< String > repoId;
+	private ValidatingField<String> repoId;
 	// private Text resourceId;
-	private ValidatingField< String > resourceId;
+	private ValidatingField<String> resourceId;
 	private Combo interfaces;
 
 	private Object object;
 	private Button addInterfaceButton;
+	private Button openTerminalButton;
 	private boolean isAddressable;
 	private boolean hasAMachine;
 	private Label interfaceLabel;
 	private RepoManagerProxyFactory repoManagerProxyFactory;
 	private NetworkStructureHelper networkStructureHelper;
 	private Shell parentShell;
-	
+
 	private StringValidationToolkit strToolkit;
 	private ValidationToolkitFactory validationToolkitFactory;
-	
-	private FieldValidatorFactory fieldValidatorFactory;
-	
-	private static final Descriptor VAL_REPO_ID
-		= new Descriptor( "[a-zA-Z]+", "", "- only letters are allowed" );
-	
-	private static final Logger logger = Logger.getLogger( EditResourceDialog.class );
 
-	public EditResourceDialog(Shell parentShell, FieldValidatorFactory fieldValidatorFactory,
-	                          Object object,
-	                          RepoManagerProxyFactory repoManagerProxyFactory, NetworkStructureHelper networkStructureHelper ) {
-		
+	private FieldValidatorFactory fieldValidatorFactory;
+	private SshTerminalWindow terminalWindow;
+
+	private static final Descriptor VAL_REPO_ID = new Descriptor("[a-zA-Z]+",
+			"", "- only letters are allowed");
+
+	private static final Logger logger = Logger
+			.getLogger(EditResourceDialog.class);
+
+	public EditResourceDialog(Shell parentShell,
+			FieldValidatorFactory fieldValidatorFactory, Object object,
+			RepoManagerProxyFactory repoManagerProxyFactory,
+			NetworkStructureHelper networkStructureHelper,
+			SshTerminalWindow terminalWindow) {
+
 		super(parentShell);
-		
+
 		this.parentShell = parentShell;
-		
+		this.terminalWindow = terminalWindow;
+
 		this.fieldValidatorFactory = fieldValidatorFactory;
 
 		this.object = object;
 		this.repoManagerProxyFactory = repoManagerProxyFactory;
 		this.networkStructureHelper = networkStructureHelper;
 
-		hasAMachine = (object instanceof Appliance) && (((Appliance)object).getType().equals(ApplianceType.MACHINE));
+		hasAMachine = (object instanceof Appliance)
+				&& (((Appliance) object).getType()
+						.equals(ApplianceType.MACHINE));
 		isAddressable = (object instanceof Appliance);
 
 	}
@@ -100,11 +110,12 @@ public class EditResourceDialog extends TitleAreaDialog {
 				interfaces.add(ipAddress.toString());
 				interfaces.setData(ipAddress.toString(), interfac);
 			}
-			resourceId.setContents( prepareData(((Appliance) object).getResourceId()));
+			resourceId.setContents(prepareData(((Appliance) object)
+					.getResourceId()));
 		} else {
-			resourceId.setContents( prepareData(((Switch) object).getResourceId()));
+			resourceId.setContents(prepareData(((Switch) object)
+					.getResourceId()));
 		}
-		
 
 		if (!isAddressable) {
 			interfaces.setVisible(false);
@@ -113,7 +124,7 @@ public class EditResourceDialog extends TitleAreaDialog {
 		}
 
 		if (hasAMachine) {
-			repoId.setContents(prepareData(((Appliance)object).getRepoId()));
+			repoId.setContents(prepareData(((Appliance) object).getRepoId()));
 		}
 	}
 
@@ -134,9 +145,9 @@ public class EditResourceDialog extends TitleAreaDialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		
+
 		strToolkit = validationToolkitFactory.createStringValidationToolkit();
-		
+
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		parent.setLayout(layout);
@@ -148,30 +159,31 @@ public class EditResourceDialog extends TitleAreaDialog {
 		if (hasAMachine) {
 			Label label3 = new Label(parent, SWT.NONE);
 			label3.setText("Repo Id:");
-			
-			repoId = strToolkit.createComboField(
-				parent, new RegexpStringFieldValidator( VAL_REPO_ID ), true, "",
-				repoManagerProxyFactory.getRepoManager().getIds().toArray( new String[ 0 ] )
-			);
-			
-			repoId.getControl().setLayoutData( gridData );
+
+			repoId = strToolkit.createComboField(parent,
+					new RegexpStringFieldValidator(VAL_REPO_ID), true, "",
+					repoManagerProxyFactory.getRepoManager().getIds().toArray(
+							new String[0]));
+
+			repoId.getControl().setLayoutData(gridData);
 		}
 
 		Label label4 = new Label(parent, SWT.NONE);
 		label4.setText("Resource Id:");
-		
-		resourceId = strToolkit.createTextField(
-			parent,
-			fieldValidatorFactory.createNameValidator(
-				hasAMachine ? Appliance.class : Switch.class,
-				"",
-				"- must not be empty\n- has to start with a letter\n- must not contain underscores"
-			),
-			true, ""
-		);
-				
+
+		resourceId = strToolkit
+				.createTextField(
+						parent,
+						fieldValidatorFactory
+								.createNameValidator(
+										hasAMachine ? Appliance.class
+												: Switch.class,
+										"",
+										"- must not be empty\n- has to start with a letter\n- must not contain underscores"),
+						true, "");
+
 		resourceId.getControl().setLayoutData(gridData);
-		
+
 		interfaceLabel = new Label(parent, SWT.NONE);
 		interfaceLabel.setText("Select interface:");
 
@@ -188,26 +200,28 @@ public class EditResourceDialog extends TitleAreaDialog {
 
 				Interface interfac = (Interface) interfaces.getData(interfaces
 						.getText());
-				Interface newInterfac = new Interface(interfac.getResourceId(), interfac.getProjectId());
+				Interface newInterfac = new Interface(interfac.getResourceId(),
+						interfac.getProjectId());
 				newInterfac.setPoliciesList(interfac.getPoliciesList());
 				newInterfac.setIpAddress(interfac.getIpAddress());
-				
-				IpAddressDialog f = new IpAddressDialog(null, newInterfac, networkStructureHelper);
+
+				IpAddressDialog f = new IpAddressDialog(null, newInterfac,
+						networkStructureHelper);
 				f.create();
 				int index = interfaces.getSelectionIndex();
 				interfaces.remove(index);
-				
+
 				if (f.open() == Window.OK) {
 					interfac.setPoliciesList(newInterfac.getPoliciesList());
 					interfac.setIpAddress(newInterfac.getIpAddress());
 					networkStructureHelper.updateElement(interfac);
 
 					interfaces.add(interfac.getIpAddress().toString());
-					interfaces.setData(interfac.getIpAddress().toString(), interfac);
+					interfaces.setData(interfac.getIpAddress().toString(),
+							interfac);
 					interfaces.setText("");
 				}
-				
-				
+
 			}
 		});
 
@@ -220,17 +234,19 @@ public class EditResourceDialog extends TitleAreaDialog {
 			@Override
 			public void handleEvent(Event arg0) {
 
-				Interface interfac = new Interface(((Appliance) object).getResourceId(), ((Appliance) object).getRepoId());
+				Interface interfac = new Interface(((Appliance) object)
+						.getResourceId(), ((Appliance) object).getRepoId());
 				IpAddress ipAddress = new IpAddress("0.0.0.0", 24);
 				interfac.setIpAddress(ipAddress);
-				IpAddressDialog f = new IpAddressDialog(null, interfac, networkStructureHelper);
+				IpAddressDialog f = new IpAddressDialog(null, interfac,
+						networkStructureHelper);
 				f.create();
 				if (f.open() == Window.OK) {
 					interfaces.add(ipAddress.toString());
 					interfaces.setData(ipAddress.toString(), interfac);
 					((Appliance) object).addInterface(interfac);
-					
-					//updejtuje element
+
+					// updejtuje element
 					networkStructureHelper.addNewElement(interfac);
 				}
 			}
@@ -238,13 +254,40 @@ public class EditResourceDialog extends TitleAreaDialog {
 		});
 
 		new Label(parent, SWT.NONE);
+
+		openTerminalButton = new Button(parent, SWT.PUSH);
+		openTerminalButton.setText("Open terminal");
+		openTerminalButton.addListener(SWT.MouseDown, new Listener() {
+
+			@Override
+			public void handleEvent(Event arg0) {
+
+				try {
+					terminalWindow.addTerminal(null, null);
+				} catch (Exception e) {
+					logger.debug("Couldn't add terminal");
+					logger.error(e);
+				}
+
+				// @todo open terminal
+				if (terminalWindow.isVisible()) {
+					terminalWindow.setVisible(true);
+				}
+			}
+
+		});
+		// open terminal only if it's deployed
+		addInterfaceButton.setEnabled(hasAMachine
+				&& !networkStructureHelper.getApplianceAction(
+						(Appliance) object).equals(Action.ADD));
+
 		setControlsValues();
 
 		return parent;
 	}
 
 	@Override
-	protected void createButtonsForButtonBar( final Composite parent ) {
+	protected void createButtonsForButtonBar(final Composite parent) {
 		GridData gridData = new GridData();
 		gridData.verticalAlignment = GridData.FILL;
 		gridData.horizontalSpan = 3;
@@ -263,40 +306,44 @@ public class EditResourceDialog extends TitleAreaDialog {
 				close();
 			}
 		});
-		
-		if ( object instanceof Appliance ) {
-		
-			Button rtButton = new Button( parent, SWT.NONE );
-			rtButton.setText( "RTables" );
-			
+
+		if (object instanceof Appliance) {
+
+			Button rtButton = new Button(parent, SWT.NONE);
+			rtButton.setText("RTables");
+
 			// Add a SelectionListener
 			rtButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
-					
-					Appliance app = ( Appliance ) object;
-					
-					List< Pair< String, String > > entries = new LinkedList< Pair< String, String > >();
-					
-					for ( Map.Entry< IpAddress, IpAddress > entry : app.getRoutingTable().getRoutes().entrySet() ) {
-						entries.add( new Pair< String, String >( entry.getKey().toString(), entry.getValue().toString() ) );
+
+					Appliance app = (Appliance) object;
+
+					List<Pair<String, String>> entries = new LinkedList<Pair<String, String>>();
+
+					for (Map.Entry<IpAddress, IpAddress> entry : app
+							.getRoutingTable().getRoutes().entrySet()) {
+						entries.add(new Pair<String, String>(entry.getKey()
+								.toString(), entry.getValue().toString()));
 					}
-						
-					RoutingTableDialog dialog = new RoutingTableDialog( parentShell, SWT.NONE, entries );
+
+					RoutingTableDialog dialog = new RoutingTableDialog(
+							parentShell, SWT.NONE, entries);
 					dialog.open();
-						
+
 					RoutingTable routingTable = new RoutingTable();
-					for ( Pair< String, String > entry : entries ) {
-						routingTable.routeAdd( IpAddress.fromString( entry.first ),
-						                       IpAddress.fromString( entry.second ) );
+					for (Pair<String, String> entry : entries) {
+						routingTable.routeAdd(
+								IpAddress.fromString(entry.first), IpAddress
+										.fromString(entry.second));
 					}
-					
-					app.setRoutingTable( routingTable );
-				
+
+					app.setRoutingTable(routingTable);
+
 				}
 			});
-		
+
 		}
-		
+
 	}
 
 	protected Button createOkButton(Composite parent, int id, String label,
@@ -357,17 +404,18 @@ public class EditResourceDialog extends TitleAreaDialog {
 	}
 
 	private void saveInput() {
-		if(hasAMachine) {
-			((Appliance)object).setRepoId(repoId.getContents());
+		if (hasAMachine) {
+			((Appliance) object).setRepoId(repoId.getContents());
 		}
-		if(isAddressable) {
-			((Appliance)object).setResourceId(resourceId.getContents());
+		if (isAddressable) {
+			((Appliance) object).setResourceId(resourceId.getContents());
 		} else {
-			((Switch)object).setResourceId(resourceId.getContents());
+			((Switch) object).setResourceId(resourceId.getContents());
 		}
 	}
 
-	public void setValidationToolkitFactory( ValidationToolkitFactory validationToolkitFactory ) {
-  	this.validationToolkitFactory = validationToolkitFactory;
-  }
+	public void setValidationToolkitFactory(
+			ValidationToolkitFactory validationToolkitFactory) {
+		this.validationToolkitFactory = validationToolkitFactory;
+	}
 }
