@@ -25,12 +25,15 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.jims.modules.crossbow.gui.NetworkStructureHelper;
+import org.jims.modules.crossbow.gui.actions.ComponentProxyFactory;
 import org.jims.modules.crossbow.gui.actions.RepoManagerProxyFactory;
+import org.jims.modules.crossbow.gui.jmx.JmxConnector;
 import org.jims.modules.crossbow.gui.ssh.SshTerminalWindow;
 import org.jims.modules.crossbow.gui.validation.FieldValidatorFactory;
 import org.jims.modules.crossbow.gui.validation.RegexpStringFieldValidator;
 import org.jims.modules.crossbow.gui.validation.ValidationToolkitFactory;
 import org.jims.modules.crossbow.gui.validation.RegexpStringFieldValidator.Descriptor;
+import org.jims.modules.crossbow.infrastructure.worker.WorkerMBean;
 import org.jims.modules.crossbow.objectmodel.Actions.Action;
 import org.jims.modules.crossbow.objectmodel.filters.address.IpAddress;
 import org.jims.modules.crossbow.objectmodel.resources.Appliance;
@@ -262,22 +265,38 @@ public class EditResourceDialog extends TitleAreaDialog {
 			@Override
 			public void handleEvent(Event arg0) {
 
+				String url = networkStructureHelper.getAssignments()
+						.get(object);
 				try {
-					terminalWindow.addTerminal(null, null);
-				} catch (Exception e) {
-					logger.debug("Couldn't add terminal");
-					logger.error(e);
-				}
 
-				// @todo open terminal
-				if (terminalWindow.isVisible()) {
-					terminalWindow.setVisible(true);
+					logger.debug("Trying to connect to jims worker at " + url);
+					JmxConnector jmxConnector = new JmxConnector(url);
+					ComponentProxyFactory factory = new ComponentProxyFactory();
+					WorkerMBean worker = factory.createProxy(WorkerMBean.class, jmxConnector
+							.getMBeanServerConnection());
+
+					try {
+						terminalWindow.addTerminal(networkStructureHelper.getApplianceHost((Appliance) object), worker.getInstantiatedName((Appliance) object));
+					} catch (Exception e) {
+						logger.debug("Couldn't add terminal");
+						logger.error(e);
+						e.printStackTrace();
+					}
+
+					// @todo open terminal
+					if (!terminalWindow.isVisible()) {
+						terminalWindow.setVisible(true);
+					}
+
+				} catch (Exception e) {
+					logger.error("Exception while connecting to : " + url
+							+ " by ssh", e);
 				}
 			}
 
 		});
 		// open terminal only if it's deployed
-		addInterfaceButton.setEnabled(hasAMachine
+		openTerminalButton.setEnabled(hasAMachine
 				&& !networkStructureHelper.getApplianceAction(
 						(Appliance) object).equals(Action.ADD));
 

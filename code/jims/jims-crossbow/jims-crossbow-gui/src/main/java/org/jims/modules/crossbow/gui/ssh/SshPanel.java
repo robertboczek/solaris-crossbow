@@ -40,16 +40,17 @@ public class SshPanel extends JPanel {
 		this.setLayout(new BorderLayout());
 		this.add(console, BorderLayout.CENTER);
 
-		console.setText("Console v.1.0.0");
+		console.setText("Console v.1.0.0\n");
 
 		sshCommandExecutor = new SshCommandExecutor(host);
-		boolean connect = true;
+		boolean connect = false;
 		try {
 			sshCommandExecutor.connect(zoneName);
-			connect = false;
+			connect = true;
 		} catch (IOException e1) {
 			logger.error("Connection to: " + host.getAddress() + " failed....");
 			logger.error(e1);
+			e1.printStackTrace();
 		}
 
 		if (connect) {
@@ -60,7 +61,14 @@ public class SshPanel extends JPanel {
 					if (e.getKeyCode() == ENTER) {
 						
 						String command = console.getText().substring(console.getText().lastIndexOf("\n") + 1);
-						logger.trace("Typed command: \'"+command+"\'");
+						logger.debug("Typed command: \'"+command+"\'");
+						try {
+							String result = sshCommandExecutor.execute(command);
+							console.setText(console.getText() + result);
+						} catch (IOException e1) {
+							logger.error("Exception while executing command " + command, e1);
+							e1.printStackTrace();
+						}
 						
 					} else if (e.getKeyCode() == BACKSPACE) {
 						if (console.getText().charAt(

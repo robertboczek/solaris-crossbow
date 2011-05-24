@@ -13,6 +13,7 @@ import org.jims.modules.crossbow.infrastructure.appliance.RepoManagerMBean;
 import org.jims.modules.crossbow.infrastructure.gatherer.StatisticsGathererMBean;
 import org.jims.modules.crossbow.infrastructure.progress.CrossbowNotificationMBean;
 import org.jims.modules.crossbow.infrastructure.supervisor.SupervisorMBean;
+import org.jims.modules.crossbow.infrastructure.worker.WorkerMBean;
 import org.jims.modules.solaris.solaris10.mbeans.GlobalZoneMonitoringMBean;
 
 public class ComponentProxyFactory {
@@ -23,6 +24,8 @@ public class ComponentProxyFactory {
 		objectNames.put( RepoManagerMBean.class, "Crossbow:type=RepoManager" );
 		objectNames.put( CrossbowNotificationMBean.class, "Crossbow:type=CrossbowNotification" );
 		objectNames.put( StatisticsGathererMBean.class, "Crossbow:type=StatisticsGatherer" );
+		objectNames.put( StatisticsGathererMBean.class, "Crossbow:type=StatisticsGatherer" );
+		objectNames.put( WorkerMBean.class, "Crossbow:type=XBowWorker" );
 		
 		objectNames.put( GlobalZoneMonitoringMBean.class, "solaris10.monitoring.global:type=ZoneMonitor,role=monitoring" );
 		

@@ -11,10 +11,6 @@ import org.apache.log4j.Logger;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.zest.core.widgets.Graph;
 import org.eclipse.zest.core.widgets.GraphConnection;
@@ -133,8 +129,6 @@ public class NetworkStructureHelper {
 			newObjects.put(obj, graphNode);
 		}
 		
-		System.err.println("SIZEEEEEEEEEEEE " + newObjects.size());
-
 	}
 
 	public void addDeployedElement(Object obj, GraphItem graphItem) {
@@ -593,8 +587,28 @@ public class NetworkStructureHelper {
 		return assignments;
 	}
 	
+	/**
+	 * Gets Host from loaded config file with the same address as 
+	 * deployed appliance
+	 * 
+	 * @param appliance
+	 * @return
+	 */
+	public Host getApplianceHost(Appliance appliance) {
+		
+		String url = assignments.get(appliance);
+		logger.debug("Looking for host configuration for address: " + url);
+		for(Host host : hosts){
+			if(url.contains(host.getAddress())) {
+				return host;
+			}
+		}
+		return null;
+	}
+	
 }
 
 enum NetworkState {
 	DEPLOYED, UNDEPLOYED
 }
+
