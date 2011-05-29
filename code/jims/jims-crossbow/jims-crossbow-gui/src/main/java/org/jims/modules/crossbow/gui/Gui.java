@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.SwingUtilities;
+
 import org.apache.log4j.Logger;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.PojoObservables;
@@ -134,7 +136,7 @@ public class Gui extends Shell {
 	private ObjectModel objectModel;
 
 	private Display display;
-	private SshTerminalWindow sshTerminal = new SshTerminalWindow();
+	private SshTerminalWindow sshTerminal;
 	
 	private ValidationToolkitFactory validationToolkitFactory;
 	private StringValidationToolkit strToolkit;
@@ -393,8 +395,18 @@ public class Gui extends Shell {
 			}
 		});
 		
-		sshTerminal.setAlwaysOnTop(true);
-		sshTerminal.setSize(800, 600);
+		Runnable r = new Runnable()
+		{
+			public void run()
+			{
+				sshTerminal = new SshTerminalWindow();
+				sshTerminal.setAlwaysOnTop(true);
+				sshTerminal.setSize(940, 760);
+				sshTerminal.setResizable(false);
+			}
+		};
+
+		SwingUtilities.invokeLater(r);
 
 		createContents();
 	}

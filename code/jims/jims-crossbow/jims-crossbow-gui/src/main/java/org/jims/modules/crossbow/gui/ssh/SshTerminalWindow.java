@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
 import org.apache.log4j.Logger;
@@ -107,6 +108,16 @@ public class SshTerminalWindow extends JFrame {
 			for(SshPanel sshPanel : panels) {
 				sshPanel.disconnect();
 			}
+			
+			Runnable r = new Runnable()
+			{
+				public void run()
+				{
+					SshTerminalWindow.this.dispose();
+				}
+			};
+
+			SwingUtilities.invokeLater(r);
 			this.dispose();
 		}
 	}
