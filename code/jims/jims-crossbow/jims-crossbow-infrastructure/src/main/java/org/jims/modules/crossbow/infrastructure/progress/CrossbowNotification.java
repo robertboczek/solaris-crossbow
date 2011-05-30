@@ -53,7 +53,7 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 	 */
 	private static final long serialVersionUID = 4845007778991652486L;
 
-	private void registerNotificationListener() throws Exception {
+	private void registerNotificationListener() {
 
 		log.debug("Reseting and registering at all WorkerProgressMBeans as listener");
 
@@ -73,7 +73,13 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 		server.removeNotificationListener( workerProgressObjectName, this );
 
 		//registers listener at server
-		server.addNotificationListener( workerProgressObjectName, this, null, null );
+		try {
+			server.addNotificationListener( workerProgressObjectName, this, null, null );
+
+		} catch( Exception e ) {
+			log.error("Exception while registering listener at WorkerProgresses", e);
+			e.printStackTrace();
+		}
 
 		try {
 
@@ -177,12 +183,9 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 		sb = new StringBuilder();
 		progressNotification = new ProgressNotification(0, totalTasks,
 					WorkerProgress.getIpAddress());
-		try {
-			registerNotificationListener();
-		} catch( Exception e ) {
-			log.error("Exception while registering listener at WorkerProgresses", e);
-			e.printStackTrace();
-		}
+
+		registerNotificationListener();
+		
 		
 
 	}
