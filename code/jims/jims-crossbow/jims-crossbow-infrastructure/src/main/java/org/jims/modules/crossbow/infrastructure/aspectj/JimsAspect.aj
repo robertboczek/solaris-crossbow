@@ -111,31 +111,6 @@ public aspect JimsAspect {
 		}
 	}
 
-	public WorkerProgressMBean getWorkerProgressMBean() {
-
-		if(this.workerProgressMBean != null) {
-			return this.workerProgressMBean;
-		}
-
-		MBeanServer server = JimsMBeanServer.findJimsMBeanServer();
-
-		if(server == null) {
-			log.error("Couldn't get MBeanServer");
-			return null;
-		}
-
-		try{
-
-			this.workerProgressMBean = JMX.newMBeanProxy(
-				server, new ObjectName( "Crossbow:type=WorkerProgress" ), WorkerProgressMBean.class
-			);
-		}catch(Exception e) {
-			log.error("Exception while getting WorkerProgressMBean");
-		}
-
-		return this.workerProgressMBean;
-	}
-
 	before (): addVNic() {
 
 		if(workerProgressMBean == null) {
@@ -246,5 +221,30 @@ public aspect JimsAspect {
 			log.info("Sending notification");
 			workerProgressMBean.sendLogNotification("Finished removing new Etherstub " + ((String)args[0]));
 		}	
+	}
+
+	public WorkerProgressMBean getWorkerProgressMBean() {
+
+		if(this.workerProgressMBean != null) {
+			return this.workerProgressMBean;
+		}
+
+		MBeanServer server = JimsMBeanServer.findJimsMBeanServer();
+
+		if(server == null) {
+			log.error("Couldn't get MBeanServer");
+			return null;
+		}
+
+		try{
+
+			this.workerProgressMBean = JMX.newMBeanProxy(
+				server, new ObjectName( "Crossbow:type=WorkerProgress" ), WorkerProgressMBean.class
+			);
+		}catch(Exception e) {
+			log.error("Exception while getting WorkerProgressMBean");
+		}
+
+		return this.workerProgressMBean;
 	}
 }
