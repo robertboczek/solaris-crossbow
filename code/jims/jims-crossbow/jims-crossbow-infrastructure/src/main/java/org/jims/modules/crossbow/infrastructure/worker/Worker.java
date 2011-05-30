@@ -253,8 +253,12 @@ public class Worker implements WorkerMBean {
 					ModifyZoneCommand cmd = commandFactory.getModifyZoneCommand();
 
 					for ( Map.Entry< String, String > entry : cmd.readRoutes( zone ).entrySet() ) {
-						app.getRoutingTable().routeAdd( IpAddress.fromString( entry.getKey() + "/24" ),  // TODO-DAWID: detect netmask!
-						                                IpAddress.fromString( entry.getValue() ) );
+
+						if ( ! "127.0.0.1".equals( entry.getValue() ) ) {
+							app.getRoutingTable().routeAdd( IpAddress.fromString( entry.getKey() + "/24" ),  // TODO-DAWID: detect netmask!
+							                                IpAddress.fromString( entry.getValue() ) );
+						}
+
 					}
 
 				} catch ( CommandException ex ) {
