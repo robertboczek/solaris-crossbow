@@ -161,6 +161,7 @@ public class ZoneAgent extends SolarisManagementCommons
                                 "/zone/jims_zmatch.sh",
                                 "/zone/jims_zsetup_forwarding.sh",
                                 "/zone/jims_zmanage_routes.sh",
+                                "/zone/jims_zread_routes.sh",
                                 "/accounting/jims_switchexacct.sh"};
 		
 	    String destDir = ManagementCommons.getJimsTemporaryDir();

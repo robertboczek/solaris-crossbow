@@ -1,6 +1,8 @@
 package org.jims.modules.solaris.solaris10.mbeans.commands.zones;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.log4j.Logger;
 import org.jims.agent.exception.CommandException;
 import org.jims.model.solaris.solaris10.ZoneInfo;
@@ -77,6 +79,24 @@ public class ModifyZoneSolaris10Command extends AbstractSolaris10ZoneCommand
 
 		String[] cmdarray = this.createRouteAddCommand( zoneName, dests, gateways );
 		this.invokeOsCommand( cmdarray );
+
+	}
+
+	@Override
+	public Map< String, String > readRoutes( String zoneName ) throws CommandException {
+
+		Map< String, String > res = new HashMap< String, String >();
+
+		String cmdarray[] = this.createReadRoutesCommand( zoneName );
+
+		for ( String line : this.invokeOsCommand( cmdarray ) ) {
+
+			String parts[] = line.split( ":" );
+			res.put( parts[ 0 ], parts[ 1 ] );
+
+		}
+
+		return res;
 
 	}
 

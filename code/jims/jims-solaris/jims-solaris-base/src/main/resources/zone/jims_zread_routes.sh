@@ -41,5 +41,5 @@ STDIN="true"
 STDIN="$STDIN && netstat -nrf inet | gawk --posix -- 'BEGIN { FS = \"[[:blank:]]+\" } /([0-9]{1,3}\.){3}[0-9]{1,3}/ { print $1 \":\" $2 }'"
 STDIN="$STDIN && exit"
 
-echo $STDIN | zlogin $ZONE_NAME sh
+echo $STDIN | zlogin $ZONE_NAME sh 2> /dev/null
 

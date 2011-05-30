@@ -246,6 +246,21 @@ public class Worker implements WorkerMBean {
 
 				Appliance app = new Appliance( name, project, appType, "dummy" );  // TODO-DAWID  repo id!
 
+				// Try to discover routing table entries.
+
+				try {
+
+					ModifyZoneCommand cmd = commandFactory.getModifyZoneCommand();
+
+					for ( Map.Entry< String, String > entry : cmd.readRoutes( zone ).entrySet() ) {
+						app.getRoutingTable().routeAdd( IpAddress.fromString( entry.getKey() + "/24" ),  // TODO-DAWID: detect netmask!
+						                                IpAddress.fromString( entry.getValue() ) );
+					}
+
+				} catch ( CommandException ex ) {
+					logger.error( "Error while reading routing table entries.", ex );
+				}
+
 				if ( ! res.containsKey( project ) ) {
 					res.put( project, new LinkedList< Appliance >() );
 				}
