@@ -22,6 +22,7 @@ public abstract class AbstractSolaris10ZoneCommand extends AbstractSolarisComman
 	public final static String CONFIGURE_INTERFACES = "zone/jims_zconfig_ifaces.sh";
 	public final static String SETUP_FORWARDING = "zone/jims_zsetup_forwarding.sh";
 	public final static String ROUTE_MANAGEMENT = "zone/jims_zmanage_routes.sh";
+	public final static String ROUTE_READ = "zone/jims_zread_routes.sh";
 
 	
 	public AbstractSolaris10ZoneCommand() 
@@ -234,6 +235,19 @@ public abstract class AbstractSolaris10ZoneCommand extends AbstractSolarisComman
 			cmdtokenslist.add( "-a" );
 			cmdtokenslist.add( dit.next() + ":" + git.next() );
 		}
+
+		return cmdtokenslist.toArray( new String[]{} );
+
+	}
+
+	public String[] createReadRoutesCommand( String zoneName ) {
+
+		List< String > cmdtokenslist = new ArrayList< String >();
+
+		cmdtokenslist.add( prepareJimsScriptPath( ROUTE_READ ) );
+
+		cmdtokenslist.add( "-z" );
+		cmdtokenslist.add( zoneName );
 
 		return cmdtokenslist.toArray( new String[]{} );
 
