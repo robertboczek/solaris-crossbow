@@ -37,12 +37,15 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 	private StringBuilder sb = new StringBuilder();
 	private ProgressNotification progressNotification = null;
 
+	private final MBeanServer server;
+
 	private final WNDelegateMBean delegate;
 
-	public CrossbowNotification(WNDelegateMBean delegate) {
+	public CrossbowNotification(MBeanServer server, WNDelegateMBean delegate) {
 
 		this.index = 0;
 		this.delegate = delegate;
+		this.server = server;
 	}
 
 	/**
@@ -66,9 +69,21 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 
 		}*/
 
+		ObjectName workerProgressObjectName = new ObjectName( "Crossbow:type=WorkerProgress" );
+		server.removeNotificationListener( workerProgressObjectName, this );
+
+		//registers listener at server
+		try {
+			server.addNotificationListener( workerProgressObjectName, this, null, null );
+
+		} catch( Exception e ) {
+			log.error("Exception while registering listener at WorkerProgresses", e);
+			e.printStackTrace();
+		}
+
 		try {
 
-			totalTasks =  delegate.scGetAllMBeanServers().length;
+			totalTasks =  0;//delegate.scGetAllMBeanServers().length;
 			for ( String url : delegate.scGetAllMBeanServers() ) {
 
 				try {
@@ -87,8 +102,9 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 						worker.clearListeners();
 					}
 
-					mbsc.addNotificationListener(new ObjectName( "Crossbow:type=WorkerProgress" ), this,
-						null, null);
+					mbsc.removeNotificationListener( workerProgressObjectName, this );
+					mbsc.addNotificationListener( workerProgressObjectName, this, null, null);
+					totalTasks++;
 
 					log.info( "CrosbowNotification successfully registered lestener at WorkerProgressMBean (url: " + url + ")" );
 
@@ -97,6 +113,8 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 				}
 
 			}
+
+			totalTasks *= 3;
 
 		} catch ( RemoteException ex ) {
 			log.error( "Error while getting MBean servers list.", ex );
@@ -165,7 +183,9 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 		sb = new StringBuilder();
 		progressNotification = new ProgressNotification(0, totalTasks,
 					WorkerProgress.getIpAddress());
+
 		registerNotificationListener();
+		
 		
 
 	}
