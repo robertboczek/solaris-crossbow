@@ -6,7 +6,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -81,12 +80,12 @@ public class SshPanel extends JPanel {
 		console.setFont(f);
 		console.setBackground(Color.BLACK);
 		console.setForeground(Color.WHITE);
-		console.setSize(480, 640);
+		console.setSize(480, 680);
 
 		// Create a tabbed pane
 		scrollPane = new JScrollPane(console);
 		scrollPane
-				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
 		this.setLayout(new BorderLayout());
 		this.add(scrollPane, BorderLayout.CENTER);
@@ -96,14 +95,21 @@ public class SshPanel extends JPanel {
 		// console.setCaretColor(Color.WHITE);
 
 		KeyAdapter kl = new KeyAdapter() {
+			StringBuilder sb = new StringBuilder();
+
 			public void keyTyped(KeyEvent e) {
 				int c = e.getKeyChar();
 
 				try {
+					sb.append(e.getKeyChar());
 					out.write(c);
 				} catch (IOException e1) {
 				}
 				e.consume();
+
+				if (sb.toString().endsWith("exit\n")) {
+					disconnect();
+				}
 			}
 		};
 
@@ -333,13 +339,17 @@ public class SshPanel extends JPanel {
 				while (true) {
 					if (conn.isAuthMethodAvailable(host.getUsername(),
 							"password")) {
-						String passwd = null;;
-						if (host.getPasswd() == null || String.valueOf(host.getPasswd()).equals("")) {
+						String passwd = null;
+						;
+						if (host.getPasswd() == null
+								|| String.valueOf(host.getPasswd()).equals("")) {
 							EnterSomethingDialog esd = new EnterSomethingDialog(
 									SshPanel.this.frame,
 									"DSA Authentication",
 									new String[] {
-											"Password was not provided for " + host.getAddress() + " address",
+											"Password was not provided for "
+													+ host.getAddress()
+													+ " address",
 											"Enter DSA private key password:" },
 									true);
 							esd.setVisible(true);
@@ -479,13 +489,28 @@ public class SshPanel extends JPanel {
 	}
 
 	public void disconnect() {
-		if (remoteConsumer != null) {
-			remoteConsumer.interrupt();
+		
+		console
+		.setText(console.getText()
+				+ "\n Connection was terminated. Please close this tab...");
+		
+		try {
+			if (remoteConsumer != null) {
+				remoteConsumer.interrupt();
+			}
+			if (connectionThread != null) {
+				connectionThread.interrupt();
+			}
+			logger.info("Closing session with: " + host.getAddress());
+			if (in != null) {
+				in.close();
+			}
+			if (out != null) {
+				out.close();
+			}
+		} catch (IOException e) {
+			logger.error(e);
 		}
-		if (connectionThread != null) {
-			connectionThread.interrupt();
-		}
-		logger.info("Closing session with: " + host.getAddress());
 		sess.close();
 	}
 
