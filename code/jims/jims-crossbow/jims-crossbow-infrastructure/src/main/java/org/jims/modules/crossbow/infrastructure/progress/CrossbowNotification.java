@@ -60,7 +60,7 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 		ObjectName workerProgressObjectName = null;
 		try { 
 
-			workerProgressObjectName = new ObjectName( "Crossbow:type=WorkerProgress" );
+			workerProgressObjectName = ObjectName.getInstance( "Crossbow:type=WorkerProgress" );
 
 		} catch( Exception e ) {
 			log.error("Exception while creating workerProgress ObjectName", e);
@@ -102,11 +102,14 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 						WorkerProgressMBean.class
 					);
 
-					if(worker != null) {
+					/*if(worker != null) {
 						worker.clearListeners();
+					}*/
+					try{
+						mbsc.removeNotificationListener( workerProgressObjectName, this );
+					} catch( Exception e ) {
+						log.error( "Exception while removing notification listener from MBean server (url: " + url + ")", e );
 					}
-
-					//mbsc.removeNotificationListener( workerProgressObjectName, this );
 					mbsc.addNotificationListener( workerProgressObjectName, this, null, null);
 					totalTasks++;
 
@@ -115,7 +118,6 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 				} catch ( Exception ex ) {
 					log.error( "Error while querying MBean server (url: " + url + ")", ex );
 				}
-
 			}
 
 			totalTasks *= 3;

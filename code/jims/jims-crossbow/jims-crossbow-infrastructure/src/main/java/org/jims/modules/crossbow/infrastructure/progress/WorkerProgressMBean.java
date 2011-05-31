@@ -2,14 +2,12 @@ package org.jims.modules.crossbow.infrastructure.progress;
 
 import java.io.Serializable;
 
-import javax.management.NotificationBroadcaster;
-
-public interface WorkerProgressMBean extends Serializable, NotificationBroadcaster{
+public interface WorkerProgressMBean extends Serializable{
 	
 	public void sendLogNotification(String log);
 	
 	public void sendTaskCompletedNotification();
 
-	public void clearListeners();
+	//public void clearListeners();
 
 }
