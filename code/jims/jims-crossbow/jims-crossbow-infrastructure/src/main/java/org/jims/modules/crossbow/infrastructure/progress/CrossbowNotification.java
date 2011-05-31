@@ -69,11 +69,13 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 
 		}*/
 
-		ObjectName workerProgressObjectName = new ObjectName( "Crossbow:type=WorkerProgress" );
-		server.removeNotificationListener( workerProgressObjectName, this );
+		ObjectName workerProgressObjectName = null;
+		try { 
 
-		//registers listener at server
-		try {
+			workerProgressObjectName = new ObjectName( "Crossbow:type=WorkerProgress" );
+			server.removeNotificationListener( workerProgressObjectName, this );
+
+			//registers listener at server
 			server.addNotificationListener( workerProgressObjectName, this, null, null );
 
 		} catch( Exception e ) {
