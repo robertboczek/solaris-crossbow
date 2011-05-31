@@ -73,14 +73,15 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 
 			workerProgress.clearListeners();
 			server.addNotificationListener( workerProgressObjectName, this, null, null);
-			log.debug("Worker progress listener successfully registered");
+			log.info("Worker progress listener successfully registered");
 
 		} catch( Exception e ) {
 			log.error("Exception while clearing listeners", e);
 			e.printStackTrace();
 		}
+		totalTasks = 3;
 
-		try {
+		/*try {
 
 			totalTasks =  0;//delegate.scGetAllMBeanServers().length;
 			for ( String url : delegate.scGetAllMBeanServers() ) {
@@ -113,7 +114,7 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 
 			}
 
-			totalTasks *= 3;
+			totalTasks *= 3;*/
 
 		} catch ( RemoteException ex ) {
 			log.error( "Error while getting MBean servers list.", ex );
