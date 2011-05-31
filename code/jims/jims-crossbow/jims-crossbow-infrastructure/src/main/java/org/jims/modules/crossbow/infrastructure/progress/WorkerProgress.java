@@ -33,6 +33,7 @@ public class WorkerProgress implements WorkerProgressMBean {
 	public void addNotificationListener(NotificationListener listener,
 			NotificationFilter filter, Object handback)
 			throws IllegalArgumentException {
+		log.info("New notification listener registered at WorkerProgressMBean");
 		listeners.add(listener);
 	}
 

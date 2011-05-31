@@ -69,7 +69,7 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 
 		MBeanServer server = JimsMBeanServer.findJimsMBeanServer();
 
-		try { 
+		/*try { 
 
 			workerProgress.clearListeners();
 			server.addNotificationListener( workerProgressObjectName, this, null, null);
@@ -78,10 +78,14 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 		} catch( Exception e ) {
 			log.error("Exception while clearing listeners", e);
 			e.printStackTrace();
-		}
+		}*/
 		totalTasks = 3;
 
-		/*try {
+		for ( String url : delegate.scGetAllMBeanServers() ) {
+			log.info(url);
+		}
+
+		try {
 
 			totalTasks =  0;//delegate.scGetAllMBeanServers().length;
 			for ( String url : delegate.scGetAllMBeanServers() ) {
@@ -115,10 +119,13 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 			}
 
 			totalTasks *= 3;
+	
+			progressNotification = new ProgressNotification(0, totalTasks,
+				WorkerProgress.getIpAddress());
 
 		} catch ( RemoteException ex ) {
 			log.error( "Error while getting MBean servers list.", ex );
-		}*/
+		}
 
 	}
 
@@ -181,8 +188,6 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 
 		index = 0;
 		sb = new StringBuilder();
-		progressNotification = new ProgressNotification(0, totalTasks,
-					WorkerProgress.getIpAddress());
 
 		registerNotificationListener();
 		
