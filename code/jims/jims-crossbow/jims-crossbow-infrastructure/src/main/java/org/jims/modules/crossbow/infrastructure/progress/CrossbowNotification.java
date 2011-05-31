@@ -58,9 +58,9 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 		log.debug("Reseting and registering at all WorkerProgressMBeans as listener");
 
 		ObjectName workerProgressObjectName = null;
-		ObjectName crossbowNotification = null;
+		ObjectName crossbowNotificationObjectName = null;
 		try { 
-			crossbowNotification = ObjectName.getInstance( "Crossbow:type=CrossbowNotification" );
+			crossbowNotificationObjectName = ObjectName.getInstance( "Crossbow:type=CrossbowNotification" );
 			workerProgressObjectName = ObjectName.getInstance( "Crossbow:type=WorkerProgress" );
 
 		} catch( Exception e ) {
@@ -102,11 +102,11 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 						worker.clearListeners();
 					}*/
 					try{
-						mbsc.removeNotificationListener( workerProgressObjectName, crossbowNotification );
+						mbsc.removeNotificationListener( workerProgressObjectName, crossbowNotificationObjectName );
 					} catch( Exception e ) {
 						log.error( "Exception while removing notification listener from MBean server (url: " + url + ")", e );
 					}
-					mbsc.addNotificationListener( workerProgressObjectName, this, null, null);
+					mbsc.addNotificationListener( workerProgressObjectName, crossbowNotificationObjectName, null, null);
 					totalTasks++;
 
 					log.info( "CrosbowNotification successfully registered lestener at WorkerProgressMBean (url: " + url + ")" );
