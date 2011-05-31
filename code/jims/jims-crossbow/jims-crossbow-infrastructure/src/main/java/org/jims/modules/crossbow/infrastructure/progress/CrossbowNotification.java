@@ -114,11 +114,11 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 
 			}
 
-			totalTasks *= 3;*/
+			totalTasks *= 3;
 
 		} catch ( RemoteException ex ) {
 			log.error( "Error while getting MBean servers list.", ex );
-		}
+		}*/
 
 	}
 
