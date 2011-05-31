@@ -51,6 +51,7 @@ public class WorkerProgress implements WorkerProgressMBean {
 
 	@Override
 	public void clearListeners() {
+		log.info("Clearing all listeners form WorkerProgressMBean");
 		listeners.clear();
 	}
 

@@ -130,7 +130,7 @@ public class CrossbowStarter implements CrossbowStarterMBean {
 		server.registerMBean( workerProgress, new ObjectName( "Crossbow:type=WorkerProgress" ) );
 
 		// CrossbowNotification must register at every single WorkerProgressMBean
-		CrossbowNotificationMBean crossbowNotification = new CrossbowNotification(/*server,*/ wnDelegate);
+		CrossbowNotificationMBean crossbowNotification = new CrossbowNotification(workerProgress, wnDelegate);
 		server.registerMBean( crossbowNotification, new ObjectName( "Crossbow:type=CrossbowNotification" ) );
 
 		Assigner assigner = new Assigner();

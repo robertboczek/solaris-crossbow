@@ -37,15 +37,15 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 	private StringBuilder sb = new StringBuilder();
 	private ProgressNotification progressNotification = null;
 
-	//private final MBeanServer server;
+	private final WorkerProgressMBean workerProgress;
 
 	private final WNDelegateMBean delegate;
 
-	public CrossbowNotification(/*MBeanServer server,*/ WNDelegateMBean delegate) {
+	public CrossbowNotification(WorkerProgressMBean workerProgress, WNDelegateMBean delegate) {
 
 		this.index = 0;
 		this.delegate = delegate;
-		//this.server = server;
+		this.workerProgress = workerProgress;
 	}
 
 	/**
@@ -57,39 +57,28 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 
 		log.debug("Reseting and registering at all WorkerProgressMBeans as listener");
 
-		/*MBeanServer server = JimsMBeanServer.findJimsMBeanServer();
-		if(server != null) {
-			try{
-				server.addNotificationListener(new ObjectName( "Crossbow:type=WorkerProgress" ), this,
-					null, null);
-				log.debug("Worker progress listener successfully registered");
-			}catch(Exception e) {
-				log.error("Couldn't register WorkerProgress Listener");
-			}
-
-		}*/
-
 		ObjectName workerProgressObjectName = null;
 		try { 
 
 			workerProgressObjectName = new ObjectName( "Crossbow:type=WorkerProgress" );
-			
-//			server.removeNotificationListener( workerProgressObjectName, this );
 
 		} catch( Exception e ) {
-			log.error("Exception while creating workerProgress Object", e);
+			log.error("Exception while creating workerProgress ObjectName", e);
 			e.printStackTrace();
 		}
 
-		/*try {
+		MBeanServer server = JimsMBeanServer.findJimsMBeanServer();
 
-			//registers listener at server
-			server.addNotificationListener( workerProgressObjectName, this, null, null );
+		try { 
+
+			workerProgress.clearListeners();
+			server.addNotificationListener( workerProgressObjectName, this, null, null);
+			log.debug("Worker progress listener successfully registered");
 
 		} catch( Exception e ) {
-			log.error("Exception while registering listener at WorkerProgresses", e);
+			log.error("Exception while clearing listeners", e);
 			e.printStackTrace();
-		}*/
+		}
 
 		try {
 
@@ -104,7 +93,7 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 
 					WorkerProgressMBean worker = JMX.newMBeanProxy(
 						mbsc,
-						new ObjectName( "Crossbow:type=WorkerProgress" ),
+						workerProgressObjectName,
 						WorkerProgressMBean.class
 					);
 
