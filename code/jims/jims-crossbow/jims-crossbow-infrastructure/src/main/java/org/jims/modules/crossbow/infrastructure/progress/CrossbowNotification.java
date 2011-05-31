@@ -37,15 +37,15 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 	private StringBuilder sb = new StringBuilder();
 	private ProgressNotification progressNotification = null;
 
-	private final MBeanServer server;
+	//private final MBeanServer server;
 
 	private final WNDelegateMBean delegate;
 
-	public CrossbowNotification(MBeanServer server, WNDelegateMBean delegate) {
+	public CrossbowNotification(/*MBeanServer server,*/ WNDelegateMBean delegate) {
 
 		this.index = 0;
 		this.delegate = delegate;
-		this.server = server;
+		//this.server = server;
 	}
 
 	/**
@@ -73,7 +73,15 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 		try { 
 
 			workerProgressObjectName = new ObjectName( "Crossbow:type=WorkerProgress" );
-			server.removeNotificationListener( workerProgressObjectName, this );
+			
+//			server.removeNotificationListener( workerProgressObjectName, this );
+
+		} catch( Exception e ) {
+			log.error("Exception while creating workerProgress Object", e);
+			e.printStackTrace();
+		}
+
+		/*try {
 
 			//registers listener at server
 			server.addNotificationListener( workerProgressObjectName, this, null, null );
@@ -81,7 +89,7 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 		} catch( Exception e ) {
 			log.error("Exception while registering listener at WorkerProgresses", e);
 			e.printStackTrace();
-		}
+		}*/
 
 		try {
 
@@ -104,7 +112,7 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 						worker.clearListeners();
 					}
 
-					mbsc.removeNotificationListener( workerProgressObjectName, this );
+					//mbsc.removeNotificationListener( workerProgressObjectName, this );
 					mbsc.addNotificationListener( workerProgressObjectName, this, null, null);
 					totalTasks++;
 
