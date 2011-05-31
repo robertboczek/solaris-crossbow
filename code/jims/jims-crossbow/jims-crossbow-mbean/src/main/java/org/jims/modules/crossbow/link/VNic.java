@@ -71,7 +71,7 @@ public class VNic extends Link implements VNicMBean {
 
 			String res = "0.0.0.0";
 			String cmd[] = { "zlogin",
-			                 this.name.replaceAll( "\\.\\.IFACE[0-9]", "" ),  // TODO-DAWID  < this is temporary
+			                 this.name.replaceAll( "_IFACE[0-9]", "" ),  // TODO-DAWID  < this is temporary
 			                 "ifconfig " + this.name + " | grep inet | sed 's/.*inet \\([.0-9]*\\).*/\\1/'" };
 
 			try {
