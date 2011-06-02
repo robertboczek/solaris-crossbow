@@ -83,7 +83,7 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 
 		try {
 
-			totalTasks =  0;//delegate.scGetAllMBeanServers().length;
+			//totalTasks =  0;//delegate.scGetAllMBeanServers().length;
 			for ( String url : delegate.scGetAllMBeanServers() ) {
 
 				try {
@@ -107,7 +107,7 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 						log.error( "Exception while removing notification listener from MBean server (url: " + url + ")", e );
 					}
 					mbsc.addNotificationListener( workerProgressObjectName, crossbowNotificationObjectName, null, null);
-					totalTasks++;
+					//totalTasks++;
 
 					log.info( "CrosbowNotification successfully registered lestener at WorkerProgressMBean (url: " + url + ")" );
 
@@ -116,7 +116,7 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 				}
 			}
 
-			totalTasks *= 3;
+			//totalTasks *= 3;
 	
 			progressNotification = new ProgressNotification(0, totalTasks,
 				WorkerProgress.getIpAddress());
@@ -182,10 +182,11 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 	}
 
 	@Override
-	public void reset() {
+	public void reset(int numberOfNodes) {
 
 		index = 0;
 		sb = new StringBuilder();
+		totalTasks = numberOfNodes * 3;
 
 		registerNotificationListener();
 		
