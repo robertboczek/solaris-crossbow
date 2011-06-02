@@ -146,5 +146,29 @@ public class GraphToModelTranslator {
 		updateProjectIdName(networkStructureHelper.getRemovedObjects(), networkStructureHelper.getProjectId());
 	}
 
+	public int getNumberOfUsedNodes( Graph g ) {
+		
+		Set<String> set = new HashSet<String>();
+		
+		for ( Object node : g.getNodes() ) {
+			
+			if ( node instanceof GraphContainer ) {
+				
+				GraphContainer container = ( GraphContainer ) node;
+				String workerId = ( String ) container.getData();
+				
+				for ( Object inner : container.getNodes() ) {
+					
+					if(!set.contains(workerId)) {
+						set.add(workerId);
+					}
+				}
+				
+			}
+		}
+		
+		return set.size();
+	}
+
 
 }

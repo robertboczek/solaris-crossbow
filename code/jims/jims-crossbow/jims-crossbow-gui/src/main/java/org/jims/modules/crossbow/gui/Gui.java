@@ -59,6 +59,7 @@ import org.jims.modules.crossbow.gui.data.GraphConnectionData;
 import org.jims.modules.crossbow.gui.data.NetworkInfo;
 import org.jims.modules.crossbow.gui.dialogs.EditResourceDialog;
 import org.jims.modules.crossbow.gui.dialogs.InterfaceStatisticsDetailsDialog;
+import org.jims.modules.crossbow.gui.dialogs.ProgressShell;
 import org.jims.modules.crossbow.gui.dialogs.SelectFlowForChart;
 import org.jims.modules.crossbow.gui.dialogs.SelectNetworkInterfacesDialog;
 import org.jims.modules.crossbow.gui.ssh.SshTerminalWindow;
@@ -515,36 +516,38 @@ public class Gui extends Shell {
 
 			final ObjectModel objModel = objectModel;
 
-			CrossbowNotificationMBean crossbowNotificationMBean = componentProxyFactory
+			final CrossbowNotificationMBean crossbowNotificationMBean = componentProxyFactory
 					.createProxy(CrossbowNotificationMBean.class);
+			
+			final GraphToModelTranslator translator = new GraphToModelTranslator();
+			
+			final Actions actions = translator.createActions( objModel, networkStructureHelper );
+			
+			class AssignmentCreator implements Runnable {
 
-			crossbowNotificationMBean.reset();
-			logger.trace("Reseting progress state before deployment");
-
-			 //ProgressShell progressShell = new ProgressShell(Gui.this,
-			 //componentProxyFactory, display); progressShell.create(); if
-			 //(progressShell.open() == Window.OK) { }
-			 
+				@Override
+				public void run() {
+					assignments = translator.createAssignments( graph );
+				}
+				
+				public int getNumberOfNodes() {
+				
+					return translator.getNumberOfUsedNodes( graph );
+				}
+				
+				volatile Assignments assignments;
+				
+			};
+			
+			final AssignmentCreator assignmentCreator = new AssignmentCreator();
+			display.syncExec( assignmentCreator );
+			
+			logger.debug("Reseting progress state before deployment - number of used nodes is: " + assignmentCreator.getNumberOfNodes());
+			crossbowNotificationMBean.reset(assignmentCreator.getNumberOfNodes());
+			
 			new Thread() {
 				public void run() {
 					// try {
-						final GraphToModelTranslator translator = new GraphToModelTranslator();
-						
-						Actions actions = translator.createActions( objModel, networkStructureHelper );
-						
-						class AssignmentCreator implements Runnable {
-
-							@Override
-							public void run() {
-								assignments = translator.createAssignments( graph );
-							}
-							
-							volatile Assignments assignments;
-							
-						};
-						
-						AssignmentCreator assignmentCreator = new AssignmentCreator();
-						display.syncExec( assignmentCreator );
 						
 						for (Map.Entry<Object, Action> entry : actions.getAll().entrySet()) {
 							logger.debug("Object with action - " + entry.getKey() + " "
@@ -568,6 +571,12 @@ public class Gui extends Shell {
 						
 				}
 			}.start();
+
+			 ProgressShell progressShell = new ProgressShell(Gui.this, componentProxyFactory, display); 
+			 progressShell.create(); 
+			 if (progressShell.open() == Window.OK) { 
+				 
+			 }
 			
 			 } catch (Exception e) {
 			MessageDialog.openError(null, "Connection problem",

@@ -30,16 +30,12 @@ public class ProgressShell extends ProgressMonitorDialog {
 	private ComponentProxyFactory componentProxyFactory;
 	private CrossbowNotificationMBean crossbowNotificationMBean;
 
-	private Button closeButton;
-
 	private String logs;
 	private ProgressNotification progressNotification;
 
 	private ProgressThread progressThread = null;
 
 	private boolean running = true;
-
-	private Gui gui;
 
 	private Display display;
 
@@ -52,7 +48,6 @@ public class ProgressShell extends ProgressMonitorDialog {
 	public ProgressShell(Gui shell, ComponentProxyFactory componentProxyFactory, Display display) {
 		super(shell);
 
-		this.gui = shell;
 		this.display = display;
 		this.componentProxyFactory = componentProxyFactory;
 
@@ -79,8 +74,8 @@ public class ProgressShell extends ProgressMonitorDialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 
-		this.setCancelable(false);
-		this.setBlockOnOpen(false);
+		this.setCancelable(true);
+		this.setBlockOnOpen(true);
 
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
@@ -117,22 +112,6 @@ public class ProgressShell extends ProgressMonitorDialog {
 		logsText.setSize(250, 80);
 		logsText.setLayoutData(gridData);
 		logsText.setEditable(false);
-
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-		new Label(parent, SWT.NONE);
-
-		closeButton = new Button(parent, SWT.PUSH);
-		closeButton.setText("Close");
-		closeButton.setEnabled(false);
-
-		closeButton.addListener(SWT.MouseUp, new Listener() {
-
-			@Override
-			public void handleEvent(Event arg0) {
-				ProgressShell.this.close();
-			}
-		});
 
 		return parent;
 
@@ -209,8 +188,7 @@ public class ProgressShell extends ProgressMonitorDialog {
 							+ " was updated");
 
 					// okienko powinno sie zamknac po zakonczeniu
-					// procesu
-					// deployementu
+					// procesu deployementu
 
 					if (progressNotification.getCurrent() == progressNotification
 							.getMax()) {
@@ -223,12 +201,6 @@ public class ProgressShell extends ProgressMonitorDialog {
 
 					progressNotification = null;
 				}
-
-				if (!running) {
-					logger.trace("Enabling close button");
-					closeButton.setEnabled(true);
-				}
-
 			}
 
 		});
