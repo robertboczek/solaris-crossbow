@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -341,22 +342,29 @@ public class EditResourceDialog extends TitleAreaDialog {
 
 					for (Map.Entry<IpAddress, IpAddress> entry : app
 							.getRoutingTable().getRoutes().entrySet()) {
+						
+						if ( ( null == entry.getKey() ) || ( null == entry.getValue() ) ) {
+							continue;
+						}
+						
 						entries.add(new Pair<String, String>(entry.getKey()
 								.toString(), entry.getValue().toString()));
 					}
 
-					RoutingTableDialog dialog = new RoutingTableDialog(
-							parentShell, SWT.NONE, entries);
-					dialog.open();
+					RoutingTableDialog dialog = new RoutingTableDialog( entries, parentShell );
+					
+					if ( IDialogConstants.OK_ID == dialog.open() ) {
 
-					RoutingTable routingTable = new RoutingTable();
-					for (Pair<String, String> entry : entries) {
-						routingTable.routeAdd(
-								IpAddress.fromString(entry.first), IpAddress
-										.fromString(entry.second));
+						RoutingTable routingTable = new RoutingTable();
+						for (Pair<String, String> entry : entries) {
+							routingTable.routeAdd(
+									IpAddress.fromString(entry.first), IpAddress
+											.fromString(entry.second));
+						}
+	
+						app.setRoutingTable(routingTable);
+					
 					}
-
-					app.setRoutingTable(routingTable);
 
 				}
 			});

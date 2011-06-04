@@ -100,6 +100,12 @@ public void translate( Graph graph, ObjectModel om, Assignments assignments,
 		
 		graph.applyLayout();
 		
+		for ( Object o : graph.getNodes() ) {
+			if ( o instanceof GraphContainer ) {
+				( ( GraphContainer ) o ).applyLayout();
+			}
+		}
+		
 	}
 	
 	

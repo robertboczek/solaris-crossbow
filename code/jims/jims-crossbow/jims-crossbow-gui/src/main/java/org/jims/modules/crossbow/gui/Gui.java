@@ -1370,38 +1370,43 @@ public class Gui extends Shell {
 								&& graphConnectionData.getEndp1() instanceof Interface) {
 							sb.append(((Interface) graphConnectionData
 									.getEndp1()).getIpAddress());
+							sb.append( "\n" );
 						}
 						if (graphConnectionData.getStatistic1() != null) {
-							sb.append(" received: ");
 							sb.append(countAvgBandwidth(graphConnectionData
 									.getStatistic1().getAverageStatistics()
 									.get(LinkStatistics.RBYTES)));
-							sb.append(" kbps sent: ");
+							sb.append(" KB IN\n");
 							sb.append(countAvgBandwidth(graphConnectionData
 									.getStatistic1().getAverageStatistics()
 									.get(LinkStatistics.OBYTES)));
-							sb.append(" kbps");
+							sb.append(" KB OUT");
 						}
 
-						if (!sb.toString().equals("")) {
-							sb.append("  ;  ");
-						}
-
+						boolean vspace = true;
+						
 						if (graphConnectionData.getEndp2() != null
 								&& graphConnectionData.getEndp2() instanceof Interface) {
+							sb.append( "\n\n" );
 							sb.append(((Interface) graphConnectionData
 									.getEndp2()).getIpAddress());
+							sb.append( "\n" );
+							vspace = false;
 						}
 						if (graphConnectionData.getStatistic2() != null) {
-							sb.append(" received: ");
+							
+							if ( vspace ) {
+								sb.append( "\n\n" );
+							}
+							
 							sb.append(countAvgBandwidth(graphConnectionData
 									.getStatistic2().getAverageStatistics()
 									.get(LinkStatistics.RBYTES)));
-							sb.append(" kbps sent: ");
+							sb.append(" KB IN\n");
 							sb.append(countAvgBandwidth(graphConnectionData
 									.getStatistic2().getAverageStatistics()
 									.get(LinkStatistics.OBYTES)));
-							sb.append(" kbps");
+							sb.append(" KB OUT");
 						}
 
 						logger.info("Updated statistics " + sb.toString());

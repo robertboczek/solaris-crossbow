@@ -3,33 +3,33 @@ package org.jims.modules.crossbow.gui.dialogs;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.swt.widgets.Dialog;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
-import org.jims.modules.crossbow.util.struct.Pair;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
+import org.jims.modules.crossbow.util.struct.Pair;
 
 
-public class RoutingTableDialog extends Dialog {
+public class RoutingTableDialog extends TitleAreaDialog {
 	
 	class RTBridge {
 		
@@ -53,122 +53,37 @@ public class RoutingTableDialog extends Dialog {
 		}
 		
 	}
-
-	protected Object result;
-	protected Shell shlManageRoutingTable;
-	private Table table;
-	private RTBridge rtBridge = new RTBridge();
-	private List< Pair< String, String > > entries;
-	private Combo target;
-	private Combo gateway;
-	private Button btnOk;
-	private Button btnAdd;
+	
 
 	/**
 	 * Create the dialog.
-	 * @param parent
-	 * @param style
+	 * @param parentShell
 	 */
-	public RoutingTableDialog( Shell parent, int style, List< Pair< String, String > > entries ) {
-		super(parent, style);
-		setText("SWT Dialog");
+	public RoutingTableDialog( List< Pair< String, String > > entries, Shell parentShell ) {
+		
+		super( parentShell );
+		setShellStyle(SWT.BORDER | SWT.TITLE | SWT.APPLICATION_MODAL);
 		
 		this.entries = entries;
-	}
-
-	/**
-	 * Open the dialog.
-	 * @return the result
-	 */
-	public Object open() {
-		createContents();
-		init();
-		shlManageRoutingTable.open();
-		shlManageRoutingTable.layout();
-		Display display = getParent().getDisplay();
-		while (!shlManageRoutingTable.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}
-		return result;
-	}
-
-	private void init() {
-		
-		rtBridge.setEntries( entries );
-		
-		table.addSelectionListener( new SelectionListener() {
-			
-			@Override
-			public void widgetSelected( SelectionEvent e ) {
-				
-				String targetText = "", gatewayText = "";
-				
-				if ( 1 == table.getSelectionCount() ) {
-					targetText = table.getSelection()[ 0 ].getText( 0 );
-					gatewayText = table.getSelection()[ 0 ].getText( 1 );
-				}
-				
-				target.setText( targetText );
-				gateway.setText( gatewayText );
-				
-			}
-			
-			@Override
-			public void widgetDefaultSelected( SelectionEvent e ) {}
-			
-		} );
-		
-		shlManageRoutingTable.addDisposeListener( new DisposeListener() {
-			@Override
-			public void widgetDisposed( DisposeEvent e ) {
-				entries.clear();
-				entries.addAll( rtBridge.getEntries() );
-			}
-		} );
-		
-		btnAdd.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseUp(MouseEvent e) {
-				TableItem item = new TableItem( table, SWT.NONE );
-				item.setText( new String[]{ target.getText(), gateway.getText() } );
-			}
-		});
-		
-		btnOk.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				shlManageRoutingTable.close();
-			}
-		});
 		
 	}
 
 	/**
 	 * Create contents of the dialog.
+	 * @param parent
 	 */
-	private void createContents() {
-		shlManageRoutingTable = new Shell(getParent(), SWT.DIALOG_TRIM | SWT.RESIZE | SWT.APPLICATION_MODAL);
-		shlManageRoutingTable.setSize(357, 286);
-		shlManageRoutingTable.setText("Manage routing table");
-		shlManageRoutingTable.setLayout(new FormLayout());
+	@Override
+	protected Control createDialogArea( Composite parent ) {
+		setTitle("Manage routing table");
 		
-		Composite composite = new Composite(shlManageRoutingTable, SWT.NONE);
-		GridLayout gl_composite = new GridLayout(1, false);
-		gl_composite.marginWidth = 0;
-		gl_composite.marginHeight = 0;
-		composite.setLayout(gl_composite);
-		FormData fd_composite = new FormData();
-		fd_composite.top = new FormAttachment(0, 10);
-		fd_composite.left = new FormAttachment(0, 8);
-		fd_composite.right = new FormAttachment(100, -10);
-		composite.setLayoutData(fd_composite);
+		Composite container = ( Composite ) super.createDialogArea( parent );
+		GridLayout gridLayout = (GridLayout) container.getLayout();
+		gridLayout.verticalSpacing = 5;
+		gridLayout.marginTop = 10;
+		gridLayout.marginRight = 10;
+		gridLayout.marginLeft = 10;
 		
-		btnOk = new Button(shlManageRoutingTable, SWT.NONE);
-		fd_composite.bottom = new FormAttachment(btnOk, -10);
-		
-		Composite composite_1 = new Composite(composite, SWT.NONE);
+		Composite composite_1 = new Composite( container, SWT.NONE);
 		GridLayout gl_composite_1 = new GridLayout(5, false);
 		gl_composite_1.marginHeight = 0;
 		gl_composite_1.marginWidth = 0;
@@ -192,32 +107,110 @@ public class RoutingTableDialog extends Dialog {
 		btnAdd = new Button(composite_1, SWT.NONE);
 		btnAdd.setText("ADD");
 		
-		table = new Table(composite, SWT.BORDER | SWT.FULL_SELECTION);
+		table = new Table( container, SWT.BORDER | SWT.FULL_SELECTION);
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		
 		TableColumn tblclmnTarget = new TableColumn(table, SWT.NONE);
-		tblclmnTarget.setWidth(165);
+		tblclmnTarget.setWidth(260);
 		tblclmnTarget.setText("Target");
 		
 		TableColumn tblclmnGateway = new TableColumn(table, SWT.NONE);
 		tblclmnGateway.setWidth(100);
 		tblclmnGateway.setText("Gateway");
-		FormData fd_btnOk = new FormData();
-		fd_btnOk.width = 75;
-		fd_btnOk.right = new FormAttachment(100, -10);
-		fd_btnOk.bottom = new FormAttachment(100, -10);
-		btnOk.setLayoutData(fd_btnOk);
-		btnOk.setText("OK");
 		
-		Button btnCancel = new Button(shlManageRoutingTable, SWT.NONE);
-		FormData fd_btnCancel = new FormData();
-		fd_btnCancel.width = 75;
-		fd_btnCancel.bottom = new FormAttachment(btnOk, 0, SWT.BOTTOM);
-		fd_btnCancel.right = new FormAttachment(btnOk, -6);
-		btnCancel.setLayoutData(fd_btnCancel);
-		btnCancel.setText("Cancel");
+		weave();
 
+		return container;
 	}
+	
+
+	private void weave() {
+		
+		table.addSelectionListener( new SelectionListener() {
+			
+			@Override
+			public void widgetSelected( SelectionEvent e ) {
+				
+				String targetText = "", gatewayText = "";
+				
+				if ( 1 == table.getSelectionCount() ) {
+					targetText = table.getSelection()[ 0 ].getText( 0 );
+					gatewayText = table.getSelection()[ 0 ].getText( 1 );
+				}
+				
+				target.setText( targetText );
+				gateway.setText( gatewayText );
+				
+			}
+			
+			@Override
+			public void widgetDefaultSelected( SelectionEvent e ) {}
+			
+		} );
+		
+		table.addKeyListener( new KeyListener() {
+			
+			@Override
+			public void keyReleased( KeyEvent e ) {
+				if ( SWT.DEL == e.keyCode ) {
+					table.remove( table.getSelectionIndices() );
+				}
+			}
+			
+			@Override
+			public void keyPressed( KeyEvent e ) {}
+			
+		} );
+		
+		getShell().addDisposeListener( new DisposeListener() {
+			@Override
+			public void widgetDisposed( DisposeEvent e ) {
+				entries.clear();
+				entries.addAll( rtBridge.getEntries() );
+			}
+		} );
+		
+		btnAdd.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseUp(MouseEvent e) {
+				TableItem item = new TableItem( table, SWT.NONE );
+				item.setText( new String[]{ target.getText(), gateway.getText() } );
+			}
+		});
+		
+		rtBridge.setEntries( entries );
+		
+  }
+
+	/**
+	 * Create contents of the button bar.
+	 * @param parent
+	 */
+	@Override
+	protected void createButtonsForButtonBar( Composite parent ) {
+		createButton( parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL,
+		    true );
+		createButton( parent, IDialogConstants.CANCEL_ID,
+		    IDialogConstants.CANCEL_LABEL, false );
+	}
+
+	/**
+	 * Return the initial size of the dialog.
+	 */
+	@Override
+	protected Point getInitialSize() {
+		return new Point( 540, 411 );
+	}
+	
+	
+	private List< Pair< String, String > > entries;
+	private RTBridge rtBridge = new RTBridge();
+	
+	private Button btnAdd;
+	private Combo target;
+	private Combo gateway;
+	private Table table;
+
 }
