@@ -25,8 +25,29 @@ public class IpAddress implements Serializable {
 			Matcher m = addrPattern.matcher( s );
 
 			if ( m.matches() ) {
-				int mask = ( null == m.group( 2 ) ) ? 32 : Integer.parseInt( m.group( 2 ) );
+
+				int mask = 0;  //  = ( null == m.group( 2 ) ) ? 32 : ;
+
+				if ( null != m.group( 2 ) ) {
+					mask = Integer.parseInt( m.group( 2 ) );
+				} else {
+
+					mask = 32;
+
+					// Try to detect most common netmasks (32, 24, 16, 0).
+
+					String parts[] = m.group( 1 ).split( "\\." );
+
+					int i = parts.length - 1;
+					while ( ( 0 <= i ) && ( "0".equals( parts[ i ] ) ) ) {
+						mask -= 8;
+						--i;
+					}
+				
+				}
+
 				return new IpAddress( m.group( 1 ), mask );
+
 			}
 
 			return null;

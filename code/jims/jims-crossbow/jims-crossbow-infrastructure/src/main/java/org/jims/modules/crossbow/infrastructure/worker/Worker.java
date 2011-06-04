@@ -255,8 +255,22 @@ public class Worker implements WorkerMBean {
 					for ( Map.Entry< String, String > entry : cmd.readRoutes( zone ).entrySet() ) {
 
 						if ( ! "127.0.0.1".equals( entry.getValue() ) ) {
-							app.getRoutingTable().routeAdd( IpAddress.fromString( entry.getKey() + "/24" ),  // TODO-DAWID: detect netmask!
-							                                IpAddress.fromString( entry.getValue() ) );
+
+							IpAddress destination;
+
+							if ( "default".equalsIgnoreCase( entry.getKey() ) ) {
+								destination = new IpAddress( "0.0.0.0", 0 );
+							} else {
+								destination = IpAddress.fromString( entry.getKey() );
+							}
+
+							if ( null != destination ) {
+								app.getRoutingTable().routeAdd( destination,
+								                                IpAddress.fromString( entry.getValue() ) );
+							} else {
+								logger.warn( "Ignoring null destination (gateway: " + entry.getValue() + ")." );
+							}
+
 						}
 
 					}
@@ -913,7 +927,7 @@ public class Worker implements WorkerMBean {
 					IpAddress dest = route.getKey();
 					IpAddress gate = route.getValue();
 
-					dests.add( dest.getAddress() + "/" + dest.getNetmask() );
+					dests.add( ( 0 == dest.getNetmask() ) ? "default" : dest.getAddress() + "/" + dest.getNetmask() );
 					gateways.add( gate.getAddress() );
 
 				}
