@@ -543,7 +543,7 @@ public class Gui extends Shell {
 			display.syncExec( assignmentCreator );
 			
 			logger.debug("Reseting progress state before deployment - number of used nodes is: " + assignmentCreator.getNumberOfNodes());
-			crossbowNotificationMBean.reset(assignmentCreator.getNumberOfNodes());
+			crossbowNotificationMBean.resetTotal(assignmentCreator.getNumberOfNodes());
 			
 			new Thread() {
 				public void run() {
