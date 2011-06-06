@@ -152,21 +152,23 @@
 
     \section{Crossbow - network virtualization technology}
 
+        It is generally acknowledged that Crossbow was invented in China in 341 B.C but it was in middle ages when 
+        it earned its recognition. Very easy in use and simultaneously very effective. The Solaris Crossbow mechanism 
+        for QoS are just like real crossbow's very efficient in comparision to other existing QoS mechanism and this
+        similarity indicates the project name origin.        
+
     \subsection{Crossbow architecture}
 
-      One of the most important condition in terms of network virtualization is that network traffic
+        One of the most important condition in terms of network virtualization is that network traffic
       should be insulated between virtual machines. This kind of isolation can be achieved by having
       a dedicated physical NIC, network cable and port from the switch to the virtual machine
-      itself.  Moreover, switch must also ensure sustainability on every port. In every other case
-      virtual machines will definitely interfere between each other. In a particular case when we
-      have to share physical NIC between virtual machines the most promising solution is to
+      itself. Moreover, switch must also ensure sustainability on every port. In every other case
+      virtual machines will definitely interfere between each other.        In a particular case when we have to share physical NIC between virtual machines the most promising solution is to
       virtualize NIC hardware and the second layer of the OSI/ISO stack where sharing is fair and
       interferences will be avoided. These approach was adapted in the Crossbow architecture in
-      OpenSolaris OS. Traffic separation is achieved by fundamental blocks of new architecture
-      which are Virtual NICs (VNICs) created by dividing NIC into many VNICs.  A VNIC can be
-      created over NIC or Etherstub ( more about them later ) and be dynamically controlled by the
-      bandwidth and CPU resources assigned to it. The crossbow architecture has introduced fully
-      paralized network stack structure. Each stack could be seen as fully independent lane (without
+      OpenSolaris OS.        Traffic separation is achieved by fundamental blocks of new architecture
+      which are Virtual NICs (VNICs) created by dividing NIC into many VNICs.         A VNIC can be created over NIC or Etherstub ( more about them later ) and be dynamically controlled by the
+      bandwidth and CPU resources assigned to it.        The crossbow architecture has introduced fully paralized network stack structure. Each stack could be seen as fully independent lane (without
       any shared locks, queues, and CPUs) therefore network isolation is guaranteed. Key concept is
       hardware classification performed by the NIC over which VNIC was created. Each lane has a
       dedicated buffer for Transmit (Tx) and Receive (Rx) ring. In case when load exceeds assigned
@@ -178,7 +180,7 @@
 		
 		\subsection{Virtualization lines}
 
-      Virtualization is the most key component in the Crossbow architecture. Each lane consists some
+                        Virtualization is the most key component in the Crossbow architecture. Each lane consists some
 			used to some concrete type of traffic. It usually would be composed of: 
 			\begin{enumerate}
 				\item{NIC resources( receive and transmit rings, interrupts, MAC address slots )}
@@ -215,25 +217,9 @@
 				machine can transmit any packets without performing queuing because of flow control or context switching.}
 			\end{enumerate}
 
-		
-		\subsection{Crossbow elements}
-
-			\subsubsection{VNics}
-			Virtual NICs (VNICs) that are related to their own lane are the key element in crossbow architecture. There is no
-			difference between NIC and VNIC in administration, they are all treated as data links. Every VNIC has an assigned
-			lane and flow classifier which classifies received packets by VNIC's MAC address and sometimes by the VLAN tag.
-			If created with a VLAN tag, protocols like GVRP or MVRP may be used to register the VLAN tag with the physical switches
-			too.	
-
-			In terms of sharing bandwidth, Crossbow enables administrative control of bandwidth for every single VNIC. The bandwidth of the link
-			is implemented by regulating the periodic intake of incoming packets per dedicated lane. The network stack allows only as many packets as it was 
-			assigned to specific VNIC. The lane picks more packets when the next period begins. In case of regulating the speed of transmited bandwidth it is much
-			easier as the network stack can either control the application that is generating the stream of packets or just drop the excessive amount of packets.
-			These mechanisms are also used in flows QoS described and discussed later in this paper.
-
-			\subsubsection{Virtual switching}
+                \subsection{Virtual switching}
 			
-			Virtual switches created always implicitly when the first VNIC is defined under existing NIC could never be accessed directly nor be visible by
+			Virtual switches are always created implicitly when the first VNIC is defined under existing NIC and could never be accessed directly nor be visible by
 			any user ( even administrator ). 
 			
 			\begin{figure}[H]
@@ -251,27 +237,64 @@
 
 			Connectivity between VNICs is available only when they were defined on the top of the same NIC. 
 
+		
+		\subsection{Crossbow elements}
+
+			\subsubsection{VNics}
+			Virtual NICs (VNICs) that are related to their own lane are the key element in crossbow architecture. There is no
+			difference between NIC and VNIC in administration, they are all treated as data links. Every VNIC has an assigned
+			lane and flow classifier which classifies received packets by VNIC's MAC address and sometimes by the VLAN tag.
+			If created with a VLAN tag, protocols like GVRP or MVRP may be used to register the VLAN tag with the physical switches
+			too.	
+
+			In terms of sharing bandwidth, Crossbow enables administrative control of bandwidth for every single VNIC. The bandwidth of the link
+			is implemented by regulating the periodic intake of incoming packets per dedicated lane. The network stack allows only as many packets as it was 
+			assigned to specific VNIC. The lane picks more packets when the next period begins. In case of regulating the speed of transmited bandwidth it is much
+			easier as the network stack can either control the application that is generating the stream of packets or just drop the excessive amount of packets.
+			These mechanisms are also used in flows QoS described and discussed later in this paper.
+
 			\subsubsection{Etherstubs}
 
-        As it was mentioned before, the MAC layer provides the virtual switching capabilities which allow VNICs to be created over existing physical NICs.
-        In some cases, creating virtual networks without the use of a physical NIC is more welcomed than creating over physical NICs. In that case VNICs 
-        would be defined on the top of pseudo NICs. The Crossbow provides these kind of elements which are called Etherstubs. These components could be used
-        instead of NICs during creation of VNICs.
-		
-			\subsubsection{Examples}
+                        As it was mentioned before, the MAC layer provides the virtual switching capabilities which allow VNICs to be created over existing physical NICs.
+                        In some cases, creating virtual networks without the use of a physical NIC is more welcomed than creating over physical NICs. In that case VNICs 
+                        would be defined on the top of pseudo NICs. The Crossbow provides these kind of elements which are called Etherstubs. These components could be used
+                        instead of NICs during creation of VNICs.
 
-        \textbf{dladm} is the admin command for managing NICs, VNICs and Etherstubs. Below we present a few examples of creating VNICs, Etherstbus and how
-        to assigned bandwidth and priority to theses elements.
+                \subsubsection{Flows}
 
-        \begin{enumerate}
-        	\item{dladm create-vnic vnic1 -l e1000g0 - creates new VNIC \textbf{vnic1} over existing NIC \textbf{e1000g0}}
-        	\item{dladm create-etherstub ether00 - creates new Etherstub \textbf{ether00}}
-        	\item{dladm show-linkprop vnic11 - lists all properties assigned to \textbf{vnic11} link}
-        	\item{dladm set-linkprop -pmaxbw=1000 vnic11 - assignes 1Mbps bandwith limit to \textbf{vnic11} link}
-        	\item{dladm set-linkprop -ppriority=low vnic11 - assignes low priority to \textbf{vnic11} link}
-        \end{enumerate}
+                        Flows are additional instruments to allow easier network traffic administration. They might be used in order to provide administer bandwidth resource control and priority for protocols, services, containers.
+                        \textbf{flowadm} is the console command used to create, modify, remove or display network bandwidth and priority limits assigned to a particular link. 
+                        Defined flow is a set of attributes based on Layer 3 and Layer 4 headers of the OSI/ISO model which are then used to identify protocol, service or virtual machine. 
+                        Flows assigned to link must be independent therefore new one must is checked before adding new one newly created correctness is checked. Input and output packets are matched to flows in very efficient 
+                        manner with minimal performance impact.
 
-        Here we have just presented some basic commands. For more examples see \textbf{man dladm}
+
+                \subsubsection{Examples}
+
+                        \textbf{dladm} is the admin command for managing of NICs, VNICs and Etherstubs. Below we present a few examples of creating VNICs, Etherstbus and how
+                        to assigned bandwidth and priority to theses elements.
+
+                        \begin{enumerate}
+                        	\item{\# dladm create-vnic vnic1 -l e1000g0 - creates new VNIC \textbf{vnic1} over existing NIC \textbf{e1000g0}}
+        	                \item{\# dladm create-etherstub ether00 - creates new Etherstub \textbf{ether00}}
+                        	\item{\# dladm show-linkprop vnic11 - lists all properties assigned to \textbf{vnic11} link}
+                        	\item{\# dladm set-linkprop -pmaxbw=1000 vnic11 - assignes 1Mbps bandwith limit to \textbf{vnic11} link}
+                        	\item{\# dladm set-linkprop -ppriority=low vnic11 - assignes low priority to \textbf{vnic11} link}
+                        \end{enumerate}
+
+                        Here we have just presented some basic commands. For more examples see \textbf{man dladm}
+
+                        \medskip
+        
+                        \textbf{flowadm} is the admin command for managing of flows. Below we present a few examples of this command usage.        
+
+                        \begin{enumerate}
+                                \item{\# flowadm show-flow -l e1000g0 - displays all flows assigned to link \textbf{e1000g0}}
+                                \item{\# flowadm add-flow -l e1000g0 -a transport=udp udpflow - creates new flow assigned to link \textbf{e1000g0} for all udp packets}
+                                \item{\# flowadm add-flow -l e1000g0 -a transport=udp udpflow - creates new flow assigned to link \textbf{e1000g0} for all udp packets}
+                        \end{enumerate}
+
+                        To see more check \textbf{man flowadm}
         
 
     \section{Resource access control}
@@ -380,6 +403,9 @@
     \bibitem[2] xVirtual switching in Solaris, http://hub.opensolaris.org/bin/download/Project+crossbow/Docs/virtualswitch.pdf
     \bibitem[3] xOracle Solaris 11 Express Network Virtualization and Network Resource Management, http://www.oracle.com/technetwork/articles/servers-storage-admin/sol11ecrossbow-186794.pdf
     \bibitem[4] xhttp://itnewscast.com/servers-storage/flow-control-solaris-11-express-network-virtualization
+    \bibitem[5] xhttp://www.google.pl/url?sa=t\&source=web\&cd=9\&ved=0CGwQFjAI\&url=http\%3A\%2F\%2Fwww.filibeto.org\%2F~aduritz\%2Ftruetrue\%2Fsolaris10\%2Fneworking\%2Fcrossbow\%2Fcrossbow-vnet-rescontrol.pdf\&rct=j\&q=crossbow\%20solaris\%2010\&ei=IjTtTdeZN8WWOoyOlLQB\&usg=AFQjCNG\_1MiQcXuYNqTPWNfwuyrZIf6lUA\&sig2=VG\_ZpFMfQ8AHI-eGFYIcxQ\&cad=rja
+    \bibitem[6] xman dladm
+    \bibitem[7] xman flowadm
 	
 
   \end{thebibliography}
