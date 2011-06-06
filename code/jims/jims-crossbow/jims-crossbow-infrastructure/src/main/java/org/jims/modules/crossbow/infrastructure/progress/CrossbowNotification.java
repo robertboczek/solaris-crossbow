@@ -30,6 +30,7 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 
 	private int totalTasks = Integer.MAX_VALUE;
 
+	private static final Integer SINGLE_NODE_OPERATIONS = 3;
 	private int index;
 
 	private Logger log = Logger.getLogger( CrossbowNotification.class );
@@ -70,20 +71,8 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 
 		MBeanServer server = JimsMBeanServer.findJimsMBeanServer();
 
-		/*try { 
-
-			workerProgress.clearListeners();
-			server.addNotificationListener( workerProgressObjectName, this, null, null);
-			log.info("Worker progress listener successfully registered");
-
-		} catch( Exception e ) {
-			log.error("Exception while clearing listeners", e);
-			e.printStackTrace();
-		}*/
-
 		try {
 
-			//totalTasks =  0;//delegate.scGetAllMBeanServers().length;
 			for ( String url : delegate.scGetAllMBeanServers() ) {
 
 				try {
@@ -92,22 +81,20 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 						new JMXServiceURL( url )
 					).getMBeanServerConnection();
 
-					WorkerProgressMBean worker = JMX.newMBeanProxy(
+					CrossbowNotificationMBean crossbowNotification = JMX.newMBeanProxy(
 						mbsc,
-						workerProgressObjectName,
-						WorkerProgressMBean.class
+						crossbowNotificationObjectName,
+						CrossbowNotificationMBean.class
 					);
 
-					/*if(worker != null) {
-						worker.clearListeners();
-					}*/
+					crossbowNotification.reset();
+
 					try{
 						mbsc.removeNotificationListener( workerProgressObjectName, crossbowNotificationObjectName );
 					} catch( Exception e ) {
 						log.error( "Exception while removing notification listener from MBean server (url: " + url + ")", e );
 					}
 					mbsc.addNotificationListener( workerProgressObjectName, crossbowNotificationObjectName, null, null);
-					//totalTasks++;
 
 					log.info( "CrosbowNotification successfully registered lestener at WorkerProgressMBean (url: " + url + ")" );
 
@@ -115,8 +102,6 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 					log.error( "Error while querying MBean server (url: " + url + ")", ex );
 				}
 			}
-
-			//totalTasks *= 3;
 	
 			progressNotification = new ProgressNotification(0, totalTasks,
 				WorkerProgress.getIpAddress());
@@ -128,10 +113,105 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 	}
 
 	@Override
+	public ProgressNotification getTotalProgress() {
+
+		ObjectName crossbowNotificationObjectName = null;
+		try { 
+			crossbowNotificationObjectName = ObjectName.getInstance( "Crossbow:type=CrossbowNotification" );
+
+		} catch( Exception e ) {
+			log.error("Exception while creating workerProgress ObjectName", e);
+			e.printStackTrace();
+		}
+		
+		int total = totalTasks;
+		int realised = 0;
+		try {
+
+			for ( String url : delegate.scGetAllMBeanServers() ) {
+
+				try {
+
+					MBeanServerConnection mbsc = JMXConnectorFactory.connect(
+						new JMXServiceURL( url )
+					).getMBeanServerConnection();
+
+					CrossbowNotificationMBean crossbowNotification = JMX.newMBeanProxy(
+						mbsc,
+						crossbowNotificationObjectName,
+						CrossbowNotificationMBean.class
+					);
+
+					ProgressNotification progress = crossbowNotification.getProgress();
+					realised += progress.getCurrent();
+					
+
+				} catch ( Exception ex ) {
+					log.error( "Error while querying MBean server (url: " + url + ")", ex );
+				}
+			}
+	
+			progressNotification = new ProgressNotification(realised, total,
+				null);
+
+		} catch ( RemoteException ex ) {
+			log.error( "Error while getting MBean servers list.", ex );
+		}
+
+		return progressNotification;
+	}
+
+	@Override
 	public synchronized ProgressNotification getProgress() {
 
 		log.info("Asking for progressNotification");
 		return this.progressNotification;
+	}
+
+	public String getTotalNewLogs() {
+		
+		StringBuilder stringBuilder = new StringBuilder();
+		ObjectName crossbowNotificationObjectName = null;
+		try { 
+			crossbowNotificationObjectName = ObjectName.getInstance( "Crossbow:type=CrossbowNotification" );
+
+		} catch( Exception e ) {
+			log.error("Exception while creating workerProgress ObjectName", e);
+			e.printStackTrace();
+		}
+		
+		try {
+
+			for ( String url : delegate.scGetAllMBeanServers() ) {
+
+				try {
+
+					MBeanServerConnection mbsc = JMXConnectorFactory.connect(
+						new JMXServiceURL( url )
+					).getMBeanServerConnection();
+
+					CrossbowNotificationMBean crossbowNotification = JMX.newMBeanProxy(
+						mbsc,
+						crossbowNotificationObjectName,
+						CrossbowNotificationMBean.class
+					);
+
+					String logs = crossbowNotification.getNewLogs();
+					if(logs != null && !logs.equals("")) {
+						stringBuilder.append(crossbowNotification.getNewLogs());
+						stringBuilder.append("\n");
+					}
+
+				} catch ( Exception ex ) {
+					log.error( "Error while querying MBean server (url: " + url + ")", ex );
+				}
+			}
+
+		} catch ( RemoteException ex ) {
+			log.error( "Error while getting MBean servers list.", ex );
+		}
+
+		return stringBuilder.toString();
 	}
 
 	@Override
@@ -151,7 +231,7 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 
 	private synchronized void updateProgress(ProgressNotification progressNotification) {
 		this.progressNotification = progressNotification;
-		log.info("Progress notification " + index + " out of " + totalTasks + " is done");
+		log.info("Progress notification " + index + " out of " + SINGLE_NODE_OPERATIONS + " is done");
 	}
 
 	/**
@@ -182,15 +262,21 @@ public class CrossbowNotification implements CrossbowNotificationMBean {
 	}
 
 	@Override
-	public void reset(int numberOfNodes) {
+	public void resetTotal(int numberOfNodes) {
 
 		index = 0;
 		sb = new StringBuilder();
-		totalTasks = numberOfNodes * 3;
+		totalTasks = numberOfNodes * SINGLE_NODE_OPERATIONS;
 
 		registerNotificationListener();
-		
-		
+
+	}
+
+	@Override
+	public void reset() {
+
+		index = 0;
+		sb = new StringBuilder();
 
 	}
 }

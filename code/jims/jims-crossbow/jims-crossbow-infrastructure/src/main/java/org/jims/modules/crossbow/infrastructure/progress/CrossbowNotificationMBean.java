@@ -15,10 +15,16 @@ import org.jims.modules.crossbow.infrastructure.progress.notification.ProgressNo
  */
 public interface CrossbowNotificationMBean extends Serializable, NotificationListener {
 
+	public ProgressNotification getTotalProgress();
+
 	public ProgressNotification getProgress();
 
 	public String getNewLogs();
 
-	public void reset(int numberOfNodes);
+	public String getTotalNewLogs();
+
+	public void resetTotal(int numberOfNodes);
+
+	public void reset();
 
 }
