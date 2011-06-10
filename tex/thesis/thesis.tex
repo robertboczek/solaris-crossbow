@@ -82,6 +82,8 @@
 
     \section{QoS-aware networking}
 
+      % IntServ, DiffServ, inne
+
 
     \section{Resource virtualization approaches}
 
@@ -148,14 +150,81 @@
 
     \section{General information}
 
+      resource management (allocation/assignment)
+      accounting
+
+
     \section{Lightweight OS-level virtualization with Solaris Containers}
+
+      The concept of lightweight (OS-level) virtualization is commonly known and supported for most (TODO really?)
+      modern operating systems. The solutions are either integrated into the system's kernel or provided by third-party
+      manufacturers as kernel patches and utility software (TODO OpenVZ).
+
+
+      \subsection{General information}
+      \label{sub:}
+
+        Containers were introduced as of Solaris Operating System 10 (czy 9?)
+
+        Lightweight virtualization solutions for other systems include: OpenVZ for Linux, (Free)BSD jails, (anything for
+        windows?)
+
+        when introduced, other vendors' solutions, overview
+
+        each zone is a (how much?) customizable instance of operating system (not necessarily Solaris)
+
+        figure: global zone, non-global zones
+
+
+      \subsection{Isolating process execution}
+      \label{sub:}
+      
+
+      \subsection{Advantages of Containers technology when compared to non-virtualized environments}
+      \label{sub:}
+              
+        \begin{itemize}
+          \item low footprint and resource consumption
+
+            % potrzebna referencja
+
+            The technology allows for running a number of isolated instances of operating system sharing (what?)
+
+          \item online (?) snapshots, restoration, mobility
+
+            Container's contents are easily serializable with ZFS (TODO more?) snapshots.
+
+            Lightweight virtual machines can be transferred between physical nodes using network connection or other
+            means of data transfer.
+
+          \item flexibility and dynamic fine-grained resource allocation
+
+            The zones can be created and destroyed on demand, which allows for 1:1 zone:service mapping.
+
+            Resources (such as CPU, memory, network bandwidth) can be assigned dynamically without interrupting the
+            container operation.
+
+        \end{itemize}
+
+
+      \subsection{Virtual appliances}
+      \label{sub:}
+
+        With the Containers system design it is possible to build virtual appliances (i.e template containers with
+        predefined set of deployed software). Such containers can then be stored in a repository for easy and fast
+        transmission to desired physical machine.
+
+        containers repositories
+      
 
     \section{Crossbow - network virtualization technology}
 
+      % TODO  xbow vs DiffServ; xbow-DiffServ interoperation (also: open systems interoperation - xbow<->DiffServ<->other)
+
         It is generally acknowledged that Crossbow was invented in China in 341 B.C but it was in middle ages when 
         it earned its recognition. Very easy in use and simultaneously very effective. The Solaris Crossbow mechanism 
-        for QoS are just like real crossbow's very efficient in comparision to other existing QoS mechanism and this
-        similarity indicates the project name origin.        
+        for QoS are just like real crossbow's very efficient in comparison to other existing QoS mechanism and this
+        similarity indicates the project name origin.
 
     \subsection{Crossbow architecture}
 
@@ -211,13 +280,13 @@
 			
 			\begin{enumerate}
 				\item{Poll thread which goes to the NIC hardware to get all packet chain}
-				\item{Woker thread which is responsible for protocol processing (IP and above) or delivers packets to virtual machine. Thread performs also any additional transmit work which is a natural 
+				\item{Worker thread which is responsible for protocol processing (IP and above) or delivers packets to virtual machine. Thread performs also any additional transmit work which is a natural 
 				requirement some concrete protocol, such as processing TCP packets that require sending ACK packets.}
 				\item{Transmit thread that is activated when if packets are being sent after transmit side flow control relief discharge, or after retreiving transmit descriptor. Application or virtual 
 				machine can transmit any packets without performing queuing because of flow control or context switching.}
 			\end{enumerate}
 
-                \subsection{Virtual switching}
+    \subsection{Virtual switching}
 			
 			Virtual switches are always created implicitly when the first VNIC is defined under existing NIC and could never be accessed directly nor be visible by
 			any user ( even administrator ). 
@@ -389,6 +458,8 @@
   \chapter{Summary}
 
     \section*{Chapter overview}
+
+      Bibliography \cite{mittelbach2004} test.
 	
 		
 
@@ -407,20 +478,22 @@
         decide what and where instantiate. What we have managed to complete is manual assigner, where you have to select on which node you would like to have your virtual resources created.
 
 
-  \begin{thebibliography}{some-label}
-    
-    \bibitem[1] xCrossbow:From Hardware Virtualized NICS To Virtualized Networks, http://conferences.sigcomm.org/sigcomm/2009/workshops/visa/papers/p53.pdf
-    \bibitem[2] xVirtual switching in Solaris, http://hub.opensolaris.org/bin/download/Project+crossbow/Docs/virtualswitch.pdf
-    \bibitem[3] xOracle Solaris 11 Express Network Virtualization and Network Resource Management, http://www.oracle.com/technetwork/articles/servers-storage-admin/sol11ecrossbow-186794.pdf
-    \bibitem[4] xhttp://itnewscast.com/servers-storage/flow-control-solaris-11-express-network-virtualization
-    \bibitem[5] xhttp://www.google.pl/url?sa=t\&source=web\&cd=9\&ved=0CGwQFjAI\&url=http\%3A\%2F\%2Fwww.filibeto.org\%2F~aduritz\%2Ftruetrue\%2Fsolaris10\%2Fneworking\%2Fcrossbow\%2Fcrossbow-vnet-rescontrol.pdf\&rct=j\&q=crossbow\%20solaris\%2010\&ei=IjTtTdeZN8WWOoyOlLQB\&usg=AFQjCNG\_1MiQcXuYNqTPWNfwuyrZIf6lUA\&sig2=VG\_ZpFMfQ8AHI-eGFYIcxQ\&cad=rja
-    \bibitem[6] xman dladm
-    \bibitem[7] xman flowadm
+  \bibliographystyle{plain}
+  \bibliography{bibliography}
+  % \begin{thebibliography}{some-label}
+  %   
+  %   \bibitem[1] xCrossbow:From Hardware Virtualized NICS To Virtualized Networks, http://conferences.sigcomm.org/sigcomm/2009/workshops/visa/papers/p53.pdf
+  %   \bibitem[2] xVirtual switching in Solaris, http://hub.opensolaris.org/bin/download/Project+crossbow/Docs/virtualswitch.pdf
+  %   \bibitem[3] xOracle Solaris 11 Express Network Virtualization and Network Resource Management, http://www.oracle.com/technetwork/articles/servers-storage-admin/sol11ecrossbow-186794.pdf
+  %   \bibitem[4] xhttp://itnewscast.com/servers-storage/flow-control-solaris-11-express-network-virtualization
+  %   \bibitem[5] xhttp://www.google.pl/url?sa=t\&source=web\&cd=9\&ved=0CGwQFjAI\&url=http\%3A\%2F\%2Fwww.filibeto.org\%2F~aduritz\%2Ftruetrue\%2Fsolaris10\%2Fneworking\%2Fcrossbow\%2Fcrossbow-vnet-rescontrol.pdf\&rct=j\&q=crossbow\%20solaris\%2010\&ei=IjTtTdeZN8WWOoyOlLQB\&usg=AFQjCNG\_1MiQcXuYNqTPWNfwuyrZIf6lUA\&sig2=VG\_ZpFMfQ8AHI-eGFYIcxQ\&cad=rja
+  %   \bibitem[6] xman dladm
+  %   \bibitem[7] xman flowadm
 	
 
-  \end{thebibliography}
+  % \end{thebibliography}
 
 
 \end{document}
 
-% vim: et : tw=100 : spelllang=en_us,pl : spell :
+% vim: et : tw=120 : spelllang=en_us,pl : spell :
