@@ -67,8 +67,7 @@
     
   \tableofcontents
 
-  \chapter*{Division of labour} %podzial pracy
-	
+  % TODO podzial pracy
 
   \chapter{Introduction}
 
@@ -148,6 +147,13 @@
 
     \section*{Chapter overview}
 
+      The chapter provides an overview of Oracle Solaris 10 and evaluates it as a platform for resource virtualization
+      with respect to networking.
+
+      Three main components are presented and discussed: Containers - OS-level virtualization technology, Crossbow -
+      network virtualization environment and the system's reasource access control utilities.
+
+
     \section{General information}
 
       resource management (allocation/assignment)
@@ -156,28 +162,57 @@
 
     \section{Lightweight OS-level virtualization with Solaris Containers}
 
-      The concept of lightweight (OS-level) virtualization is commonly known and supported for most (TODO really?)
-      modern operating systems. The solutions are either integrated into the system's kernel or provided by third-party
-      manufacturers as kernel patches and utility software (TODO OpenVZ).
+      % TODO classify and define virtualization types (not here)
+
+      The concept of lightweight (OS-level) virtualization is commonly known and supported by most (TODO really?)
+      modern operating systems. The solutions are either integrated into the system's kernel (Solaris Containers, AIX
+      Workload partitions, BSD jails TODO cite) or provided by third-party manufacturers as kernel patches and utility
+      software (OpenVZ and LXC for Linux OS).
 
 
       \subsection{General information}
       \label{sub:}
 
-        Containers were introduced as of Solaris Operating System 10 (czy 9?)
+        Containers (or zones) were introduced as of Solaris Operating System 10. They provide a way of partitioning systems'
+        resources and allow for isolated application execution environment.
 
-        Lightweight virtualization solutions for other systems include: OpenVZ for Linux, (Free)BSD jails, (anything for
-        windows?)
+        There are two types of zones: global and non-global. Global zone is the default one and is used to execute
+        applications as well as to administrate the system. Non-global zones can be created from within the global zone
+        only.
+        (TODO cite sag (how zones work)) A single operating system instance with one global zone can host as many as
+        8192 non-global zones.
 
-        when introduced, other vendors' solutions, overview
+        Zones can be assigned system resources such as CPU power, the amount of random-access memory or disk space
+        quota. Network isolation is also supported at two levels: basic isolation at the IP layer and advanced fine-grained
+        network isolation and virtualization with Crossbow technology. (TODO verify the sentence!)
 
-        each zone is a (how much?) customizable instance of operating system (not necessarily Solaris)
+        Each non-global zone can run a different set of applications, with optional system call translation
+        (\textit{Branded Zones Technology} TODO cite sag (branded zones technology)) thus emulating different operating
+        environment. The user is able to create a branded container with Linux system call translation and run
+        Linux-specific applications within the container without code recompilation.
 
-        figure: global zone, non-global zones
+        \begin{figure}[H]
+          \begin{center}
+            % TODO  redraw or cite
+            \includegraphics[width=0.7\textwidth]{img/solaris/zones.png}
+          \end{center}
+
+          \caption{Solaris Containers hierarchy (source: wiki)}
+        \end{figure}
 
 
-      \subsection{Isolating process execution}
+      \subsection{Isolation of processes}
       \label{sub:}
+
+        The Containers technology offers a high level of application security and isolation. This is accomplished by
+        imposing software bounds on the resource usage and introduction of additional abstraction layer over hardware.
+
+        Every process and its children are bound to concrete zone and the assignment cannot be changed. Moreover, it is
+        impossible for processes in distinct zones to monitor each other operation. They are not visible to each other
+        and no standard interprocess communication can take place (standard==all except networking, TODO verify).
+
+        An application failure possibly affects only the processes in containing zone. (TODO easier recovery,
+        independent container management)
       
 
       \subsection{Advantages of Containers technology when compared to non-virtualized environments}
@@ -186,11 +221,10 @@
         \begin{itemize}
           \item low footprint and resource consumption
 
-            % potrzebna referencja
+            The technology allows for running a number of isolated instances of operating system sharing CPU time,
+            physical network bandwidth, filesystem contents and binary code. The instances are able to execute applications with minimum overhead \cite{price}.
 
-            The technology allows for running a number of isolated instances of operating system sharing (what?)
-
-          \item online (?) snapshots, restoration, mobility
+          \item snapshots, restoration, mobility (migration)
 
             Container's contents are easily serializable with ZFS (TODO more?) snapshots.
 
@@ -210,11 +244,48 @@
       \subsection{Virtual appliances}
       \label{sub:}
 
-        With the Containers system design it is possible to build virtual appliances (i.e template containers with
-        predefined set of deployed software). Such containers can then be stored in a repository for easy and fast
-        transmission to desired physical machine.
+        Virtual appliance is pre-built, pre-configured, ready-to-run enterprise application packaged along with an
+        optimized operating system inside a virtual machine (definition from \cite{changhua}). Solaris Containers
+        fulfil all the requirements (TODO what requirements?) to be used as virtual appliance building block.
 
-        containers repositories
+        The main problem virtual appliances can solve is the complexity and duration of application deployment process.
+        In general, a service deployment can be described as comprising the following stages: preparation (learning the
+        dependencies), pre-installation, installation and post-installation. With traditional (non-virtualized)
+        approach, these stages have to be repeated every time a service is deployed.
+
+        \begin{figure}[H]
+          \begin{center}
+            preparation $\rightarrow$ pre-installation $\rightarrow$ installation $\rightarrow$ post-installation
+          \end{center}
+
+          \caption{Traditional application deployment stages.}
+        \end{figure}
+
+        % TODO figure here: traditional application deployment, also: verify the stages
+
+        Virtual appliance approach makes it possible to reduce deployment time significantly \cite{changhua}. This is
+        achieved by performing most of the deployment stages once and storing the configured environment in a virtual
+        appliance. The appliance can now be published in publicly-available repository for actual deployment on a host
+        system.
+
+        \begin{figure}[H]
+          % TODO  make it a graph
+
+          \begin{enumerate}
+            \item preparation, pre-installation, installation, post-installation
+            \item (virtual) appliance preparation
+            \item appliance publication
+            \item appliance retrieval and activation
+            \item configuration adjustment
+          \end{enumerate}
+
+          \caption{Deployment process with virtual appliances. Stage 1 is executed once.}
+        \end{figure}
+
+        It is possible to prepare sets of virtual appliances containing traditional services (such as application
+        servers, database servers or media servers) as well as highly specialized networking-focused appliances that can
+        act as routers, firewalls or load balancers. These Virtual (Network) Appliances, together with other components
+        provided by Solaris 10,  can be leveraged to build fully virtual network topologies.
       
 
     \section{Crossbow - network virtualization technology}
