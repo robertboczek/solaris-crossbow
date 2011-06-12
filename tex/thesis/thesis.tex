@@ -173,6 +173,8 @@
       \subsection{General information}
       \label{sub:}
 
+        % TODO zone lifecycle
+
         Containers (or zones) were introduced as of Solaris Operating System 10. They provide a way of partitioning systems'
         resources and allow for isolated application execution environment.
 
@@ -201,6 +203,10 @@
         \end{figure}
 
 
+      \subsection{Container lifecycle}
+      \label{sub:}
+
+      
       \subsection{Isolation of processes}
       \label{sub:}
 
@@ -217,34 +223,42 @@
 
       \subsection{Advantages of Containers technology when compared to non-virtualized environments}
       \label{sub:}
-              
-        \begin{itemize}
-          \item low footprint and resource consumption
 
-            The technology allows for running a number of isolated instances of operating system sharing CPU time,
-            physical network bandwidth, filesystem contents and binary code. The instances are able to execute applications with minimum overhead \cite{price}.
+        The architecture of Solaris Containers makes it a competitive solution as far as systems administration and
+        operation efficiency is concerned. The technology, imposing negligible overhead \cite{price}, allows to perform tasks that would be
+        impossible or very hard to perform if traditional setup is used. Examples of such tasks include dynamic resource
+        assignment, instantaneous cloning and migration of systems between physical nodes.
 
-          \item snapshots, restoration, mobility (migration)
+        The technology allows for running a number of isolated instances of operating system sharing CPU time,
+        physical network bandwidth, filesystem contents and binary code. Sharing of these resources can greatly improve
+        overall system efficiency and reduce the amount of occupied memory. The speed of network communication between
+        different zones can also be improved thanks to ,,short-circuited'' traffic (i.e. omitting of layers below IP in
+        the OSI/ISO stack). The instances are able to execute applications with minimum overhead introduced mainly due
+        to accessing commands and libraries through the lofs filesystem (TODO more about that) \cite{price}.
 
-            Container's contents are easily serializable with ZFS (TODO more?) snapshots.
+        When using file system that supports snapshots (as, for example, Solaris 10's default ZFS, TODO citation), containers can be
+        serialized (a snapshot of the file system can be taken) and sent over the network connection (or other means of
+        data transfer) to another machine. There the zone can be restored and operate as a part of the host system.
 
-            Lightweight virtual machines can be transferred between physical nodes using network connection or other
-            means of data transfer.
+        Another important aspect of building the infrastructure with containers is resource control. 
 
-          \item flexibility and dynamic fine-grained resource allocation
+
+          flexibility and dynamic fine-grained resource allocation
 
             The zones can be created and destroyed on demand, which allows for 1:1 zone:service mapping.
 
             Resources (such as CPU, memory, network bandwidth) can be assigned dynamically without interrupting the
             container operation.
 
-        \end{itemize}
+
+        service consolidation -> one host with multiple containers
+
 
 
       \subsection{Virtual appliances}
       \label{sub:}
 
-        Virtual appliance is pre-built, pre-configured, ready-to-run enterprise application packaged along with an
+        Virtual appliance is a pre-built, pre-configured, ready-to-run enterprise application packaged along with an
         optimized operating system inside a virtual machine (definition from \cite{changhua}). Solaris Containers
         fulfil all the requirements (TODO what requirements?) to be used as virtual appliance building block.
 
