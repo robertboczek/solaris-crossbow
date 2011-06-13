@@ -235,12 +235,12 @@
         applications as well as to administrate the system. Non-global zones can be created from within the global zone
         only. A single operating system instance with one global zone can host as many as 8192 non-global zones \cite{sag}.
 
-        Zones can be assigned system resources such as CPU power, the amount of random-access memory or disk space
-        quota (TODO that may not be true). Also, network isolation is supported at two levels: basic, at the IP layer, and
+        Zones can be assigned system resources such as CPU capacity, the amount of random-access memory or even maximum
+        number of lightweight processes that can run simultaneously. Also, network isolation is supported at two levels: basic, at the IP layer, and
         network isolation and advanced virtualization with fine grained quality of service control using the Crossbow technology.
 
         Each zone can run a different set of applications, with optional translation of system calls
-        (\textit{Branded Zones Technology}) thus emulating different operating
+        (Branded Zones Technology) thus emulating different operating
         environments \cite{sag}. The user is able to create a branded container with translation of Linux system calls and run
         Linux-specific applications in the container without code recompilation.
 
