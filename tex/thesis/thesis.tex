@@ -348,7 +348,7 @@
         \begin{figure}[H]
           \begin{center}
             \begin{tikzpicture}[start chain, node distance=5mm,
-                                every node/.style={terminal, on chain, join, text width=3.5cm, align=center},
+                                every node/.style={terminal, on chain, join, text width=3.5cm},
                                 every join/.style={->}]
 
               \node (prep)                 {preparation};
@@ -371,33 +371,32 @@
         provided by Solaris 10,  can be leveraged to build fully virtual network topologies.
 
         % TODO figure: example of network built with VNAs
-      
 
     \section{Crossbow - network virtualization technology}
 
-      % TODO  xbow vs DiffServ; xbow-DiffServ interoperation (also: open systems interoperation - xbow<->DiffServ<->other)
+                % TODO  xbow vs DiffServ; xbow-DiffServ interoperation (also: open systems interoperation - xbow<->DiffServ<->other)
 
-        It is generally acknowledged that Crossbow was invented in China in 341 B.C but it was in middle ages when 
-        it earned its recognition. Very easy in use and simultaneously very effective. The Solaris Crossbow mechanism 
-        for QoS are just like real crossbow's very efficient in comparison to other existing QoS mechanisms and this
-        similarity indicates the project name origin.
+                It is generally acknowledged that Crossbow was invented in China in 341 B.C but it was in middle ages when 
+                it earned its recognition. Very easy in use and simultaneously very effective. The Solaris Crossbow mechanism 
+                for QoS are just like real crossbows, very efficient in comparison to other existing QoS mechanisms and this
+                similarity indicates the project name origin.
 
-    \subsection{Crossbow architecture}
+                \subsection{Crossbow architecture}
 
-        One of the most important condition in terms of network virtualization is that network traffic
-      should be insulated between virtual machines. This kind of isolation can be achieved by having
-      a dedicated physical NIC, network cable and port from the switch to the virtual machine
-      itself. Moreover, switch must also ensure sustainability on every port. In every other case
-      virtual machines will definitely interfere between each other.        In a particular case when we have to share physical NIC between virtual machines the most promising solution is to
-      virtualize NIC hardware and the second layer of the OSI/ISO stack where sharing is fair and
-      interferences will be avoided. These approach was adapted in the Crossbow architecture in
-      OpenSolaris OS.        Traffic separation is achieved by fundamental blocks of new architecture
-      which are Virtual NICs (VNICs) created by dividing NIC into many VNICs.         A VNIC can be created over NIC or Etherstub ( more about them later ) and be dynamically controlled by the
-      bandwidth and CPU resources assigned to it.        The crossbow architecture has introduced fully paralized network stack structure. Each stack could be seen as fully independent lane (without
-      any shared locks, queues, and CPUs) therefore network isolation is guaranteed. Key concept is
-      hardware classification performed by the NIC over which VNIC was created. Each lane has a
-      dedicated buffer for Transmit (Tx) and Receive (Rx) ring. In case when load exceeds assigned
-      limit packets must be dropped as it is wiser to dop them then to expend OS CPU resources. 
+                One of the most important condition in terms of network virtualization is that network traffic
+              should be insulated between virtual machines. This kind of isolation can be achieved by having
+              a dedicated physical NIC, network cable and port from the switch to the virtual machine
+              itself. Moreover, switch must also ensure sustainability on every port. In every other case
+              virtual machines will definitely interfere between each other.                In a particular case when we have to share physical NIC between virtual machines the most promising solution is to
+              virtualize NIC hardware and the second layer of the OSI/ISO stack where sharing is fair and
+              interferences will be avoided. These approach was adapted in the Crossbow architecture in
+              OpenSolaris OS.                Traffic separation is achieved by fundamental blocks of new architecture
+              which are Virtual NICs (VNICs) created by dividing NIC into many VNICs.                 A VNIC can be created over NIC or Etherstub ( more about them later ) and be dynamically controlled by the
+              bandwidth and CPU resources assigned to it.                The crossbow architecture has introduced fully paralized network stack structure. Each stack could be seen as fully independent lane (without
+              any shared locks, queues, and CPUs) therefore network isolation is guaranteed. Key concept is
+              hardware classification performed by the NIC over which VNIC was created. Each lane has a
+              dedicated buffer for Transmit (Tx) and Receive (Rx) ring. In case when load exceeds assigned
+              limit packets must be dropped as it is wiser to dop them then to expend OS CPU resources. 
 
                        \begin{figure}[H]
                         \begin{center}
@@ -444,7 +443,7 @@
 				machine can transmit any packets without performing queuing because of flow control or context switching.}
 			\end{enumerate}
 
-    \subsection{Virtual switching}
+                \subsection{Virtual switching}
 			
 			Virtual switches are always created implicitly when the first VNIC is defined under existing NIC and could never be accessed directly nor be visible by
 			any user ( even administrator ). 
@@ -465,9 +464,11 @@
 			Connectivity between VNICs is available only when they were defined on the top of the same NIC. 
 
 		
-		\subsection{Crossbow elements}
+	\section{Crossbow components}
 
-			\subsubsection{VNics}
+                The Crossbow specification describes three major components: VNics, Etherstubs and Flows. This chapter will give an insight into theirs application and usage. 
+
+		\subsection{VNics}
 			Virtual NICs (VNICs) each containing their own lane are the key element in crossbow architecture. There is no
 			difference between NIC and VNIC in administration, as they are all treated as data links. Every VNIC has an assigned
 			lane and flow classifier which classifies received packets by VNIC's MAC address and sometimes by the VLAN tag.
@@ -480,14 +481,14 @@
 			easier as the network stack can either control the application that is generating the stream of packets or just drop the excessive amount of packets.
 			These mechanisms are also used in flows QoS described and discussed later in this paper.
 
-			\subsubsection{Etherstubs}
+		\subsection{Etherstubs}
 
                         As it was mentioned before, the MAC layer provides the virtual switching capabilities which allow VNICs to be created over existing physical NICs.
                         In some cases, creating virtual networks without the use of a physical NIC is more welcomed than creating over physical NICs. In that case VNICs 
                         would be defined on the top of pseudo NICs. The Crossbow provides these kind of elements which are called Etherstubs. These components could be used
                         instead of NICs during creation of VNICs.
 
-                \subsubsection{Flows}
+                \subsection{Flows}
 
                         Flows are additional instruments created to allow easier network traffic administration. They might be used in order to provide administer bandwidth resource control and priority for protocols, services, containers.
                         Defined flow is a set of attributes based on Layer 3 and Layer 4 headers of the OSI/ISO model which are then used to identify protocol, service or virtual machine. 
@@ -499,7 +500,9 @@
                         \textbf{flowadm} is the console command used to create, modify, remove or display network bandwidth and priority limits assigned to a particular link. 
 
 
-                \subsubsection{Examples}
+                \subsection{Running examples}
+
+                        \textbf{dladm} and \textbf{flowadm} are two basic administrative commands for dealing with the Crossbow's components. Below a few general examples of their usage are presented.
 
                         \textbf{dladm} is the admin command for crossbow datalinks elements management. Below a few examples of VNICs, Etherstubs management commands are presented and how
                         bandwidth and priority values might be assigned to these elements.
@@ -553,8 +556,7 @@
     \section*{Summary}
 
                 Solaris 10 OS seems to be ideal cross-platform choice for customers dealing with managment of high level services, complex system administration and high costs. It is the only open operating system which has proven 
-                results running from every critical enterprise databases to high performance Web farms that is way Solaris OS is becoming strategic platform for today's constantly growing demands towards operating systems.
-
+                results running from every critical enterprise databases to high performance Web farms that is why Solaris OS is becoming strategic platform for today's constantly growing demands towards operating systems.
   \chapter{The system architecture}
 
     \section*{Chapter overview}
