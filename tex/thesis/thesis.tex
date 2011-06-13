@@ -47,7 +47,10 @@
 \usepackage{caption}
 \usepackage{color}
 \usepackage{hyperref}
+\usepackage{tikz}
 % \usepackage[toc,acronym]{glossaries}
+\usetikzlibrary{positioning}
+\usetikzlibrary{chains}
 
 \newcommand{\code}[1]{\begin{tt}{#1}\end{tt}}
 
@@ -56,6 +59,9 @@
 
 \newcommand{\tasklabel}[1]{{\textcolor{Blue}{\textbf{#1}}\label{#1}}}
 \newcommand{\taskref}[1]{\hyperref[#1]{{\textcolor{Blue}{\textbf{#1}}}}}
+
+% include TikZ styles
+\input{tikz.tex}
 
 
 \title{Component-based system for management of multilevel virtualization of networking resources}
@@ -156,6 +162,8 @@
 
     \section{General information}
 
+      % TODO intro with history (when started and so on, minimum sentences on that!)
+
       resource management (allocation/assignment)
       accounting
 
@@ -180,16 +188,14 @@
 
         There are two types of zones: global and non-global. Global zone is the default one and is used to execute
         applications as well as to administrate the system. Non-global zones can be created from within the global zone
-        only.
-        (TODO cite sag (how zones work)) A single operating system instance with one global zone can host as many as
-        8192 non-global zones.
+        only. A single operating system instance with one global zone can host as many as 8192 non-global zones \cite{sag}.
 
         Zones can be assigned system resources such as CPU power, the amount of random-access memory or disk space
-        quota. Network isolation is also supported at two levels: basic isolation at the IP layer and advanced fine-grained
+        quota. Also, network isolation is supported at two levels: basic, at the IP layer, and advanced fine-grained
         network isolation and virtualization with Crossbow technology. (TODO verify the sentence!)
 
-        Each non-global zone can run a different set of applications, with optional system call translation
-        (\textit{Branded Zones Technology} TODO cite sag (branded zones technology)) thus emulating different operating
+        Each zone can run a different set of applications, with optional system call translation
+        (\textit{Branded Zones Technology} \cite{sag}) thus emulating different operating
         environment. The user is able to create a branded container with Linux system call translation and run
         Linux-specific applications within the container without code recompilation.
 
@@ -203,10 +209,16 @@
         \end{figure}
 
 
-      \subsection{Container lifecycle}
+      \subsection{Container lifecycle model}
       \label{sub:}
 
-      
+        A model was created to describe the states a zone can be in. A non-global zone can be in one of six states:
+        \textit{configured}, \textit{incomplete}, \textit{installed}, \textit{ready}, \textit{running}, \textit{shutting
+        down or down} \cite{sag}.
+
+        % TODO statechart here?
+
+
       \subsection{Isolation of processes}
       \label{sub:}
 
@@ -215,10 +227,13 @@
 
         Every process and its children are bound to concrete zone and the assignment cannot be changed. Moreover, it is
         impossible for processes in distinct zones to monitor each other operation. They are not visible to each other
-        and no standard interprocess communication can take place (standard==all except networking, TODO verify).
+        and no interprocess communication can take place, except for network-based one.
 
-        An application failure possibly affects only the processes in containing zone. (TODO easier recovery,
-        independent container management)
+        Because of the isolation, an application failure possibly affects only the processes in the containing zone.
+        Assuming no interaction between processes in separate zones, the rest of the system remains intact and can
+        operate normally.
+        
+        % TODO easier recovery, independent container management
       
 
       \subsection{Advantages of Containers technology when compared to non-virtualized environments}
@@ -240,58 +255,69 @@
         serialized (a snapshot of the file system can be taken) and sent over the network connection (or other means of
         data transfer) to another machine. There the zone can be restored and operate as a part of the host system.
 
-        Another important aspect of building the infrastructure with containers is resource control. 
+        Another important aspect of building the infrastructure with containers is resource control. The Solaris system
+        makes it possible to define resource controls (rctls) at various level, also on per-zone basis. CPU shares and
+        maximum number of lightweight processes are the resource control properties that can be set for a zone. This can
+        be further extended by providing fine-grained properties at project, task and process levels \cite{sag}. The
+        resource control process is dynamic - the assignments can be changed as the system is running, without
+        interrupting the container normal operation. This of extreme importance if one is building high-availability systems (TODO define?).
 
-
-          flexibility and dynamic fine-grained resource allocation
-
-            The zones can be created and destroyed on demand, which allows for 1:1 zone:service mapping.
-
-            Resources (such as CPU, memory, network bandwidth) can be assigned dynamically without interrupting the
-            container operation.
-
-
-        service consolidation -> one host with multiple containers
-
+        % TODO service consolidation -> one host with multiple containers
 
 
       \subsection{Virtual appliances}
       \label{sub:}
 
-        Virtual appliance is a pre-built, pre-configured, ready-to-run enterprise application packaged along with an
-        optimized operating system inside a virtual machine (definition from \cite{changhua}). Solaris Containers
-        fulfil all the requirements (TODO what requirements?) to be used as virtual appliance building block.
+        Virtual appliance is a pre-built, pre-configured, ready-to-run (enterprise) application packaged along with an
+        optimized operating system inside a virtual machine \cite{changhua}. Solaris Zones, together with other
+        components of the Solaris OS, constitute a complete framework that implements virtual appliance approach to
+        systems management.  % TODO any citation?
 
         The main problem virtual appliances can solve is the complexity and duration of application deployment process.
         In general, a service deployment can be described as comprising the following stages: preparation (learning the
         dependencies), pre-installation, installation and post-installation. With traditional (non-virtualized)
-        approach, these stages have to be repeated every time a service is deployed.
+        approach, these stages have to be repeated every time a service is deployed on different machines.
 
         \begin{figure}[H]
           \begin{center}
-            preparation $\rightarrow$ pre-installation $\rightarrow$ installation $\rightarrow$ post-installation
+            \begin{tikzpicture}[start chain,
+                                node distance=5mm,
+                                every node/.style={on chain, join, terminal},
+                                every join/.style={->}]
+
+              \node {preparation};
+              \node {pre-installation};
+              \node {installation};
+              \node {post-installation};
+            \end{tikzpicture}
           \end{center}
 
           \caption{Traditional application deployment stages.}
         \end{figure}
 
-        % TODO figure here: traditional application deployment, also: verify the stages
+        % TODO verify the stages
 
         Virtual appliance approach makes it possible to reduce deployment time significantly \cite{changhua}. This is
         achieved by performing most of the deployment stages once and storing the configured environment in a virtual
-        appliance. The appliance can now be published in publicly-available repository for actual deployment on a host
+        appliance. The appliance can then be published in publicly-available repository for actual deployment on a host
         system.
 
         \begin{figure}[H]
-          % TODO  make it a graph
+          \begin{center}
+            \begin{tikzpicture}[start chain, node distance=5mm,
+                                every node/.style={terminal, on chain, join, text width=3.5cm, align=center},
+                                every join/.style={->}]
 
-          \begin{enumerate}
-            \item preparation, pre-installation, installation, post-installation
-            \item (virtual) appliance preparation
-            \item appliance publication
-            \item appliance retrieval and activation
-            \item configuration adjustment
-          \end{enumerate}
+              \node (prep)                 {preparation};
+              \node (pre)  [below=of prep] {pre-installation};
+              \node (ins)  [below=of pre]  {installation};
+              \node (post) [below=of ins]  {post-installation};
+
+              \node (pub)  [right=of post] {appliance publication};
+              \node (act)  [right=of pub]  {appliance retrieval and activation};
+              \node (adj)  [right=of act]  {configuration adjustment};
+            \end{tikzpicture}
+          \end{center}
 
           \caption{Deployment process with virtual appliances. Stage 1 is executed once.}
         \end{figure}
@@ -300,6 +326,8 @@
         servers, database servers or media servers) as well as highly specialized networking-focused appliances that can
         act as routers, firewalls or load balancers. These Virtual (Network) Appliances, together with other components
         provided by Solaris 10,  can be leveraged to build fully virtual network topologies.
+
+        % TODO figure: example of network built with VNAs
       
 
     \section{Crossbow - network virtualization technology}
@@ -308,7 +336,7 @@
 
         It is generally acknowledged that Crossbow was invented in China in 341 B.C but it was in middle ages when 
         it earned its recognition. Very easy in use and simultaneously very effective. The Solaris Crossbow mechanism 
-        for QoS are just like real crossbow's very efficient in comparison to other existing QoS mechanism and this
+        for QoS are just like real crossbow's very efficient in comparison to other existing QoS mechanisms and this
         similarity indicates the project name origin.
 
     \subsection{Crossbow architecture}
@@ -328,13 +356,15 @@
       dedicated buffer for Transmit (Tx) and Receive (Rx) ring. In case when load exceeds assigned
       limit packets must be dropped as it is wiser to dop them then to expend OS CPU resources. 
 
-       \begin{figure}[H]
-      \includegraphics[width=\textwidth]{img/crossbow-traffic-dedicated-line.jpeg}
-      \caption{Dedicated lines in the Crossbow architecture} \end{figure}
+                       \begin{figure}[H]
+                        \begin{center}
+                              \includegraphics[width=0.7\textwidth]{img/crossbow-traffic-dedicated-line.jpeg}
+                              \caption{Dedicated lanes in the Crossbow architecture}
+                        \end{center}                 \end{figure}
 		
-		\subsection{Virtualization lines}
+		\subsection{Virtualization lanes}
 
-                        Virtualization is the most key component in the Crossbow architecture. Each lane consists some
+                        Virtualization lane is the most key component in the Crossbow architecture. Each lane consists some dedicated hardware and software that might be 
 			used to some concrete type of traffic. It usually would be composed of: 
 			\begin{enumerate}
 				\item{NIC resources( receive and transmit rings, interrupts, MAC address slots )}
@@ -359,7 +389,7 @@
 		\subsection{Dynamic polling}	
 			
 			The Crossbow architecture proposed two types of working mode. Currently used mode is determined by traffic and load. Under low load, where the rate of arraving packets is lower than
-			time of packet processing, lane works in the interrupt mode which means that receive ring generates an interrupt when new packet arrives. However, when the backlog grows, the line 
+			time of packet processing lane works in the interrupt mode which means that receive ring generates an interrupt when new packet arrives. However, when the backlog grows, the line 
 			switches to dynamic polling mode in which a kernel thread goes down to the receive ring in the NIC hardware to extract all outstanding packets in a single chain. Key aspect is that 
 			every virtualization lane works independently and transparently from each other. Usually only three threads are used per lane:
 			
@@ -395,8 +425,8 @@
 		\subsection{Crossbow elements}
 
 			\subsubsection{VNics}
-			Virtual NICs (VNICs) that are related to their own lane are the key element in crossbow architecture. There is no
-			difference between NIC and VNIC in administration, they are all treated as data links. Every VNIC has an assigned
+			Virtual NICs (VNICs) each containing their own lane are the key element in crossbow architecture. There is no
+			difference between NIC and VNIC in administration, as they are all treated as data links. Every VNIC has an assigned
 			lane and flow classifier which classifies received packets by VNIC's MAC address and sometimes by the VLAN tag.
 			If created with a VLAN tag, protocols like GVRP or MVRP may be used to register the VLAN tag with the physical switches
 			too.	
@@ -416,17 +446,20 @@
 
                 \subsubsection{Flows}
 
-                        Flows are additional instruments to allow easier network traffic administration. They might be used in order to provide administer bandwidth resource control and priority for protocols, services, containers.
-                        \textbf{flowadm} is the console command used to create, modify, remove or display network bandwidth and priority limits assigned to a particular link. 
+                        Flows are additional instruments created to allow easier network traffic administration. They might be used in order to provide administer bandwidth resource control and priority for protocols, services, containers.
                         Defined flow is a set of attributes based on Layer 3 and Layer 4 headers of the OSI/ISO model which are then used to identify protocol, service or virtual machine. 
-                        Flows assigned to link must be independent therefore new one must is checked before adding new one newly created correctness is checked. Input and output packets are matched to flows in very efficient 
+                        Flows assigned to link must be independent therefore before adding new one its correctness is checked. Input and output packets are matched to flows in very efficient 
                         manner with minimal performance impact.
+
+                        \medskip
+
+                        \textbf{flowadm} is the console command used to create, modify, remove or display network bandwidth and priority limits assigned to a particular link. 
 
 
                 \subsubsection{Examples}
 
-                        \textbf{dladm} is the admin command for managing of NICs, VNICs and Etherstubs. Below we present a few examples of creating VNICs, Etherstbus and how
-                        to assigned bandwidth and priority to theses elements.
+                        \textbf{dladm} is the admin command for crossbow datalinks elements management. Below a few examples of VNICs, Etherstubs management commands are presented and how
+                        bandwidth and priority values might be assigned to these elements.
 
                         \begin{enumerate}
                         	\item{\# dladm create-vnic vnic1 -l e1000g0 - creates new VNIC \textbf{vnic1} over existing NIC \textbf{e1000g0}}
@@ -436,26 +469,48 @@
                         	\item{\# dladm set-linkprop -ppriority=low vnic11 - assignes low priority to \textbf{vnic11} link}
                         \end{enumerate}
 
-                        Here we have just presented some basic commands. For more examples see \textbf{man dladm}
+                        These were just basics, for more examples see \textbf{man dladm}
 
                         \medskip
         
-                        \textbf{flowadm} is the admin command for managing of flows. Below we present a few examples of this command usage.        
+                        \textbf{flowadm} is the admin command for flow management. It migth be used as follow:     
 
                         \begin{enumerate}
                                 \item{\# flowadm show-flow -l e1000g0 - displays all flows assigned to link \textbf{e1000g0}}
                                 \item{\# flowadm add-flow -l e1000g0 -a transport=udp udpflow - creates new flow assigned to link \textbf{e1000g0} for all udp packets}
-                                \item{\# flowadm add-flow -l e1000g0 -a transport=udp udpflow - creates new flow assigned to link \textbf{e1000g0} for all udp packets}
                         \end{enumerate}
 
-                        To see more check \textbf{man flowadm}
+                        To see more see \textbf{man flowadm}
         
 
     \section{Resource access control}
 
-    \section*{Summary}
+                Nowadays existing operating systems must provide mechanisms for response to the varying resource 
+		demands per workload which is an aggregation of processes of an application. By default resource management
+		features are not used and system gives equal access to resources. When it is necassary it is possible 
+		to modify these default behaviour with respect to different workloads. These management allows you to:
+		\begin{enumerate}
+        	\item{Restrict access to specific resource}
+			\item{Offer resources to workloads on a preferential basis}
+			\item{Isolate workloads from each another}
+		\end{enumerate}
 	
+		Resource is any part of computing system that may be modified in order to change application behaviour. Resource management enables more 
+		effective resource utilization and avoid wasting available ones due to load variability. Reserving additional capability
+		during off-peak periods and effective sharing resources definately inceases application performance.
+		
+		Solaris Operating System introduced three types of resource management control mechanisms:
+		\begin{enumerate}
+        	\item{constraints - allows defining set of bounds on used resources for a workload}
+			\item{partitioning - enables binding subset of system's available resources to specific workload}
+			\item{scheduling - involves predictable algorithm making sequence of allocation decisions at specific intervals}
+		 \end{enumerate}
+                
 
+    \section*{Summary}
+
+                Solaris 10 OS seems to be ideal cross-platform choice for customers dealing with managment of high level services, complex system administration and high costs. It is the only open operating system which has proven 
+                results running from every critical enterprise databases to high performance Web farms that is way Solaris OS is becoming strategic platform for today's constantly growing demands towards operating systems.
 
   \chapter{The system architecture}
 
@@ -531,6 +586,12 @@
           \item 3 users: 2 streaming, 1 VOD
         \end{itemize}
 
+        \begin{figure}[H]
+                   \begin{center}
+                         \includegraphics[width=0.7\textwidth]{img/test-case/diagram.png}
+                         \caption{VOD + streaming clients test case example}
+                   \end{center}        \end{figure}
+
 
       \subsection{Resource access requirements}
 
@@ -574,6 +635,7 @@
   %   \bibitem[5] xhttp://www.google.pl/url?sa=t\&source=web\&cd=9\&ved=0CGwQFjAI\&url=http\%3A\%2F\%2Fwww.filibeto.org\%2F~aduritz\%2Ftruetrue\%2Fsolaris10\%2Fneworking\%2Fcrossbow\%2Fcrossbow-vnet-rescontrol.pdf\&rct=j\&q=crossbow\%20solaris\%2010\&ei=IjTtTdeZN8WWOoyOlLQB\&usg=AFQjCNG\_1MiQcXuYNqTPWNfwuyrZIf6lUA\&sig2=VG\_ZpFMfQ8AHI-eGFYIcxQ\&cad=rja
   %   \bibitem[6] xman dladm
   %   \bibitem[7] xman flowadm
+  %   \bibitem[8]{ http://download.oracle.com/docs/cd/E19044-01/sol.containers/817-1592/resource/index.html }
 	
 
   % \end{thebibliography}
