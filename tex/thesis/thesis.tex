@@ -394,7 +394,16 @@
               interferences will be avoided. These approach was adapted in the Crossbow architecture in
               OpenSolaris OS.                Traffic separation is achieved by fundamental blocks of new architecture
               which are Virtual NICs (VNICs) created by dividing NIC into many VNICs.                 A VNIC can be created over NIC or Etherstub ( more about them later ) and be dynamically controlled by the
-              bandwidth and CPU resources assigned to it.                The crossbow architecture has introduced fully paralized network stack structure. Each stack could be seen as fully independent lane (without
+              bandwidth and CPU resources assigned to it. New architecture after introducing new networking features combined with existing features
+              like Solaris Containers, resource control can be presented as following:
+
+               \begin{figure}[H]
+			\includegraphics[width=\textwidth]{img/crossbow.jpg}
+			\caption{The Solaris Crossbow network virtualization enhancement, source: http://www.net-security.org/secworld.php?id=7573}
+                        %@todo add preceise url}
+		\end{figure}
+
+                The crossbow architecture has introduced fully paralized network stack structure. Each stack could be seen as fully independent lane (without
               any shared locks, queues, and CPUs) therefore network isolation is guaranteed. Key concept is
               hardware classification performed by the NIC over which VNIC was created. Each lane has a
               dedicated buffer for Transmit (Tx) and Receive (Rx) ring. In case when load exceeds assigned
@@ -553,12 +562,20 @@
 			\item{partitioning - enables binding subset of system's available resources to specific workload}
 			\item{scheduling - involves predictable algorithm making sequence of allocation decisions at specific intervals}
 		 \end{enumerate}
+
+                Hierarchical architecture allows defining set of resource control sets on each level. However, if more than one is assigned to a resource, the smallest container's control level is enforced. 
+
+                \begin{figure}[H]
+			\includegraphics[width=\textwidth]{img/rctrl.png}
+			\caption{Solaris system multilevel architecture and their resource control sets ( source: http://oracle.com ) }
+                        %@todo add preceise url}
+		\end{figure}
                 
 
     \section*{Summary}
 
                 Solaris 10 OS seems to be ideal cross-platform choice for customers dealing with managment of high level services, complex system administration and high costs. It is the only open operating system which has proven 
-                results running from every critical enterprise databases to high performance Web farms that is why Solaris OS is becoming strategic platform for today's constantly growing demands towards operating systems.
+                results running from every critical enterprise databases to high performance Web farms that is why Solaris OS is becoming strategic platform for today's constantly growing demands towards operating systems. 
   \chapter{The system architecture}
 
     \section*{Chapter overview}
