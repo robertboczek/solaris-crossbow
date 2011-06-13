@@ -156,47 +156,91 @@
       The chapter provides an overview of Oracle Solaris 10 and evaluates it as a platform for resource virtualization
       with respect to networking.
 
-      Three main components are presented and discussed: Containers - OS-level virtualization technology, Crossbow -
-      network virtualization environment and the system's reasource access control utilities.
+      Section \ref{sec:sol:general} contains introductory information about the system. A short historical note is
+      presented and general description follows. Main components of the system are introduced and described.
+      
+      Each of the remaining sections describe in more detail these parts of the operating system that are extensively
+      used by the implemented system. Section \ref{sec:sol:containers} investigates the Solaris Zones technology. After
+      defining the concept of zones (TODO define it!), zone lifecycle model is presented, the level of process isolation
+      is described and the discussion of Zones advantages in comparison to non-virtualized environments follows.
+
+      % Three main components are presented and discussed: Containers - OS-level virtualization technology, Crossbow -
+      % network virtualization environment and the system's resource control utilities.
 
 
     \section{General information}
+    \label{sec:sol:general}
+
+      % LDOMS, virtual networks (vnet), VLANs, Zones, Crossbow, resource control, (extended) accounting
 
       % TODO intro with history (when started and so on, minimum sentences on that!)
 
-      resource management (allocation/assignment)
-      accounting
+      % TODO jest wyposazony
+
+      The Solaris OS provides unique set of tools that support virtualization of practically all types of resources at
+      various levels. There is Logical Domains (LDOMs) technology for full virtualization and lightweight Zones, when
+      all that is needed is the isolation of processes. Logical domains can be connected with complex virtual networks
+      that are created with vswitches, vnets (TODO more about it) and Crossbow can be used to enable lightweight and
+      efficient networking for zones, exploiting capabilities of underlying hardware layer (TODO special NICs).
+
+      Resource utilization can be managed with integrated administration tools. Resource access policies can be created with high
+      level of granularity (per-process resource control) as well as in more general way (limiting resource access for
+      LDOMs). Resource consumption can be subject of monitoring and accounting. With extended accounting subsystem
+      enabled, it is possible to capture detailed accounting data even for single processes. (TODO what data can be gathered?
+      examples).
+
+      As far as multiple physical machines are considered, there is also support for VLANs (Virtual Local Area Network).
+      Thanks to VLAN tagging support, it is possible to build systems that guarantee the quality of service at the
+      lowest possible (reasonable?) levels, even for services consolidated within single machine.
+
+      \begin{figure}[H]
+
+        \caption{The variety of resources that can be virtualized and that Solaris 10 had integrated support for}
+      \end{figure}
 
 
-    \section{Lightweight OS-level virtualization with Solaris Containers}
+
+      % TODO figure with two physical Solarises, each containing LDOMS, Zones, and so on.
+
+      As it can already be seen, the Oracle Solaris 10 operating system comes with (TODO too informal?) vast variety
+      of virtualization-supporting subsystems. This multiplicity (TODO ok?) and flexibility makes it a promising
+      platform for service provisioning and building even more abstract architectures on top of it. The following
+      sections describe selected aspects of the system in more detail.
+
+
+    \section{OS-level virtualization with Solaris Zones}
+    \label{sec:sol:containers}
+
+      % TODO zones vs containers!!!
 
       % TODO classify and define virtualization types (not here)
 
-      The concept of lightweight (OS-level) virtualization is commonly known and supported by most (TODO really?)
-      modern operating systems. The solutions are either integrated into the system's kernel (Solaris Containers, AIX
-      Workload partitions, BSD jails TODO cite) or provided by third-party manufacturers as kernel patches and utility
-      software (OpenVZ and LXC for Linux OS).
+      The concept of lightweight (OS-level) virtualization is supported by most (TODO really?)
+      modern operating systems. The solutions are either integrated into the system's kernel and accessible as soon as
+      the system is installed (Solaris Containers, AIX
+      Workload partitions, BSD jails TODO cite) or are provided by third-party manufacturers as kernel patches and utility
+      software (OpenVZ and LXC for Linux OS). Because of the integration and awareness of other system components, Zones
+      should have more potential in them than other virtualization methods. (TODO more?)
 
 
       \subsection{General information}
       \label{sub:}
 
-        % TODO zone lifecycle
-
-        Containers (or zones) were introduced as of Solaris Operating System 10. They provide a way of partitioning systems'
-        resources and allow for isolated application execution environment.
+        Zones technology was introduced as of Solaris OS 10. It provides a way of partitioning system
+        resources and allows for isolated and secure application execution environment \cite{sag}. Solaris Zones is a
+        component of Solaris Container environment which, in turn, (TODO what?)
 
         There are two types of zones: global and non-global. Global zone is the default one and is used to execute
         applications as well as to administrate the system. Non-global zones can be created from within the global zone
         only. A single operating system instance with one global zone can host as many as 8192 non-global zones \cite{sag}.
 
         Zones can be assigned system resources such as CPU power, the amount of random-access memory or disk space
-        quota. Also, network isolation is supported at two levels: basic, at the IP layer, and advanced fine-grained
-        network isolation and virtualization with Crossbow technology. (TODO verify the sentence!)
+        quota (TODO that may not be true). Also, network isolation is supported at two levels: basic, at the IP layer, and
+        network isolation and advanced virtualization with fine grained quality of service control using the Crossbow technology.
 
-        Each zone can run a different set of applications, with optional system call translation
+        Each zone can run a different set of applications, with optional translation of system calls
         (\textit{Branded Zones Technology} \cite{sag}) thus emulating different operating
-        environment. The user is able to create a branded container with Linux system call translation and run
+        environments. The user is able to create a branded container with translation of Linux system calls and run
         Linux-specific applications within the container without code recompilation.
 
         \begin{figure}[H]
@@ -205,14 +249,14 @@
             \includegraphics[width=0.7\textwidth]{img/solaris/zones.png}
           \end{center}
 
-          \caption{Solaris Containers hierarchy (source: wiki)}
+          \caption{Solaris Zones high-level view (source: wiki)}
         \end{figure}
 
 
       \subsection{Container lifecycle model}
       \label{sub:}
 
-        A model was created to describe the states a zone can be in. A non-global zone can be in one of six states:
+        A model was created to describe the states a zone can be in and possible transitions. A non-global zone can be in one of six states:
         \textit{configured}, \textit{incomplete}, \textit{installed}, \textit{ready}, \textit{running}, \textit{shutting
         down or down} \cite{sag}.
 
@@ -227,7 +271,7 @@
 
         Every process and its children are bound to concrete zone and the assignment cannot be changed. Moreover, it is
         impossible for processes in distinct zones to monitor each other operation. They are not visible to each other
-        and no interprocess communication can take place, except for network-based one.
+        and no interprocess communication can take place, except for network-based one, if enabled by the administrator.
 
         Because of the isolation, an application failure possibly affects only the processes in the containing zone.
         Assuming no interaction between processes in separate zones, the rest of the system remains intact and can
