@@ -153,15 +153,16 @@
 
     \section*{Chapter overview}
 
-      The chapter provides an overview of Oracle Solaris 10 and evaluates it as a platform for resource virtualization
-      with respect to networking.
+      The chapter provides an overview of Oracle Solaris 10 and evaluates it as a platform for resource virtualization.
+      Special emphasis is put on the networking-related aspects of virtualization. Thus, the Solaris Crossbow technology
+      is given its own section.
 
       Section \ref{sec:sol:general} contains introductory information about the system. A short historical note is
       presented and general description follows. Main components of the system are introduced and described.
       
       Each of the remaining sections describe in more detail these parts of the operating system that are extensively
       used by the implemented system. Section \ref{sec:sol:containers} investigates the Solaris Zones technology. After
-      defining the concept of zones (TODO define it!), zone lifecycle model is presented, the level of process isolation
+      defining the concept of zones, zone lifecycle model is presented, the achieved level of process isolation
       is described and the discussion of Zones advantages in comparison to non-virtualized environments follows.
 
       % Three main components are presented and discussed: Containers - OS-level virtualization technology, Crossbow -
@@ -179,18 +180,19 @@
       The Solaris OS provides unique set of tools that support virtualization of practically all types of resources at
       various levels. There is Logical Domains (LDOMs) technology for full virtualization and lightweight Zones, when
       all that is needed is the isolation of processes. Logical domains can be connected with complex virtual networks
-      that are created with vswitches, vnets (TODO more about it) and Crossbow can be used to enable lightweight and
-      efficient networking for zones, exploiting capabilities of underlying hardware layer (TODO special NICs).
+      that are created with virtual switches (vsw) and virtual network devices (vnet) \cite{ldomag} and Crossbow can be used to enable lightweight and
+      efficient networking for zones, exploiting capabilities of underlying hardware layer (network interface cards with
+      virtualization level 1, 2 or 3 \cite{santos}).
 
       Resource utilization can be managed with integrated administration tools. Resource access policies can be created with high
       level of granularity (per-process resource control) as well as in more general way (limiting resource access for
       LDOMs). Resource consumption can be subject of monitoring and accounting. With extended accounting subsystem
-      enabled, it is possible to capture detailed accounting data even for single processes. (TODO what data can be gathered?
-      examples).
+      enabled, it is possible to capture detailed accounting data even for single processes. Gathered data include CPU
+      usage, number of bytes received or transmitted per DiffServ or Crossbow flow and more.
 
       As far as multiple physical machines are considered, there is also support for VLANs (Virtual Local Area Network).
-      Thanks to VLAN tagging support, it is possible to build systems that guarantee the quality of service at the
-      lowest possible (reasonable?) levels, even for services consolidated within single machine.
+      Thanks to VLAN tagging support, it is possible to build systems that guarantee the quality of service from the
+      lowest levels up, even for services belonging to different systems and consolidated within single physical machine.
 
       \begin{figure}[H]
 
@@ -198,11 +200,10 @@
       \end{figure}
 
 
-
       % TODO figure with two physical Solarises, each containing LDOMS, Zones, and so on.
 
-      As it can already be seen, the Oracle Solaris 10 operating system comes with (TODO too informal?) vast variety
-      of virtualization-supporting subsystems. This multiplicity (TODO ok?) and flexibility makes it a promising
+      As it can be seen, the Oracle Solaris 10 operating system is accompanied by vast variety
+      of virtualization-supporting subsystems. This multiplicity and flexibility makes it a promising
       platform for service provisioning and building even more abstract architectures on top of it. The following
       sections describe selected aspects of the system in more detail.
 
@@ -213,21 +214,22 @@
       % TODO zones vs containers!!!
 
       % TODO classify and define virtualization types (not here)
+      % TODO citation for WPARs
 
       The concept of lightweight (OS-level) virtualization is supported by most (TODO really?)
       modern operating systems. The solutions are either integrated into the system's kernel and accessible as soon as
-      the system is installed (Solaris Containers, AIX
-      Workload partitions, BSD jails TODO cite) or are provided by third-party manufacturers as kernel patches and utility
-      software (OpenVZ and LXC for Linux OS). Because of the integration and awareness of other system components, Zones
-      should have more potential in them than other virtualization methods. (TODO more?)
+      it is installed (Solaris Containers, AIX
+      Workload partitions, BSD jails \cite{kamp}) or are provided by third-party manufacturers as kernel patches and utility
+      software (OpenVZ and LXC for Linux OS). Because of the integration with and awareness of other system components,
+      it can be expected that Zones have more potential in them than other virtualization methods.
 
 
       \subsection{General information}
       \label{sub:}
 
         Zones technology was introduced as of Solaris OS 10. It provides a way of partitioning system
-        resources and allows for isolated and secure application execution environment \cite{sag}. Solaris Zones is a
-        component of Solaris Container environment which, in turn, (TODO what?)
+        resources and allows for isolated and secure application execution environment \cite{sag}. Solaris Zones,
+        together with resource management functionality, constitute the Solaris Container environment.
 
         There are two types of zones: global and non-global. Global zone is the default one and is used to execute
         applications as well as to administrate the system. Non-global zones can be created from within the global zone
@@ -238,9 +240,9 @@
         network isolation and advanced virtualization with fine grained quality of service control using the Crossbow technology.
 
         Each zone can run a different set of applications, with optional translation of system calls
-        (\textit{Branded Zones Technology} \cite{sag}) thus emulating different operating
-        environments. The user is able to create a branded container with translation of Linux system calls and run
-        Linux-specific applications within the container without code recompilation.
+        (\textit{Branded Zones Technology}) thus emulating different operating
+        environments \cite{sag}. The user is able to create a branded container with translation of Linux system calls and run
+        Linux-specific applications in the container without code recompilation.
 
         \begin{figure}[H]
           \begin{center}
