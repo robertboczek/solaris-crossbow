@@ -553,51 +553,64 @@
 
       \subsubsection{Flows}
 
-        Flows are additional instruments created to allow easier network traffic administration. They might be used in
-        order to provide administer bandwidth resource control and priority for protocols, services, containers.  Defined
-        flow is a set of attributes based on Layer 3 and Layer 4 headers of the OSI/ISO model which are then used to
-        identify protocol, service or virtual machine.  Flows assigned to link must be independent therefore before adding
-        new one its correctness is checked. Input and output packets are matched to flows in very efficient manner with
-        minimal performance impact.
+                       Flows are additional instruments created to allow easier network traffic administration. They might be used in order to provide administer bandwidth resource control and priority for protocols, services, containers.
+                        Defined flow is a set of attributes based on Layer 3 and Layer 4 headers of the OSI/ISO model which are then used to identify protocol, service or virtual machine. 
+                        Flows assigned to link must be independent therefore before adding new one its correctness is checked. Input and output packets are matched to flows in very efficient 
+                        manner with minimal performance impact.
 
-        % TODO wiecej o flowach, np. na podstawie czego mozna klasyfikowac i jakie konkretne polityki mozna przypisac
-        % flowom
+                        \medskip
 
-        \medskip
+                        Crossbow flows can be created with one of the following sets of attributes:
+                        \begin{itemize}
+                        	\item{Services (protocol + remote/local ports)}
+                        	\item{Transport (TCP, UDP, SCTP, iSCSI, etc)}
+                        	\item{IP addresses and IP subnets}
+                        \end{itemize}
 
-        \textbf{flowadm} is the console command used to create, modify, remove or display network bandwidth and priority
-        limits assigned to a particular link. 
+                        For each flow the following properties can be set: 
+                        \begin{itemize}
+                        	\item{bandwidth}
+                        	\item{priority}
+                        \end{itemize}
+
+                        \medskip
+
+                        \textbf{flowadm} is the console command used to create, modify, remove or to display network bandwidth and priority limits assigned to a particular link. 
 
 
-      \subsubsection{Running examples}
 
-        \textbf{dladm} and \textbf{flowadm} are two basic administrative commands for dealing with the Crossbow's
-        components. Below a few general examples of their usage are presented.
 
-        \textbf{dladm} is the admin command for crossbow datalinks elements management. Below a few
-        examples of VNICs, Etherstubs management commands are presented and how bandwidth and priority
-        values might be assigned to these elements.
 
-        \begin{enumerate}
-          \item{\# dladm create-vnic vnic1 -l e1000g0 - creates new VNIC \textbf{vnic1} over existing NIC \textbf{e1000g0}}
-          \item{\# dladm create-etherstub ether00 - creates new Etherstub \textbf{ether00}}
-          \item{\# dladm show-linkprop vnic11 - lists all properties assigned to \textbf{vnic11} link}
-          \item{\# dladm set-linkprop -pmaxbw=1000 vnic11 - assignes 1Mbps bandwith limit to \textbf{vnic11} link}
-          \item{\# dladm set-linkprop -ppriority=low vnic11 - assignes low priority to \textbf{vnic11} link}
-        \end{enumerate}
 
-        These were just basics, for more examples see \textbf{man dladm}
 
-        \medskip
+                \subsection{Running examples of flowadm and dladm command}
 
-        \textbf{flowadm} is the admin command for flow management. It migth be used as follow:     
+                        \textbf{dladm} and \textbf{flowadm} are two basic administrative commands for dealing with the Crossbow's components. Below a few general examples of their usage are presented.
 
-        \begin{enumerate}
-                \item{\# flowadm show-flow -l e1000g0 - displays all flows assigned to link \textbf{e1000g0}}
-                \item{\# flowadm add-flow -l e1000g0 -a transport=udp udpflow - creates new flow assigned to link \textbf{e1000g0} for all udp packets}
-        \end{enumerate}
+                        \textbf{dladm} is the admin command for crossbow datalinks elements management. Below a few examples of VNICs, Etherstubs management commands are presented and how
+                        bandwidth and priority values might be assigned to these elements.
 
-        To see more see \textbf{man flowadm}
+                        \begin{enumerate}
+                        	\item{\# dladm create-vnic vnic1 -l e1000g0 - creates new VNIC \textbf{vnic1} over existing NIC \textbf{e1000g0}}
+        	                \item{\# dladm create-etherstub ether00 - creates new Etherstub \textbf{ether00}}
+                        	\item{\# dladm show-linkprop vnic11 - lists all properties assigned to \textbf{vnic11} link}
+                        	\item{\# dladm set-linkprop -pmaxbw=1000 vnic11 - assignes 1Mbps bandwith limit to \textbf{vnic11} link}
+                        	\item{\# dladm set-linkprop -ppriority=low vnic11 - assignes low priority to \textbf{vnic11} link}
+                        \end{enumerate}
+
+                        These were just basics, for more examples see \textbf{man dladm}
+
+                        \medskip
+        
+                        \textbf{flowadm} is the admin command for flow management. It migth be used as follow:     
+
+                        \begin{enumerate}
+                                \item{\# flowadm show-flow -l e1000g0 - displays all flows assigned to link \textbf{e1000g0}}
+                                \item{\# flowadm add-flow -l e1000g0 -a transport=udp udpflow - creates new flow assigned to link \textbf{e1000g0} for all udp packets}
+                        \end{enumerate}
+
+                        To see more see \textbf{man flowadm}
+
 
 
       \subsection{Crossbow and Differentiated Services - interoperability}
