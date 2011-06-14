@@ -174,7 +174,7 @@
     \section{General information}
     \label{sec:sol:general}
 
-      Oracle Solaris is a multiuser, multitasking, multithreading UNIX-like operating system \cite{reference}. Since its
+      Oracle Solaris is a \textit{multiuser, multitasking, multithreading UNIX-like operating system} \cite{reference}. Since its
       release in 1992 (as Sun Solaris 1), the system became one of the most popular environments supporting
       enterprise software. Nowadays, big corporations and companies as well as individual developers use it to do
       their business and deliver reliable and scalable services.
@@ -603,18 +603,22 @@
       \subsection{Crossbow and Differentiated Services - interoperability}
       \label{sub:sol:diffserv}
 
-        Crossbow - provide virtual networks inside single os instance, not designed to support multiple machines
-        connected with comp. network; relatively simple (compared to DiffServ) filters; no special hardware required
+        The Crossbow technology is designed to work inside single operating system instance, there are no mechanisms
+        meant to cope with problems that arise when dealing with installations spanning multiple physical machines
+        connected with traditional (non-virtual) network. Crossbow's flows are, by design, relatively simple (when
+        compared to DiffServ) but more efficient as far as receive performance is considered \cite{xbow-vertically}.
+        Crossbow, unlike DiffServ, does not require special hardware, although if it is present it can boost overall
+        operation performance \cite{xbow-vertically}.
 
-        DiffServ - complex Qos mechanisms that require proper hardware (routers) to work; multiplicity of policies;
-        standardized, special IP header fields (DSCP) used to carry information with packets; ability to specify
-        classification, queuing operation, best effort? (certainly no link reservation)
+        DiffServ, on the other hand, provides sophisticated QoS mechanisms that require proper hardware (DiffServ-aware
+        routers) to be present for it to work. DiffServ is standardized (RFC 2475) and offers a multiplicity of
+        classification, marking, policing and traffic shaping alternatives \cite{rfc2475}. Special fields (called DSCP)
+        contained in IP packet's header are used to carry processing-related information with packets. The approach can
+        be used with complex networks, comprising a number of routers with QoS awareness.
 
-        These two approaches complement one another rather than compete.
-
-        Crossbow supports flow matching based on the DSCP field value. DSCP field generation is not yet supported. It is
-        possible (althought, at the moment, partially) to integrate these and build a comprehensive end-to-end
-        networking solution with QoS support.
+        These two approaches complement one another rather than compete. Crossbow supports flow matching based on the
+        DSCP field value. DSCP field generation is not yet supported. It is possible (althought, at the moment, only
+        partially) to integrate these and build a comprehensive end-to-end networking solution with QoS support.
 
 
     \section{Resource access control}
