@@ -49,8 +49,8 @@
 \usepackage{hyperref}
 \usepackage{tikz}
 % \usepackage[toc,acronym]{glossaries}
-\usetikzlibrary{positioning}
-\usetikzlibrary{chains}
+\usetikzlibrary{positioning,chains,backgrounds,fit}
+% \usetikzlibrary{chains}
 
 \newcommand{\code}[1]{\begin{tt}{#1}\end{tt}}
 
@@ -168,39 +168,42 @@
       % Three main components are presented and discussed: Containers - OS-level virtualization technology, Crossbow -
       % network virtualization environment and the system's resource control utilities.
 
+      % TODO xbow, rctl sections overview
+
 
     \section{General information}
     \label{sec:sol:general}
 
       Oracle Solaris is a multiuser, multitasking, multithreading UNIX-like operating system \cite{reference}. Since its
       release in 1992 (as Sun Solaris 1), the system became one of the most popular environments supporting
-      enterprise-class software. Nowadays, big corporations and companies as well as individual developers use it to do
+      enterprise software. Nowadays, big corporations and companies as well as individual developers use it to do
       their business and deliver reliable and scalable services.
 
       The Solaris OS provides unique set of tools that support virtualization of practically all types of resources at
       various levels. There is Logical Domains (LDOMs) technology for full virtualization and lightweight Zones, when
       all that is needed is the isolation of processes. Logical domains can be connected with complex virtual networks
-      that are created with virtual switches (vsw) and virtual network devices (vnet) \cite{ldomag} and Crossbow can be used to enable lightweight and
-      efficient networking for zones, exploiting capabilities of underlying hardware layer (network interface cards with
-      virtualization level 1, 2 or 3 \cite{santos}).
+      that are created with virtual switches (vsw) and virtual network devices (vnet) \cite{ldomag} and Crossbow can be
+      used to enable lightweight and efficient networking for zones, exploiting capabilities of underlying hardware
+      layer (network interface cards with virtualization level 1, 2 or 3 \cite{santos}).
 
-      Resource utilization can be managed with integrated administration tools. Resource access policies can be created with high
-      level of granularity (per-process resource control) as well as in more general way (limiting resource access for
-      LDOMs). Resource consumption can be subject of monitoring and accounting. With extended accounting subsystem
-      enabled, it is possible to capture detailed accounting data even for single processes. Gathered data include CPU
-      usage, number of bytes received or transmitted per DiffServ or Crossbow flow and more.
+      Resource utilization can be managed with integrated administration tools. Resource access policies can be created
+      with high level of granularity (per-process resource control) as well as in more general way (limiting resource
+      access for LDOMs). Resource consumption can be subject of monitoring and accounting. With extended accounting
+      subsystem enabled, it is possible to capture detailed accounting data even for single processes. Gathered data
+      include CPU usage, number of bytes received or transmitted per DiffServ or Crossbow flow and more.
 
       As far as multiple physical machines are considered, there is also support for VLANs (Virtual Local Area Network).
       Thanks to VLAN tagging support, it is possible to build systems that guarantee the quality of service from the
       lowest levels up, even for services belonging to different systems and consolidated within single physical machine.
 
       \begin{figure}[H]
+        % TODO expand
+        \begin{center}
+          \includegraphics[width=.7\textwidth]{img/solaris/full-featured.pdf}
+        \end{center}
 
-        \caption{The variety of resources that can be virtualized and that Solaris 10 had integrated support for}
+        \caption{The variety of resources that can be virtualized with Solaris 10}
       \end{figure}
-
-
-      % TODO figure with two physical Solarises, each containing LDOMS, Zones, and so on.
 
       As it can be seen, the Oracle Solaris 10 operating system is accompanied by vast variety
       of virtualization-supporting subsystems. This multiplicity and flexibility makes it a promising
@@ -208,41 +211,39 @@
       sections describe selected aspects of the system in more detail.
 
 
-    \section{OS-level virtualization with Solaris Zones}
+    \section{OS-level virtualization with Solaris Containers}
     \label{sec:sol:containers}
-
-      % TODO zones vs containers!!!
 
       % TODO classify and define virtualization types (not here)
       % TODO citation for WPARs
 
-      The concept of lightweight (OS-level) virtualization is supported by most (TODO really?)
-      modern operating systems. The solutions are either integrated into the system's kernel and accessible as soon as
-      it is installed (Solaris Containers, AIX
-      Workload partitions, BSD jails \cite{kamp}) or are provided by third-party manufacturers as kernel patches and utility
-      software (OpenVZ and LXC for Linux OS). Because of the integration with and awareness of other system components,
-      it can be expected that Zones have more potential in them than other virtualization methods.
+      The concept of lightweight (OS-level) virtualization is supported by most modern operating systems. The solutions
+      are either integrated into the system's kernel and accessible as soon as it is installed (Solaris Containers, AIX
+      Workload partitions, BSD jails \cite{kamp}) or are provided by third-party manufacturers as kernel patches and
+      utility software (OpenVZ and LXC for Linux OS). Because of the integration with and awareness of other system
+      components, it can be expected that Zones have more potential in them than other virtualization methods.
 
 
       \subsection{General information}
       \label{sub:}
 
-        Zones technology was introduced as of Solaris OS 10. It provides a way of partitioning system
-        resources and allows for isolated and secure application execution environment \cite{sag}. Solaris Zones,
-        together with resource management functionality, constitute the Solaris Container environment.
+        Zones technology was introduced as of Solaris OS 10. It provides a way of partitioning system resources and
+        allows for isolated and secure application execution environment \cite{sag}. Solaris Zones, together with
+        resource management functionality, constitute the Solaris Container environment.
 
         There are two types of zones: global and non-global. Global zone is the default one and is used to execute
-        applications as well as to administrate the system. Non-global zones can be created from within the global zone
-        only. A single operating system instance with one global zone can host as many as 8192 non-global zones \cite{sag}.
+        applications as well as to administer the system. Non-global zones can be created from within the global zone
+        only. A single operating system instance with one global zone can host as many as 8192 non-global zones
+        \cite{sag}.
 
         Zones can be assigned system resources such as CPU capacity, the amount of random-access memory or even maximum
-        number of lightweight processes that can run simultaneously. Also, network isolation is supported at two levels: basic, at the IP layer, and
-        network isolation and advanced virtualization with fine grained quality of service control using the Crossbow technology.
+        number of lightweight processes that can be running simultaneously. Also, network isolation is supported at two
+        levels: basic, at the IP layer, and network isolation and advanced virtualization with fine grained quality of
+        service control using the Crossbow technology.
 
-        Each zone can run a different set of applications, with optional translation of system calls
-        (Branded Zones Technology) thus emulating different operating
-        environments \cite{sag}. The user is able to create a branded container with translation of Linux system calls and run
-        Linux-specific applications in the container without code recompilation.
+        Each zone can run a different set of applications, with optional translation of system calls (Branded Zones
+        Technology) thus emulating different operating environments \cite{sag}. The user is able to create a branded
+        zone with translation of Linux system calls and run Linux-specific applications without code recompilation.
 
         \begin{figure}[H]
           \begin{center}
@@ -250,20 +251,20 @@
             \includegraphics[width=0.7\textwidth]{img/solaris/zones.png}
           \end{center}
 
-          \caption{Solaris Zones high-level view (source: wiki)}
+          \caption{Solaris Zones high-level view (source: http://tinyurl.com/6b376dg)}
         \end{figure}
 
 
-      \subsection{Container lifecycle model}
+      \subsection{Zone lifecycle model}
       \label{sub:}
 
-        A model was created to describe the states a zone can be in and possible transitions. A non-global zone can be in one of six states:
-        \textit{configured}, \textit{incomplete}, \textit{installed}, \textit{ready}, \textit{running}, \textit{shutting
-        down or down} \cite{sag}.
+        A model was created to describe the states a zone can be in and possible transitions. A non-global zone can be
+        in one of six states: \textit{configured}, \textit{incomplete}, \textit{installed}, \textit{ready},
+        \textit{running}, \textit{shutting down or down} \cite{sag}. The following figure depicts the model.
 
         \begin{figure}[H]
           \begin{center}
-            \includegraphics[width=0.7\textwidth]{img/solaris/zone_states.png}
+            \includegraphics[width=0.7\textwidth]{img/solaris/zone_states.pdf}
           \end{center}
 
           \caption{Solaris Zones states transitions}
@@ -273,7 +274,7 @@
       \subsection{Isolation of processes}
       \label{sub:}
 
-        The Containers technology offers a high level of application security and isolation. This is accomplished by
+        The Containers environment offers a high level of application security and isolation. This is accomplished by
         imposing software bounds on the resource usage and introduction of additional abstraction layer over hardware.
 
         Every process and its children are bound to concrete zone and the assignment cannot be changed. Moreover, it is
@@ -291,29 +292,36 @@
       \label{sub:}
 
         The architecture of Solaris Containers makes it a competitive solution as far as systems administration and
-        operation efficiency is concerned. The technology, imposing negligible overhead \cite{price}, allows to perform tasks that would be
-        impossible or very hard to perform if traditional setup is used. Examples of such tasks include dynamic resource
-        assignment, instantaneous cloning and migration of systems between physical nodes.
+        operation efficiency is concerned. The technology, imposing negligible overhead \cite{price}, allows to perform
+        tasks that would be impossible or very hard to perform if traditional setup is used. Examples of such tasks
+        include dynamic resource assignment, instantaneous cloning and migration of systems between physical nodes.
 
         The technology allows for running a number of isolated instances of operating system sharing CPU time,
         physical network bandwidth, filesystem contents and binary code. Sharing of these resources can greatly improve
         overall system efficiency and reduce the amount of occupied memory. The speed of network communication between
         different zones can also be improved thanks to ,,short-circuited'' traffic (i.e. omitting of layers below IP in
         the OSI/ISO stack). The instances are able to execute applications with minimum overhead introduced mainly due
-        to accessing commands and libraries through the lofs filesystem (TODO more about that) \cite{price}.
+        to accessing commands and libraries through the lofs (loopback filesystem) \cite{price,fsag}.
 
-        When using file system that supports snapshots (as, for example, Solaris 10's default ZFS, TODO citation), containers can be
-        serialized (a snapshot of the file system can be taken) and sent over the network connection (or other means of
-        data transfer) to another machine. There the zone can be restored and operate as a part of the host system.
+        When using file system that supports snapshots (as, for example, ZFS), zones can be
+        serialized (a snapshot of the file system can be taken) and sent over the network connection or other means of
+        data transfer to another machine. There, the zone can be restored and operate as a part of the host system.
 
         Another important aspect of building the infrastructure with containers is resource control. The Solaris system
         makes it possible to define resource controls (rctls) at various level, also on per-zone basis. CPU shares and
-        maximum number of lightweight processes are the resource control properties that can be set for a zone. This can
-        be further extended by providing fine-grained properties at project, task and process levels \cite{sag}. The
-        resource control process is dynamic - the assignments can be changed as the system is running, without
-        interrupting the container normal operation. This of extreme importance if one is building high-availability systems (TODO define?).
+        maximum number of lightweight processes and maximum swap size are examples of resource control properties that
+        can be set for a zone. This can be further extended by providing fine-grained properties at project, task and
+        process levels \cite{sag}. The resource control process is dynamic - the assignments can be changed as the
+        system is running, without interrupting the container normal operation. This can be of extreme importance if one
+        is building high-availability systems.
 
-        % TODO service consolidation -> one host with multiple containers
+        Containers facilitate service consolidation - all components of a system can be executed in a single machine
+        with network-based communication handled entirely by the host operating system, thus eliminating the need for
+        additional network hardware and its management. The consolidated infrastructure becomes more flexible as the
+        majority of administration tasks can be performed by issuing a series of terminal commands. All these factors
+        make total cost of ownership lower \cite{price}.
+
+        % TODO consolidation figure
 
 
       \subsection{Virtual appliances}
@@ -322,7 +330,7 @@
         Virtual appliance is a pre-built, pre-configured, ready-to-run (enterprise) application packaged along with an
         optimized operating system inside a virtual machine \cite{changhua}. Solaris Zones, together with other
         components of the Solaris OS, constitute a complete framework that implements virtual appliance approach to
-        systems management.  % TODO any citation?
+        systems management.
 
         The main problem virtual appliances can solve is the complexity and duration of application deployment process.
         In general, a service deployment can be described as comprising the following stages: preparation (learning the
@@ -350,8 +358,8 @@
 
         Virtual appliance approach makes it possible to reduce deployment time significantly \cite{changhua}. This is
         achieved by performing most of the deployment stages once and storing the configured environment in a virtual
-        appliance. The appliance can then be published in publicly-available repository for actual deployment on a host
-        system.
+        appliance. The appliance can then be moved to publicly-available repository for actual deployment on host
+        systems.
 
         \begin{figure}[H]
           \begin{center}
@@ -363,6 +371,10 @@
               \node (pre)  [below=of prep] {pre-installation};
               \node (ins)  [below=of pre]  {installation};
               \node (post) [below=of ins]  {post-installation};
+
+              \begin{pgfonlayer}{background}
+                \node [terminal, on chain=] (background) [fit=(prep) (post), align=center, style=terminal] {};
+              \end{pgfonlayer}
 
               \node (pub)  [right=of post] {appliance publication};
               \node (act)  [right=of pub]  {appliance retrieval and activation};
@@ -380,9 +392,8 @@
 
         % TODO figure: example of network built with VNAs
 
-    \section{Crossbow - network virtualization technology}
 
-                % TODO  xbow vs DiffServ; xbow-DiffServ interoperation (also: open systems interoperation - xbow<->DiffServ<->other)
+    \section{Crossbow - network virtualization technology}
 
                 It is generally acknowledged that Crossbow was invented in China in 341 B.C but it was in middle ages when 
                 it earned its recognition. Very easy in use and simultaneously very effective. The Solaris Crossbow mechanism 
@@ -391,40 +402,47 @@
 
                 \subsection{Crossbow architecture}
 
-                One of the most important condition in terms of network virtualization is that network traffic
-              should be insulated between virtual machines. This kind of isolation can be achieved by having
-              a dedicated physical NIC, network cable and port from the switch to the virtual machine
-              itself. Moreover, switch must also ensure sustainability on every port. In every other case
-              virtual machines will definitely interfere between each other.                In a particular case when we have to share physical NIC between virtual machines the most promising solution is to
-              virtualize NIC hardware and the second layer of the OSI/ISO stack where sharing is fair and
-              interferences will be avoided. These approach was adapted in the Crossbow architecture in
-              OpenSolaris OS.                Traffic separation is achieved by fundamental blocks of new architecture
-              which are Virtual NICs (VNICs) created by dividing NIC into many VNICs.                 A VNIC can be created over NIC or Etherstub ( more about them later ) and be dynamically controlled by the
-              bandwidth and CPU resources assigned to it. New architecture after introducing new networking features combined with existing features
-              like Solaris Containers, resource control can be presented as following:
+                One of the most important condition in terms of network virtualization is that network traffic should be
+                insulated between virtual machines. This kind of isolation can be achieved by having a dedicated
+                physical NIC, network cable and port from the switch to the virtual machine itself. Moreover, switch
+                must also ensure sustainability on every port. In every other case virtual machines will definitely
+                interfere between each other.                In a particular case when we have to share physical NIC
+                between virtual machines the most promising solution is to virtualize NIC hardware and the second layer
+                of the OSI/ISO stack where sharing is fair and interferences will be avoided. These approach was adapted
+                in the Crossbow architecture in OpenSolaris OS.                Traffic separation is achieved by
+                fundamental blocks of new architecture which are Virtual NICs (VNICs) created by dividing NIC into many
+                VNICs.                 A VNIC can be created over NIC or Etherstub ( more about them later ) and be
+                dynamically controlled by the bandwidth and CPU resources assigned to it. New architecture after
+                introducing new networking features combined with existing features like Solaris Containers, resource
+                control can be presented as following:
 
-               \begin{figure}[H]
-			\includegraphics[width=\textwidth]{img/crossbow.jpg}
-			\caption{The Solaris Crossbow network virtualization enhancement, source: http://www.net-security.org/secworld.php?id=7573}
+              \begin{figure}[H]
+                \begin{center}
+                  \includegraphics[width=.7\textwidth]{img/crossbow.jpg}
+                \end{center}
+
+                \caption{The Solaris Crossbow network virtualization enhancement, source: http://www.net-security.org/secworld.php?id=7573}
                         %@todo add preceise url}
-		\end{figure}
+              \end{figure}
 
-                The crossbow architecture has introduced fully paralized network stack structure. Each stack could be seen as fully independent lane (without
-              any shared locks, queues, and CPUs) therefore network isolation is guaranteed. Key concept is
-              hardware classification performed by the NIC over which VNIC was created. Each lane has a
-              dedicated buffer for Transmit (Tx) and Receive (Rx) ring. In case when load exceeds assigned
-              limit packets must be dropped as it is wiser to dop them then to expend OS CPU resources. 
+                The crossbow architecture has introduced fully paralized network stack structure. Each stack could be
+                seen as fully independent lane (without any shared locks, queues, and CPUs) therefore network isolation
+                is guaranteed. Key concept is hardware classification performed by the NIC over which VNIC was created.
+                Each lane has a dedicated buffer for Transmit (Tx) and Receive (Rx) ring. In case when load exceeds
+                assigned limit packets must be dropped as it is wiser to dop them then to expend OS CPU resources. 
 
-                       \begin{figure}[H]
+                       \begin{figure}[H]
                         \begin{center}
-                              \includegraphics[width=0.7\textwidth]{img/crossbow-traffic-dedicated-line.jpeg}
+                              \includegraphics[width=0.7\textwidth]{img/crossbow-traffic-dedicated-line.pdf}
                               \caption{Dedicated lanes in the Crossbow architecture}
                         \end{center}                 \end{figure}
 		
 		\subsection{Virtualization lanes}
 
-                        Virtualization lane is the most key component in the Crossbow architecture. Each lane consists some dedicated hardware and software that might be 
-			used to some concrete type of traffic. It usually would be composed of: 
+      Virtualization lane is the most key component in the Crossbow architecture. Each lane consists
+      some dedicated hardware and software that might be used to some concrete type of traffic. It
+      usually would be composed of: 
+
 			\begin{enumerate}
 				\item{NIC resources( receive and transmit rings, interrupts, MAC address slots )}
 				\item{Driver resources( DMA bindings )}
@@ -435,22 +453,28 @@
 			
 			\subsubsection{Hardware-based virtualization lanes}
 			
-			This type requires ability to partitioning resources from NIC. The minimum requirement is that a hardware-based lane should must have a dedicated receive ring.
-			Other resources such as transmit lane can be exclusive or shared between lanes. Each virtual machine could have one or more lanes assigned and the incoming packets
-			would be distributed among them based on even scheduling unless some administrative polices where created, such as priority or bandwidth limit.		
+      This type requires ability to partitioning resources from NIC. The minimum requirement is that a hardware-based
+      lane should must have a dedicated receive ring.  Other resources such as transmit lane can be exclusive or shared
+      between lanes. Each virtual machine could have one or more lanes assigned and the incoming packets would be
+      distributed among them based on even scheduling unless some administrative polices where created, such as priority
+      or bandwidth limit.		
 			
 			\subsubsection{Software-based virtualization lanes}
 			
-			In case when NIC runs out of hardware-based virtualization lane, receive and transmit rings may be shared by multiple VNICs. The number of software-based virtualization 
-			lanes also often called softrings is unlimited. The main disadvantage of software-based lanes is the lack of fairness and isolation which in fact is provided in hardware-based
-			lanes. The received and sent rings may work also in mix mode, whereas some of the rings may be assigned to software and some may be assigned to hardware based lanes.	
+      In case when NIC runs out of hardware-based virtualization lane, receive and transmit rings may be shared by
+      multiple VNICs. The number of software-based virtualization lanes also often called softrings is unlimited. The
+      main disadvantage of software-based lanes is the lack of fairness and isolation which in fact is provided in
+      hardware-based lanes. The received and sent rings may work also in mix mode, whereas some of the rings may be
+      assigned to software and some may be assigned to hardware based lanes.	
 			
 		\subsection{Dynamic polling}	
 			
-			The Crossbow architecture proposed two types of working mode. Currently used mode is determined by traffic and load. Under low load, where the rate of arraving packets is lower than
-			time of packet processing lane works in the interrupt mode which means that receive ring generates an interrupt when new packet arrives. However, when the backlog grows, the line 
-			switches to dynamic polling mode in which a kernel thread goes down to the receive ring in the NIC hardware to extract all outstanding packets in a single chain. Key aspect is that 
-			every virtualization lane works independently and transparently from each other. Usually only three threads are used per lane:
+      The Crossbow architecture proposed two types of working mode. Currently used mode is determined by traffic and
+      load. Under low load, where the rate of arraving packets is lower than time of packet processing lane works in the
+      interrupt mode which means that receive ring generates an interrupt when new packet arrives. However, when the
+      backlog grows, the line switches to dynamic polling mode in which a kernel thread goes down to the receive ring in
+      the NIC hardware to extract all outstanding packets in a single chain. Key aspect is that every virtualization
+      lane works independently and transparently from each other. Usually only three threads are used per lane:
 			
 			\begin{enumerate}
 				\item{Poll thread which goes to the NIC hardware to get all packet chain}
@@ -460,13 +484,16 @@
 				machine can transmit any packets without performing queuing because of flow control or context switching.}
 			\end{enumerate}
 
-                \subsection{Virtual switching}
+    \subsection{Virtual switching}
 			
 			Virtual switches are always created implicitly when the first VNIC is defined under existing NIC and could never be accessed directly nor be visible by
 			any user ( even administrator ). 
 			
 			\begin{figure}[H]
-				\includegraphics[width=\textwidth]{img/physical_and_virtual_switches_mapping.jpeg}
+				\begin{center}
+          \includegraphics[width=.7\textwidth]{img/physical_and_virtual_switches_mapping.pdf}
+				\end{center}
+
 				\caption{Mapping between physical and virtual network building elements}
 			\end{figure}
 			
@@ -480,113 +507,142 @@
 
 			Connectivity between VNICs is available only when they were defined on the top of the same NIC. 
 
-		
+	
 	\section{Crossbow components}
 
-                The Crossbow specification describes three major components: VNics, Etherstubs and Flows. This chapter will give an insight into theirs application and usage. 
+                The Crossbow specification describes three major components: VNics, Etherstubs and Flows. This chapter
+                will give an insight into theirs application and usage.
+                
+    \subsection{VNics}
+    
+      Virtual NICs (VNICs) each containing their own lane are the key element in crossbow architecture. There is no
+      difference between NIC and VNIC in administration, as they are all treated as data links. Every VNIC has an
+      assigned lane and flow classifier which classifies received packets by VNIC's MAC address and sometimes by the
+      VLAN tag.  If created with a VLAN tag, protocols like GVRP or MVRP may be used to register the VLAN tag with the
+      physical switches too.	
 
-		\subsection{VNics}
-			Virtual NICs (VNICs) each containing their own lane are the key element in crossbow architecture. There is no
-			difference between NIC and VNIC in administration, as they are all treated as data links. Every VNIC has an assigned
-			lane and flow classifier which classifies received packets by VNIC's MAC address and sometimes by the VLAN tag.
-			If created with a VLAN tag, protocols like GVRP or MVRP may be used to register the VLAN tag with the physical switches
-			too.	
+      In terms of sharing bandwidth, Crossbow enables administrative control of bandwidth for every single VNIC. The
+      bandwidth of the link is implemented by regulating the periodic intake of incoming packets per dedicated lane. The
+      network stack allows only as many packets as it was assigned to specific VNIC. The lane picks more packets when
+      the next period begins. In case of regulating the speed of transmited bandwidth it is much easier as the network
+      stack can either control the application that is generating the stream of packets or just drop the excessive
+      amount of packets.  These mechanisms are also used in flows QoS described and discussed later in this paper.
 
-			In terms of sharing bandwidth, Crossbow enables administrative control of bandwidth for every single VNIC. The bandwidth of the link
-			is implemented by regulating the periodic intake of incoming packets per dedicated lane. The network stack allows only as many packets as it was 
-			assigned to specific VNIC. The lane picks more packets when the next period begins. In case of regulating the speed of transmited bandwidth it is much
-			easier as the network stack can either control the application that is generating the stream of packets or just drop the excessive amount of packets.
-			These mechanisms are also used in flows QoS described and discussed later in this paper.
 
 		\subsection{Etherstubs}
 
-                        As it was mentioned before, the MAC layer provides the virtual switching capabilities which allow VNICs to be created over existing physical NICs.
-                        In some cases, creating virtual networks without the use of a physical NIC is more welcomed than creating over physical NICs. In that case VNICs 
-                        would be defined on the top of pseudo NICs. The Crossbow provides these kind of elements which are called Etherstubs. These components could be used
-                        instead of NICs during creation of VNICs.
-
-                \subsection{Flows}
-
-                        Flows are additional instruments created to allow easier network traffic administration. They might be used in order to provide administer bandwidth resource control and priority for protocols, services, containers.
-                        Defined flow is a set of attributes based on Layer 3 and Layer 4 headers of the OSI/ISO model which are then used to identify protocol, service or virtual machine. 
-                        Flows assigned to link must be independent therefore before adding new one its correctness is checked. Input and output packets are matched to flows in very efficient 
-                        manner with minimal performance impact.
-
-                        \medskip
-
-                        \textbf{flowadm} is the console command used to create, modify, remove or display network bandwidth and priority limits assigned to a particular link. 
+      As it was mentioned before, the MAC layer provides the virtual switching capabilities which allow VNICs to be
+      created over existing physical NICs.  In some cases, creating virtual networks without the use of a physical NIC
+      is more welcomed than creating over physical NICs. In that case VNICs would be defined on the top of pseudo NICs.
+      The Crossbow provides these kind of elements which are called Etherstubs. These components could be used instead
+      of NICs during creation of VNICs.
 
 
-                \subsection{Running examples}
+    \subsection{Flows}
 
-                        \textbf{dladm} and \textbf{flowadm} are two basic administrative commands for dealing with the Crossbow's components. Below a few general examples of their usage are presented.
+      Flows are additional instruments created to allow easier network traffic administration. They might be used in
+      order to provide administer bandwidth resource control and priority for protocols, services, containers.  Defined
+      flow is a set of attributes based on Layer 3 and Layer 4 headers of the OSI/ISO model which are then used to
+      identify protocol, service or virtual machine.  Flows assigned to link must be independent therefore before adding
+      new one its correctness is checked. Input and output packets are matched to flows in very efficient manner with
+      minimal performance impact.
 
-                        \textbf{dladm} is the admin command for crossbow datalinks elements management. Below a few examples of VNICs, Etherstubs management commands are presented and how
-                        bandwidth and priority values might be assigned to these elements.
+      % TODO wiecej o flowach, np. na podstawie czego mozna klasyfikowac i jakie konkretne polityki mozna przypisac
+      % flowom
 
-                        \begin{enumerate}
-                        	\item{\# dladm create-vnic vnic1 -l e1000g0 - creates new VNIC \textbf{vnic1} over existing NIC \textbf{e1000g0}}
-        	                \item{\# dladm create-etherstub ether00 - creates new Etherstub \textbf{ether00}}
-                        	\item{\# dladm show-linkprop vnic11 - lists all properties assigned to \textbf{vnic11} link}
-                        	\item{\# dladm set-linkprop -pmaxbw=1000 vnic11 - assignes 1Mbps bandwith limit to \textbf{vnic11} link}
-                        	\item{\# dladm set-linkprop -ppriority=low vnic11 - assignes low priority to \textbf{vnic11} link}
-                        \end{enumerate}
+      \medskip
 
-                        These were just basics, for more examples see \textbf{man dladm}
+      \textbf{flowadm} is the console command used to create, modify, remove or display network bandwidth and priority
+      limits assigned to a particular link. 
 
-                        \medskip
-        
-                        \textbf{flowadm} is the admin command for flow management. It migth be used as follow:     
 
-                        \begin{enumerate}
-                                \item{\# flowadm show-flow -l e1000g0 - displays all flows assigned to link \textbf{e1000g0}}
-                                \item{\# flowadm add-flow -l e1000g0 -a transport=udp udpflow - creates new flow assigned to link \textbf{e1000g0} for all udp packets}
-                        \end{enumerate}
+    \subsection{Running examples}
 
-                        To see more see \textbf{man flowadm}
+      \textbf{dladm} and \textbf{flowadm} are two basic administrative commands for dealing with the Crossbow's
+      components. Below a few general examples of their usage are presented.
+
+      \textbf{dladm} is the admin command for crossbow datalinks elements management. Below a few
+      examples of VNICs, Etherstubs management commands are presented and how bandwidth and priority
+      values might be assigned to these elements.
+
+      \begin{enumerate}
+        \item{\# dladm create-vnic vnic1 -l e1000g0 - creates new VNIC \textbf{vnic1} over existing NIC \textbf{e1000g0}}
+        \item{\# dladm create-etherstub ether00 - creates new Etherstub \textbf{ether00}}
+        \item{\# dladm show-linkprop vnic11 - lists all properties assigned to \textbf{vnic11} link}
+        \item{\# dladm set-linkprop -pmaxbw=1000 vnic11 - assignes 1Mbps bandwith limit to \textbf{vnic11} link}
+        \item{\# dladm set-linkprop -ppriority=low vnic11 - assignes low priority to \textbf{vnic11} link}
+      \end{enumerate}
+
+      These were just basics, for more examples see \textbf{man dladm}
+
+      \medskip
+
+      \textbf{flowadm} is the admin command for flow management. It migth be used as follow:     
+
+      \begin{enumerate}
+              \item{\# flowadm show-flow -l e1000g0 - displays all flows assigned to link \textbf{e1000g0}}
+              \item{\# flowadm add-flow -l e1000g0 -a transport=udp udpflow - creates new flow assigned to link \textbf{e1000g0} for all udp packets}
+      \end{enumerate}
+
+      To see more see \textbf{man flowadm}
+
+
+    \section{Crossbow and Differentiated Services - interoperability}
+    \label{sec:sol:diffserv}
         
 
     \section{Resource access control}
 
-                Nowadays existing operating systems must provide mechanisms for response to the varying resource 
-		demands per workload which is an aggregation of processes of an application. By default resource management
-		features are not used and system gives equal access to resources. When it is necassary it is possible 
-		to modify these default behaviour with respect to different workloads. These management allows you to:
-		\begin{enumerate}
-        	\item{Restrict access to specific resource}
-			\item{Offer resources to workloads on a preferential basis}
-			\item{Isolate workloads from each another}
-		\end{enumerate}
+      Nowadays existing operating systems must provide mechanisms for response to the varying resource demands
+      per workload which is an aggregation of processes of an application. By default resource management
+      features are not used and system gives equal access to resources. When it is necassary it is possible to
+      modify these default behaviour with respect to different workloads. These management allows you to:
+
+      \begin{enumerate}
+        \item{Restrict access to specific resource}
+        \item{Offer resources to workloads on a preferential basis}
+        \item{Isolate workloads from each another}
+      \end{enumerate}
 	
-		Resource is any part of computing system that may be modified in order to change application behaviour. Resource management enables more 
-		effective resource utilization and avoid wasting available ones due to load variability. Reserving additional capability
-		during off-peak periods and effective sharing resources definately inceases application performance.
-		
-		Solaris Operating System introduced three types of resource management control mechanisms:
-		\begin{enumerate}
-        	\item{constraints - allows defining set of bounds on used resources for a workload}
-			\item{partitioning - enables binding subset of system's available resources to specific workload}
-			\item{scheduling - involves predictable algorithm making sequence of allocation decisions at specific intervals}
-		 \end{enumerate}
+      Resource is any part of computing system that may be modified in order to change application behaviour. Resource
+      management enables more effective resource utilization and avoid wasting available ones due to load variability.
+      Reserving additional capability during off-peak periods and effective sharing resources definately inceases
+      application performance.
+      
+      Solaris Operating System introduced three types of resource management control mechanisms:
 
-                Hierarchical architecture allows defining set of resource control sets on each level. However, if more than one is assigned to a resource, the smallest container's control level is enforced. 
+      \begin{enumerate}
+        \item{constraints - allows defining set of bounds on used resources for a workload}
+        \item{partitioning - enables binding subset of system's available resources to specific workload}
+        \item{scheduling - involves predictable algorithm making sequence of allocation decisions at specific intervals}
+      \end{enumerate}
 
-                \begin{figure}[H]
-			\includegraphics[width=\textwidth]{img/rctrl.png}
-			\caption{Solaris system multilevel architecture and their resource control sets ( source: http://oracle.com ) }
-                        %@todo add preceise url}
-		\end{figure}
+      Hierarchical architecture allows defining set of resource control sets on each level. However, if more
+      than one is assigned to a resource, the smallest container's control level is enforced. 
+
+      \begin{figure}[H]
+        \includegraphics[width=\textwidth]{img/rctrl.png}
+        \caption{Solaris system multilevel architecture and their resource control sets ( source: http://oracle.com ) }
+                          %@todo add preceise url}
+		  \end{figure}
                 
 
     \section*{Summary}
 
-                Solaris 10 OS seems to be ideal cross-platform choice for customers dealing with managment of high level services, complex system administration and high costs. It is the only open operating system which has proven 
-                results running from every critical enterprise databases to high performance Web farms that is why Solaris OS is becoming strategic platform for today's constantly growing demands towards operating systems. 
+      Solaris 10 OS seems to be ideal cross-platform choice for customers dealing with management of high level
+      services, complex system administration and high costs. It is the only open operating system which has
+      proven results running from every critical enterprise databases to high performance Web farms that is
+      why Solaris OS is becoming strategic platform for today's constantly growing demands towards operating
+      systems. 
+
+
   \chapter{The system architecture}
 
     \section*{Chapter overview}
 
-      The \nameref{sec:domain-model} section describes the transformations performed by the system's components in order to instantiate/deploy an object model. These include simple one-node instantiation as well as more complex multi-node instantiations.
+      The \nameref{sec:domain-model} section describes the transformations performed by the system's components in order
+      to instantiate/deploy an object model. These include simple one-node instantiation as well as more complex
+      multi-node instantiations.
 
       % tutaj tez kilka slow i JIMSie i integracji + co to daje
 
