@@ -319,16 +319,16 @@
         data transfer to another machine. There, the zone can be restored and operate as a part of the host system.
 
         Another important aspect of building the infrastructure with containers is resource control. The Solaris system
-        makes it possible to define resource controls (rctls) at various level, also on per-zone basis. CPU shares,
+        makes it possible to define resource controls (rctls) at various levels, also on per-zone basis. CPU shares,
         maximum number of lightweight processes and maximum swap size are examples of resource control properties that
         can be set for a zone. This can be further extended by providing fine-grained properties at project, task and
-        process levels \cite{sag}. The resource control process is dynamic - assignments can be changes as the system
+        process levels \cite{sag}. The resource control process is dynamic - assignments can be changed as the system
         is running, without interrupting the container's normal operation. This can be of extreme importance as far
         as high-availability systems are considered.
 
         Containers facilitate service consolidation - all components of a system can be executed in a single machine
         with network-based communication handled entirely by the host operating system, thus eliminating the need for
-        additional network hardware and its management. The consolidated infrastructure becomes more flexible as the
+        additional networking hardware and its management. The consolidated infrastructure becomes more flexible as the
         majority of administration tasks can be performed by issuing a series of terminal commands. All these factors
         make total cost of ownership lower \cite{price}.
 
@@ -434,14 +434,14 @@
 
       \subsection{Crossbow architecture}
 
-        One of the most important condition in terms of network virtualization is that network traffic should be
+        One of the most important conditions in terms of network virtualization is that network traffic should be
         insulated between virtual machines. This kind of isolation can be achieved by having a dedicated physical NIC,
         network cable and port from the switch to the virtual machine itself. Moreover, switch must also ensure
         sustainability on every port. Otherwise, virtual machines will definitely interfere with each other \cite{crossbow}.
         
-        In a particular case when we have to share physical NIC between virtual machines the most promising solution is
-        to virtualize NIC hardware and the second layer of the OSI/ISO stack where sharing is fair and interferences
-        will be avoided. These approach was adapted in the Crossbow architecture in OpenSolaris OS \cite{crossbow}.
+        In a particular case when a physical NIC has to be shared between virtual machines the most promising solution is
+        to virtualize NIC hardware and the second layer of the OSI/ISO stack where sharing is fair and interference
+        will be avoided. These approach was adapted in the Crossbow architecture in the Solaris OS \cite{crossbow}.
         
         Traffic separation is achieved with fundamental blocks of new architecture which are Virtual NICs (VNICs)
         created by partitioning physical NIC. A VNIC can be created over NIC or Etherstub and
@@ -458,11 +458,11 @@
                   %@todo add preceise url}
         \end{figure}
 
-        The crossbow architecture has introduced fully paralized network stack structure. Each stack could be seen as
-        fully independent lane (without any shared locks, queues, and CPUs) therefore network isolation is guaranteed.
+        The crossbow architecture has introduced fully parallel network stack structure. Each stack could be seen as
+        an independent lane (without any shared locks, queues, and CPUs) therefore network isolation is guaranteed.
         Key concept is hardware classification performed by the NIC over which VNIC was created.  Each lane has a
         dedicated buffer for Transmit (Tx) and Receive (Rx) ring. In case when load exceeds assigned limit packets must
-        be dropped as it is wiser to dop them then to expend OS CPU resources \cite{crossbow}.
+        be dropped as it is wiser to drop them than to expend OS CPU resources \cite{crossbow}.
 
         \begin{figure}[H]
           \begin{center}
@@ -475,8 +475,8 @@
 		
       \subsection{Virtualization lanes}
 
-        Virtualization lane is the most key component in the Crossbow architecture. Each lane consists some dedicated
-        hardware and software that might be used to some concrete type of traffic. It usually would be composed of: 
+        Virtualization lane is the most key component in the Crossbow architecture. Each lane consists of some dedicated
+        hardware and software that might be used to handle specific type of traffic. It usually would be composed of: 
 
         \begin{enumerate}
           \item NIC resources (receive and transmit rings, interrupts, MAC address slots)
@@ -506,13 +506,13 @@
 			
       \subsection{Dynamic polling}	
         
-        The Crossbow architecture proposed two types of working mode. Currently used mode is determined by traffic and
-        load. Under low load, where the rate of arriving packets is lower than time of packet processing lane works in
+        The Crossbow architecture proposed two types of working modes. Currently used mode is determined by traffic and
+        load. Under low load, where the rate of arriving packets is lower than time of packet processing, a lane works in
         the interrupt mode which means that receive ring generates an interrupt when new packet arrives. However, when
         the backlog grows, the line switches to dynamic polling mode in which a kernel thread goes down to the receive
         ring in the NIC hardware to extract all outstanding packets in a single chain. Key aspect is that every
         virtualization lane works independently and transparently from each other. Usually only three threads are used
-        per lane\cite{crossbow}:
+        per lane \cite{crossbow}:
         
         \begin{enumerate}
           \item Poll thread which goes to the NIC hardware to get all packet chain
@@ -538,10 +538,10 @@
           \caption{Mapping between physical and virtual network building elements}
         \end{figure}
         
-        Semantics assured by virtual switches are the same as provided by physical switches: 
+        Semantics assured by virtual switches is the same as provided by physical switches: 
 
         \begin{enumerate}
-          \item VNICs created on top of the same NIC can send ehterstub packets to each other
+          \item VNICs created on top of the same NIC can send packets to each other
           \item Broadcast packets received by the underlying NIC are distributed to every single VNIC that was defined
                 on the top of this NIC
           \item Broadcast packets sent by one of the VNICs is distributed to all VNICs defined on the top of the same
@@ -550,16 +550,16 @@
                 packets to appropriate VNIC
         \end{enumerate}
 
-        Connectivity between VNICs is available only when they were defined on the top of the same NIC. 
+        Data Link Layer connectivity between VNICs is available only when they were defined on top of the same NIC. 
 
 	
       \subsection{Crossbow components}
 
-        The Crossbow specification describes three major components: VNics, Etherstubs and Flows. This section gives an
+        The Crossbow specification describes three major components: VNICs, Etherstubs and Flows. This section gives an
         insight into their application and usage.
 
                 
-        \subsubsection{VNics}
+        \subsubsection{VNICs}
         
           Virtual NICs (VNICs) each containing their own lane are the key element in crossbow architecture. There is no
           difference between NIC and VNIC in administration, as they are all treated as data links. Every VNIC has an
@@ -588,12 +588,12 @@
         \subsubsection{Flows}
 
           Flows are additional instruments created to allow easier network traffic administration. They might be used in
-          order to provide administer bandwidth resource control and priority for protocols, services, containers. Virtual
+          order to provide bandwidth resource control and priority for protocols, services, containers. Virtual
           networks can be described to maintain isolation and different network properties, and define flows to manage quality
           of service \cite{network_virtualization}.
 
           Defined flow is a set of attributes based on Layer 3 and Layer 4 headers of the OSI/ISO model which are then
-          used to identify protocol, service or virtual machine.  Flows assigned to link must be independent therefore
+          used to identify protocol, service or virtual machine.  Flows assigned to a link must be independent therefore
           before adding new one its correctness is checked. Input and output packets are matched to flows in very
           efficient manner with minimal performance impact.
 
@@ -640,11 +640,11 @@
           \item \# dladm set-linkprop -ppriority=low vnic11 - assignes low priority to \textbf{vnic11} link
         \end{enumerate}
   
-        These were just basics, for more examples see \textbf{man dladm}
+        More examples can be found in \textbf{man dladm}.
 
         \medskip
 
-        \textbf{flowadm} is the admin command for flow management. It migth be used as follow:     
+        \textbf{flowadm} is the admin command for flow management. It might be used as follows:     
 
         \begin{enumerate}
           \item \# flowadm show-flow -l e1000g0 - displays all flows assigned to link \textbf{e1000g0}
@@ -652,7 +652,7 @@
                 \textbf{e1000g0} for all udp packets
         \end{enumerate}
 
-        More information about \textbf{man flowadm} and \textbf{man dladm} can be found in manual.
+        More information about \textbf{flowadm} and \textbf{dladm} tools can be found in manual.
 
 
       \subsection{Crossbow and Differentiated Services - interoperability}
