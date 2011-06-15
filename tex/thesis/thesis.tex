@@ -382,7 +382,7 @@
           \begin{center}
             \begin{tikzpicture}[node distance=5mm,]
 
-              { [start chain, every node/.style={terminal, on chain, join, text width=3cm, align=center}, every join/.style={->}]
+              { [start chain, every node/.style={terminal, on chain, join, text width=3cm}, every join/.style={->}]
 
                 { [every on chain/.style={text width=3.5cm}]
 
@@ -398,7 +398,7 @@
               }
 
               \begin{pgfonlayer}{background}
-                \node [terminal] (background) [fit=(prep) (post), align=center, style=terminal] {};
+                \node [terminal] (background) [fit=(prep) (post), style=terminal] {};
               \end{pgfonlayer}
 
             \end{tikzpicture}
@@ -437,19 +437,19 @@
         One of the most important condition in terms of network virtualization is that network traffic should be
         insulated between virtual machines. This kind of isolation can be achieved by having a dedicated physical NIC,
         network cable and port from the switch to the virtual machine itself. Moreover, switch must also ensure
-        sustainability on every port. Otherwise, virtual machines will definitely interfere with each other.
+        sustainability on every port. Otherwise, virtual machines will definitely interfere with each other \cite{crossbow}.
         
         In a particular case when we have to share physical NIC between virtual machines the most promising solution is
         to virtualize NIC hardware and the second layer of the OSI/ISO stack where sharing is fair and interferences
-        will be avoided. These approach was adapted in the Crossbow architecture in OpenSolaris OS.
+        will be avoided. These approach was adapted in the Crossbow architecture in OpenSolaris OS \cite{crossbow}.
 
         % TODO ,,more about them later'' <- nie moze tego byc
         
-        Traffic separation is achieved with fundamental blocks of new architecture which are Virtual NICs (VNICs) created
-        by partitioning physical NIC. A VNIC can be created over NIC or Etherstub ( more about them later ) and be
-        dynamically controlled by the bandwidth and CPU resources assigned to it. New architecture after introducing new
-        networking features combined with existing features like Solaris Containers, resource control can be presented
-        as following:
+        Traffic separation is achieved with fundamental blocks of new architecture which are Virtual NICs (VNICs)
+        created by partitioning physical NIC. A VNIC can be created over NIC or Etherstub ( more about them later ) and
+        be dynamically controlled by the bandwidth and CPU resources assigned to it
+        \cite{crossbow,network_virtualization}. New architecture after introducing new networking features combined with
+        existing features like Solaris Containers, resource control can be presented as following:
 
         \begin{figure}[H]
           \begin{center}
@@ -464,7 +464,7 @@
         fully independent lane (without any shared locks, queues, and CPUs) therefore network isolation is guaranteed.
         Key concept is hardware classification performed by the NIC over which VNIC was created.  Each lane has a
         dedicated buffer for Transmit (Tx) and Receive (Rx) ring. In case when load exceeds assigned limit packets must
-        be dropped as it is wiser to dop them then to expend OS CPU resources.
+        be dropped as it is wiser to dop them then to expend OS CPU resources \cite{crossbow}.
 
         \begin{figure}[H]
           \begin{center}
@@ -495,7 +495,7 @@
           hardware-based lane should must have a dedicated receive ring.  Other resources such as transmit lane can be
           exclusive or shared between lanes. Each virtual machine could have one or more lanes assigned and the incoming
           packets would be distributed among them based on even scheduling unless some administrative polices where
-          created, such as priority or bandwidth limit.		
+          created, such as priority or bandwidth limit \cite{crossbow}.		
 
         
         \subsubsection{Software-based virtualization lanes}
@@ -504,7 +504,7 @@
           multiple VNICs. The number of software-based virtualization lanes also often called softrings is unlimited.
           The main disadvantage of software-based lanes is the lack of fairness and isolation which in fact is provided
           in hardware-based lanes. The received and sent rings may work also in mix mode, whereas some of the rings may
-          be assigned to software and some may be assigned to hardware based lanes.	
+          be assigned to software and some may be assigned to hardware based lanes \cite{crossbow}.	
 			
       \subsection{Dynamic polling}	
         
@@ -514,7 +514,7 @@
         the backlog grows, the line switches to dynamic polling mode in which a kernel thread goes down to the receive
         ring in the NIC hardware to extract all outstanding packets in a single chain. Key aspect is that every
         virtualization lane works independently and transparently from each other. Usually only three threads are used
-        per lane:
+        per lane\cite{crossbow}:
         
         \begin{enumerate}
           \item Poll thread which goes to the NIC hardware to get all packet chain
@@ -530,7 +530,7 @@
       \subsection{Virtual switching}
         
         Virtual switches are always created implicitly when the first VNIC is defined under existing NIC and could never
-        be accessed directly nor be visible by any user (even administrator). 
+        be accessed directly nor be visible by any user (even administrator) \cite{crossbow2}. 
         
         \begin{figure}[H]
           \begin{center}
@@ -567,7 +567,7 @@
           difference between NIC and VNIC in administration, as they are all treated as data links. Every VNIC has an
           assigned lane and flow classifier which classifies received packets by VNIC's MAC address and sometimes by the
           VLAN tag.  If created with a VLAN tag, protocols like GVRP or MVRP may be used to register the VLAN tag with
-          the physical switches too.	
+          the physical switches too \cite{crossbow}.	
 
           In terms of sharing bandwidth, Crossbow enables administrative control of bandwidth for every single VNIC. The
           bandwidth of the link is implemented by regulating the periodic intake of incoming packets per dedicated lane.
@@ -575,7 +575,7 @@
           when the next period begins. In case of regulating the speed of transmited bandwidth it is much easier as the
           network stack can either control the application that is generating the stream of packets or just drop the
           excessive amount of packets.  These mechanisms are also used in flows QoS described and discussed later in
-          this paper.
+          this paper \cite{crossbow}.
 
 
         \subsubsection{Etherstubs}
@@ -584,13 +584,16 @@
           created over existing physical NICs.  In some cases, creating virtual networks without the use of a physical
           NIC is more welcomed than creating over physical NICs. In that case VNICs would be defined on the top of
           pseudo NICs.  The Crossbow provides these kind of elements which are called Etherstubs. These components could
-          be used instead of NICs during creation of VNICs.
+          be used instead of NICs during creation of VNICs \cite{crossbow}.
 
 
         \subsubsection{Flows}
 
           Flows are additional instruments created to allow easier network traffic administration. They might be used in
-          order to provide administer bandwidth resource control and priority for protocols, services, containers.
+          order to provide administer bandwidth resource control and priority for protocols, services, containers. Virtual
+          networks can be described to maintain isolation and different network properties, and define flows to manage quality
+          of service \cite{network_virtualization}.
+
           Defined flow is a set of attributes based on Layer 3 and Layer 4 headers of the OSI/ISO model which are then
           used to identify protocol, service or virtual machine.  Flows assigned to link must be independent therefore
           before adding new one its correctness is checked. Input and output packets are matched to flows in very
@@ -607,7 +610,7 @@
             \item DSCP field
           \end{itemize}
 
-          For each flow the following properties can be set: 
+          For each flow the following properties can be set \cite{flows2}: 
 
           \begin{itemize}
             \item bandwidth
@@ -615,6 +618,8 @@
           \end{itemize}
 
           \medskip
+
+          
 
           \textbf{flowadm} is the console command used to create, modify, remove or to display network bandwidth and
           priority limits assigned to a particular link. 
@@ -700,6 +705,11 @@
       management enables more effective resource utilization and avoid wasting available ones due to load variability.
       Reserving additional capability during off-peak periods and effective sharing resources definitely increases
       application performance.
+
+      Most of the operating systems limited the resource control just to per-process control, whereas Oracle Solaris has
+      extended this concept to the task, project and zone. Due to introducing granularity levels processes, tasks, and 
+      zones are efficiently controlled from excessive resource consumption. All these enhacements are available thanks 
+      to resource controls (rctls) facility \cite{oracle_admin_guide}.
       
       Solaris Operating System introduced three types of resource management control mechanisms:
 
@@ -710,7 +720,7 @@
       \end{enumerate}
 
       Hierarchical architecture allows defining set of resource control sets on each level. However, if more than one is
-      assigned to a resource, the smallest container's control level is enforced. 
+      assigned to a resource, the smallest container's control level is enforced \cite{oracle_admin_guide}. 
 
       \begin{figure}[H]
         \begin{center}
@@ -758,7 +768,7 @@
       Solaris 10 OS seems to be ideal cross-platform choice for customers dealing with management of high level
       services, complex system administration and high costs. It is the only open operating system which has proven
       results running from every critical enterprise databases to high performance Web farms that is why Solaris OS is
-      becoming strategic platform for today's constantly growing demands towards operating systems. 
+      becoming strategic platform for today's constantly growing demands towards operating systems \cite{solaris_operating_system}. 
 
 
   \chapter{The system architecture}
@@ -877,19 +887,6 @@
 
   \bibliographystyle{plain}
   \bibliography{bibliography}
-  % \begin{thebibliography}{some-label}
-  %   
-  %   \bibitem[1] xCrossbow:From Hardware Virtualized NICS To Virtualized Networks, http://conferences.sigcomm.org/sigcomm/2009/workshops/visa/papers/p53.pdf
-  %   \bibitem[2] xVirtual switching in Solaris, http://hub.opensolaris.org/bin/download/Project+crossbow/Docs/virtualswitch.pdf
-  %   \bibitem[3] xOracle Solaris 11 Express Network Virtualization and Network Resource Management, http://www.oracle.com/technetwork/articles/servers-storage-admin/sol11ecrossbow-186794.pdf
-  %   \bibitem[4] xhttp://itnewscast.com/servers-storage/flow-control-solaris-11-express-network-virtualization
-  %   \bibitem[5] xhttp://www.google.pl/url?sa=t\&source=web\&cd=9\&ved=0CGwQFjAI\&url=http\%3A\%2F\%2Fwww.filibeto.org\%2F~aduritz\%2Ftruetrue\%2Fsolaris10\%2Fneworking\%2Fcrossbow\%2Fcrossbow-vnet-rescontrol.pdf\&rct=j\&q=crossbow\%20solaris\%2010\&ei=IjTtTdeZN8WWOoyOlLQB\&usg=AFQjCNG\_1MiQcXuYNqTPWNfwuyrZIf6lUA\&sig2=VG\_ZpFMfQ8AHI-eGFYIcxQ\&cad=rja
-  %   \bibitem[6] xman dladm
-  %   \bibitem[7] xman flowadm
-  %   \bibitem[8]{ http://download.oracle.com/docs/cd/E19044-01/sol.containers/817-1592/resource/index.html }
-	
-
-  % \end{thebibliography}
 
 
 \end{document}
