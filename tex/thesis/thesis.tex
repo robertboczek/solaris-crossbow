@@ -157,9 +157,10 @@
 
       % TODO  actually, Solaris 10, Solaris 11 and OpenSolaris are described here!
 
-      The chapter provides an overview of Oracle Solaris 10 and evaluates it as a platform for resource virtualization.
-      Special emphasis is put on the networking-related aspects of virtualization. Thus, the Solaris Crossbow technology
-      is given its own section.
+      The chapter provides an overview of Oracle Solaris operating system and evaluates it as a platform for resource
+      virtualization. The chapter describes Solaris 11 Express release of the system, as it is the first release
+      (together with OpenSolaris) with Crossbow technology integrated. Special emphasis is put on the networking-related
+      aspects of virtualization. Thus, the Solaris Crossbow technology is described in detail.
 
       Section \ref{sec:sol:general} contains introductory information about the system. A short historical note is
       presented and general description follows. Main components of the system are introduced and described.
@@ -169,15 +170,17 @@
       defining the concept of zones, zone lifecycle model is presented, the achieved level of process isolation is
       described and discussion of Zones advantages in comparison to non-virtualized environments follows.
 
-      Section \ref{sec:sol:xbow} introduces Solaris Crossbow - lightweight network virtualization environment. The part
-      starts with general description of the technology. Next, components crucial to efficiency improvement are
+      Section \ref{sec:sol:xbow} introduces Solaris Crossbow - lightweight network virtualization environment. The
+      section starts with general description of the technology. Next, components crucial to efficiency improvement are
       presented in detail. Etherstubs, VNICs and flows are described. These are building blocks used to create
       virtualized network elements and apply QoS policies. The section ends with the comparison between Crossbow and
       DiffServ and a method of integration of these two solutions is presented.
 
-      Section \ref{sec:sol:res} provides an overview of resource control methods offered by the Solaris OS. Three types
+      Section \ref{sec:sol:res} provides an overview of resource control methods offered by the Solaris OS. The types
       of resource management mechanisms (constraints, partitioning and scheduling) are identified and defined. Resource
-      control hierarchy used by the system is depicted and explained.
+      control hierarchy used by the system is depicted and explained. Also, the accounting facility is described. The
+      types of resources extended accounting can work with are enumerated and examples of data that can be gathered are
+      listed.
 
 
     \section{General information}
@@ -211,13 +214,13 @@
           \includegraphics[width=.7\textwidth]{img/solaris/full-featured.pdf}
         \end{center}
 
-        \caption{The variety of resources that can be virtualized with Solaris 10}
+        \caption{The variety of resources that can be virtualized with Solaris OS}
       \end{figure}
 
-      As it can be seen, the Oracle Solaris 10 operating system is accompanied by vast variety
-      of virtualization-supporting subsystems. This multiplicity and flexibility makes it a promising
-      platform for service provisioning and building even more abstract architectures on top of it. The following
-      sections describe selected aspects of the system in more detail.
+      As it can be seen, the Solaris operating system is accompanied by vast variety of virtualization-supporting
+      subsystems. This multiplicity and flexibility makes it a promising platform for service provisioning and building
+      even more abstract architectures on top of it. The following sections describe selected aspects of the system in
+      more detail.
 
 
     \section{OS-level virtualization with Solaris Containers}
@@ -255,27 +258,27 @@
 
         \begin{figure}[H]
           \begin{center}
-            % TODO  redraw or cite
-            \includegraphics[width=0.7\textwidth]{img/solaris/zones.png}
+            \includegraphics[width=0.7\textwidth]{img/solaris/zones-high-level.pdf}
           \end{center}
 
-          \caption{Solaris Zones high-level view (source: http://tinyurl.com/6b376dg)}
+          \caption{Solaris Zones high-level view}
         \end{figure}
 
 
-      \subsection{Zone lifecycle model}
+      \subsection{Zone lifecycle}
       \label{sub:}
 
         A model was created to describe the states a zone can be in and possible transitions. A non-global zone can be
         in one of six states: \textit{configured}, \textit{incomplete}, \textit{installed}, \textit{ready},
-        \textit{running}, \textit{shutting down or down} \cite{sag}. The following figure depicts the model.
+        \textit{running}, \textit{shutting down or down} \cite{sag}. Figure \ref{fig:sol:lifecycle} depicts the model.
 
         \begin{figure}[H]
           \begin{center}
             \includegraphics[width=0.7\textwidth]{img/solaris/zone_states.pdf}
           \end{center}
 
-          \caption{Solaris Zones states transitions}
+          \caption{Zone states and possible transitions}
+          \label{fig:sol:lifecycle}
         \end{figure}
 
 
@@ -301,13 +304,13 @@
 
         The architecture of Solaris Containers makes it a competitive solution as far as systems administration and
         operation efficiency is concerned. The technology, imposing negligible overhead \cite{price}, allows to perform
-        tasks that would be impossible or very hard to perform if traditional setup is used. Examples of such tasks
+        tasks that would be impossible or very hard to accomplish if traditional setup is used. Examples of such tasks
         include dynamic resource assignment, instantaneous cloning and migration of systems between physical nodes.
 
         The technology allows for running a number of isolated instances of operating system sharing CPU time,
         physical network bandwidth, filesystem contents and binary code. Sharing of these resources can greatly improve
         overall system efficiency and reduce the amount of occupied memory. The speed of network communication between
-        different zones can also be improved thanks to ,,short-circuited'' traffic (i.e. omitting of layers below IP in
+        different zones can also be improved thanks to ,,short-circuited'' traffic (i.e. omitting the layers below IP in
         the OSI/ISO stack). The instances are able to execute applications with minimum overhead introduced mainly due
         to accessing commands and libraries through the lofs (loopback filesystem) \cite{price,fsag}.
 
@@ -316,12 +319,12 @@
         data transfer to another machine. There, the zone can be restored and operate as a part of the host system.
 
         Another important aspect of building the infrastructure with containers is resource control. The Solaris system
-        makes it possible to define resource controls (rctls) at various level, also on per-zone basis. CPU shares and
+        makes it possible to define resource controls (rctls) at various level, also on per-zone basis. CPU shares,
         maximum number of lightweight processes and maximum swap size are examples of resource control properties that
         can be set for a zone. This can be further extended by providing fine-grained properties at project, task and
         process levels \cite{sag}. The resource control process is dynamic - the assignments can be changed as the
-        system is running, without interrupting the container normal operation. This can be of extreme importance if one
-        is building high-availability systems.
+        system is running, without interrupting the container normal operation. This can be of extreme importance as far
+        as high-availability systems are considered.
 
         Containers facilitate service consolidation - all components of a system can be executed in a single machine
         with network-based communication handled entirely by the host operating system, thus eliminating the need for
@@ -331,19 +334,18 @@
 
         \begin{figure}[H]
           \begin{center}
-            \includegraphics[width=.7\textwidth]{img/solaris/consolidation.pdf}
+            \includegraphics[width=.6\textwidth]{img/solaris/consolidation.pdf}
           \end{center}
 
-          \caption{Service consolidation within a single Solaris OS instance with internal network connectivity. Each
-          service is given its own container.}
+          \caption{Service consolidation within a Solaris OS instance with internal network connectivity}
         \end{figure}
 
 
       \subsection{Virtual appliances}
       \label{sub:}
 
-        Virtual appliance is a pre-built, pre-configured, ready-to-run (enterprise) application packaged along with an
-        optimized operating system inside a virtual machine \cite{changhua}. Solaris Zones, together with other
+        Virtual appliance is a \textit{pre-built, pre-configured, ready-to-run (enterprise) application packaged along
+        with an optimized operating system inside a virtual machine} \cite{changhua}. Solaris Zones, together with other
         components of the Solaris OS, constitute a complete framework that implements virtual appliance approach to
         systems management.
 
@@ -408,14 +410,14 @@
         It is possible to prepare sets of virtual appliances containing traditional services (such as application
         servers, database servers or media servers) as well as highly specialized networking-focused appliances that can
         act as routers, firewalls or load balancers. These Virtual (Network) Appliances, together with other components
-        provided by Solaris 10,  can be leveraged to build fully virtual network topologies.
+        provided by Solaris OS,  can be leveraged to build fully virtual network topologies.
 
         \begin{figure}[H]
           \begin{center}
             \includegraphics[width=.7\textwidth]{img/solaris/virtual-appliance-infra.pdf}
           \end{center}
 
-          \caption{An example of network infrastructure utilizing virtual appliances with virtual appliance repository.}
+          \caption{An example of infrastructure utilizing virtual appliances with appliance repository.}
         \end{figure}
 
 
@@ -440,9 +442,11 @@
         In a particular case when we have to share physical NIC between virtual machines the most promising solution is
         to virtualize NIC hardware and the second layer of the OSI/ISO stack where sharing is fair and interferences
         will be avoided. These approach was adapted in the Crossbow architecture in OpenSolaris OS.
+
+        % TODO ,,more about them later'' <- nie moze tego byc
         
-        Traffic separation is achieved by fundamental blocks of new architecture which are Virtual NICs (VNICs) created
-        by dividing NIC into many VNICs. A VNIC can be created over NIC or Etherstub ( more about them later ) and be
+        Traffic separation is achieved with fundamental blocks of new architecture which are Virtual NICs (VNICs) created
+        by partitioning physical NIC. A VNIC can be created over NIC or Etherstub ( more about them later ) and be
         dynamically controlled by the bandwidth and CPU resources assigned to it. New architecture after introducing new
         networking features combined with existing features like Solaris Containers, resource control can be presented
         as following:
@@ -553,8 +557,8 @@
 	
       \subsection{Crossbow components}
 
-        The Crossbow specification describes three major components: VNics, Etherstubs and Flows. This section will give
-        an insight into their application and usage.
+        The Crossbow specification describes three major components: VNics, Etherstubs and Flows. This section gives an
+        insight into their application and usage.
 
                 
         \subsubsection{VNics}
@@ -681,12 +685,10 @@
     \section{Resource control}
     \label{sec:sol:res}
 
-      % TODO accounting
-
       Nowadays existing operating systems must provide mechanisms for response to the varying resource demands per
       workload which is an aggregation of processes of an application. By default resource management features are not
-      used and system gives equal access to resources. When it is necassary it is possible to modify these default
-      behaviour with respect to different workloads. These management allows you to:
+      used and system gives equal access to resources. When necessary, it is possible to modify this default behaviour
+      with respect to different workloads. These management allows you to:
 
       \begin{enumerate}
         \item Restrict access to specific resource
@@ -711,10 +713,33 @@
       assigned to a resource, the smallest container's control level is enforced. 
 
       \begin{figure}[H]
-        \includegraphics[width=\textwidth]{img/rctrl.png}
+        \begin{center}
+          \includegraphics[width=.7\textwidth]{img/rctrl.png}
+        \end{center}
+        
         \caption{Solaris system multilevel architecture and its resource control sets (source: http://oracle.com)}
                           %@todo add preceise url}
 		  \end{figure}
+
+
+      \subsection{Accounting}
+      \label{sub:sol:acct}
+
+        Highly configurable accounting facility is provided as part of the system. Its role is to gather historical
+        usage records of system and network resources. There are two levels accounting can work on in Solaris
+        OS - basic and extended. Basic accounting allows for per-zone and per-project statistics gathering while
+        extended accounting facility makes it possible to collect the data for tasks and processes. Statistics gathered
+        by the extended accounting can be examined using C or Perl interface of the libexacct library \cite{sag}.
+
+        The extended accounting facility can gather data for:
+
+        \begin{itemize}
+          \item system resources usage (per-task and per-process)
+          \item flows defined with the IPQoS tools
+          \item links and flows created with Crossbow
+        \end{itemize}
+
+        % TODO what data can be gathered?
                 
 
     \section*{Summary}
