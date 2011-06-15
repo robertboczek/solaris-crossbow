@@ -155,6 +155,8 @@
 
     \section*{Chapter overview}
 
+      % TODO  actually, Solaris 10, Solaris 11 and OpenSolaris are described here!
+
       The chapter provides an overview of Oracle Solaris 10 and evaluates it as a platform for resource virtualization.
       Special emphasis is put on the networking-related aspects of virtualization. Thus, the Solaris Crossbow technology
       is given its own section.
@@ -164,8 +166,8 @@
       
       Each of the remaining sections describe in more detail these parts of the operating system that are extensively
       used by the implemented system. Section \ref{sec:sol:containers} investigates the Solaris Zones technology. After
-      defining the concept of zones, zone lifecycle model is presented, the achieved level of process isolation
-      is described and discussion of Zones advantages in comparison to non-virtualized environments follows.
+      defining the concept of zones, zone lifecycle model is presented, the achieved level of process isolation is
+      described and discussion of Zones advantages in comparison to non-virtualized environments follows.
 
       Section \ref{sec:sol:xbow} introduces Solaris Crossbow - lightweight network virtualization environment. The part
       starts with general description of the technology. Next, components crucial to efficiency improvement are
@@ -181,10 +183,10 @@
     \section{General information}
     \label{sec:sol:general}
 
-      Oracle Solaris is a \textit{multiuser, multitasking, multithreading UNIX-like operating system} \cite{reference}. Since its
-      release in 1992 (as Sun Solaris 1), the system became one of the most popular environments supporting
-      enterprise software. Nowadays, big corporations and companies as well as individual developers use it to do
-      their business and deliver reliable and scalable services.
+      Oracle Solaris is a \textit{multiuser, multitasking, multithreading UNIX-like operating system} \cite{reference}.
+      Since its release in 1992 (as Sun Solaris 1), the system became one of the most popular environments supporting
+      enterprise software. Nowadays, big corporations and companies as well as individual developers use it to do their
+      business and deliver reliable and scalable services.
 
       The Solaris OS provides unique set of tools that support virtualization of practically all types of resources at
       various levels. There is Logical Domains (LDOMs) technology for full virtualization and lightweight Zones, when
@@ -422,210 +424,228 @@
 
       % TODO when introduced? +citation
 
-                It is generally acknowledged that Crossbow was invented in China in 341 B.C but it was in middle ages when 
-                it earned its recognition. Very easy in use and simultaneously very effective. The Solaris Crossbow mechanism 
-                for QoS are just like real crossbows, very efficient in comparison to other existing QoS mechanisms and this
-                similarity indicates the project name origin.
+      It is generally acknowledged that Crossbow was invented in China in 341 B.C but it was in middle ages when 
+      it earned its recognition. Very easy in use and simultaneously very effective. The Solaris Crossbow mechanism 
+      for QoS are just like real crossbows, very efficient in comparison to other existing QoS mechanisms and this
+      similarity indicates the project name origin.
 
-                \subsection{Crossbow architecture}
 
-                One of the most important condition in terms of network virtualization is that network traffic should be
-                insulated between virtual machines. This kind of isolation can be achieved by having a dedicated
-                physical NIC, network cable and port from the switch to the virtual machine itself. Moreover, switch
-                must also ensure sustainability on every port. Otherwise, virtual machines will definitely
-                interfere with each other.
-                
-                In a particular case when we have to share physical NIC
-                between virtual machines the most promising solution is to virtualize NIC hardware and the second layer
-                of the OSI/ISO stack where sharing is fair and interferences will be avoided. These approach was adapted
-                in the Crossbow architecture in OpenSolaris OS.
-                
-                Traffic separation is achieved by
-                fundamental blocks of new architecture which are Virtual NICs (VNICs) created by dividing NIC into many
-                VNICs. A VNIC can be created over NIC or Etherstub ( more about them later ) and be
-                dynamically controlled by the bandwidth and CPU resources assigned to it. New architecture after
-                introducing new networking features combined with existing features like Solaris Containers, resource
-                control can be presented as following:
+      \subsection{Crossbow architecture}
 
-              \begin{figure}[H]
-                \begin{center}
-                  \includegraphics[width=.7\textwidth]{img/crossbow.jpg}
-                \end{center}
+        One of the most important condition in terms of network virtualization is that network traffic should be
+        insulated between virtual machines. This kind of isolation can be achieved by having a dedicated physical NIC,
+        network cable and port from the switch to the virtual machine itself. Moreover, switch must also ensure
+        sustainability on every port. Otherwise, virtual machines will definitely interfere with each other.
+        
+        In a particular case when we have to share physical NIC between virtual machines the most promising solution is
+        to virtualize NIC hardware and the second layer of the OSI/ISO stack where sharing is fair and interferences
+        will be avoided. These approach was adapted in the Crossbow architecture in OpenSolaris OS.
+        
+        Traffic separation is achieved by fundamental blocks of new architecture which are Virtual NICs (VNICs) created
+        by dividing NIC into many VNICs. A VNIC can be created over NIC or Etherstub ( more about them later ) and be
+        dynamically controlled by the bandwidth and CPU resources assigned to it. New architecture after introducing new
+        networking features combined with existing features like Solaris Containers, resource control can be presented
+        as following:
 
-                \caption{The Solaris Crossbow network virtualization enhancement, source: http://www.net-security.org/secworld.php?id=7573}
-                        %@todo add preceise url}
-              \end{figure}
+        \begin{figure}[H]
+          \begin{center}
+            \includegraphics[width=.7\textwidth]{img/crossbow.jpg}
+          \end{center}
 
-                The crossbow architecture has introduced fully paralized network stack structure. Each stack could be
-                seen as fully independent lane (without any shared locks, queues, and CPUs) therefore network isolation
-                is guaranteed. Key concept is hardware classification performed by the NIC over which VNIC was created.
-                Each lane has a dedicated buffer for Transmit (Tx) and Receive (Rx) ring. In case when load exceeds
-                assigned limit packets must be dropped as it is wiser to dop them then to expend OS CPU resources. 
+          \caption{The Solaris Crossbow network virtualization enhancement, source: http://www.net-security.org/secworld.php?id=7573}
+                  %@todo add preceise url}
+        \end{figure}
 
-                       \begin{figure}[H]
-                        \begin{center}
-                              \includegraphics[width=0.7\textwidth]{img/crossbow-traffic-dedicated-line.pdf}
-                              \caption{Dedicated lanes in the Crossbow architecture}
-                        \end{center}
-                      \end{figure}
+        The crossbow architecture has introduced fully paralized network stack structure. Each stack could be seen as
+        fully independent lane (without any shared locks, queues, and CPUs) therefore network isolation is guaranteed.
+        Key concept is hardware classification performed by the NIC over which VNIC was created.  Each lane has a
+        dedicated buffer for Transmit (Tx) and Receive (Rx) ring. In case when load exceeds assigned limit packets must
+        be dropped as it is wiser to dop them then to expend OS CPU resources.
+
+        \begin{figure}[H]
+          \begin{center}
+            \includegraphics[width=0.7\textwidth]{img/crossbow-traffic-dedicated-line.pdf}
+          \end{center}
+
+          \caption{Dedicated lanes in the Crossbow architecture}
+        \end{figure}
+
 		
-		\subsection{Virtualization lanes}
+      \subsection{Virtualization lanes}
 
-      Virtualization lane is the most key component in the Crossbow architecture. Each lane consists
-      some dedicated hardware and software that might be used to some concrete type of traffic. It
-      usually would be composed of: 
+        Virtualization lane is the most key component in the Crossbow architecture. Each lane consists some dedicated
+        hardware and software that might be used to some concrete type of traffic. It usually would be composed of: 
 
-			\begin{enumerate}
-				\item NIC resources (receive and transmit rings, interrupts, MAC address slots)
-				\item Driver resources (DMA bindings)
-				\item MAC layer resources (data structures, execution threads, locks)
-			\end{enumerate}
-			
-			A virtualization lane can be one of two types, hardware-based or software-based.
-			
-			\subsubsection{Hardware-based virtualization lanes}
-			
-      This type requires ability to partitioning resources from NIC. The minimum requirement is that a hardware-based
-      lane should must have a dedicated receive ring.  Other resources such as transmit lane can be exclusive or shared
-      between lanes. Each virtual machine could have one or more lanes assigned and the incoming packets would be
-      distributed among them based on even scheduling unless some administrative polices where created, such as priority
-      or bandwidth limit.		
-			
-			\subsubsection{Software-based virtualization lanes}
-			
-      In case when NIC runs out of hardware-based virtualization lane, receive and transmit rings may be shared by
-      multiple VNICs. The number of software-based virtualization lanes also often called softrings is unlimited. The
-      main disadvantage of software-based lanes is the lack of fairness and isolation which in fact is provided in
-      hardware-based lanes. The received and sent rings may work also in mix mode, whereas some of the rings may be
-      assigned to software and some may be assigned to hardware based lanes.	
-			
-		\subsection{Dynamic polling}	
-			
-      The Crossbow architecture proposed two types of working mode. Currently used mode is determined by traffic and
-      load. Under low load, where the rate of arraving packets is lower than time of packet processing lane works in the
-      interrupt mode which means that receive ring generates an interrupt when new packet arrives. However, when the
-      backlog grows, the line switches to dynamic polling mode in which a kernel thread goes down to the receive ring in
-      the NIC hardware to extract all outstanding packets in a single chain. Key aspect is that every virtualization
-      lane works independently and transparently from each other. Usually only three threads are used per lane:
-			
-			\begin{enumerate}
-				\item Poll thread which goes to the NIC hardware to get all packet chain
-				\item Worker thread which is responsible for protocol processing (IP and above) or delivers packets to virtual machine. Thread performs also any additional transmit work which is a natural 
-				requirement some concrete protocol, such as processing TCP packets that require sending ACK packets.
-				\item Transmit thread that is activated when if packets are being sent after transmit side flow control relief
-        discharge, or after retrieving transmit descriptor. Application or virtual 
-				machine can transmit any packets without performing queuing because of flow control or context switching.
-			\end{enumerate}
+        \begin{enumerate}
+          \item NIC resources (receive and transmit rings, interrupts, MAC address slots)
+          \item Driver resources (DMA bindings)
+          \item MAC layer resources (data structures, execution threads, locks)
+        \end{enumerate}
+        
+        A virtualization lane can be one of two types, hardware-based or software-based.
 
-    \subsection{Virtual switching}
-			
-			Virtual switches are always created implicitly when the first VNIC is defined under existing NIC and could never be accessed directly nor be visible by
-			any user ( even administrator ). 
-			
-			\begin{figure}[H]
-				\begin{center}
-          \includegraphics[width=.7\textwidth]{img/physical_and_virtual_switches_mapping.pdf}
-				\end{center}
+        
+        \subsubsection{Hardware-based virtualization lanes}
+        
+          This type requires ability to partitioning resources from NIC. The minimum requirement is that a
+          hardware-based lane should must have a dedicated receive ring.  Other resources such as transmit lane can be
+          exclusive or shared between lanes. Each virtual machine could have one or more lanes assigned and the incoming
+          packets would be distributed among them based on even scheduling unless some administrative polices where
+          created, such as priority or bandwidth limit.		
 
-				\caption{Mapping between physical and virtual network building elements}
-			\end{figure}
+        
+        \subsubsection{Software-based virtualization lanes}
+        
+          In case when NIC runs out of hardware-based virtualization lane, receive and transmit rings may be shared by
+          multiple VNICs. The number of software-based virtualization lanes also often called softrings is unlimited.
+          The main disadvantage of software-based lanes is the lack of fairness and isolation which in fact is provided
+          in hardware-based lanes. The received and sent rings may work also in mix mode, whereas some of the rings may
+          be assigned to software and some may be assigned to hardware based lanes.	
 			
-			Semantics assured by virtual switches are the same as provided by physical switches: 
-			\begin{enumerate}
-				\item VNICs created on top of the same NIC can send ehterstub packets to each other
-				\item Broadcast packets received by the underlying NIC are distributed to every single VNIC that was defined on the top of this NIC
-				\item Broadcast packets sent by one of the VNICs is distributed to all VNICs defined on the top of the same NIC and to the NIC for further transmission as well
-				\item In terms of multicast network traffic multicast group membership is monitored and used for distributing packets to appropriate VNIC
-			\end{enumerate}
+      \subsection{Dynamic polling}	
+        
+        The Crossbow architecture proposed two types of working mode. Currently used mode is determined by traffic and
+        load. Under low load, where the rate of arriving packets is lower than time of packet processing lane works in
+        the interrupt mode which means that receive ring generates an interrupt when new packet arrives. However, when
+        the backlog grows, the line switches to dynamic polling mode in which a kernel thread goes down to the receive
+        ring in the NIC hardware to extract all outstanding packets in a single chain. Key aspect is that every
+        virtualization lane works independently and transparently from each other. Usually only three threads are used
+        per lane:
+        
+        \begin{enumerate}
+          \item Poll thread which goes to the NIC hardware to get all packet chain
+          \item Worker thread which is responsible for protocol processing (IP and above) or delivers packets to virtual
+                machine. Thread performs also any additional transmit work which is a natural 
+                requirement some concrete protocol, such as processing TCP packets that require sending ACK packets.
+          \item Transmit thread that is activated when if packets are being sent after transmit side flow control relief
+                discharge, or after retrieving transmit descriptor. Application or virtual 
+                machine can transmit any packets without performing queuing because of flow control or context switching.
+        \end{enumerate}
 
-			Connectivity between VNICs is available only when they were defined on the top of the same NIC. 
+
+      \subsection{Virtual switching}
+        
+        Virtual switches are always created implicitly when the first VNIC is defined under existing NIC and could never
+        be accessed directly nor be visible by any user (even administrator). 
+        
+        \begin{figure}[H]
+          \begin{center}
+            \includegraphics[width=.7\textwidth]{img/physical_and_virtual_switches_mapping.pdf}
+          \end{center}
+
+          \caption{Mapping between physical and virtual network building elements}
+        \end{figure}
+        
+        Semantics assured by virtual switches are the same as provided by physical switches: 
+
+        \begin{enumerate}
+          \item VNICs created on top of the same NIC can send ehterstub packets to each other
+          \item Broadcast packets received by the underlying NIC are distributed to every single VNIC that was defined
+                on the top of this NIC
+          \item Broadcast packets sent by one of the VNICs is distributed to all VNICs defined on the top of the same
+                NIC and to the NIC for further transmission as well
+          \item In terms of multicast network traffic multicast group membership is monitored and used for distributing
+                packets to appropriate VNIC
+        \end{enumerate}
+
+        Connectivity between VNICs is available only when they were defined on the top of the same NIC. 
 
 	
       \subsection{Crossbow components}
 
-                The Crossbow specification describes three major components: VNics, Etherstubs and Flows. This section
-                will give an insight into their application and usage.
+        The Crossbow specification describes three major components: VNics, Etherstubs and Flows. This section will give
+        an insight into their application and usage.
+
                 
-      \subsubsection{VNics}
-      
-        Virtual NICs (VNICs) each containing their own lane are the key element in crossbow architecture. There is no
-        difference between NIC and VNIC in administration, as they are all treated as data links. Every VNIC has an
-        assigned lane and flow classifier which classifies received packets by VNIC's MAC address and sometimes by the
-        VLAN tag.  If created with a VLAN tag, protocols like GVRP or MVRP may be used to register the VLAN tag with the
-        physical switches too.	
-
-        In terms of sharing bandwidth, Crossbow enables administrative control of bandwidth for every single VNIC. The
-        bandwidth of the link is implemented by regulating the periodic intake of incoming packets per dedicated lane. The
-        network stack allows only as many packets as it was assigned to specific VNIC. The lane picks more packets when
-        the next period begins. In case of regulating the speed of transmited bandwidth it is much easier as the network
-        stack can either control the application that is generating the stream of packets or just drop the excessive
-        amount of packets.  These mechanisms are also used in flows QoS described and discussed later in this paper.
-
-
-      \subsubsection{Etherstubs}
-
-        As it was mentioned before, the MAC layer provides the virtual switching capabilities which allow VNICs to be
-        created over existing physical NICs.  In some cases, creating virtual networks without the use of a physical NIC
-        is more welcomed than creating over physical NICs. In that case VNICs would be defined on the top of pseudo NICs.
-        The Crossbow provides these kind of elements which are called Etherstubs. These components could be used instead
-        of NICs during creation of VNICs.
-
-
-      \subsubsection{Flows}
-
-                       Flows are additional instruments created to allow easier network traffic administration. They might be used in order to provide administer bandwidth resource control and priority for protocols, services, containers.
-                        Defined flow is a set of attributes based on Layer 3 and Layer 4 headers of the OSI/ISO model which are then used to identify protocol, service or virtual machine. 
-                        Flows assigned to link must be independent therefore before adding new one its correctness is checked. Input and output packets are matched to flows in very efficient 
-                        manner with minimal performance impact.
-
-                        \medskip
-
-                        Crossbow flows can be created with one of the following sets of attributes:
-                        \begin{itemize}
-                        	\item Services (protocol + remote/local ports)
-                        	\item Transport (TCP, UDP, SCTP, iSCSI, etc)
-                        	\item IP addresses and IP subnets
-                          \item DSCP field
-                        \end{itemize}
-
-                        For each flow the following properties can be set: 
-                        \begin{itemize}
-                        	\item{bandwidth}
-                        	\item{priority}
-                        \end{itemize}
-
-                        \medskip
-
-                        \textbf{flowadm} is the console command used to create, modify, remove or to display network bandwidth and priority limits assigned to a particular link. 
-
-
-                \subsection{Running examples of flowadm and dladm command}
-
-                        \textbf{dladm} and \textbf{flowadm} are two basic administrative commands for dealing with the Crossbow's components. Below a few general examples of their usage are presented.
-
-                        \textbf{dladm} is the admin command for crossbow datalinks elements management. Below a few examples of VNICs, Etherstubs management commands are presented and how
-                        bandwidth and priority values might be assigned to these elements.
-
-                        \begin{enumerate}
-                        	\item{\# dladm create-vnic vnic1 -l e1000g0 - creates new VNIC \textbf{vnic1} over existing NIC \textbf{e1000g0}}
-        	                \item{\# dladm create-etherstub ether00 - creates new Etherstub \textbf{ether00}}
-                        	\item{\# dladm show-linkprop vnic11 - lists all properties assigned to \textbf{vnic11} link}
-                        	\item{\# dladm set-linkprop -pmaxbw=1000 vnic11 - assignes 1Mbps bandwith limit to \textbf{vnic11} link}
-                        	\item{\# dladm set-linkprop -ppriority=low vnic11 - assignes low priority to \textbf{vnic11} link}
-                        \end{enumerate}
-
-                        These were just basics, for more examples see \textbf{man dladm}
-
-                        \medskip
+        \subsubsection{VNics}
         
-                        \textbf{flowadm} is the admin command for flow management. It migth be used as follow:     
+          Virtual NICs (VNICs) each containing their own lane are the key element in crossbow architecture. There is no
+          difference between NIC and VNIC in administration, as they are all treated as data links. Every VNIC has an
+          assigned lane and flow classifier which classifies received packets by VNIC's MAC address and sometimes by the
+          VLAN tag.  If created with a VLAN tag, protocols like GVRP or MVRP may be used to register the VLAN tag with
+          the physical switches too.	
 
-                        \begin{enumerate}
-                                \item{\# flowadm show-flow -l e1000g0 - displays all flows assigned to link \textbf{e1000g0}}
-                                \item{\# flowadm add-flow -l e1000g0 -a transport=udp udpflow - creates new flow assigned to link \textbf{e1000g0} for all udp packets}
-                        \end{enumerate}
+          In terms of sharing bandwidth, Crossbow enables administrative control of bandwidth for every single VNIC. The
+          bandwidth of the link is implemented by regulating the periodic intake of incoming packets per dedicated lane.
+          The network stack allows only as many packets as it was assigned to specific VNIC. The lane picks more packets
+          when the next period begins. In case of regulating the speed of transmited bandwidth it is much easier as the
+          network stack can either control the application that is generating the stream of packets or just drop the
+          excessive amount of packets.  These mechanisms are also used in flows QoS described and discussed later in
+          this paper.
 
-                        To see more see \textbf{man flowadm}
+
+        \subsubsection{Etherstubs}
+
+          As it was mentioned before, the MAC layer provides the virtual switching capabilities which allow VNICs to be
+          created over existing physical NICs.  In some cases, creating virtual networks without the use of a physical
+          NIC is more welcomed than creating over physical NICs. In that case VNICs would be defined on the top of
+          pseudo NICs.  The Crossbow provides these kind of elements which are called Etherstubs. These components could
+          be used instead of NICs during creation of VNICs.
+
+
+        \subsubsection{Flows}
+
+          Flows are additional instruments created to allow easier network traffic administration. They might be used in
+          order to provide administer bandwidth resource control and priority for protocols, services, containers.
+          Defined flow is a set of attributes based on Layer 3 and Layer 4 headers of the OSI/ISO model which are then
+          used to identify protocol, service or virtual machine.  Flows assigned to link must be independent therefore
+          before adding new one its correctness is checked. Input and output packets are matched to flows in very
+          efficient manner with minimal performance impact.
+
+          \medskip
+
+          Crossbow flows can be created with one of the following sets of attributes:
+
+          \begin{itemize}
+            \item Services (protocol + remote/local ports)
+            \item Transport (TCP, UDP, SCTP, iSCSI, etc)
+            \item IP addresses and IP subnets
+            \item DSCP field
+          \end{itemize}
+
+          For each flow the following properties can be set: 
+
+          \begin{itemize}
+            \item bandwidth
+            \item priority
+          \end{itemize}
+
+          \medskip
+
+          \textbf{flowadm} is the console command used to create, modify, remove or to display network bandwidth and
+          priority limits assigned to a particular link. 
+
+
+      \subsection{Running examples of flowadm and dladm command}
+
+        \textbf{dladm} and \textbf{flowadm} are two basic administrative commands for dealing with the Crossbow's
+        components. Below a few general examples of their usage are presented.
+  
+        \textbf{dladm} is the admin command for crossbow datalinks elements management. Below a few examples of VNICs,
+        Etherstubs management commands are presented and how bandwidth and priority values might be assigned to these
+        elements.
+  
+        \begin{enumerate}
+          \item \# dladm create-vnic vnic1 -l e1000g0 - creates new VNIC \textbf{vnic1} over existing NIC \textbf{e1000g0}
+          \item \# dladm create-etherstub ether00 - creates new Etherstub \textbf{ether00}
+          \item \# dladm show-linkprop vnic11 - lists all properties assigned to \textbf{vnic11} link
+          \item \# dladm set-linkprop -pmaxbw=1000 vnic11 - assignes 1Mbps bandwith limit to \textbf{vnic11} link
+          \item \# dladm set-linkprop -ppriority=low vnic11 - assignes low priority to \textbf{vnic11} link
+        \end{enumerate}
+  
+        These were just basics, for more examples see \textbf{man dladm}
+
+        \medskip
+
+        \textbf{flowadm} is the admin command for flow management. It migth be used as follow:     
+
+        \begin{enumerate}
+          \item \# flowadm show-flow -l e1000g0 - displays all flows assigned to link \textbf{e1000g0}
+          \item \# flowadm add-flow -l e1000g0 -a transport=udp udpflow - creates new flow assigned to link
+                \textbf{e1000g0} for all udp packets
+        \end{enumerate}
+
+        To see more see \textbf{man flowadm}.
 
 
       \subsection{Crossbow and Differentiated Services - interoperability}
@@ -661,10 +681,12 @@
     \section{Resource control}
     \label{sec:sol:res}
 
-      Nowadays existing operating systems must provide mechanisms for response to the varying resource demands
-      per workload which is an aggregation of processes of an application. By default resource management
-      features are not used and system gives equal access to resources. When it is necassary it is possible to
-      modify these default behaviour with respect to different workloads. These management allows you to:
+      % TODO accounting
+
+      Nowadays existing operating systems must provide mechanisms for response to the varying resource demands per
+      workload which is an aggregation of processes of an application. By default resource management features are not
+      used and system gives equal access to resources. When it is necassary it is possible to modify these default
+      behaviour with respect to different workloads. These management allows you to:
 
       \begin{enumerate}
         \item Restrict access to specific resource
@@ -685,8 +707,8 @@
         \item scheduling - involves predictable algorithm making sequence of allocation decisions at specific intervals
       \end{enumerate}
 
-      Hierarchical architecture allows defining set of resource control sets on each level. However, if more
-      than one is assigned to a resource, the smallest container's control level is enforced. 
+      Hierarchical architecture allows defining set of resource control sets on each level. However, if more than one is
+      assigned to a resource, the smallest container's control level is enforced. 
 
       \begin{figure}[H]
         \includegraphics[width=\textwidth]{img/rctrl.png}
@@ -697,13 +719,21 @@
 
     \section*{Summary}
 
-      The chapter presented the Solaris operating system with regard to resource virtualization.
+      The chapter presented Solaris operating system with regard to resource virtualization. The stack of tools
+      integrated into the system provides extensive support for virtualization techniques: Containers facilitate
+      OS-level resource virtualization and Crossbow, shipped with Solaris 11, makes virtualization of networking
+      resources possible. Resource control subsystem gives the administrator even more fine-grained control over
+      resource utilization. Last, but not least, accounting functionality provides detailed view of resource usage
+      history.
+
+      The features mentioned above make realization of flexible, scalable and efficient systems possible. With these
+      foundations, it is possible to build and consolidate complex network-oriented infrastructures that prove to be
+      reliable, relatively easy to manage and adjust to changing requirements.
 
       Solaris 10 OS seems to be ideal cross-platform choice for customers dealing with management of high level
-      services, complex system administration and high costs. It is the only open operating system which has
-      proven results running from every critical enterprise databases to high performance Web farms that is
-      why Solaris OS is becoming strategic platform for today's constantly growing demands towards operating
-      systems. 
+      services, complex system administration and high costs. It is the only open operating system which has proven
+      results running from every critical enterprise databases to high performance Web farms that is why Solaris OS is
+      becoming strategic platform for today's constantly growing demands towards operating systems. 
 
 
   \chapter{The system architecture}
