@@ -49,7 +49,7 @@
 \usepackage{hyperref}
 \usepackage{tikz}
 % \usepackage[toc,acronym]{glossaries}
-\usetikzlibrary{positioning,chains,backgrounds,fit}
+\usetikzlibrary{positioning,chains,backgrounds,fit,scopes}
 % \usetikzlibrary{chains}
 
 \newcommand{\code}[1]{\begin{tt}{#1}\end{tt}}
@@ -91,6 +91,8 @@
 
 
     \section{Resource virtualization approaches}
+
+      % TODO classify and define virtualization types
 
 
     \section{Multilevel network virtualization}
@@ -163,12 +165,17 @@
       Each of the remaining sections describe in more detail these parts of the operating system that are extensively
       used by the implemented system. Section \ref{sec:sol:containers} investigates the Solaris Zones technology. After
       defining the concept of zones, zone lifecycle model is presented, the achieved level of process isolation
-      is described and the discussion of Zones advantages in comparison to non-virtualized environments follows.
+      is described and discussion of Zones advantages in comparison to non-virtualized environments follows.
 
-      % Three main components are presented and discussed: Containers - OS-level virtualization technology, Crossbow -
-      % network virtualization environment and the system's resource control utilities.
+      Section \ref{sec:sol:xbow} introduces Solaris Crossbow - lightweight network virtualization environment. The part
+      starts with general description of the technology. Next, components crucial to efficiency improvement are
+      presented in detail. Etherstubs, VNICs and flows are described. These are building blocks used to create
+      virtualized network elements and apply QoS policies. The section ends with the comparison between Crossbow and
+      DiffServ and a method of integration of these two solutions is presented.
 
-      % TODO xbow, rctl sections overview
+      Section \ref{sec:sol:res} provides an overview of resource control methods offered by the Solaris OS. Three types
+      of resource management mechanisms (constraints, partitioning and scheduling) are identified and defined. Resource
+      control hierarchy used by the system is depicted and explained.
 
 
     \section{General information}
@@ -214,7 +221,6 @@
     \section{OS-level virtualization with Solaris Containers}
     \label{sec:sol:containers}
 
-      % TODO classify and define virtualization types (not here)
       % TODO citation for WPARs
 
       The concept of lightweight (OS-level) virtualization is supported by most modern operating systems. The solutions
@@ -370,22 +376,27 @@
 
         \begin{figure}[H]
           \begin{center}
-            \begin{tikzpicture}[start chain, node distance=5mm,
-                                every node/.style={terminal, on chain, join, text width=3.5cm},
-                                every join/.style={->}]
+            \begin{tikzpicture}[node distance=5mm,]
 
-              \node (prep)                 {preparation};
-              \node (pre)  [below=of prep] {pre-installation};
-              \node (ins)  [below=of pre]  {installation};
-              \node (post) [below=of ins]  {post-installation};
+              { [start chain, every node/.style={terminal, on chain, join, text width=3cm, align=center}, every join/.style={->}]
+
+                { [every on chain/.style={text width=3.5cm}]
+
+                  \node (prep)                 {preparation};
+                  \node (pre)  [below=of prep] {pre-installation};
+                  \node (ins)  [below=of pre]  {installation};
+                  \node (post) [below=of ins]  {post-installation};
+                }
+
+                \node (pub)  [right=of post] {appliance publication};
+                \node (act)  [right=of pub]  {appliance retrieval and activation};
+                \node (adj)  [right=of act]  {configuration adjustment};
+              }
 
               \begin{pgfonlayer}{background}
-                \node [terminal, on chain=] (background) [fit=(prep) (post), align=center, style=terminal] {};
+                \node [terminal] (background) [fit=(prep) (post), align=center, style=terminal] {};
               \end{pgfonlayer}
 
-              \node (pub)  [right=of post] {appliance publication};
-              \node (act)  [right=of pub]  {appliance retrieval and activation};
-              \node (adj)  [right=of act]  {configuration adjustment};
             \end{tikzpicture}
           \end{center}
 
@@ -407,6 +418,9 @@
 
 
     \section{Crossbow - network virtualization technology}
+    \label{sec:sol:xbow}
+
+      % TODO when introduced? +citation
 
                 It is generally acknowledged that Crossbow was invented in China in 341 B.C but it was in middle ages when 
                 it earned its recognition. Very easy in use and simultaneously very effective. The Solaris Crossbow mechanism 
@@ -418,13 +432,17 @@
                 One of the most important condition in terms of network virtualization is that network traffic should be
                 insulated between virtual machines. This kind of isolation can be achieved by having a dedicated
                 physical NIC, network cable and port from the switch to the virtual machine itself. Moreover, switch
-                must also ensure sustainability on every port. In every other case virtual machines will definitely
-                interfere between each other.                In a particular case when we have to share physical NIC
+                must also ensure sustainability on every port. Otherwise, virtual machines will definitely
+                interfere with each other.
+                
+                In a particular case when we have to share physical NIC
                 between virtual machines the most promising solution is to virtualize NIC hardware and the second layer
                 of the OSI/ISO stack where sharing is fair and interferences will be avoided. These approach was adapted
-                in the Crossbow architecture in OpenSolaris OS.                Traffic separation is achieved by
+                in the Crossbow architecture in OpenSolaris OS.
+                
+                Traffic separation is achieved by
                 fundamental blocks of new architecture which are Virtual NICs (VNICs) created by dividing NIC into many
-                VNICs.                 A VNIC can be created over NIC or Etherstub ( more about them later ) and be
+                VNICs. A VNIC can be created over NIC or Etherstub ( more about them later ) and be
                 dynamically controlled by the bandwidth and CPU resources assigned to it. New architecture after
                 introducing new networking features combined with existing features like Solaris Containers, resource
                 control can be presented as following:
@@ -448,7 +466,8 @@
                         \begin{center}
                               \includegraphics[width=0.7\textwidth]{img/crossbow-traffic-dedicated-line.pdf}
                               \caption{Dedicated lanes in the Crossbow architecture}
-                        \end{center}                 \end{figure}
+                        \end{center}
+                      \end{figure}
 		
 		\subsection{Virtualization lanes}
 
@@ -457,9 +476,9 @@
       usually would be composed of: 
 
 			\begin{enumerate}
-				\item{NIC resources( receive and transmit rings, interrupts, MAC address slots )}
-				\item{Driver resources( DMA bindings )}
-				\item{MAC layer resources ( data structures, execution threads, locks )}
+				\item NIC resources (receive and transmit rings, interrupts, MAC address slots)
+				\item Driver resources (DMA bindings)
+				\item MAC layer resources (data structures, execution threads, locks)
 			\end{enumerate}
 			
 			A virtualization lane can be one of two types, hardware-based or software-based.
@@ -490,11 +509,12 @@
       lane works independently and transparently from each other. Usually only three threads are used per lane:
 			
 			\begin{enumerate}
-				\item{Poll thread which goes to the NIC hardware to get all packet chain}
-				\item{Worker thread which is responsible for protocol processing (IP and above) or delivers packets to virtual machine. Thread performs also any additional transmit work which is a natural 
-				requirement some concrete protocol, such as processing TCP packets that require sending ACK packets.}
-				\item{Transmit thread that is activated when if packets are being sent after transmit side flow control relief discharge, or after retreiving transmit descriptor. Application or virtual 
-				machine can transmit any packets without performing queuing because of flow control or context switching.}
+				\item Poll thread which goes to the NIC hardware to get all packet chain
+				\item Worker thread which is responsible for protocol processing (IP and above) or delivers packets to virtual machine. Thread performs also any additional transmit work which is a natural 
+				requirement some concrete protocol, such as processing TCP packets that require sending ACK packets.
+				\item Transmit thread that is activated when if packets are being sent after transmit side flow control relief
+        discharge, or after retrieving transmit descriptor. Application or virtual 
+				machine can transmit any packets without performing queuing because of flow control or context switching.
 			\end{enumerate}
 
     \subsection{Virtual switching}
@@ -512,10 +532,10 @@
 			
 			Semantics assured by virtual switches are the same as provided by physical switches: 
 			\begin{enumerate}
-				\item{VNICs created on top of the same NIC can send ehterstub packets to each other}
-				\item{Broadcast packets received by the underlying NIC are distributed to every single VNIC that was defined on the top of this NIC}
-				\item{Broadcast packets sent by one of the VNICs is distributed to all VNICs defined on the top of the same NIC and to the NIC for further transmission as well}
-				\item{In terms of multicast network traffic multicast group membership is monitored and used for distributing packets to appropriate VNIC}
+				\item VNICs created on top of the same NIC can send ehterstub packets to each other
+				\item Broadcast packets received by the underlying NIC are distributed to every single VNIC that was defined on the top of this NIC
+				\item Broadcast packets sent by one of the VNICs is distributed to all VNICs defined on the top of the same NIC and to the NIC for further transmission as well
+				\item In terms of multicast network traffic multicast group membership is monitored and used for distributing packets to appropriate VNIC
 			\end{enumerate}
 
 			Connectivity between VNICs is available only when they were defined on the top of the same NIC. 
@@ -524,7 +544,7 @@
       \subsection{Crossbow components}
 
                 The Crossbow specification describes three major components: VNics, Etherstubs and Flows. This section
-                will give an insight into theirs application and usage.
+                will give an insight into their application and usage.
                 
       \subsubsection{VNics}
       
@@ -562,9 +582,10 @@
 
                         Crossbow flows can be created with one of the following sets of attributes:
                         \begin{itemize}
-                        	\item{Services (protocol + remote/local ports)}
-                        	\item{Transport (TCP, UDP, SCTP, iSCSI, etc)}
-                        	\item{IP addresses and IP subnets}
+                        	\item Services (protocol + remote/local ports)
+                        	\item Transport (TCP, UDP, SCTP, iSCSI, etc)
+                        	\item IP addresses and IP subnets
+                          \item DSCP field
                         \end{itemize}
 
                         For each flow the following properties can be set: 
@@ -576,11 +597,6 @@
                         \medskip
 
                         \textbf{flowadm} is the console command used to create, modify, remove or to display network bandwidth and priority limits assigned to a particular link. 
-
-
-
-
-
 
 
                 \subsection{Running examples of flowadm and dladm command}
@@ -612,7 +628,6 @@
                         To see more see \textbf{man flowadm}
 
 
-
       \subsection{Crossbow and Differentiated Services - interoperability}
       \label{sub:sol:diffserv}
 
@@ -629,12 +644,22 @@
         contained in IP packet's header are used to carry processing-related information with packets. The approach can
         be used with complex networks, comprising a number of routers with QoS awareness.
 
-        These two approaches complement one another rather than compete. Crossbow supports flow matching based on the
-        DSCP field value. DSCP field generation is not yet supported. It is possible (althought, at the moment, only
-        partially) to integrate these and build a comprehensive end-to-end networking solution with QoS support.
+        These two environments complement one another rather than compete. Crossbow supports flow matching based on the
+        DSCP field value. DSCP field generation is planned but not yet supported. It is possible (although, at the
+        moment, only partially) to integrate these and build a comprehensive end-to-end networking solution with QoS
+        support and virtualized components.
+
+        \begin{figure}[H]
+          \begin{center}
+            \includegraphics[width=.7\textwidth]{img/solaris/xbow-diffserv.pdf}
+          \end{center}
+
+          \caption{DiffServ integration using Crossbow-provided mechanisms}
+        \end{figure}
 
 
-    \section{Resource access control}
+    \section{Resource control}
+    \label{sec:sol:res}
 
       Nowadays existing operating systems must provide mechanisms for response to the varying resource demands
       per workload which is an aggregation of processes of an application. By default resource management
@@ -642,9 +667,9 @@
       modify these default behaviour with respect to different workloads. These management allows you to:
 
       \begin{enumerate}
-        \item{Restrict access to specific resource}
-        \item{Offer resources to workloads on a preferential basis}
-        \item{Isolate workloads from each another}
+        \item Restrict access to specific resource
+        \item Offer resources to workloads on a preferential basis
+        \item Isolate workloads from each another
       \end{enumerate}
 	
       Resource is any part of computing system that may be modified in order to change application behaviour. Resource
@@ -655,9 +680,9 @@
       Solaris Operating System introduced three types of resource management control mechanisms:
 
       \begin{enumerate}
-        \item{constraints - allows defining set of bounds on used resources for a workload}
-        \item{partitioning - enables binding subset of system's available resources to specific workload}
-        \item{scheduling - involves predictable algorithm making sequence of allocation decisions at specific intervals}
+        \item constraints - allows defining set of bounds on used resources for a workload
+        \item partitioning - enables binding subset of system's available resources to specific workload
+        \item scheduling - involves predictable algorithm making sequence of allocation decisions at specific intervals
       \end{enumerate}
 
       Hierarchical architecture allows defining set of resource control sets on each level. However, if more
@@ -665,12 +690,14 @@
 
       \begin{figure}[H]
         \includegraphics[width=\textwidth]{img/rctrl.png}
-        \caption{Solaris system multilevel architecture and their resource control sets ( source: http://oracle.com ) }
+        \caption{Solaris system multilevel architecture and its resource control sets (source: http://oracle.com)}
                           %@todo add preceise url}
 		  \end{figure}
                 
 
     \section*{Summary}
+
+      The chapter presented the Solaris operating system with regard to resource virtualization.
 
       Solaris 10 OS seems to be ideal cross-platform choice for customers dealing with management of high level
       services, complex system administration and high costs. It is the only open operating system which has

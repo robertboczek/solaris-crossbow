@@ -14,6 +14,10 @@ nbactions.xml
 *~
 *.gch
 *.class
+*.eps
+*.bbl
+*.blg
+ssh-config.xml
 tags
 .lvimrc
 .classpath
