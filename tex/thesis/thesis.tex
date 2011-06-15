@@ -231,8 +231,8 @@
       The concept of lightweight (OS-level) virtualization is supported by most modern operating systems. The solutions
       are either integrated into the system's kernel and accessible as soon as it is installed (Solaris Containers, AIX
       Workload partitions, BSD jails \cite{kamp}) or are provided by third-party manufacturers as kernel patches and
-      utility software (OpenVZ and LXC for Linux OS). Because of the integration with and awareness of other system
-      components, it can be expected that Zones have more potential in them than other virtualization methods.
+      utility software (OpenVZ and LXC for Linux OS). Because of awareness of other system components and integration 
+      with them, it can be expected that Zones have more potential than other virtualization methods.
 
 
       \subsection{General information}
@@ -268,7 +268,7 @@
       \subsection{Zone lifecycle}
       \label{sub:}
 
-        A model was created to describe the states a zone can be in and possible transitions. A non-global zone can be
+        A model was created to describe the states in which each zone must exist and its possible transitions. A non-global zone can be
         in one of six states: \textit{configured}, \textit{incomplete}, \textit{installed}, \textit{ready},
         \textit{running}, \textit{shutting down or down} \cite{sag}. Figure \ref{fig:sol:lifecycle} depicts the model.
 
@@ -322,8 +322,8 @@
         makes it possible to define resource controls (rctls) at various level, also on per-zone basis. CPU shares,
         maximum number of lightweight processes and maximum swap size are examples of resource control properties that
         can be set for a zone. This can be further extended by providing fine-grained properties at project, task and
-        process levels \cite{sag}. The resource control process is dynamic - the assignments can be changed as the
-        system is running, without interrupting the container normal operation. This can be of extreme importance as far
+        process levels \cite{sag}. The resource control process is dynamic - assignments can be changes as the system
+        is running, without interrupting the container's normal operation. This can be of extreme importance as far
         as high-availability systems are considered.
 
         Containers facilitate service consolidation - all components of a system can be executed in a single machine
@@ -442,11 +442,9 @@
         In a particular case when we have to share physical NIC between virtual machines the most promising solution is
         to virtualize NIC hardware and the second layer of the OSI/ISO stack where sharing is fair and interferences
         will be avoided. These approach was adapted in the Crossbow architecture in OpenSolaris OS \cite{crossbow}.
-
-        % TODO ,,more about them later'' <- nie moze tego byc
         
         Traffic separation is achieved with fundamental blocks of new architecture which are Virtual NICs (VNICs)
-        created by partitioning physical NIC. A VNIC can be created over NIC or Etherstub ( more about them later ) and
+        created by partitioning physical NIC. A VNIC can be created over NIC or Etherstub and
         be dynamically controlled by the bandwidth and CPU resources assigned to it
         \cite{crossbow,network_virtualization}. New architecture after introducing new networking features combined with
         existing features like Solaris Containers, resource control can be presented as following:
@@ -654,7 +652,7 @@
                 \textbf{e1000g0} for all udp packets
         \end{enumerate}
 
-        To see more see \textbf{man flowadm}.
+        More information about \textbf{man flowadm} and \textbf{man dladm} can be found in manual.
 
 
       \subsection{Crossbow and Differentiated Services - interoperability}
@@ -693,7 +691,7 @@
       Nowadays existing operating systems must provide mechanisms for response to the varying resource demands per
       workload which is an aggregation of processes of an application. By default resource management features are not
       used and system gives equal access to resources. When necessary, it is possible to modify this default behaviour
-      with respect to different workloads. These management allows you to:
+      with respect to different workloads. It is allowed to:
 
       \begin{enumerate}
         \item Restrict access to specific resource
