@@ -152,7 +152,8 @@
 
 
   \chapter{Solaris OS as a resource virtualization environment}
-
+  
+    %TODO change chapter title !!!
     % TODO  actually, Solaris 10, Solaris 11 and OpenSolaris are described here!
 
     The chapter provides an overview of Oracle Solaris operating system and evaluates it as a platform for resource
@@ -477,9 +478,9 @@
         hardware and software that might be used to handle specific type of traffic. It usually would be composed of: 
 
         \begin{enumerate}
-          \item NIC resources (receive and transmit rings, interrupts, MAC address slots)
-          \item Driver resources (DMA bindings)
-          \item MAC layer resources (data structures, execution threads, locks)
+          \item NIC resources (receive and transmit rings, interrupts, MAC address slots),
+          \item Driver resources (DMA bindings),
+          \item MAC layer resources (data structures, execution threads, locks).
         \end{enumerate}
         
         A virtualization lane can be one of two types, hardware-based or software-based.
@@ -513,10 +514,10 @@
         per lane \cite{crossbow}:
         
         \begin{enumerate}
-          \item Poll thread which goes to the NIC hardware to get all packet chain
+          \item Poll thread which goes to the NIC hardware to get all packet chain,
           \item Worker thread which is responsible for protocol processing (IP and above) or delivers packets to virtual
                 machine. Thread performs also any additional transmit work which is a natural 
-                requirement some concrete protocol, such as processing TCP packets that require sending ACK packets.
+                requirement some concrete protocol, such as processing TCP packets that require sending ACK packets,
           \item Transmit thread that is activated when if packets are being sent after transmit side flow control relief
                 discharge, or after retrieving transmit descriptor. Application or virtual 
                 machine can transmit any packets without performing queuing because of flow control or context switching.
@@ -539,13 +540,13 @@
         Semantics assured by virtual switches is the same as provided by physical switches: 
 
         \begin{enumerate}
-          \item VNICs created on top of the same NIC can send packets to each other
+          \item VNICs created on top of the same NIC can send packets to each other,
           \item Broadcast packets received by the underlying NIC are distributed to every single VNIC that was defined
-                on the top of this NIC
+                on the top of this NIC,
           \item Broadcast packets sent by one of the VNICs is distributed to all VNICs defined on the top of the same
-                NIC and to the NIC for further transmission as well
+                NIC and to the NIC for further transmission as well,
           \item In terms of multicast network traffic multicast group membership is monitored and used for distributing
-                packets to appropriate VNIC
+                packets to appropriate VNIC.
         \end{enumerate}
 
         Data Link Layer connectivity between VNICs is available only when they were defined on top of the same NIC. 
@@ -600,17 +601,17 @@
           Crossbow flows can be created with one of the following sets of attributes:
 
           \begin{itemize}
-            \item Services (protocol + remote/local ports)
-            \item Transport (TCP, UDP, SCTP, iSCSI, etc)
-            \item IP addresses and IP subnets
-            \item DSCP field
+            \item Services (protocol + remote/local ports),
+            \item Transport (TCP, UDP, SCTP, iSCSI, etc),
+            \item IP addresses and IP subnets,
+            \item DSCP field.
           \end{itemize}
 
           For each flow the following properties can be set \cite{flows2}: 
 
           \begin{itemize}
-            \item bandwidth
-            \item priority
+            \item bandwidth,
+            \item priority.
           \end{itemize}
 
           \medskip
@@ -631,11 +632,11 @@
         elements.
   
         \begin{enumerate}
-          \item \# dladm create-vnic vnic1 -l e1000g0 - creates new VNIC \textbf{vnic1} over existing NIC \textbf{e1000g0}
-          \item \# dladm create-etherstub ether00 - creates new Etherstub \textbf{ether00}
-          \item \# dladm show-linkprop vnic11 - lists all properties assigned to \textbf{vnic11} link
-          \item \# dladm set-linkprop -pmaxbw=1000 vnic11 - assignes 1Mbps bandwith limit to \textbf{vnic11} link
-          \item \# dladm set-linkprop -ppriority=low vnic11 - assignes low priority to \textbf{vnic11} link
+          \item \# dladm create-vnic vnic1 -l e1000g0 - creates new VNIC \textbf{vnic1} over existing NIC \textbf{e1000g0},
+          \item \# dladm create-etherstub ether00 - creates new Etherstub \textbf{ether00},
+          \item \# dladm show-linkprop vnic11 - lists all properties assigned to \textbf{vnic11} link,
+          \item \# dladm set-linkprop -pmaxbw=1000 vnic11 - assignes 1Mbps bandwith limit to \textbf{vnic11} link,
+          \item \# dladm set-linkprop -ppriority=low vnic11 - assignes low priority to \textbf{vnic11} link.
         \end{enumerate}
   
         More examples can be found in \textbf{man dladm}.
@@ -645,9 +646,9 @@
         \textbf{flowadm} is the admin command for flow management. It might be used as follows:     
 
         \begin{enumerate}
-          \item \# flowadm show-flow -l e1000g0 - displays all flows assigned to link \textbf{e1000g0}
+          \item \# flowadm show-flow -l e1000g0 - displays all flows assigned to link \textbf{e1000g0},
           \item \# flowadm add-flow -l e1000g0 -a transport=udp udpflow - creates new flow assigned to link
-                \textbf{e1000g0} for all udp packets
+                \textbf{e1000g0} for all udp packets.
         \end{enumerate}
 
         More information about \textbf{flowadm} and \textbf{dladm} tools can be found in manual.
@@ -692,9 +693,9 @@
       with respect to different workloads. It is allowed to:
 
       \begin{enumerate}
-        \item Restrict access to specific resource
-        \item Offer resources to workloads on a preferential basis
-        \item Isolate workloads from each another
+        \item Restrict access to specific resource,
+        \item Offer resources to workloads on a preferential basis,
+        \item Isolate workloads from each another.
       \end{enumerate}
 	
       Resource is any part of computing system that may be modified in order to change application behaviour. Resource
@@ -710,9 +711,9 @@
       Solaris Operating System introduced three types of resource management control mechanisms:
 
       \begin{enumerate}
-        \item constraints - allows defining set of bounds on used resources for a workload
-        \item partitioning - enables binding subset of system's available resources to specific workload
-        \item scheduling - involves predictable algorithm making sequence of allocation decisions at specific intervals
+        \item constraints - allows defining set of bounds on used resources for a workload,
+        \item partitioning - enables binding subset of system's available resources to specific workload,
+        \item scheduling - involves predictable algorithm making sequence of allocation decisions at specific intervals.
       \end{enumerate}
 
       Hierarchical architecture allows defining set of resource control sets on each level. However, if more than one is
@@ -740,9 +741,9 @@
         The extended accounting facility can gather data for:
 
         \begin{itemize}
-          \item system resources usage (per-task and per-process)
-          \item flows defined with the IPQoS tools
-          \item links and flows created with Crossbow
+          \item system resources usage (per-task and per-process),
+          \item flows defined with the IPQoS tools,
+          \item links and flows created with Crossbow.
         \end{itemize}
 
         % TODO what data can be gathered?
