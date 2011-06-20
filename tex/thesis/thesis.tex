@@ -152,35 +152,34 @@
 
 
   \chapter{Solaris OS as a resource virtualization environment}
+  
+    %TODO change chapter title !!!
+    % TODO  actually, Solaris 10, Solaris 11 and OpenSolaris are described here!
 
-    \section*{Chapter overview}
+    The chapter provides an overview of Oracle Solaris operating system and evaluates it as a platform for resource
+    virtualization. The chapter describes Solaris 11 Express release of the system, as it is the first release
+    (together with OpenSolaris) with Crossbow technology integrated. Special emphasis is put on the networking-related
+    aspects of virtualization. Thus, the Solaris Crossbow technology is described in detail.
 
-      % TODO  actually, Solaris 10, Solaris 11 and OpenSolaris are described here!
+    Section \ref{sec:sol:general} contains introductory information about the system. A short historical note is
+    presented and general description follows. Main components of the system are introduced and described.
+    
+    Each of the remaining sections describe in more detail these parts of the operating system that are extensively
+    used by the implemented system. Section \ref{sec:sol:containers} investigates the Solaris Zones technology. After
+    defining the concept of zones, zone lifecycle model is presented, the achieved level of process isolation is
+    described and discussion of Zones advantages in comparison to non-virtualized environments follows.
 
-      The chapter provides an overview of Oracle Solaris operating system and evaluates it as a platform for resource
-      virtualization. The chapter describes Solaris 11 Express release of the system, as it is the first release
-      (together with OpenSolaris) with Crossbow technology integrated. Special emphasis is put on the networking-related
-      aspects of virtualization. Thus, the Solaris Crossbow technology is described in detail.
+    Section \ref{sec:sol:xbow} introduces Solaris Crossbow - lightweight network virtualization environment. The
+    section starts with general description of the technology. Next, components crucial to efficiency improvement are
+    presented in detail. Etherstubs, VNICs and flows are described. These are building blocks used to create
+    virtualized network elements and apply QoS policies. The section ends with the comparison between Crossbow and
+    DiffServ and a method of integration of these two solutions is presented.
 
-      Section \ref{sec:sol:general} contains introductory information about the system. A short historical note is
-      presented and general description follows. Main components of the system are introduced and described.
-      
-      Each of the remaining sections describe in more detail these parts of the operating system that are extensively
-      used by the implemented system. Section \ref{sec:sol:containers} investigates the Solaris Zones technology. After
-      defining the concept of zones, zone lifecycle model is presented, the achieved level of process isolation is
-      described and discussion of Zones advantages in comparison to non-virtualized environments follows.
-
-      Section \ref{sec:sol:xbow} introduces Solaris Crossbow - lightweight network virtualization environment. The
-      section starts with general description of the technology. Next, components crucial to efficiency improvement are
-      presented in detail. Etherstubs, VNICs and flows are described. These are building blocks used to create
-      virtualized network elements and apply QoS policies. The section ends with the comparison between Crossbow and
-      DiffServ and a method of integration of these two solutions is presented.
-
-      Section \ref{sec:sol:res} provides an overview of resource control methods offered by the Solaris OS. The types
-      of resource management mechanisms (constraints, partitioning and scheduling) are identified and defined. Resource
-      control hierarchy used by the system is depicted and explained. Also, the accounting facility is described. The
-      types of resources extended accounting can work with are enumerated and examples of data that can be gathered are
-      listed.
+    Section \ref{sec:sol:res} provides an overview of resource control methods offered by the Solaris OS. The types
+    of resource management mechanisms (constraints, partitioning and scheduling) are identified and defined. Resource
+    control hierarchy used by the system is depicted and explained. Also, the accounting facility is described. The
+    types of resources extended accounting can work with are enumerated and examples of data that can be gathered are
+    listed.
 
 
     \section{General information}
@@ -479,9 +478,9 @@
         hardware and software that might be used to handle specific type of traffic. It usually would be composed of: 
 
         \begin{enumerate}
-          \item NIC resources (receive and transmit rings, interrupts, MAC address slots)
-          \item Driver resources (DMA bindings)
-          \item MAC layer resources (data structures, execution threads, locks)
+          \item NIC resources (receive and transmit rings, interrupts, MAC address slots),
+          \item Driver resources (DMA bindings),
+          \item MAC layer resources (data structures, execution threads, locks).
         \end{enumerate}
         
         A virtualization lane can be one of two types, hardware-based or software-based.
@@ -515,10 +514,10 @@
         per lane \cite{crossbow}:
         
         \begin{enumerate}
-          \item Poll thread which goes to the NIC hardware to get all packet chain
+          \item Poll thread which goes to the NIC hardware to get all packet chain,
           \item Worker thread which is responsible for protocol processing (IP and above) or delivers packets to virtual
                 machine. Thread performs also any additional transmit work which is a natural 
-                requirement some concrete protocol, such as processing TCP packets that require sending ACK packets.
+                requirement some concrete protocol, such as processing TCP packets that require sending ACK packets,
           \item Transmit thread that is activated when if packets are being sent after transmit side flow control relief
                 discharge, or after retrieving transmit descriptor. Application or virtual 
                 machine can transmit any packets without performing queuing because of flow control or context switching.
@@ -541,13 +540,13 @@
         Semantics assured by virtual switches is the same as provided by physical switches: 
 
         \begin{enumerate}
-          \item VNICs created on top of the same NIC can send packets to each other
+          \item VNICs created on top of the same NIC can send packets to each other,
           \item Broadcast packets received by the underlying NIC are distributed to every single VNIC that was defined
-                on the top of this NIC
+                on the top of this NIC,
           \item Broadcast packets sent by one of the VNICs is distributed to all VNICs defined on the top of the same
-                NIC and to the NIC for further transmission as well
+                NIC and to the NIC for further transmission as well,
           \item In terms of multicast network traffic multicast group membership is monitored and used for distributing
-                packets to appropriate VNIC
+                packets to appropriate VNIC.
         \end{enumerate}
 
         Data Link Layer connectivity between VNICs is available only when they were defined on top of the same NIC. 
@@ -602,17 +601,17 @@
           Crossbow flows can be created with one of the following sets of attributes:
 
           \begin{itemize}
-            \item Services (protocol + remote/local ports)
-            \item Transport (TCP, UDP, SCTP, iSCSI, etc)
-            \item IP addresses and IP subnets
-            \item DSCP field
+            \item Services (protocol + remote/local ports),
+            \item Transport (TCP, UDP, SCTP, iSCSI, etc),
+            \item IP addresses and IP subnets,
+            \item DSCP field.
           \end{itemize}
 
           For each flow the following properties can be set \cite{flows2}: 
 
           \begin{itemize}
-            \item bandwidth
-            \item priority
+            \item bandwidth,
+            \item priority.
           \end{itemize}
 
           \medskip
@@ -633,11 +632,11 @@
         elements.
   
         \begin{enumerate}
-          \item \# dladm create-vnic vnic1 -l e1000g0 - creates new VNIC \textbf{vnic1} over existing NIC \textbf{e1000g0}
-          \item \# dladm create-etherstub ether00 - creates new Etherstub \textbf{ether00}
-          \item \# dladm show-linkprop vnic11 - lists all properties assigned to \textbf{vnic11} link
-          \item \# dladm set-linkprop -pmaxbw=1000 vnic11 - assignes 1Mbps bandwith limit to \textbf{vnic11} link
-          \item \# dladm set-linkprop -ppriority=low vnic11 - assignes low priority to \textbf{vnic11} link
+          \item \# dladm create-vnic vnic1 -l e1000g0 - creates new VNIC \textbf{vnic1} over existing NIC \textbf{e1000g0},
+          \item \# dladm create-etherstub ether00 - creates new Etherstub \textbf{ether00},
+          \item \# dladm show-linkprop vnic11 - lists all properties assigned to \textbf{vnic11} link,
+          \item \# dladm set-linkprop -pmaxbw=1000 vnic11 - assignes 1Mbps bandwith limit to \textbf{vnic11} link,
+          \item \# dladm set-linkprop -ppriority=low vnic11 - assignes low priority to \textbf{vnic11} link.
         \end{enumerate}
   
         More examples can be found in \textbf{man dladm}.
@@ -647,9 +646,9 @@
         \textbf{flowadm} is the admin command for flow management. It might be used as follows:     
 
         \begin{enumerate}
-          \item \# flowadm show-flow -l e1000g0 - displays all flows assigned to link \textbf{e1000g0}
+          \item \# flowadm show-flow -l e1000g0 - displays all flows assigned to link \textbf{e1000g0},
           \item \# flowadm add-flow -l e1000g0 -a transport=udp udpflow - creates new flow assigned to link
-                \textbf{e1000g0} for all udp packets
+                \textbf{e1000g0} for all udp packets.
         \end{enumerate}
 
         More information about \textbf{flowadm} and \textbf{dladm} tools can be found in manual.
@@ -694,9 +693,9 @@
       with respect to different workloads. It is allowed to:
 
       \begin{enumerate}
-        \item Restrict access to specific resource
-        \item Offer resources to workloads on a preferential basis
-        \item Isolate workloads from each another
+        \item Restrict access to specific resource,
+        \item Offer resources to workloads on a preferential basis,
+        \item Isolate workloads from each another.
       \end{enumerate}
 	
       Resource is any part of computing system that may be modified in order to change application behaviour. Resource
@@ -712,9 +711,9 @@
       Solaris Operating System introduced three types of resource management control mechanisms:
 
       \begin{enumerate}
-        \item constraints - allows defining set of bounds on used resources for a workload
-        \item partitioning - enables binding subset of system's available resources to specific workload
-        \item scheduling - involves predictable algorithm making sequence of allocation decisions at specific intervals
+        \item constraints - allows defining set of bounds on used resources for a workload,
+        \item partitioning - enables binding subset of system's available resources to specific workload,
+        \item scheduling - involves predictable algorithm making sequence of allocation decisions at specific intervals.
       \end{enumerate}
 
       Hierarchical architecture allows defining set of resource control sets on each level. However, if more than one is
@@ -742,9 +741,9 @@
         The extended accounting facility can gather data for:
 
         \begin{itemize}
-          \item system resources usage (per-task and per-process)
-          \item flows defined with the IPQoS tools
-          \item links and flows created with Crossbow
+          \item system resources usage (per-task and per-process),
+          \item flows defined with the IPQoS tools,
+          \item links and flows created with Crossbow.
         \end{itemize}
 
         % TODO what data can be gathered?
@@ -779,6 +778,13 @@
 
       % tutaj tez kilka slow i JIMSie i integracji + co to daje
 
+        \begin{figure}[H]
+          \begin{center}
+            \includegraphics[width=0.8\textwidth]{img/architecture/layered_architecture.png}
+          \end{center}
+          \caption{Layered system architecture}
+        \end{figure}  
+
 
     \section{High-level design}
 
@@ -797,6 +803,16 @@
 
     \section{Domain model and data flows} \label{sec:domain-model}
 
+    Created object model allows to describe network structure contaning of: switches, resources with attached addressable 
+    interfaces and policies. Figure below presents concrete classes and their dependencies.    
+
+        \begin{figure}[H]
+          \begin{center}
+            \includegraphics[angle=90, height=0.9\textwidth]{img/impl/resource-object-model.png}
+          \end{center}
+          \caption{Resource object model and their relationships}
+        \end{figure}        
+
 
     \section*{Summary}
 
@@ -808,8 +824,36 @@
 
     \section{Implementation environment}
 
+    \section{Crossbow components implementational details}
+
+        %TODO czy tutaj te diagramy pasuja???
+
+        \begin{figure}[H]
+          \begin{center}
+            \includegraphics[width=0.8\textwidth]{img/impl/etherstub.png}
+          \end{center}
+          \caption{Etherstub class diagram}
+        \end{figure}        
+
+        \begin{figure}[H]
+          \begin{center}
+            \includegraphics[width=0.8\textwidth]{img/impl/link.png}
+          \end{center}
+          \caption{Link (VNic, Nic) class diagram}
+        \end{figure}        
+
+        \begin{figure}[H]
+          \begin{center}
+            \includegraphics[width=0.8\textwidth]{img/impl/flow.png}
+          \end{center}
+          \caption{Flow class diagram}
+        \end{figure}        
+
+        
+
 
     \section{Domain model transformation details}
+        
 
 
     \section{Low-level functions access}
@@ -823,12 +867,23 @@
 
   \chapter{Case Study}
 
-    \section*{Chapter overview}
-
+    The chapter describes experimental studies.
 
     \section{Multimedia server}
 
       \subsection{Scenario description}
+
+        % TODO
+        %
+        % * DSS VA
+        % * mplayer na VA klienckich
+        % * tshark
+
+        % na kazdej zonce tshark i zbieranie danych do pcap
+        % analiza+wykresy (jitter, opuszczone pakiety) - wireshark
+        % serwer - darwin
+        % klient - mplayer
+
 
         \begin{itemize}
           \item similar to DiffServ (traffic classes, selectors, filters, priority, queuing)
@@ -846,10 +901,12 @@
         \end{itemize}
 
         \begin{figure}[H]
-                   \begin{center}
-                         \includegraphics[width=0.7\textwidth]{img/test-case/diagram.png}
-                         \caption{VOD + streaming clients test case example}
-                   \end{center}        \end{figure}
+          \begin{center}
+            \includegraphics[width=0.8\textwidth]{img/test-case/diagram.png}
+          \end{center}
+
+          \caption{VOD + streaming clients test case example}
+        \end{figure}
 
 
       \subsection{Resource access requirements}
@@ -878,9 +935,9 @@
 
     \section{Further work}
 	
-	In terms of the future work there are many many improvments that might be implemented. Probably the largest component we'd plannned to implement was automatic resource assigner, which would run
-        and perform automatic assigning resources to nodes that run under least load. This assigner with attached rule based system should gather data about the load on each node and based on that should 
-        decide what and where instantiate. What we have managed to complete is manual assigner, where you have to select on which node you would like to have your virtual resources created.
+	In terms of the future work there are many improvements that might be implemented. Probably the largest component, which was initially plannned to be implemented, was automatic resource assigner, that would run
+        and perform automatic resource assignments to nodes that run under lowest load. This assigner with attached rule based system would gather data about the load on each node and based on that 
+	decide what and where instantiate. Presented and discussed system in this thesis lacks that functionality. Instead, it offers manual assignments, where user must select on which node his virtual resources should be created. 
 
 
   \bibliographystyle{plain}
