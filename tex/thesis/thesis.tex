@@ -778,6 +778,13 @@
 
       % tutaj tez kilka slow i JIMSie i integracji + co to daje
 
+        \begin{figure}[H]
+          \begin{center}
+            \includegraphics[width=0.8\textwidth]{img/architecture/layered_architecture.pdf}
+          \end{center}
+          \caption{Layered system architecture}
+        \end{figure}  
+
 
     \section{High-level design}
 
@@ -796,6 +803,16 @@
 
     \section{Domain model and data flows} \label{sec:domain-model}
 
+    Created object model allows to describe network structure contaning of: switches, resources with attached addressable 
+    interfaces and policies. Figure below presents concrete classes and their dependencies.    
+
+        \begin{figure}[H]
+          \begin{center}
+            \includegraphics[angle=90, height=0.9\textwidth]{img/impl/resource-object-model.png}
+          \end{center}
+          \caption{Resource object model and their relationships}
+        \end{figure}        
+
 
     \section*{Summary}
 
@@ -807,8 +824,36 @@
 
     \section{Implementation environment}
 
+    \section{Crossbow components implementational details}
+
+        %TODO czy tutaj te diagramy pasuja???
+
+        \begin{figure}[H]
+          \begin{center}
+            \includegraphics[width=0.8\textwidth]{img/impl/etherstub.png}
+          \end{center}
+          \caption{Etherstub class diagram}
+        \end{figure}        
+
+        \begin{figure}[H]
+          \begin{center}
+            \includegraphics[width=0.8\textwidth]{img/impl/link.png}
+          \end{center}
+          \caption{Link (VNic, Nic) class diagram}
+        \end{figure}        
+
+        \begin{figure}[H]
+          \begin{center}
+            \includegraphics[width=0.8\textwidth]{img/impl/flow.png}
+          \end{center}
+          \caption{Flow class diagram}
+        \end{figure}        
+
+        
+
 
     \section{Domain model transformation details}
+        
 
 
     \section{Low-level functions access}
@@ -890,9 +935,9 @@
 
     \section{Further work}
 	
-	In terms of the future work there are many many improvments that might be implemented. Probably the largest component we'd plannned to implement was automatic resource assigner, which would run
-        and perform automatic assigning resources to nodes that run under least load. This assigner with attached rule based system should gather data about the load on each node and based on that should 
-        decide what and where instantiate. What we have managed to complete is manual assigner, where you have to select on which node you would like to have your virtual resources created.
+	In terms of the future work there are many improvements that might be implemented. Probably the largest component, which was initially plannned to be implemented, was automatic resource assigner, that would run
+        and perform automatic resource assignments to nodes that run under lowest load. This assigner with attached rule based system would gather data about the load on each node and based on that 
+	decide what and where instantiate. Presented and discussed system in this thesis lacks that functionality. Instead, it offers manual assignments, where user must select on which node his virtual resources should be created. 
 
 
   \bibliographystyle{plain}
