@@ -84,7 +84,7 @@
 	must provide safe, predicatable and sometimes guaranteed services. Accomplishing the required Quality of 
 	Sevice(QoS) by controlling the delay, delay variation(jitter), bandwidth, packet loss parameters is deeply 
 	hidden secret of most successful end-to-end business applications. 
-	http://www.cisco.com/en/US/products/ps6558/products_ios_technology_home.html
+	http://www.cisco.com/en/US/products/ps6558/products\_ios\_technology\_home.html
 	
 	%TODO dopisac o rezerwacji zasobow i izolacji
 	
@@ -100,11 +100,11 @@
 	jitter, package missing	tolerance there seems to be just one correct answer for this question. Although creating
 	such systems is not an easy task many groups such as IETF(The Internet Engineering Task Force) are working on this problem. 
 	Currently there are three existing models performing QoS in the IP network:
-	\begin{enumerate}
+	\begin{itemize}
         \item best effort,
 		\item Intserv,
 		\item Diffserv.
-	\end{enumerate}
+	\end{itemize}
 	
 	These models are discussed in more details in the following section.
 	
@@ -130,17 +130,17 @@
 			may be built. \cite{qos}
 			
 			DiffServ works with traffic stream containing many complex microflows which among the same stream have:
-			\begin{enumerate}
+			\begin{itemize}
 				\item Same QoS requirements,
 				\item Traverses domain towards the same direction.
-			\end{enumerate}
+			\end{itemize}
 			
 			Microflow is a flow between applications and is identified mainly by:
-			\begin{enumerate}
+			\begin{itemize}
 				\item Source and/or Destination Address,
 				\item Transport protocol,
 				\item Source and/or Desitination Port.
-			\end{enumerate}
+			\end{itemize}
 			
 			\begin{figure}[H]
 				\begin{center}
@@ -177,17 +177,18 @@
 			operation is available thanks to RSVP protocol. Due to this reservation session initialization 
 			lasts much longer than in DiffServ.
 			
-		\{DiffServ vs IntServ}
+                \medskip
+		\textbf{DiffServ vs IntServ}
 		
 			\begin{table}[ht]
 				\caption{DiffServ, IntServ comparision}
 				\centering % used for centering table
-				\begin{tabular}{c c c c}
+				\begin{tabular}{c c}
 					\hline \hline
-					IntServ & DiffServ
-					Stateful & Stateless
-					Not scalable & Scalable
-					Stream oriented & Processing single packets
+					IntServ & DiffServ \\
+					Stateful & Stateless \\
+					Not scalable & Scalable \\
+					Stream oriented & Processing single packets \\
 					\hline
 				\end{tabular}
 			\end{table}
