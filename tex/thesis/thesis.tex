@@ -911,7 +911,40 @@
 
       \subsection{Resource access requirements}
 
+      \subsection{Preparation of the environment}
+      \label{sub:case:prep}
+
+        \subsubsection{Virtual appliances}
+        \label{ssub:case:prep:va}
+
+          % zfs create rpool/Zones/darwin
+          %
+          % zonecfg -z darwin
+          %
+          % darwin: No such zone configured
+          % Use 'create' to begin configuring a new zone.
+          % zonecfg:darwin> create
+          % zonecfg:darwin> set zonepath=/rpool/Zones/darwin
+          % zonecfg:darwin> set ip-type=exclusive
+          % zonecfg:darwin> verify
+          % zonecfg:darwin> commit
+          % zonecfg:darwin> exit
+          %
+          % chmod 700 rpool/Zones/darwin
+          % zoneadm -z darwin install
+          %
+          % you may have to add root:NP: in the zone-specific /etc/shadow file to be able to login with zlogin
+          %
+          % dss installation
+
+          After a zone is prepared, it is transferred to the repository.
+        
+      
       \subsection{Providing tunable and scalable virtual infrastructure}
+
+      \subsection{Enhancements provided by the solution}
+      \label{sub:}
+      
 
 
     \section*{Summary}
@@ -934,6 +967,8 @@
 		
 
     \section{Further work}
+
+      % * semi-automatic snapshot creation (select an existing zone and transfer to the repository)
 	
 	In terms of the future work there are many improvements that might be implemented. Probably the largest component, which was initially plannned to be implemented, was automatic resource assigner, that would run
         and perform automatic resource assignments to nodes that run under lowest load. This assigner with attached rule based system would gather data about the load on each node and based on that 
