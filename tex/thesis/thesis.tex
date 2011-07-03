@@ -84,7 +84,7 @@
 	must provide safe, predicatable and sometimes guaranteed services. Accomplishing the required Quality of 
 	Sevice(QoS) by controlling the delay, delay variation(jitter), bandwidth, packet loss parameters is deeply 
 	hidden secret of most successful end-to-end business applications. 
-	http://www.cisco.com/en/US/products/ps6558/products_ios_technology_home.html
+	http://www.cisco.com/en/US/products/ps6558/products\_ios\_technology\_home.html
 	
 	%TODO dopisac o rezerwacji zasobow i izolacji
 	
@@ -94,14 +94,15 @@
 
   \chapter{Context}  % TODO ładniej
 
-	Constantly growing demand for bandwidth in networks ( especially VoD, VoIP, RT) raises the question: 'Whether it 
+	Constantly growing demand for bandwidth in networks (especially VoD, VoIP, RT) raises the question: 'Whether it 
 	is better to increase available bandwidth of networks or to build intelligent systems managing users traffic?'. 
-	As high bandwidth is just not enough because there are other equally important transmission parameters like: delay,
-	jitter, package missing	tolerance there seems to be just one correct answer for this question. Although creating
-	such systems is not an easy task many groups such as IETF(The Internet Engineering Task Force) are working on this problem. 
+	As high bandwidth is just not enough because there are other equally important transmission parameters (delay,
+	jitter, package missing	tolerance) there seems to be just one correct answer for this question. Creating
+	such systems is not an easy task and many groups such as IETF (The Internet Engineering Task Force) are working on this problem. 
 	Currently there are three existing models performing QoS in the IP network:
+
 	\begin{enumerate}
-        \item best effort,
+    \item best effort,
 		\item Intserv,
 		\item Diffserv.
 	\end{enumerate}
@@ -111,15 +112,22 @@
 
     \section{QoS-aware networking}
 
+      % TODO  krotki przeglad QoS w roznych sieciach, nie tylko IP, ale tez ATM, Frame Relay, Token Ring (na podst.
+      % wykl. Luke-a?)
+      %
+      % w szczegolach o QoS na IP
+
       % IntServ, DiffServ, inne
-	  Nowadays the IETF(The Internet Engineering Task Force) is working on two approaches
+	  Nowadays the IETF (The Internet Engineering Task Force) is working on two approaches
 	  beyond the basic best-effort service to provide more advanced handling of packets and providing requested level 
 	  of bandwidth and delay which are:
-	  \begin{enumerate}
-                \item integrated services - reserves resources neccassary to provide the service along path,
-		\item differentiated services - uses TOS field(IPv4) or Traffic Class field(IPv6) and can work
-			on packet by packet basis and do not need detailed information about flows
-	  \end{enumerate}
+
+    \begin{enumerate}
+      \item integrated services - reserves resources necessary to provide the service along path,
+      \item differentiated services - uses TOS field (IPv4) or Traffic Class field (IPv6) and can work
+            on packet by packet basis and does not need detailed information about flows
+            % TODO ^  bardziej ogolnie? (nie wymaga rezerwacji na sciezce itd)
+    \end{enumerate}
 	
 		\subsection{DiffServ}
 		
@@ -130,16 +138,18 @@
 			may be built. \cite{qos}
 			
 			DiffServ works with traffic stream containing many complex microflows which among the same stream have:
+
 			\begin{enumerate}
 				\item Same QoS requirements,
 				\item Traverses domain towards the same direction.
 			\end{enumerate}
 			
 			Microflow is a flow between applications and is identified mainly by:
+
 			\begin{enumerate}
 				\item Source and/or Destination Address,
 				\item Transport protocol,
-				\item Source and/or Desitination Port.
+				\item Source and/or Destination Port.
 			\end{enumerate}
 			
 			\begin{figure}[H]
@@ -149,11 +159,11 @@
 				\caption{DiffServ domain}
 			\end{figure} %TODO podac zrodlo obrazka ( wyklad z systemow multimedialnych dotyczacy QoS )
 			
-			DiffServ domain is a set of nodes with consistent QoS policy ( for example network managed by
-			the same ISP or intranet ). Routers within domain are didvided into two groups: boundary routers and 
-			core routers. Boundary router performs traffic classification, packet marking, traffic metering, traffic
-			control (policing, shaping) where core routers pass packets according to PHB(Per Hop Behaviour - more about them later)
-			and sometimes changes DSCP labels.			
+      DiffServ domain is a set of nodes with consistent QoS policy (for example network managed by the same ISP or
+      intranet). Routers within domain are didvided into two groups: boundary routers and core routers. Boundary router
+      performs traffic classification, packet marking, traffic metering, traffic control (policing, shaping) where core
+      routers pass packets according to PHB(Per Hop Behaviour - more about them later) and sometimes changes DSCP
+      labels.			
 			
 			This architecture distinguishes two major components: packet marking using the IPv4 ToS byte or TC in
 			IPv6 and PHBs(Per Hop Behaviour).
@@ -173,21 +183,21 @@
 			guaranteed bandwidth and delay, whereas Controlled-Load Service does not give full guarantee
 			and should be used with application less sensitive for packets loss or delay.
 			
-			IntServ requires resource reservation for certain flows or agregated data streams. The reservation 
+			IntServ requires resource reservation for certain flows or aggregated data streams. The reservation 
 			operation is available thanks to RSVP protocol. Due to this reservation session initialization 
 			lasts much longer than in DiffServ.
 			
-		\{DiffServ vs IntServ}
+		{DiffServ vs IntServ}
 		
 			\begin{table}[ht]
-				\caption{DiffServ, IntServ comparision}
+				\caption{DiffServ, IntServ comparison}
 				\centering % used for centering table
-				\begin{tabular}{c c c c}
+				\begin{tabular}{cccc}
 					\hline \hline
-					IntServ & DiffServ
-					Stateful & Stateless
-					Not scalable & Scalable
-					Stream oriented & Processing single packets
+					IntServ & DiffServ \\
+					Stateful & Stateless \\ 
+					Not scalable & Scalable \\ 
+					Stream oriented & Processing single packets \\
 					\hline
 				\end{tabular}
 			\end{table}
@@ -1039,8 +1049,17 @@
           % you may have to add root:NP: in the zone-specific /etc/shadow file to be able to login with zlogin
           %
           % dss installation
+          %
+          %
 
           After a zone is prepared, it is transferred to the repository.
+
+          % zfs snapshot -r <path>@SNAP
+          % zfs send -R <path>@SNAP > /appliance/<appname>.SNAP
+          %
+          % Example:
+          % zfs snapshot -r rpool/Zones/darwin@SNAP
+          % zfs send rpool/Zones/darwin@SNAP > /appliance/darwin.SNAP
         
       
       \subsection{Providing tunable and scalable virtual infrastructure}
