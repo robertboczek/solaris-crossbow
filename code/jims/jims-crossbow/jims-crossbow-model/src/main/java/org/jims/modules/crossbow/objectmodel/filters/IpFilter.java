@@ -40,8 +40,11 @@ public class IpFilter extends Filter{
         return address;
     }
 
+    public void setAddress(IpAddress ipAddress) {
+        this.address = ipAddress;
+    }
 
 		private Location location;
-		private final IpAddress address;
+		private IpAddress address;
 
 }

@@ -1092,8 +1092,8 @@ public class Gui extends Shell {
 							public void run() {
 								chartsButton.setEnabled(NetworkState.DEPLOYED
 										.equals(networkState));
-								deployButton.setEnabled(NetworkState.DEPLOYED
-										.equals(networkState));
+								//deployButton.setEnabled(NetworkState.DEPLOYED
+								//		.equals(networkState));
 							}
 						});
 					}

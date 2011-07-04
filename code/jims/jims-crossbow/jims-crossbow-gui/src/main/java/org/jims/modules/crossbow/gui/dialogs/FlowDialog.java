@@ -24,6 +24,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Spinner;
 import org.jims.modules.crossbow.gui.data.FlowData;
+import org.jims.modules.crossbow.gui.validator.IpValidator;
 import org.jims.modules.crossbow.objectmodel.filters.IpFilter;
 import org.jims.modules.crossbow.objectmodel.filters.PortFilter;
 import org.jims.modules.crossbow.objectmodel.filters.TransportFilter;
@@ -43,6 +44,7 @@ public class FlowDialog extends TitleAreaDialog{
 	private Text bandwidth;
 	private Combo priority;
 	private Text port;
+	private Text address;
 	
 	
 	private Combo location;
@@ -171,6 +173,12 @@ public class FlowDialog extends TitleAreaDialog{
 					break;
 				}
 			}
+			
+			Label label8 = new Label(parent, SWT.NONE);
+			label8.setText("Ip address:");
+			
+			address = new Text(parent, SWT.NONE);
+			address.setText(ipFilter.getAddress().getAddress());
 			
 		}
 		
@@ -320,6 +328,12 @@ public class FlowDialog extends TitleAreaDialog{
 		} else if(valid && policy instanceof PriorityPolicy && priority.getSelectionIndex() == -1) {
 			errorMessage += "Select type of priority from combobox \n";
 			valid = false;
+		} 
+		
+		if (valid && policy.getFilter() instanceof IpFilter) {
+			if (!IpValidator.isIpv4(address.getText())) {
+				errorMessage += "Address must in ipv4 format \n";
+			}
 		}
 		
 		if(valid && policy.getFilter() instanceof PortFilter) {
@@ -368,6 +382,7 @@ public class FlowDialog extends TitleAreaDialog{
 			IpFilter ipFilter = (IpFilter) policy.getFilter();
 			
 			ipFilter.setLocation((org.jims.modules.crossbow.objectmodel.filters.IpFilter.Location)location.getData(location.getText()));
+			ipFilter.getAddress().setAddress(address.getText());
 			
 		}
 		
