@@ -116,6 +116,12 @@
       % wykl. Luke-a?)
       %
       % w szczegolach o QoS na IP
+	  QoS (Quality of Service) is an issue in all types of networks such as IP, Token Ring, Frame Relay or even ATM. Each of them
+	  adapted specific approach towards this matter. IP network for instance is non-deterministic although there is
+	  a possiblity of packet classification using CoS (Class of Service) field. Token Ring on the other hand is deterministic
+	  and allows using priority to distinct traffic. Last but not least ATM creates virtual path between sender and receiver and sets
+	  QoS parameters. Despite the fact that all approaches are very interesting and meaningful this paper focuses mainly on the IP 
+	  network and its approach to QoS.
 
       % IntServ, DiffServ, inne
 	  Nowadays the IETF (The Internet Engineering Task Force) is working on two approaches
@@ -124,9 +130,7 @@
 
     \begin{enumerate}
       \item integrated services - reserves resources necessary to provide the service along path,
-      \item differentiated services - uses TOS field (IPv4) or Traffic Class field (IPv6) and can work
-            on packet by packet basis and does not need detailed information about flows
-            % TODO ^  bardziej ogolnie? (nie wymaga rezerwacji na sciezce itd)
+      \item differentiated services - do not require resource reservation along path
     \end{enumerate}
 	
 		\subsection{DiffServ}
@@ -226,6 +230,16 @@
       \subsection{Improving server-side infrastructure scalability}
 
       \subsection{Infrastructure as a service}
+	  
+	  The IAAS( Infrastructure as a service ) sometimes also called Hardware as a Service (HaaS) is one of three 
+	  cloud computing models, the other two are: Software as a Service (SaaS) and Platform as a Service (PaaS). 
+	  This service is based on providing by the supplier whole scalable IT infrastructure depending on user demand 
+	  such as virtualized hardware. The service provider owns the equipment and is responsible for housing,
+	  running and maintaining it.  
+	  
+	  At the beginning the IaaS was just renting dedicated servers services from supplier. Nowadays thanks to virtualization 
+	  these are most often virtual machines. In the former case user paid for the concrete hardware (box), now client 
+	  typically pays on a per-use basis.
 
       \subsection{The role of resource virtualization in the SOA stack}
 
@@ -264,9 +278,9 @@
     \section*{Summary}
 
 
-  \chapter{Solaris OS as a resource virtualization environment}
+  \chapter{Solaris 10, Solaris 11 and OpenSolaris}
   
-    %TODO change chapter title !!!
+    %TODO change chapter title !!! // Solaris OS as a resource virtualization environment
     % TODO  actually, Solaris 10, Solaris 11 and OpenSolaris are described here!
 
     The chapter provides an overview of Oracle Solaris operating system and evaluates it as a platform for resource
@@ -566,8 +580,7 @@
             \includegraphics[width=.7\textwidth]{img/crossbow.jpg}
           \end{center}
 
-          \caption{The Solaris Crossbow network virtualization enhancement, source: http://www.net-security.org/secworld.php?id=7573}
-                  %@todo add preceise url}
+          \caption{The Solaris Crossbow network virtualization enhancement, source: http://www.net-security.org/images/articles/crossbow.jpg}
         \end{figure}
 
         The crossbow architecture has introduced fully parallel network stack structure. Each stack could be seen as
@@ -1030,6 +1043,36 @@
         \subsubsection{Virtual appliances}
         \label{ssub:case:prep:va}
 
+        In order to create new zone following steps should be taken: \\
+
+        \textbf{zonecfg} -z mplayer \\
+
+        create \\
+
+        \textbf{zonecfg:mplayer}> set zonepath=/rpool/Appliances/mplayer \\
+
+        \textbf{zonecfg:mplayer}> set autoboot=true \\
+
+        \textbf{zonecfg:mplayer}> set ip-type=exclusive \\
+
+        \textbf{zonecfg:mplayer}> verify \\
+
+        \textbf{zonecfg:mplayer}> commit \\
+
+        \textbf{zonecfg:mplayer}> exit \\
+
+        \textbf{chmod} 700 rpool/Appliances/mplayer \\
+
+        \textbf{zoneadm} -z mplayer install \\
+
+        After installation zone can be booted and used after logging. \\
+
+        \textbf{zoneadm} -z mplayer boot \\
+
+        \textbf{zlogin} -S mplayer \\
+
+        
+
           % zfs create rpool/Zones/darwin
           %
           % zonecfg -z darwin
@@ -1052,14 +1095,16 @@
           %
           %
 
-          After a zone is prepared, it is transferred to the repository.
+          After a zone is prepared, it is transferred to the repository. \\
 
-          % zfs snapshot -r <path>@SNAP
-          % zfs send -R <path>@SNAP > /appliance/<appname>.SNAP
+          \textbf{zfs} snapshot -r <path>@SNAPNAME \\
+
+          \textbf{zfs} send -R <path>@SNAPNAME > /appliance/<appname>.SNAP \\
           %
-          % Example:
-          % zfs snapshot -r rpool/Zones/darwin@SNAP
-          % zfs send rpool/Zones/darwin@SNAP > /appliance/darwin.SNAP
+
+          Example: \\
+          \textbf{zfs} snapshot -r rpool/Appliances/mplayer@SNAP \\
+          \textbf{zfs} send rpool/Appliances/mplayer@SNAP > /appliance/mplayer.SNAP \\
         
       
       \subsection{Providing tunable and scalable virtual infrastructure}
