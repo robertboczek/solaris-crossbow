@@ -830,9 +830,11 @@ public class Worker implements WorkerMBean {
 	private void appliancesREM( List< Appliance > appliances ) throws ActionException {
 
 		RemoveZoneCommand cmd = null;
+		ModifyZoneCommand modifyCmd = null;
 
 		try {
 			cmd = commandFactory.getRemoveZoneCommand();
+			modifyCmd = commandFactory.getModifyZoneCommand();
 		} catch ( CommandException ex ) {
 			throw new ActionException( "Appliance REM error", ex );
 		}
@@ -843,9 +845,14 @@ public class Worker implements WorkerMBean {
 			             + ", repoId: " + app.getRepoId() + ")" );
 
 			try {
-				cmd.removeZone( new ZoneInfo( ApplianceType.MACHINE.equals( app.getType() )
-				                              ? NameHelper.machineName( app )
-				                              : NameHelper.routerName( app ) ) );
+
+				String name = ApplianceType.MACHINE.equals( app.getType() )
+				              ? NameHelper.machineName( app )
+				              : NameHelper.routerName( app );
+
+				modifyCmd.shutdownZone( name );
+				cmd.removeZone( new ZoneInfo( name ) );
+
 			} catch ( CommandException ex ) {
 				throw new ActionException( "Appliance REM error", ex );
 			}
