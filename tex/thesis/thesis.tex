@@ -987,17 +987,104 @@
 
     \section{Building and running the platform}
 
+        		To build and run the platform the following prerequisits are required:
+		\begin{itemize}
+			\item{Java SE 1.6, maven,}
+			\item{jims sources downloaded,}
+			\item{jims-crossbow module downloaded from \\ https://github.com/robertboczek/solaris\-crossbow/tree/master/code.}
+		\end{itemize}
+		
+		Afterwards jims project must be built. Detailed description of how to build jims is in \textbf{README} file located
+		in the main catalog of jims sources. One of the most common problems are missing jars that unfortunately must be 
+		manually downloaded and installed in the local repository.
+		
+		
+		Subsequently jims-crossbow module should be copied to the main folder containing jims and then build. The script 
+		\textbf{inst-crossbow-lib.sh} must be	later executed to copy shared libraries *.so files to /usr/lib folder.
+		
+		If everything went well another step is running jims :
+		\begin{itemize}
+			\item{jims-gateway: .../jims-gateway/bin/jims-agent.sh [-b host\_address] start|stop|restart,}
+			\item{jims-agent: .../jims-agent/bin/jims-agent.sh [-b host\_address] start|stop|restart.}
+		\end{itemize}
+		
+		We should run just single jims-gateway and on the rest nodes as many jims-agents as we require. For more information about \textbf{jims} 
+		and its architecture please refer to:
+		%TODO znalezc jakis tutorial do jims i opis architektury
+		
+		
+		If jims-agent or jims-gateway did not started it is worth to see logs files, located respectively at target/.../jims-agent/var/jims/log/agent.log
+		and target/.../jims-gateway/var/jims/log/agent.log
+		
+		It also recommended to have logs opened during jims start to see whether any exception was thrown ( \textbf{tail -f target/.../jims\-gateway/var/jims/log/agent.log} )
+		
+		Jims has jmx-based architecture so each jims-agent and jims-gateway can be accessed through jconsole. In order to do that start 
+		jconsole, select remote process and enter type: \\ \textbf{service:jmx:rmi:///jndi/rmi://address:port/jims} where \textbf{address} and 
+		\textbf{port} is concrete address and port under which jims was started. \textbf{JConsole} allows browsing registered mbeans and 
+		performing CRUD operations. Especially in case of the crossbow module it allows these operations as
+		the figure below presents:
+		
+		\begin{figure}[H]
+                  \begin{center}
+                    \includegraphics[width=1.0\textwidth]{img/impl/jconsole.png}
+                  \end{center}
+                  \caption{The Crossbow module registered MBeans example}
+                \end{figure}
+		
+		To simplify working with our system gui application was created. It is located in jims/jims-crossbow/jims-crossbow-gui catalog. Application 
+		may be imported to eclipse and then build and run or build using maven (\textbf{ mvn assembly:assembly }) and run 
+                \textbf{java -cp target/jims-crossbow-gui-3.0.0-exe.jar org.jims.modules.crossbow.gui.Gui}
+
+		\begin{figure}[H]
+                  \begin{center}
+                    \includegraphics[width=1.0\textwidth]{img/impl/gui.png}
+                  \end{center}
+                  \caption{Gui application}
+                \end{figure}
+		
+		Implemented gui application allows:
+		\begin{itemize}
+			\item{Connecting to jims-gateway,}
+			\item{Creating, modifying and removing desired network structure with requested virtual appliances,}
+			\item{Discovering already created projects,}
+			\item{Detailed information about links and flows like bandwidth load presented in charts from requested time periods or just simple numbers,}
+			\item{Automatic logging using ssh to selected ( already deployed ) nodes and opening gui-type terminal.}
+		\end{itemize}
+
 
     \section*{Summary}
 
 
   \chapter{Case Study}
 
-    The chapter describes experimental studies.
+    In order to present capabilities of created system, case with video streaming server and clients with differential QoS demands was prepared.
+        %TODO troche wprowadzenia dlaczego akurat multimedia itp
 
     \section{Multimedia server}
 
       \subsection{Scenario description}
+
+		Network traffic in this case was differentiated among users through priorities and maximum bandwidth filters created over the flow paths. 
+		The figure below presents precisely network structure and client configuration.
+	
+		\begin{figure}[H]
+                        \begin{center}
+                            \includegraphics[width=0.8\textwidth]{img/test-case/diagram.pdf}
+                          \end{center}
+
+                  \caption{VOD + streaming clients test case example}
+                \end{figure}
+		
+		\medskip
+		Our network distinguishes three node types:
+		\begin{itemize}
+			\item{http server - containing thttpd server,}
+			\item{media server - containing Darwin Streaming Server,}
+			\item{client player - containing MPlayer.}
+		\end{itemize}
+		
+		The section \textbf{'Preparation of the environment'} describes an example of how a new zone and then snapshot may be created, 
+                which then would be used as virtual appliance.
 
         % TODO
         %
@@ -1043,7 +1130,7 @@
         \subsubsection{Virtual appliances}
         \label{ssub:case:prep:va}
 
-        In order to create new zone following steps should be taken: \\
+        In order to create new zone ( called for example 'mplayer' ) following steps should be taken: \\
 
         \textbf{zonecfg} -z mplayer \\
 
@@ -1095,7 +1182,7 @@
           %
           %
 
-          After a zone is prepared, it is transferred to the repository. \\
+          When zone is prepared, it can be transferred to the repository. \\
 
           \textbf{zfs} snapshot -r <path>@SNAPNAME \\
 
@@ -1106,6 +1193,8 @@
           \textbf{zfs} snapshot -r rpool/Appliances/mplayer@SNAP \\
           \textbf{zfs} send rpool/Appliances/mplayer@SNAP > /appliance/mplayer.SNAP \\
 
+
+        Afterwards these exported snaphots may be used by our gui application as desired virtual appliance to be restored. 
           % VOD: thttpd
         
       
@@ -1141,9 +1230,11 @@
 
       % * semi-automatic snapshot creation (select an existing zone and transfer to the repository)
 	
-	In terms of the future work there are many improvements that might be implemented. Probably the largest component, which was initially plannned to be implemented, was automatic resource assigner, that would run
-        and perform automatic resource assignments to nodes that run under lowest load. This assigner with attached rule based system would gather data about the load on each node and based on that 
-	decide what and where instantiate. Presented and discussed system in this thesis lacks that functionality. Instead, it offers manual assignments, where user must select on which node his virtual resources should be created. 
+	In terms of the future work there are many improvements that might be implemented. Probably the largest component, which was initially plannned
+        was automatic resource assigner, that would run and perform automatic resource assignments to nodes that run under lowest load. This assigner 
+        with attached rule based system would gather data about the load on each node and based on that decide what and where instantiate. Presented 
+        and discussed system in this thesis lacks that functionality. Instead, it offers manual assignments, where user selects on which node his 
+        virtual resources should be created.
 
 
   \bibliographystyle{plain}
