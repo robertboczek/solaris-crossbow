@@ -38,7 +38,7 @@ public class StatisticAnalyzer {
 
 		for (GraphConnectionData g : graphConnectionDataList) {
 
-			System.out.println(g.getEndp1() + " " + g.getEndp2());
+			//System.out.println(g.getEndp1() + " " + g.getEndp2());
 			if (g.getEndp1() != null) {
 
 				if (g.getEndp1() instanceof Interface) {
@@ -72,7 +72,7 @@ public class StatisticAnalyzer {
 		
 		this.assignments = assignments;
 
-		System.out.println(interfacesMap.size());
+		//System.out.println(interfacesMap.size());
 		for (Map.Entry<Interface, EndpointStatistic> entry : interfacesMap
 				.entrySet()) {
 			new Thread(entry.getValue()).start();
@@ -126,8 +126,9 @@ public class StatisticAnalyzer {
 		@Override
 		public void run() {
 
-			System.out.println("Start gathering statistics for interface "
+			logger.debug("Start gathering statistics for interface "
 					+ interfac);
+			boolean firstTime = true;
 			try {
 				while (!stop) {
 
@@ -139,15 +140,15 @@ public class StatisticAnalyzer {
 					} catch (Exception e) {
 
 						e.printStackTrace();
-						Thread.sleep(REFRESH_TIME);
 						continue;
 					}
 
-					if (statisticGatherer != null && assignments != null) {
+					if (statisticGatherer != null && assignments != null && !firstTime) {
 						Map<LinkStatistics, Long> statistics = statisticGatherer
 								.getInterfaceStatistics(interfac, assignments);
 						updateStatistics(statistics);
 					}
+					firstTime = false;
 					Thread.sleep(REFRESH_TIME);
 
 				}

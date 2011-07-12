@@ -1,29 +1,25 @@
 package org.jims.modules.crossbow.gui.dialogs;
 
 import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.dialogs.TitleAreaDialog;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
-import org.jims.modules.crossbow.gui.data.FlowData;
+import org.eclipse.swt.widgets.Text;
+import org.jims.modules.crossbow.gui.validator.IpValidator;
 import org.jims.modules.crossbow.objectmodel.filters.IpFilter;
 import org.jims.modules.crossbow.objectmodel.filters.PortFilter;
 import org.jims.modules.crossbow.objectmodel.filters.TransportFilter;
@@ -34,26 +30,26 @@ import org.jims.modules.crossbow.objectmodel.policy.Policy;
 import org.jims.modules.crossbow.objectmodel.policy.PriorityPolicy;
 import org.jims.modules.crossbow.objectmodel.policy.PriorityPolicy.Priority;
 
+public class FlowDialog extends TitleAreaDialog {
 
-public class FlowDialog extends TitleAreaDialog{
-	
 	public static final int DELETE_CODE = 0x855374;
 
-	private Policy policy;		
+	private Policy policy;
 	private Text bandwidth;
 	private Combo priority;
 	private Text port;
-	
-	
+	private Text address;
+	private Spinner netmask;
+
 	private Combo location;
 	private Combo protocol;
 
 	public FlowDialog(Shell parentShell, Policy policy) {
 		super(parentShell);
-		
+
 		this.policy = policy;
 	}
-	
+
 	private void setControlsValues() {
 
 	}
@@ -69,8 +65,8 @@ public class FlowDialog extends TitleAreaDialog{
 		setInformation();
 	}
 
-	private void setInformation() {		
-		setMessage("Provide resource details", IMessageProvider.INFORMATION);		
+	private void setInformation() {
+		setMessage("Provide resource details", IMessageProvider.INFORMATION);
 	}
 
 	@Override
@@ -82,40 +78,42 @@ public class FlowDialog extends TitleAreaDialog{
 		GridData gridData = new GridData();
 		gridData.grabExcessHorizontalSpace = true;
 		gridData.horizontalAlignment = GridData.FILL;
-		
-		if(policy.getFilter() instanceof PortFilter) {
+
+		if (policy.getFilter() instanceof PortFilter) {
 			PortFilter portFilter = (PortFilter) policy.getFilter();
-			
+
 			Label label4 = new Label(parent, SWT.NONE);
 			label4.setText("Protocol:");
-			
+
 			protocol = new Combo(parent, SWT.DROP_DOWN);
 			protocol.setLayoutData(gridData);
 			protocol.setItems(new String[] { "tcp", "udp", "sctp" });
-			
+
 			protocol.setData("tcp", Protocol.TCP);
 			protocol.setData("udp", Protocol.UDP);
 			protocol.setData("sctp", Protocol.SCTP);
-			
+
 			int i = 0;
-			for(i=0; i<protocol.getItems().length; i++) {
-				if(protocol.getData(protocol.getItem(i)).equals(portFilter.getProtocol())) {
+			for (i = 0; i < protocol.getItems().length; i++) {
+				if (protocol.getData(protocol.getItem(i)).equals(
+						portFilter.getProtocol())) {
 					protocol.select(i);
 					break;
 				}
 			}
-			
+
 			Label label5 = new Label(parent, SWT.NONE);
 			label5.setText("Location:");
-			
+
 			location = new Combo(parent, SWT.DROP_DOWN);
 			location.setItems(new String[] { "LOCAL", "REMOTE" });
-			
+
 			location.setData("LOCAL", Location.LOCAL);
 			location.setData("REMOTE", Location.REMOTE);
-			
-			for(i=0; i<2; i++) {
-				if(location.getData(location.getItem(i)).equals(portFilter.getLocation())) {
+
+			for (i = 0; i < 2; i++) {
+				if (location.getData(location.getItem(i)).equals(
+						portFilter.getLocation())) {
 					location.select(i);
 					break;
 				}
@@ -123,61 +121,101 @@ public class FlowDialog extends TitleAreaDialog{
 
 			Label label6 = new Label(parent, SWT.NONE);
 			label6.setText("Port number:");
-			
+
 			port = new Text(parent, SWT.NONE);
 			port.setLayoutData(gridData);
 			port.setText(String.valueOf(portFilter.getPort()));
-		
-		} else if(policy.getFilter() instanceof TransportFilter) {
-			TransportFilter transportFilter = (TransportFilter) policy.getFilter();
-			
+
+		} else if (policy.getFilter() instanceof TransportFilter) {
+			TransportFilter transportFilter = (TransportFilter) policy
+					.getFilter();
+
 			Label label4 = new Label(parent, SWT.NONE);
 			label4.setText("Protocol:");
-			
+
 			protocol = new Combo(parent, SWT.DROP_DOWN);
 			protocol.setLayoutData(gridData);
-			protocol.setItems(new String[] { "tcp", "udp", "sctp", "icmp", "icmpv6" });
-			
-			protocol.setData("tcp", org.jims.modules.crossbow.objectmodel.filters.TransportFilter.Transport.TCP);
-			protocol.setData("icmp", org.jims.modules.crossbow.objectmodel.filters.TransportFilter.Transport.ICMP);
-			protocol.setData("icmpv6", org.jims.modules.crossbow.objectmodel.filters.TransportFilter.Transport.ICMPV6);
-			protocol.setData("sctp", org.jims.modules.crossbow.objectmodel.filters.TransportFilter.Transport.SCTP);
-			protocol.setData("udp", org.jims.modules.crossbow.objectmodel.filters.TransportFilter.Transport.UDP);
-			
+			protocol.setItems(new String[] { "tcp", "udp", "sctp", "icmp",
+					"icmpv6" });
+
+			protocol
+					.setData(
+							"tcp",
+							org.jims.modules.crossbow.objectmodel.filters.TransportFilter.Transport.TCP);
+			protocol
+					.setData(
+							"icmp",
+							org.jims.modules.crossbow.objectmodel.filters.TransportFilter.Transport.ICMP);
+			protocol
+					.setData(
+							"icmpv6",
+							org.jims.modules.crossbow.objectmodel.filters.TransportFilter.Transport.ICMPV6);
+			protocol
+					.setData(
+							"sctp",
+							org.jims.modules.crossbow.objectmodel.filters.TransportFilter.Transport.SCTP);
+			protocol
+					.setData(
+							"udp",
+							org.jims.modules.crossbow.objectmodel.filters.TransportFilter.Transport.UDP);
+
 			int i = 0;
-			for(i=0; i<protocol.getItems().length; i++) {
-				if(protocol.getData(protocol.getItem(i)).equals(transportFilter.getTransport())) {
+			for (i = 0; i < protocol.getItems().length; i++) {
+				if (protocol.getData(protocol.getItem(i)).equals(
+						transportFilter.getTransport())) {
 					protocol.select(i);
 					break;
 				}
 			}
-			
-		} else if(policy.getFilter() instanceof IpFilter) {
+
+		} else if (policy.getFilter() instanceof IpFilter) {
 			IpFilter ipFilter = (IpFilter) policy.getFilter();
-			
+
 			Label label7 = new Label(parent, SWT.NONE);
 			label7.setText("Location:");
-			
+
 			location = new Combo(parent, SWT.DROP_DOWN);
 			location.setLayoutData(gridData);
 			location.setItems(new String[] { "LOCAL", "REMOTE" });
-			location.setData("LOCAL", org.jims.modules.crossbow.objectmodel.filters.IpFilter.Location.LOCAL);
-			location.setData("REMOTE", org.jims.modules.crossbow.objectmodel.filters.IpFilter.Location.REMOTE);
-			
+			location
+					.setData(
+							"LOCAL",
+							org.jims.modules.crossbow.objectmodel.filters.IpFilter.Location.LOCAL);
+			location
+					.setData(
+							"REMOTE",
+							org.jims.modules.crossbow.objectmodel.filters.IpFilter.Location.REMOTE);
+
 			int i = 0;
-			for(i=0; i<2; i++) {
-				if(location.getData(location.getItem(i)).equals(ipFilter.getLocation())) {
+			for (i = 0; i < 2; i++) {
+				if (location.getData(location.getItem(i)).equals(
+						ipFilter.getLocation())) {
 					location.select(i);
 					break;
 				}
 			}
+
+			Label label8 = new Label(parent, SWT.NONE);
+			label8.setText("Ip address:");
+
+			address = new Text(parent, SWT.NONE);
+			address.setText(ipFilter.getAddress().getAddress());
 			
+			Label label2 = new Label(parent, SWT.NONE);
+			label2.setText("Netmask:");
+
+			netmask = new Spinner(parent, SWT.NONE);
+			netmask.setValues(24, 16, 30, 0, 1, 10);
+			if (ipFilter.getAddress() != null) {
+				netmask.setValues(ipFilter.getAddress().getNetmask(), 16, 30, 0, 1, 10);
+			}
+
 		}
-		
-		if(policy instanceof BandwidthPolicy) {
-			
+
+		if (policy instanceof BandwidthPolicy) {
+
 			BandwidthPolicy bandwidthPolicy = (BandwidthPolicy) policy;
-			
+
 			Label label5 = new Label(parent, SWT.NONE);
 			label5.setText("Bandwidth:");
 
@@ -203,12 +241,12 @@ public class FlowDialog extends TitleAreaDialog{
 				}
 
 			});
-			
+
 			bandwidth.setText(String.valueOf(bandwidthPolicy.getLimit()));
-		} else if(policy instanceof PriorityPolicy) {
-			
+		} else if (policy instanceof PriorityPolicy) {
+
 			PriorityPolicy priorityPolicy = (PriorityPolicy) policy;
-			
+
 			Label label6 = new Label(parent, SWT.NONE);
 			label6.setText("Priority:");
 
@@ -219,23 +257,22 @@ public class FlowDialog extends TitleAreaDialog{
 			priority.setData("low", PriorityPolicy.Priority.LOW);
 			priority.setData("medium", PriorityPolicy.Priority.MEDIUM);
 			priority.setData("high", PriorityPolicy.Priority.HIGH);
-			
+
 			for (int i = 0; i < priority.getItemCount(); i++) {
-				if (((PriorityPolicy.Priority) priority
-						.getData(priority.getItem(i)))
-						.equals(priorityPolicy.getPriority())) {
+				if (((PriorityPolicy.Priority) priority.getData(priority
+						.getItem(i))).equals(priorityPolicy.getPriority())) {
 					priority.select(i);
 					break;
 				}
 			}
-			
+
 		}
-		
+
 		setControlsValues();
-		
+
 		return parent;
 	}
-	
+
 	private String validateBandwidth() {
 		String errorMessage = "";
 		if (this.bandwidth.getText().equals("") == false) {
@@ -259,7 +296,7 @@ public class FlowDialog extends TitleAreaDialog{
 
 		parent.setLayoutData(gridData);
 		createOkButton(parent, OK, "Save", true);
-		
+
 		Button cancelButton = createButton(parent, CANCEL, "Cancel", false);
 		// Add a SelectionListener
 		cancelButton.addSelectionListener(new SelectionAdapter() {
@@ -294,17 +331,17 @@ public class FlowDialog extends TitleAreaDialog{
 		setButtonLayoutData(button);
 		return button;
 	}
-	
+
 	/*
 	 * Check whether passed argument integerValue is parsable to Integer
 	 */
 	private boolean isValidIntegerValue(String integerValue) {
 
-		try{
+		try {
 			Integer i = Integer.parseInt(integerValue);
-			if(i < 1)
+			if (i < 1)
 				return false;
-		}catch(NumberFormatException e){
+		} catch (NumberFormatException e) {
 			return false;
 		}
 		return true;
@@ -312,28 +349,37 @@ public class FlowDialog extends TitleAreaDialog{
 
 	private boolean isValidInput() {
 		boolean valid = true;
-		
+
 		String errorMessage = "";
-		
+
 		if (valid && policy instanceof BandwidthPolicy) {
 			errorMessage = validateBandwidth();
-		} else if(valid && policy instanceof PriorityPolicy && priority.getSelectionIndex() == -1) {
+		} else if (valid && policy instanceof PriorityPolicy
+				&& priority.getSelectionIndex() == -1) {
 			errorMessage += "Select type of priority from combobox \n";
 			valid = false;
 		}
-		
-		if(valid && policy.getFilter() instanceof PortFilter) {
-			
-			if(this.port.equals("") == false && !isValidIntegerValue(this.port.getText())){
+
+		if (valid && policy.getFilter() instanceof IpFilter) {
+			if (!IpValidator.isIpv4(address.getText())) {
+				errorMessage += "Address must in ipv4 format \n";
+				valid = false;
+			}
+		}
+
+		if (valid && policy.getFilter() instanceof PortFilter) {
+
+			if (this.port.equals("") == false
+					&& !isValidIntegerValue(this.port.getText())) {
 				errorMessage += "Port number must be positive integer \n";
 				valid = false;
 			}
 
 		}
-		
-		if(errorMessage.equals("") == false)
+
+		if (!errorMessage.equals(""))
 			MessageDialog.openError(null, "Error", errorMessage);
-		
+
 		return valid;
 	}
 
@@ -349,36 +395,45 @@ public class FlowDialog extends TitleAreaDialog{
 	}
 
 	private void saveInput() {
-		
-		if(policy.getFilter() instanceof PortFilter) {
-			PortFilter portFilter = (PortFilter) policy.getFilter();
-			
-			portFilter.setPort(Integer.parseInt(port.getText()));
-			portFilter.setProtocol((Protocol)protocol.getData(protocol.getText()));
-			portFilter.setLocation((Location)location.getData(location.getText()));
 
-		} else if(policy.getFilter() instanceof TransportFilter) {
-			
-			TransportFilter transportFilter = (TransportFilter) policy.getFilter();
-			transportFilter.setTransport((org.jims.modules.crossbow.objectmodel.filters.TransportFilter.Transport)
-				protocol.getData(protocol.getText()));
-			
-		} else if(policy.getFilter() instanceof IpFilter) {
-			
+		if (policy.getFilter() instanceof PortFilter) {
+			PortFilter portFilter = (PortFilter) policy.getFilter();
+
+			portFilter.setPort(Integer.parseInt(port.getText()));
+			portFilter.setProtocol((Protocol) protocol.getData(protocol
+					.getText()));
+			portFilter.setLocation((Location) location.getData(location
+					.getText()));
+
+		} else if (policy.getFilter() instanceof TransportFilter) {
+
+			TransportFilter transportFilter = (TransportFilter) policy
+					.getFilter();
+			transportFilter
+					.setTransport((org.jims.modules.crossbow.objectmodel.filters.TransportFilter.Transport) protocol
+							.getData(protocol.getText()));
+
+		} else if (policy.getFilter() instanceof IpFilter) {
+
 			IpFilter ipFilter = (IpFilter) policy.getFilter();
-			
-			ipFilter.setLocation((org.jims.modules.crossbow.objectmodel.filters.IpFilter.Location)location.getData(location.getText()));
-			
+
+			ipFilter
+					.setLocation((org.jims.modules.crossbow.objectmodel.filters.IpFilter.Location) location
+							.getData(location.getText()));
+			ipFilter.getAddress().setAddress(address.getText());
+			ipFilter.getAddress().setNetmask(
+					Integer.parseInt(netmask.getText()));
 		}
-		
-		if(policy instanceof PriorityPolicy) {
-			
+
+		if (policy instanceof PriorityPolicy) {
+
 			PriorityPolicy priorityPolicy = (PriorityPolicy) policy;
-			
-			priorityPolicy.setPriority((Priority) priority.getData(priority.getText()));
-		} else if(policy instanceof BandwidthPolicy) {
+
+			priorityPolicy.setPriority((Priority) priority.getData(priority
+					.getText()));
+		} else if (policy instanceof BandwidthPolicy) {
 			BandwidthPolicy bandwidthPolicy = (BandwidthPolicy) policy;
-			
+
 			bandwidthPolicy.setLimit(Integer.valueOf(bandwidth.getText()));
 		}
 	}
