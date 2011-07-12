@@ -1099,12 +1099,14 @@
 
           \textbf{zfs} snapshot -r <path>@SNAPNAME \\
 
-          \textbf{zfs} send -R <path>@SNAPNAME > /appliance/<appname>.SNAP \\
+          \textbf{zfs} send <path>@SNAPNAME > /appliance/<appname>.SNAP \\
           %
 
           Example: \\
           \textbf{zfs} snapshot -r rpool/Appliances/mplayer@SNAP \\
           \textbf{zfs} send rpool/Appliances/mplayer@SNAP > /appliance/mplayer.SNAP \\
+
+          % VOD: thttpd
         
       
       \subsection{Providing tunable and scalable virtual infrastructure}
@@ -1130,7 +1132,9 @@
 		
 
     \section{Achieved goals}
-	
+
+      % * drastyczne przyspieszenie konfiguracji systemu w porownaniu do recznego ustawiania
+      % * widok w postaci grafu
 		
 
     \section{Further work}
