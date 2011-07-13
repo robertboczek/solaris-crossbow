@@ -14,6 +14,7 @@
         <include>log4j:log4j</include>
 		<include>org.eclipse:jface</include>
 		<include>org.eclipse:swt</include>
+		<include>org.eclipse:swt-win32</include>
 		<include>org.eclipse:swt-solaris</include>
 		<include>org.eclipse:swt-linux32</include>
 		<include>org.eclipse:ui</include>
@@ -28,6 +29,18 @@
 		<include>jims:jims-crossbow-model</include>
 		<include>jims:jims-crossbow-mbean</include>
 		<include>jims:jims-crossbow-infrastructure</include>
+		<include>rcptoolbox:rcptoolbox</include>
+		<include>jims:jims-crossbow-util</include>
+		<include>ganymed:ganymed</include>
+		<include>jims:jims-solaris-base</include>
+		<include>commons-net:commons-net</include>
+		<include>sax:sax</include>
+		<include>com.googlecode:charts4j</include>
+		<include>org.eclipse:jface-databinding</include>
+		<include>org.eclipse:core-databinding-property</include>
+		<include>org.eclipse:core-databinding-observable</include>
+		<include>org.eclipse:core-databinding-beans</include>
+		<include>org.eclipse:core-databinding</include>
       </includes>
     </dependencySet>
   </dependencySets>
