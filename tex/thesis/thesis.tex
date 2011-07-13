@@ -129,8 +129,8 @@
 	  of bandwidth and delay which are:
 
     \begin{enumerate}
-      \item integrated services - reserves resources necessary to provide the service along path,
-      \item differentiated services - do not require resource reservation along path
+      \item integrated services --- reserves resources necessary to provide the service along path,
+      \item differentiated services --- do not require resource reservation along path
     \end{enumerate}
 	
 		\subsection{DiffServ}
@@ -1043,33 +1043,33 @@
         \subsubsection{Virtual appliances}
         \label{ssub:case:prep:va}
 
-        In order to create new zone following steps should be taken: \\
+          In order to create new zone following steps should be taken: \\
 
-        \textbf{zonecfg} -z mplayer \\
+          \textbf{zonecfg} -z mplayer \\
 
-        create \\
+          create \\
+  
+          \textbf{zonecfg:mplayer}> set zonepath=/rpool/Appliances/mplayer \\
+ 
+          \textbf{zonecfg:mplayer}> set autoboot=true \\
 
-        \textbf{zonecfg:mplayer}> set zonepath=/rpool/Appliances/mplayer \\
+          \textbf{zonecfg:mplayer}> set ip-type=exclusive \\
 
-        \textbf{zonecfg:mplayer}> set autoboot=true \\
+          \textbf{zonecfg:mplayer}> verify \\
 
-        \textbf{zonecfg:mplayer}> set ip-type=exclusive \\
+          \textbf{zonecfg:mplayer}> commit \\
 
-        \textbf{zonecfg:mplayer}> verify \\
+          \textbf{zonecfg:mplayer}> exit \\
 
-        \textbf{zonecfg:mplayer}> commit \\
+          \textbf{chmod} 700 rpool/Appliances/mplayer \\
 
-        \textbf{zonecfg:mplayer}> exit \\
+          \textbf{zoneadm} -z mplayer install \\
 
-        \textbf{chmod} 700 rpool/Appliances/mplayer \\
+          After installation zone can be booted and used after logging. \\
 
-        \textbf{zoneadm} -z mplayer install \\
+          \textbf{zoneadm} -z mplayer boot \\
 
-        After installation zone can be booted and used after logging. \\
-
-        \textbf{zoneadm} -z mplayer boot \\
-
-        \textbf{zlogin} -S mplayer \\
+          \textbf{zlogin} -S mplayer \\
 
         
 
@@ -1108,6 +1108,18 @@
 
           % VOD: thttpd
         
+      
+        \subsubsection{Media preparation}
+        \label{ssub:}
+
+          For a movie to be streamed, hints have to be created (TODO: more about that).
+
+          ffmpeg -i movie.mpg -vcodec mpeg4 -acodec libfaac movie.mp4
+          mp4creator -optimize movie.mp4
+          mp4creator -hint=1 movie.mp4
+          mp4creator -hint=2 movie.mp4
+          mp4creator -list movie.mp4
+
       
       \subsection{Providing tunable and scalable virtual infrastructure}
 
