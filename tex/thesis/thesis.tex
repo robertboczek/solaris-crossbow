@@ -1057,34 +1057,38 @@
 
   \chapter{Case Study}
 
-    In order to present capabilities of created system, case with video streaming server and clients with differential QoS demands was prepared.
+    In order to present capabilities of created system, case with video streaming server and clients with differential
+    QoS demands was prepared.
         %TODO troche wprowadzenia dlaczego akurat multimedia itp
+
 
     \section{Multimedia server}
 
       \subsection{Scenario description}
 
-		Network traffic in this case was differentiated among users through priorities and maximum bandwidth filters created over the flow paths. 
-		The figure below presents precisely network structure and client configuration.
-	
-		\begin{figure}[H]
-                        \begin{center}
-                            \includegraphics[width=0.8\textwidth]{img/test-case/diagram.pdf}
-                          \end{center}
+        Network traffic in this case was differentiated among users through priorities and maximum bandwidth filters
+        created over the flow paths. Figure \ref{fig:cs:scenario} presents precisely network structure and client
+        configuration.
+      
+        \begin{figure}[H]
+          \begin{center}
+            \includegraphics[width=0.8\textwidth]{img/test-case/diagram.pdf}
+          \end{center}
 
-                  \caption{VOD + streaming clients test case example}
-                \end{figure}
-		
-		\medskip
-		Our network distinguishes three node types:
-		\begin{itemize}
-			\item{http server - containing thttpd server,}
-			\item{media server - containing Darwin Streaming Server,}
-			\item{client player - containing MPlayer.}
-		\end{itemize}
-		
-		The section \textbf{'Preparation of the environment'} describes an example of how a new zone and then snapshot may be created, 
-                which then would be used as virtual appliance.
+          \caption{VOD + streaming clients test case example}
+          \label{fig:cs:scenario}
+        \end{figure}
+        
+        % \medskip
+        Our network distinguishes three node types:
+        \begin{itemize}
+          \item{http server - containing thttpd server,}
+          \item{media server - containing Darwin Streaming Server,}
+          \item{client player - containing MPlayer.}
+        \end{itemize}
+        
+        The section \textbf{'Preparation of the environment'} describes an example of how a new zone and then snapshot
+        may be created, which then would be used as virtual appliance.
 
         % TODO
         %
@@ -1122,7 +1126,7 @@
         \end{figure}
 
 
-      \subsection{Resource access requirements}
+      \subsection{Service type and client differentiation}
 
       \subsection{Preparation of the environment}
       \label{sub:case:prep}
@@ -1210,11 +1214,22 @@
           mp4creator -list movie.mp4
 
       
-      \subsection{Providing tunable and scalable virtual infrastructure}
+      \subsection{The infrastructure operation}
+
+        \subsubsection{Limiting the bandwidth}
+        \label{ssub:}
+
+
+        \subsubsection{Different policies for different types of traffic}
+        \label{ssub:}
+
+
+        \subsubsection{Client-dependent quality of service}
+        \label{ssub:}
+
 
       \subsection{Enhancements provided by the solution}
       \label{sub:}
-      
 
 
     \section*{Summary}
