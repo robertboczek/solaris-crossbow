@@ -1117,237 +1117,235 @@
         %TODO troche wprowadzenia dlaczego akurat multimedia itp
 
 
-    \section{Multimedia server}
+    \section{Scenario description}
 
-      \subsection{Scenario description}
+      Network traffic in this case was differentiated among users through priorities and maximum bandwidth filters
+      created over the flow paths. Figure \ref{fig:cs:scenario} presents precisely network structure and client
+      configuration.
+    
+      \begin{figure}[H]
+        \begin{center}
+          \includegraphics[width=0.8\textwidth]{img/test-case/diagram.pdf}
+        \end{center}
 
-        Network traffic in this case was differentiated among users through priorities and maximum bandwidth filters
-        created over the flow paths. Figure \ref{fig:cs:scenario} presents precisely network structure and client
-        configuration.
+        \caption{VOD + streaming clients test case example}
+        \label{fig:cs:scenario}
+      \end{figure}
       
-        \begin{figure}[H]
-          \begin{center}
-            \includegraphics[width=0.8\textwidth]{img/test-case/diagram.pdf}
-          \end{center}
+      % \medskip
+      Our network distinguishes three node types:
+      \begin{itemize}
+        \item{http server - containing thttpd server,}
+        \item{media server - containing Darwin Streaming Server,}
+        \item{client player - containing MPlayer.}
+      \end{itemize}
+      
+      The section \textbf{'Preparation of the environment'} describes an example of how a new zone and then snapshot
+      may be created, which then would be used as virtual appliance.
 
-          \caption{VOD + streaming clients test case example}
-          \label{fig:cs:scenario}
-        \end{figure}
-        
-        % \medskip
-        Our network distinguishes three node types:
-        \begin{itemize}
-          \item{http server - containing thttpd server,}
-          \item{media server - containing Darwin Streaming Server,}
-          \item{client player - containing MPlayer.}
-        \end{itemize}
-        
-        The section \textbf{'Preparation of the environment'} describes an example of how a new zone and then snapshot
-        may be created, which then would be used as virtual appliance.
+      % TODO
+      %
+      % * DSS VA
+      % * mplayer na VA klienckich
+      % * tshark
 
-        % TODO
+      % na kazdej zonce tshark i zbieranie danych do pcap
+      % analiza+wykresy (jitter, opuszczone pakiety) - wireshark
+      % serwer - darwin
+      % klient - mplayer
+
+
+      \begin{itemize}
+        \item similar to DiffServ (traffic classes, selectors, filters, priority, queuing)
+        \item DiffServ doesn't specify anything virtual
+        \item DSS and adaptive codecs
+      \end{itemize}
+
+      \begin{itemize}
+        \item 2 classes: VOD + streaming
+        \item \_ unicast \_ vs multicast streaming
+        \item access rules for resources of different quality
+        \item enabling QoS for defined classes
+        \item priorities + limiting the bandwidth (per user)!
+        \item 3 users: 2 streaming, 1 VOD
+      \end{itemize}
+
+      \begin{figure}[H]
+        \begin{center}
+          \includegraphics[width=0.8\textwidth]{img/test-case/diagram.pdf}
+        \end{center}
+
+        \caption{VOD + streaming clients test case example}
+      \end{figure}
+
+
+    \section{Service type and client differentiation}
+
+    \section{Preparation of the environment}
+    \label{sub:case:prep}
+
+      \subsection{Virtual appliances}
+      \label{ssub:case:prep:va}
+
+      In order to create new zone ( called for example 'mplayer' ) following steps should be taken: \\
+
+        \textbf{zonecfg} -z mplayer \\
+
+        create \\
+
+        \textbf{zonecfg:mplayer}> set zonepath=/rpool/Appliances/mplayer \\
+
+        \textbf{zonecfg:mplayer}> set autoboot=true \\
+
+        \textbf{zonecfg:mplayer}> set ip-type=exclusive \\
+
+        \textbf{zonecfg:mplayer}> verify \\
+
+        \textbf{zonecfg:mplayer}> commit \\
+
+        \textbf{zonecfg:mplayer}> exit \\
+
+        \textbf{chmod} 700 rpool/Appliances/mplayer \\
+
+        \textbf{zoneadm} -z mplayer install \\
+
+        After installation zone can be booted and used after logging. \\
+
+        \textbf{zoneadm} -z mplayer boot \\
+
+        \textbf{zlogin} -S mplayer \\
+
+      
+
+        % zfs create rpool/Zones/darwin
         %
-        % * DSS VA
-        % * mplayer na VA klienckich
-        % * tshark
+        % zonecfg -z darwin
+        %
+        % darwin: No such zone configured
+        % Use 'create' to begin configuring a new zone.
+        % zonecfg:darwin> create
+        % zonecfg:darwin> set zonepath=/rpool/Zones/darwin
+        % zonecfg:darwin> set ip-type=exclusive
+        % zonecfg:darwin> verify
+        % zonecfg:darwin> commit
+        % zonecfg:darwin> exit
+        %
+        % chmod 700 rpool/Zones/darwin
+        % zoneadm -z darwin install
+        %
+        % you may have to add root:NP: in the zone-specific /etc/shadow file to be able to login with zlogin
+        %
+        % dss installation
+        %
+        %
 
-        % na kazdej zonce tshark i zbieranie danych do pcap
-        % analiza+wykresy (jitter, opuszczone pakiety) - wireshark
-        % serwer - darwin
-        % klient - mplayer
+        When zone is prepared, it can be transferred to the repository. \\
 
+        \textbf{zfs} snapshot -r <path>@SNAPNAME \\
+
+        \textbf{zfs} send <path>@SNAPNAME > /appliance/<appname>.SNAP \\
+        %
+
+        Example: \\
+        \textbf{zfs} snapshot -r rpool/Appliances/mplayer@SNAP \\
+        \textbf{zfs} send rpool/Appliances/mplayer@SNAP > /appliance/mplayer.SNAP \\
+
+
+      Afterwards these exported snaphots may be used by our gui application as desired virtual appliance to be restored. 
+        % VOD: thttpd
+
+
+      \subsection{Topology instantiation}
+      \label{ssub:}
+
+        After all necessary virtual appliances have been created and stored in the repository, network topology can be
+        designed and instantiated. Following steps comprise the whole process:
+
+        \begin{enumerate}
+          \item selection of virtual appliance templates from the repository,
+          \item designation of physical machine(s) to host the topology,
+          \item appliance-to-host assignment,
+          \item enabling network connection between nodes, addressing, routing setup,
+          \item adding QoS policies.
+        \end{enumerate}
+
+        router appliance (able to forward IP packets between its directly-attached interfaces), server appliance (with
+        Darwin Streaming Server and thttpd HTTP server installed), client appliance (mplayer with RTP streaming
+        support enabled)
+
+        All the appliances are instantiated on a single physical host.
+
+        Present are three subnetworks:
 
         \begin{itemize}
-          \item similar to DiffServ (traffic classes, selectors, filters, priority, queuing)
-          \item DiffServ doesn't specify anything virtual
-          \item DSS and adaptive codecs
+          \item 1.1.1.0/24 contains only the server appliance (1.1.1.2),
+          \item 2.2.2.0/24 with one VOD client (2.2.2.2),
+          \item 3.3.3.0/24 with two streaming clients (3.3.3.2, 3.3.3.3).
         \end{itemize}
+
+        The router appliance, with three interfaces addressed 1.1.1.1, 2.2.2.1 and 3.3.3.1, links the subnetworks and
+        provides network-level connectivity. Each of the appliances has additional entries in its routing table.
+
+        Quality of Service assurance is composed of two main stages:
 
         \begin{itemize}
-          \item 2 classes: VOD + streaming
-          \item \_ unicast \_ vs multicast streaming
-          \item access rules for resources of different quality
-          \item enabling QoS for defined classes
-          \item priorities + limiting the bandwidth (per user)!
-          \item 3 users: 2 streaming, 1 VOD
+          \item bandwidth of the links used to stream and download media is limited to 8Mbps (mainly to make the
+                testing process easier),
+          \item traffic is divided into classes and policies are assigned to the classes.
         \end{itemize}
 
-        \begin{figure}[H]
-          \begin{center}
-            \includegraphics[width=0.8\textwidth]{img/test-case/diagram.pdf}
-          \end{center}
+        Three traffic classes are distinguished with respect to service type:
 
-          \caption{VOD + streaming clients test case example}
-        \end{figure}
+        \begin{itemize}
+          \item high priority RTP streaming - UDP traffic with source ports 6970 and 6971, used by streaming clients in 3.3.3.0/24
+                subnetwork,
+          \item low priority Video On Demand - TCP traffic with source port 80, used by the VOD client,
+          \item medium priority ordinary traffic.
+        \end{itemize}
 
+        Furthermore, the streaming clients inside the 3.3.3.0/24 network are assigned different priority values. The
+        3.3.3.2 client is favoured and has high priority for RTP data, whereas 3.3.3.3 client is assigned low
+        priority.
 
-      \subsection{Service type and client differentiation}
-
-      \subsection{Preparation of the environment}
-      \label{sub:case:prep}
-
-        \subsubsection{Virtual appliances}
-        \label{ssub:case:prep:va}
-
-        In order to create new zone ( called for example 'mplayer' ) following steps should be taken: \\
-
-          \textbf{zonecfg} -z mplayer \\
-
-          create \\
-  
-          \textbf{zonecfg:mplayer}> set zonepath=/rpool/Appliances/mplayer \\
- 
-          \textbf{zonecfg:mplayer}> set autoboot=true \\
-
-          \textbf{zonecfg:mplayer}> set ip-type=exclusive \\
-
-          \textbf{zonecfg:mplayer}> verify \\
-
-          \textbf{zonecfg:mplayer}> commit \\
-
-          \textbf{zonecfg:mplayer}> exit \\
-
-          \textbf{chmod} 700 rpool/Appliances/mplayer \\
-
-          \textbf{zoneadm} -z mplayer install \\
-
-          After installation zone can be booted and used after logging. \\
-
-          \textbf{zoneadm} -z mplayer boot \\
-
-          \textbf{zlogin} -S mplayer \\
-
-        
-
-          % zfs create rpool/Zones/darwin
-          %
-          % zonecfg -z darwin
-          %
-          % darwin: No such zone configured
-          % Use 'create' to begin configuring a new zone.
-          % zonecfg:darwin> create
-          % zonecfg:darwin> set zonepath=/rpool/Zones/darwin
-          % zonecfg:darwin> set ip-type=exclusive
-          % zonecfg:darwin> verify
-          % zonecfg:darwin> commit
-          % zonecfg:darwin> exit
-          %
-          % chmod 700 rpool/Zones/darwin
-          % zoneadm -z darwin install
-          %
-          % you may have to add root:NP: in the zone-specific /etc/shadow file to be able to login with zlogin
-          %
-          % dss installation
-          %
-          %
-
-          When zone is prepared, it can be transferred to the repository. \\
-
-          \textbf{zfs} snapshot -r <path>@SNAPNAME \\
-
-          \textbf{zfs} send <path>@SNAPNAME > /appliance/<appname>.SNAP \\
-          %
-
-          Example: \\
-          \textbf{zfs} snapshot -r rpool/Appliances/mplayer@SNAP \\
-          \textbf{zfs} send rpool/Appliances/mplayer@SNAP > /appliance/mplayer.SNAP \\
-
-
-        Afterwards these exported snaphots may be used by our gui application as desired virtual appliance to be restored. 
-          % VOD: thttpd
-
-
-        \subsubsection{Topology instantiation}
-        \label{ssub:}
-
-          After all necessary virtual appliances have been created and stored in the repository, network topology can be
-          designed and instantiated. Following steps comprise the whole process:
-
-          \begin{enumerate}
-            \item selection of virtual appliance templates from the repository,
-            \item designation of physical machine(s) to host the topology,
-            \item appliance-to-host assignment,
-            \item enabling network connection between nodes, addressing, routing setup,
-            \item adding QoS policies.
-          \end{enumerate}
-
-          router appliance (able to forward IP packets between its directly-attached interfaces), server appliance (with
-          Darwin Streaming Server and thttpd HTTP server installed), client appliance (mplayer with RTP streaming
-          support enabled)
-
-          All the appliances are instantiated on a single physical host.
-
-          Present are three subnetworks:
-
-          \begin{itemize}
-            \item 1.1.1.0/24 contains only the server appliance (1.1.1.2),
-            \item 2.2.2.0/24 with one VOD client (2.2.2.2),
-            \item 3.3.3.0/24 with two streaming clients (3.3.3.2, 3.3.3.3).
-          \end{itemize}
-
-          The router appliance, with three interfaces addressed 1.1.1.1, 2.2.2.1 and 3.3.3.1, links the subnetworks and
-          provides network-level connectivity. Each of the appliances has additional entries in its routing table.
-
-          Quality of Service assurance is composed of two main stages:
-
-          \begin{itemize}
-            \item bandwidth of the links used to stream and download media is limited to 8Mbps (mainly to make the
-                  testing process easier),
-            \item traffic is divided into classes and policies are assigned to the classes.
-          \end{itemize}
-
-          Three traffic classes are distinguished with respect to service type:
-
-          \begin{itemize}
-            \item high priority RTP streaming - UDP traffic with source ports 6970 and 6971, used by streaming clients in 3.3.3.0/24
-                  subnetwork,
-            \item low priority Video On Demand - TCP traffic with source port 80, used by the VOD client,
-            \item medium priority ordinary traffic.
-          \end{itemize}
-
-          Furthermore, the streaming clients inside the 3.3.3.0/24 network are assigned different priority values. The
-          3.3.3.2 client is favoured and has high priority for RTP data, whereas 3.3.3.3 client is assigned low
-          priority.
-
-          % TODO  diagram here (in terms of the domain model)
-        
-        
-        \subsubsection{Media preparation}
-        \label{ssub:}
-
-          For a movie to be streamed, hint tracks have to be created. Hints are meta-data that provide information on
-          how to stream audio and video tracks. This information is then used by the server when dividing the media into
-          packets and sending them via the network.
-
-          The following sequence of commands demonstrates how to prepare a movie to be streamed by Darwin Streaming
-          Server (the example leverages ffmpeg and mpeg4ip utilities). First, the data streams are transcoded to MPEG4
-          (video) and AAC (audio) formats and saved in an MPEG4 container. Then, hint tracks are appended to the
-          container.
-
-          \begin{verbatim}
-            ffmpeg -i movie.mpg -vcodec mpeg4 -acodec libfaac movie.mp4
-            mp4creator -optimize movie.mp4
-            mp4creator -hint=1 movie.mp4
-            mp4creator -hint=2 movie.mp4
-          \end{verbatim}
-
+        % TODO  diagram here (in terms of the domain model)
       
-      \subsection{The infrastructure operation}
+      
+      \subsubsection{Media preparation}
+      \label{ssub:}
 
-        \subsubsection{Limiting the bandwidth}
-        \label{ssub:}
+        For a movie to be streamed, hint tracks have to be created. Hints are meta-data that provide information on
+        how to stream audio and video tracks. This information is then used by the server when dividing the media into
+        packets and sending them via the network.
+
+        The following sequence of commands demonstrates how to prepare a movie to be streamed by Darwin Streaming
+        Server (the example leverages ffmpeg and mpeg4ip utilities). First, the data streams are transcoded to MPEG4
+        (video) and AAC (audio) formats and saved in an MPEG4 container. Then, hint tracks are appended to the
+        container.
+
+        \begin{verbatim}
+          ffmpeg -i movie.mpg -vcodec mpeg4 -acodec libfaac movie.mp4
+          mp4creator -optimize movie.mp4
+          mp4creator -hint=1 movie.mp4
+          mp4creator -hint=2 movie.mp4
+        \end{verbatim}
+
+    
+    \section{The infrastructure operation}
+
+      \subsection{Limiting the bandwidth}
+      \label{ssub:}
 
 
-        \subsubsection{Different policies for different types of traffic}
-        \label{ssub:}
+      \subsection{Different policies for different types of traffic}
+      \label{ssub:}
 
 
-        \subsubsection{Client-dependent quality of service}
-        \label{ssub:}
+      \subsection{Client-dependent quality of service}
+      \label{ssub:}
 
 
-      \subsection{Enhancements provided by the solution}
-      \label{sub:}
+    \section{Enhancements provided by the solution}
+    \label{sub:}
 
 
     \section*{Summary}
