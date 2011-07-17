@@ -946,38 +946,93 @@
   \chapter{Implementation}
     
     \section*{Chapter overview}
-
+	
+	This chapter focuses mainly on implementational details, especially on most interesting aspects of our system.
 
     \section{Implementation environment}
+	
+	For the purpose of this paper two applications were implemented:
+	
+	\begin{itemize}
+		\item{Jims module for crossbow,}
+		\item{Gui application.}
+	\end{itemize}
+	
+	Gui application was developed in java using swt and swing graphic libraries. Project was managed with maven and thanks to 
+	maven profiles feature can be build and run on operating systems like:
+	\begin{itemize}
+		\item{Solaris,}
+		\item{Linux x86,}
+		\item{Windows x86.}
+	\end{itemize}
+	Swt core libraries for these operating systems were provided in repository, so the only requirements is to have one
+	of the already mentioned operating system and installed: java se 1.6 and maven 2.x.
+	
+	\medskip
+	
+	In case of jims-crossbow module the implementation environment must consist:
+	\begin{itemize}
+		\item{gcc compiler - for building jims-crossbow shared librarires,}
+		\item{dladm, flowadm libraries.}
+	\end{itemize}
+	
+	The demand for crossbow libraries ( flowadm, dladm ) implicated that implementation environment must have been solaris 11 
+	or any other system supporting crossbow. 
 
     \section{Crossbow components implementational details}
-
-        %TODO czy tutaj te diagramy pasuja???
+	
+		In terms of crossbow components two kinds of them have been distinguished:
+		
+		\begin{itemize}
+			\item{Managers,}
+			\item{Entities.}
+		\end{itemize}
+		
+		Managers basically provide operations for entity discovery and general management. The following managers have 
+		been created:
+		\begin{itemize}
+			\item{VNicManager,}
+			\item{EtherstubManager,}
+			\item{FlowManager.}
+		\end{itemize}
+		
+		Another component type is entity which is basically equivalent of single crossbow entity like VNic, Etherstub. These entities
+		appear as MBean's and are registed at MBeanServer's. Each bean contains basic information about entity like name, assigned 
+		properties and other attributes depending on their type. Operations for altering properties, parameters, ip address are 
+		provided as well.
+		
+		Three figures below depicts in detail each manager and their corresponding entity.
 
         \begin{figure}[H]
           \begin{center}
-            \includegraphics[width=0.8\textwidth]{img/impl/etherstub.png}
+            \includegraphics[width=0.9\textwidth]{img/impl/etherstub.png}
           \end{center}
           \caption{Etherstub class diagram}
         \end{figure}        
 
         \begin{figure}[H]
           \begin{center}
-            \includegraphics[width=0.8\textwidth]{img/impl/link.png}
+            \includegraphics[width=0.9\textwidth]{img/impl/link.png}
           \end{center}
           \caption{Link (VNic, Nic) class diagram}
         \end{figure}        
 
         \begin{figure}[H]
           \begin{center}
-            \includegraphics[width=0.8\textwidth]{img/impl/flow.png}
+            \includegraphics[width=0.9\textwidth]{img/impl/flow.png}
           \end{center}
           \caption{Flow class diagram}
         \end{figure}        
 
-        
-
-
+		Due to the fact that managers and entities have been separated and that each entity is an individual MBean
+		these entities can be accessed not only from java code but also be viewed and modified from jconsole.
+		
+		\begin{figure}[H]
+          \begin{center}
+            \includegraphics[width=0.9\textwidth]{img/impl/crossbowLibsDiagram.png}
+          \end{center}
+          \caption{Jims-crossbow components, shared libraries and crossbow native libraries relationship}
+        \end{figure} 
     \section{Domain model transformation details}
         
 
