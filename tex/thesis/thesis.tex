@@ -1200,18 +1200,81 @@
 
         Afterwards these exported snaphots may be used by our gui application as desired virtual appliance to be restored. 
           % VOD: thttpd
+
+
+        \subsubsection{Topology instantiation}
+        \label{ssub:}
+
+          After all necessary virtual appliances have been created and stored in the repository, network topology can be
+          designed and instantiated. Following steps comprise the whole process:
+
+          \begin{enumerate}
+            \item selection of virtual appliance templates from the repository,
+            \item designation of physical machine(s) to host the topology,
+            \item appliance-to-host assignment,
+            \item enabling network connection between nodes, addressing, routing setup,
+            \item adding QoS policies.
+          \end{enumerate}
+
+          router appliance (able to forward IP packets between its directly-attached interfaces), server appliance (with
+          Darwin Streaming Server and thttpd HTTP server installed), client appliance (mplayer with RTP streaming
+          support enabled)
+
+          All the appliances are instantiated on a single physical host.
+
+          Present are three subnetworks:
+
+          \begin{itemize}
+            \item 1.1.1.0/24 contains only the server appliance (1.1.1.2),
+            \item 2.2.2.0/24 with one VOD client (2.2.2.2),
+            \item 3.3.3.0/24 with two streaming clients (3.3.3.2, 3.3.3.3).
+          \end{itemize}
+
+          The router appliance, with three interfaces addressed 1.1.1.1, 2.2.2.1 and 3.3.3.1, links the subnetworks and
+          provides network-level connectivity. Each of the appliances has additional entries in its routing table.
+
+          Quality of Service assurance is composed of two main stages:
+
+          \begin{itemize}
+            \item bandwidth of the links used to stream and download media is limited to 8Mbps (mainly to make the
+                  testing process easier),
+            \item traffic is divided into classes and policies are assigned to the classes.
+          \end{itemize}
+
+          Three traffic classes are distinguished with respect to service type:
+
+          \begin{itemize}
+            \item high priority RTP streaming - UDP traffic with source ports 6970 and 6971, used by streaming clients in 3.3.3.0/24
+                  subnetwork,
+            \item low priority Video On Demand - TCP traffic with source port 80, used by the VOD client,
+            \item medium priority ordinary traffic.
+          \end{itemize}
+
+          Furthermore, the streaming clients inside the 3.3.3.0/24 network are assigned different priority values. The
+          3.3.3.2 client is favoured and has high priority for RTP data, whereas 3.3.3.3 client is assigned low
+          priority.
+
+          % TODO  diagram here (in terms of the domain model)
         
-      
+        
         \subsubsection{Media preparation}
         \label{ssub:}
 
-          For a movie to be streamed, hints have to be created (TODO: more about that).
+          For a movie to be streamed, hint tracks have to be created. Hints are meta-data that provide information on
+          how to stream audio and video tracks. This information is then used by the server when dividing the media into
+          packets and sending them via the network.
 
-          ffmpeg -i movie.mpg -vcodec mpeg4 -acodec libfaac movie.mp4
-          mp4creator -optimize movie.mp4
-          mp4creator -hint=1 movie.mp4
-          mp4creator -hint=2 movie.mp4
-          mp4creator -list movie.mp4
+          The following sequence of commands demonstrates how to prepare a movie to be streamed by Darwin Streaming
+          Server (the example leverages ffmpeg and mpeg4ip utilities). First, the data streams are transcoded to MPEG4
+          (video) and AAC (audio) formats and saved in an MPEG4 container. Then, hint tracks are appended to the
+          container.
+
+          \begin{verbatim}
+            ffmpeg -i movie.mpg -vcodec mpeg4 -acodec libfaac movie.mp4
+            mp4creator -optimize movie.mp4
+            mp4creator -hint=1 movie.mp4
+            mp4creator -hint=2 movie.mp4
+          \end{verbatim}
 
       
       \subsection{The infrastructure operation}
