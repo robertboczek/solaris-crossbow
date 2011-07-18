@@ -1117,18 +1117,42 @@
     Section \ref{sec:uc:description} introduces the overall view of the topology that was created. The elements are
     listed and described and QoS requirements are discussed.
 
-    In order to present capabilities of created system, case with video streaming server and clients with differential
-    QoS demands was prepared.
-        %TODO troche wprowadzenia dlaczego akurat multimedia itp
+    Section \ref{sec:uc:prep} describes the steps one needs to perform to set up the topology. The steps include
+    virtual appliance creation and publication, topology design, determining the quality policy and instantiation.
+
+    Section \ref{sec:uc:operation} presents the results of experiments performed to verify the requirements of the
+    system.
 
 
     \section{Scenario description}
     \label{sec:uc:description}
 
-      The test case used is inspired by multimedia systems.
+      The test case used is inspired by multimedia systems. The problems of quality-aware transmission arise naturally
+      in multimedia-oriented networks. As far as audio and video streaming is concerned, it must be supplied to the end
+      user with special focus on minimizing the delay and jitter.
 
+      The types of the multimedia services map directly to QoS policies that are required. Table \ref{tab:uc:qos} shows
+      the mapping.
+
+      \begin{table}[H]
+        \begin{center}
+          \begin{tabular}{|c|c|c|}
+            \hline
+            type of traffic & bandwidth & delay tolerance \\
+            \hline \hline
+            real-time streaming & high & low \\
+            \hline
+            video on demand     & high & high  \\
+            \hline
+          \end{tabular}
+        \end{center}
+
+        \caption{Multimedia network traffic and its requirements}
+        \label{tab:uc:qos}
+      \end{table}
+      
       Network traffic in this case was differentiated among users through priorities and maximum bandwidth filters
-      created over the flow paths. Figure \ref{fig:cs:scenario} presents precisely network structure and client
+      created over the flow paths. Figure \ref{fig:cs:scenario} presents an overview of the network structure and client
       configuration.
     
       \begin{figure}[H]
@@ -1140,7 +1164,6 @@
         \label{fig:cs:scenario}
       \end{figure}
       
-      % \medskip
       Our network distinguishes three node types:
       \begin{itemize}
         \item{http server - containing thttpd server,}
@@ -1190,7 +1213,7 @@
     \section{Service type and client differentiation}
 
     \section{Preparation of the environment}
-    \label{sub:case:prep}
+    \label{sec:uc:prep}
 
       \subsection{Virtual appliances}
       \label{ssub:case:prep:va}
@@ -1259,7 +1282,7 @@
         \textbf{zfs} send rpool/Appliances/mplayer@SNAP > /appliance/mplayer.SNAP \\
 
 
-      Afterwards these exported snaphots may be used by our gui application as desired virtual appliance to be restored. 
+      Afterwards these exported snapshots may be used by our gui application as desired virtual appliance to be restored. 
         % VOD: thttpd
 
 
@@ -1316,6 +1339,10 @@
         priority.
 
         % TODO  diagram here (in terms of the domain model)
+
+        \begin{figure}[H]
+          \caption{Network topology expressed in terms of the domain model}
+        \end{figure}
       
       
       \subsubsection{Media preparation}
@@ -1339,17 +1366,41 @@
 
     
     \section{The infrastructure operation}
+    \label{sec:uc:operation}
+
+      The traffic data is gathered as follows: each host node has tshark utility installed. It is set up to monitor all
+      the traffic on the server interface and write it to a file (dump.cap). When the gathering process is finished, the
+      data is handed to wireshark and analyzed - graphs with throughput and jitter values are generated to show the
+      interdependencies between the streams of data.
+
+      The tests include verifying that the set up bandwidth limitations work on per-client basis (TODO), different
+      service types are treated according to the policy and streaming client differentiation requirements are satisfied.
+      The main metric used is bandwidth each of the streams is assigned. Also, jitter is analyzed to estimate the
+      Quality of Experience the user gets when watching streaming media.
+
 
       \subsection{Limiting the bandwidth}
       \label{ssub:}
+
+        \begin{figure}[H]
+          \caption{8Mbps bandwidth limitation set for all the clients}
+        \end{figure}
 
 
       \subsection{Different policies for different types of traffic}
       \label{ssub:}
 
+        \begin{figure}[H]
+          \caption{VOD traffic bandwidth consumption compared to high-priority RTP streams}
+        \end{figure}
+
 
       \subsection{Client-dependent quality of service}
       \label{ssub:}
+
+        \begin{figure}[H]
+          \caption{Distribution of available bandwidth between streaming clients}
+        \end{figure}
 
 
     \section{Enhancements provided by the solution}
@@ -1381,11 +1432,12 @@
 
       % * semi-automatic snapshot creation (select an existing zone and transfer to the repository)
 	
-	In terms of the future work there are many improvements that might be implemented. Probably the largest component, which was initially plannned
-        was automatic resource assigner, that would run and perform automatic resource assignments to nodes that run under lowest load. This assigner 
-        with attached rule based system would gather data about the load on each node and based on that decide what and where instantiate. Presented 
-        and discussed system in this thesis lacks that functionality. Instead, it offers manual assignments, where user selects on which node his 
-        virtual resources should be created.
+      In terms of the future work there are many improvements that might be implemented. Probably the largest component,
+      which was initially plannned was automatic resource assigner, that would run and perform automatic resource
+      assignments to nodes that run under lowest load. This assigner with attached rule based system would gather data
+      about the load on each node and based on that decide what and where instantiate. Presented and discussed system in
+      this thesis lacks that functionality. Instead, it offers manual assignments, where user selects on which node his
+      virtual resources should be created.
 
 
   \bibliographystyle{plain}
