@@ -929,8 +929,8 @@
 
     \section{Domain model and data flows} \label{sec:domain-model}
 
-    Created object model allows to describe network structure contaning of: switches, resources with attached addressable 
-    interfaces and policies. Figure below presents concrete classes and their dependencies.    
+    Created object model allows describing network structure contaning of: switches, resources with attached addressable 
+    interfaces and flows with policies. Figure below presents concrete classes and their dependencies. 
 
         \begin{figure}[H]
           \begin{center}
@@ -951,22 +951,47 @@
 
     \section{Implementation environment}
 	
+	JIMS Extensions for Resource Monitoring and Management of Solaris 10 provides general architecture for monitoring and management
+	applications written in Java. 
+	
+	JIMS architecture is generally based on JMX ( Java Management Extensions ) - technology for distributed resource management. These managed 
+	resources in JMX are represented by MBeans which are simple Java objects registered at MBean Server under specific ObjectName. \cite{jims}
+	
+	\begin{figure}[H]
+          \begin{center}
+            \includegraphics[width=0.9\textwidth]{img/jims/jmx.png}
+          \end{center}
+          \caption{JMX architecture \cite{jims}}
+     \end{figure}
+	
+	JMX provides also services such as:
+	\begin{itemize}
+		\item{Notifications,}
+		\item{MLet ( downloading dynamic modules ).}
+	\end{itemize}
+	
+	JIMS ( JMX based Infrastructure Monitoring System ) supports monitoring and management under both Linux and Solaris platforms. 
+	Due to Jims features such as: easy maintenance ( automatic modules downloading ), extensibility ( possibility of adding additional modules ) integrating with Jims newly
+	developed module ( jims-crossbow ) was quite an easy task. \cite{jims}
+	
+	\begin{figure}[H]
+          \begin{center}
+            \includegraphics[width=0.9\textwidth]{img/jims/jims.png}
+          \end{center}
+          \caption{JIMS architecture \cite{jims}}
+     \end{figure}
+	 
+	 Jims services( MBeans ) enabling creating, reading and changing properties of zones and projects were extensively used in our system
+	 during deploying ( creating ) requested network structure. For more information about JIMS project please refer to the bibliography.	
+	
+	\medskip
+	
 	For the purpose of this paper two applications were implemented:
 	
 	\begin{itemize}
 		\item{Jims module for crossbow,}
 		\item{Gui application.}
 	\end{itemize}
-	
-	Gui application was developed in java using swt and swing graphic libraries. Project was managed with maven and thanks to 
-	maven profiles feature can be build and run on operating systems like:
-	\begin{itemize}
-		\item{Solaris,}
-		\item{Linux x86,}
-		\item{Windows x86.}
-	\end{itemize}
-	Swt core libraries for these operating systems were provided in repository, so the only requirements is to have one
-	of the already mentioned operating system and installed: java se 1.6 and maven 2.x.
 	
 	\medskip
 	
@@ -977,7 +1002,17 @@
 	\end{itemize}
 	
 	The demand for crossbow libraries ( flowadm, dladm ) implicated that implementation environment must have been solaris 11 
-	or any other system supporting crossbow. 
+	or any other system supporting crossbow.
+	
+	Gui application was developed in java using swt and swing graphic libraries. Project was managed with maven and thanks to 
+	maven profiles feature can be build and run on operating systems like:
+	\begin{itemize}
+		\item{Solaris,}
+		\item{Linux x86,}
+		\item{Windows x86.}
+	\end{itemize}
+	Swt core libraries for these operating systems were provided in repository, so the only requirements is to have one
+	of the already mentioned operating system and installed: java se 1.6 and maven 2.x.
 
     \section{Crossbow components implementational details}
 	
