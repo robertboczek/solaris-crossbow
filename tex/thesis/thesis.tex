@@ -1117,19 +1117,26 @@
     Section \ref{sec:uc:description} introduces the overall view of the topology that was created. The elements are
     listed and described and QoS requirements are discussed.
 
+    Section \ref{sec:uc:diff} discusses Quality of Service requirements in more detail. Types of service are presented
+    and appropriate network-level policies described.
+
     Section \ref{sec:uc:prep} describes the steps one needs to perform to set up the topology. The steps include
     virtual appliance creation and publication, topology design, determining the quality policy and instantiation.
 
     Section \ref{sec:uc:operation} presents the results of experiments performed to verify the requirements of the
     system.
 
+    Section \ref{sec:uc:enhance} lists the advantages of using the proposed system and approach to create, manage and
+    monitor QoS-aware virtual topologies.
+
 
     \section{Scenario description}
     \label{sec:uc:description}
 
       The test case used is inspired by multimedia systems. The problems of quality-aware transmission arise naturally
-      in multimedia-oriented networks. As far as audio and video streaming is concerned, it must be supplied to the end
-      user with special focus on minimizing the delay and jitter.
+      in multimedia-oriented networks. Moreover, there are classes of traffic with non-uniform quality requirements. As
+      far as audio and video streaming is concerned, it must be supplied to the end user with special focus on
+      minimizing the delay and jitter.
 
       The types of the multimedia services map directly to QoS policies that are required. Table \ref{tab:uc:qos} shows
       the mapping.
@@ -1138,11 +1145,11 @@
         \begin{center}
           \begin{tabular}{|c|c|c|}
             \hline
-            type of traffic & bandwidth & delay tolerance \\
+            type of traffic     & bandwidth & delay tolerance \\
             \hline \hline
-            real-time streaming & high & low \\
+            real-time streaming & high      & low \\
             \hline
-            video on demand     & high & high  \\
+            video on demand     & high      & high  \\
             \hline
           \end{tabular}
         \end{center}
@@ -1150,6 +1157,30 @@
         \caption{Multimedia network traffic and its requirements}
         \label{tab:uc:qos}
       \end{table}
+
+      The most demanding type of multimedia data is undoubtedly real-time streaming. The high priority data has to be
+      favoured in order to provide desired level of quality --- precedence when accessing the transport media and
+      low-jitter transfer. This allows for low-delay streaming with small input data buffers.
+      % TODO < zmienic? zrodlo?
+
+      Video on demand data is of less priority. It is assumed that the user is not going to use the data as it is being
+      downloaded. This assumption loosens the transmission requirements and allows to treat VOD traffic as
+      medium-priority or even best-effort data (no CIR).  % TODO < citation needed?
+
+      The network topology built is an attempt to model simple yet real environment used to transmit multimedia data.
+      There is a streaming server without user differentiation mechanisms (with respect to quality of transmission) and
+      a HTTP server handling VOD requests. The clients are able to connect to the streaming server and start streaming
+      sessions. They can also download video served by the HTTP daemon.
+
+      Client and server components are placed in different subnetworks that, in turn, are connected with a QoS-aware
+      router which provides one more level policies can be defined at. Rules defined for the router's interfaces specify
+      fine-grained policies for clients in subnetworks regardless of the ones defined at the server level.
+      
+      % TODO ^ ladniej!
+
+      Taking this approach, it is easy to enable QoS-aware networking leveraging relatively simple applications. The
+      aspects of choosing server and client implementations and providing quality of service become orthogonal and the
+      whole design gets clear and maintainable.
       
       Network traffic in this case was differentiated among users through priorities and maximum bandwidth filters
       created over the flow paths. Figure \ref{fig:cs:scenario} presents an overview of the network structure and client
@@ -1160,57 +1191,60 @@
           \includegraphics[width=0.8\textwidth]{img/test-case/diagram.pdf}
         \end{center}
 
-        \caption{VOD + streaming clients test case example}
+        \caption{High-level view of the created topology}
         \label{fig:cs:scenario}
       \end{figure}
       
-      Our network distinguishes three node types:
-      \begin{itemize}
-        \item{http server - containing thttpd server,}
-        \item{media server - containing Darwin Streaming Server,}
-        \item{client player - containing MPlayer.}
-      \end{itemize}
+      % Our network distinguishes three node types:
+      % \begin{itemize}
+      %   \item http server --- containing thttpd server,
+      %   \item media server --- containing Darwin Streaming Server,
+      %   \item client player --- containing MPlayer.
+      % \end{itemize}
       
-      The section \textbf{'Preparation of the environment'} describes an example of how a new zone and then snapshot
-      may be created, which then would be used as virtual appliance.
-
-      % TODO
-      %
-      % * DSS VA
-      % * mplayer na VA klienckich
-      % * tshark
-
-      % na kazdej zonce tshark i zbieranie danych do pcap
-      % analiza+wykresy (jitter, opuszczone pakiety) - wireshark
-      % serwer - darwin
-      % klient - mplayer
+      % The section \textbf{'Preparation of the environment'} describes an example of how a new zone and then snapshot
+      % may be created, which then would be used as virtual appliance.
 
 
-      \begin{itemize}
-        \item similar to DiffServ (traffic classes, selectors, filters, priority, queuing)
-        \item DiffServ doesn't specify anything virtual
-        \item DSS and adaptive codecs
-      \end{itemize}
+      % \begin{itemize}
+      %   \item similar to DiffServ (traffic classes, selectors, filters, priority, queuing)
+      %   \item DiffServ doesn't specify anything virtual
+      %   \item DSS and adaptive codecs
+      % \end{itemize}
 
-      \begin{itemize}
-        \item 2 classes: VOD + streaming
-        \item \_ unicast \_ vs multicast streaming
-        \item access rules for resources of different quality
-        \item enabling QoS for defined classes
-        \item priorities + limiting the bandwidth (per user)!
-        \item 3 users: 2 streaming, 1 VOD
-      \end{itemize}
+      % \begin{itemize}
+      %   \item 2 classes: VOD + streaming
+      %   \item \_ unicast \_ vs multicast streaming
+      %   \item access rules for resources of different quality
+      %   \item enabling QoS for defined classes
+      %   \item priorities + limiting the bandwidth (per user)!
+      %   \item 3 users: 2 streaming, 1 VOD
+      % \end{itemize}
 
-      \begin{figure}[H]
-        \begin{center}
-          \includegraphics[width=0.8\textwidth]{img/test-case/diagram.pdf}
-        \end{center}
+      % \begin{figure}[H]
+      %   \begin{center}
+      %     \includegraphics[width=0.8\textwidth]{img/test-case/diagram.pdf}
+      %   \end{center}
 
-        \caption{VOD + streaming clients test case example}
-      \end{figure}
+      %   \caption{VOD + streaming clients test case example}
+      % \end{figure}
 
 
     \section{Service type and client differentiation}
+    \label{sec:uc:diff}
+
+      Three traffic classes are distinguished with respect to service type:
+
+      \begin{itemize}
+        \item high priority RTP streaming --- UDP traffic with source ports 6970 and 6971, used by streaming client 0
+              and streaming client 1 in LAN1 subnetwork,
+        \item low priority Video On Demand --- TCP traffic with source port 80, used by the VOD client 0,
+        \item medium priority ordinary traffic (all the other data).
+      \end{itemize}
+
+      Furthermore, the streaming clients inside the LAN1 subnetwork are assigned different priority values. Client 0 is
+      favoured and has high priority for RTP data, whereas client 1 is assigned low priority.
+
 
     \section{Preparation of the environment}
     \label{sec:uc:prep}
@@ -1325,28 +1359,37 @@
           \item traffic is divided into classes and policies are assigned to the classes.
         \end{itemize}
 
-        Three traffic classes are distinguished with respect to service type:
+        The service differentiation is based on local port numbers and users are differentiated with respect to their
+        network addresses so the filters that have to be applied are PortFilter and IpFilter. PortFilter specifies a
+        triple \mbox{(port number, location, protocol)} --- the example for RTP is \mbox{(6970, LOCAL, UDP)}. IpFilter
+        specifies a triple \mbox{(IP address, netmask, location)} --- the example for a client in 1.1.1.0/24 subnetwork
+        is \mbox{(1.1.1.2, 24, REMOTE)}.
 
-        \begin{itemize}
-          \item high priority RTP streaming - UDP traffic with source ports 6970 and 6971, used by streaming clients in 3.3.3.0/24
-                subnetwork,
-          \item low priority Video On Demand - TCP traffic with source port 80, used by the VOD client,
-          \item medium priority ordinary traffic.
-        \end{itemize}
+        Relative bandwidth assignment is achieved with priorities. The PriorityPolicy instances determining traffic
+        priority (LOW, MEDIUM, HIGH) have to be applied to specific interfaces.
 
-        Furthermore, the streaming clients inside the 3.3.3.0/24 network are assigned different priority values. The
-        3.3.3.2 client is favoured and has high priority for RTP data, whereas 3.3.3.3 client is assigned low
-        priority.
+        Figure \ref{fig:cs:topo} presents the complete topology built with domain model elements. It includes virtual
+        appliances (:Machine, :Router), connectivity (:Interface, :IpAddress, :Switch) and policies (:PriorityPolicy,
+        :PortFilter, :IpFilter).
+
+        % TODO ^ QoS na poziomie policy - PriorityPolicy, IpFilter, PortFilter
 
         \begin{figure}[H]
-          \includegraphics[width=\textwidth]{img/test-case/topology-om.pdf}
+          \includegraphics[width=.9\textwidth]{img/test-case/topology-om.pdf}
 
           \caption{Network topology expressed in terms of the domain model}
+          \label{fig:cs:topo}
         \end{figure}
+
+        % TODO ^ maxbw!
       
       
-      \subsubsection{Media preparation}
-      \label{ssub:}
+      \subsection{Resulting Crossbow and Solaris components}
+      \label{}
+
+
+      \subsection{Media preparation}
+      \label{sub:}
 
         For a movie to be streamed, hint tracks have to be created. Hints are meta-data that provide information on
         how to stream audio and video tracks. This information is then used by the server when dividing the media into
@@ -1363,8 +1406,6 @@
           mp4creator -hint=1 movie.mp4
           mp4creator -hint=2 movie.mp4
         \end{verbatim}
-
-    
     \section{The infrastructure operation}
     \label{sec:uc:operation}
 
@@ -1382,8 +1423,16 @@
       \subsection{Limiting the bandwidth}
       \label{ssub:}
 
+        % TODO v natychmiastowy efekt jest wazny, bo moze byc uzyty przy automatycznym zarzadzaniu - napisac!
+        % (enhancements?)
+
+        Bandwidth is limited to 8Mbps for all the links. The limits can be changed online with immediate effects. Figure
+        \ref{fig:uc:limit} shows bandwidth limitation for a VOD client downloading a movie. After a short period of
+        non-limited transmission, the link bandwidth is narrowed to 8Mbps (lowest supported value).
+
         \begin{figure}[H]
-          \caption{8Mbps bandwidth limitation set for all the clients}
+          \caption{8Mbps bandwidth limitation}
+          \label{fig:uc:limit}
         \end{figure}
 
 
@@ -1404,8 +1453,10 @@
 
 
     \section{Enhancements provided by the solution}
-    \label{sub:}
+    \label{sec:uc:enhance}
 
+      % * enables QoS policies
+      % * virtual --- flexible
 
     \section*{Summary}
 
