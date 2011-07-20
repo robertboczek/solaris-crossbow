@@ -1307,30 +1307,36 @@
       \subsection{Virtual appliances}
       \label{ssub:case:prep:va}
 
-        In order to create new zone (called for example 'mplayer') following steps should be taken:
-
-        \begin{lstlisting}[caption={New zone creation}]
-          # zonecfg -z mplayer
-
-          create
-          zonecfg:mplayer> set zonepath=/rpool/Appliances/mplayer
-          zonecfg:mplayer> set autoboot=true
-          zonecfg:mplayer> set ip-type=exclusive
-          zonecfg:mplayer> verify
-          zonecfg:mplayer> commit
-          zonecfg:mplayer> exit
-
-          # chmod 700 rpool/Appliances/mplayer
-          # zoneadm -z mplayer install
-        \end{lstlisting}
+        In order to create new zone (called for example 'mplayer') following steps should be taken: \\
 
         \noindent
-        After installation zone can be booted and used after logging.
+        \begin{minipage}{\textwidth}
+          \begin{lstlisting}[caption={New zone creation}]
+            # zonecfg -z mplayer
 
-        \begin{lstlisting}[caption={Booting and logging into a zone}]
-          # zoneadm -z mplayer boot
-          # zlogin mplayer
-        \end{lstlisting}
+            create
+            zonecfg:mplayer> set zonepath=/rpool/Appliances/mplayer
+            zonecfg:mplayer> set autoboot=true
+            zonecfg:mplayer> set ip-type=exclusive
+            zonecfg:mplayer> verify
+            zonecfg:mplayer> commit
+            zonecfg:mplayer> exit
+
+            # chmod 700 rpool/Appliances/mplayer
+            # zoneadm -z mplayer install
+          \end{lstlisting}
+        \end{minipage}
+
+        \noindent
+        After installation zone can be booted and used after logging. \\
+
+        \noindent
+        \begin{minipage}{\textwidth}
+          \begin{lstlisting}[caption={Booting and logging into a zone}]
+            # zoneadm -z mplayer boot
+            # zlogin mplayer
+          \end{lstlisting}
+        \end{minipage}
 
         % zfs create rpool/Zones/darwin
         %
@@ -1355,21 +1361,27 @@
         %
 
         \noindent
-        When zone is prepared, it can be transferred to the repository.
-
-        \begin{lstlisting}[caption={Taking a zone snapshot}]
-          # zfs snapshot -r <path>@SNAPNAME
-          # zfs send <path>@SNAPNAME > /appliance/<appname>.SNAP
-        \end{lstlisting}
+        When zone is prepared, it can be transferred to the repository. \\
 
         \noindent
-        Example:
+        \begin{minipage}{\textwidth}
+          \begin{lstlisting}[caption={Taking a zone snapshot}]
+            # zfs snapshot -r <path>@SNAPNAME
+            # zfs send <path>@SNAPNAME > /appliance/<appname>.SNAP
+          \end{lstlisting}
+        \end{minipage}
 
-        \begin{lstlisting}[caption={Publishing a snapshot in NFS repository}]
-          # zfs snapshot -r rpool/Appliances/mplayer@SNAP
-          # zfs send rpool/Appliances/mplayer@SNAP \
-                > /appliance/mplayer.SNAP
-        \end{lstlisting}
+        \noindent
+        Example: \\
+
+        \noindent
+        \begin{minipage}{\textwidth}
+          \begin{lstlisting}[caption={Publishing a snapshot in NFS repository}]
+            # zfs snapshot -r rpool/Appliances/mplayer@SNAP
+            # zfs send rpool/Appliances/mplayer@SNAP \
+                  > /appliance/mplayer.SNAP
+          \end{lstlisting}
+        \end{minipage}
 
 
       Afterwards these exported snapshots may be used by our GUI application as desired virtual appliance to be restored. 
@@ -1446,24 +1458,62 @@
         provide fully operational network topology.
 
         All the entity names follow the same pattern --- they are prepended with project identifier (\texttt{uc\_}).
-        There are five zones created (one media server, three clients and one router).
+        There are five zones created (one media server, three clients and one router). \\
 
-        \begin{lstlisting}[caption={All the zones created after model instantiation}]
-          # zoneadm list -cv | egrep ``^uc_''
-        \end{lstlisting}
+        \noindent
+        \begin{minipage}{\textwidth}
+          \begin{lstlisting}[caption={All the zones created after model instantiation}]
+            # zoneadm list -cv | grep uc_
+
+            NAME      STATUS   PATH                        BRAND   IP    
+            uc_Mch    running  /rpool/Appliances/uc_Mch    native  excl
+            uc_Rr0    running  /rpool/Appliances/uc_Rr0    native  excl
+            uc_Mcl    running  /rpool/Appliances/uc_Mcl    native  excl
+            uc_Msrv   running  /rpool/Appliances/uc_Msrv   native  excl
+            uc_Mcvod  running  /rpool/Appliances/uc_Mcvod  native  excl
+          \end{lstlisting}
+        \end{minipage}
 
         Each of the zones has virtual interfaces (VNICs) assigned. Flows are created for some of the interfaces. The
-        server zone and all of the client zones are connected to the router zone with etherstubs.
+        server zone and all of the client zones are connected to the router zone with etherstubs. \\
 
-        \begin{lstlisting}[caption={Etherstubs}]
-          # dladm show-etherstub | egrep ``^uc_''
-        \end{lstlisting}
+        \noindent
+        \begin{minipage}{\textwidth}
+          \begin{lstlisting}[caption={Etherstubs}]
+            # dladm show-etherstub | grep uc_
 
-        \begin{lstlisting}[caption={Virtual interfaces and flows created on top of them}]
-          # dladm show-vnic | egrep ``^uc_''
+            LINK
+            uc_Ss1
+            uc_Ss3
+            uc_Ss2
+          \end{lstlisting}
+        \end{minipage}
 
-          # flowadm show-flow | egrep ``^uc_''
-        \end{lstlisting}
+        \noindent
+        \begin{minipage}{\textwidth}
+          \begin{lstlisting}[caption={Virtual interfaces and flows created on top of them}]
+            # dladm show-vnic | grep uc_
+
+            LINK             OVER    MACADDRESS       MACADDRTYPE
+            uc_Msrv_IFACE0   uc_Ss1  2:8:20:83:18:98  random     
+            uc_Mcvod_IFACE0  uc_Ss2  2:8:20:8f:a8:d0  random     
+            uc_Mcl_IFACE0    uc_Ss3  2:8:20:da:2a:12  random     
+            uc_Mch_IFACE0    uc_Ss3  2:8:20:47:72:a2  random     
+            uc_Rr0_IFACE1    uc_Ss2  2:8:20:31:2e:cd  random     
+            uc_Rr0_IFACE2    uc_Ss3  2:8:20:ed:60:99  random     
+            uc_Rr0_IFACE0    uc_Ss1  2:8:20:73:d1:22  random     
+
+
+            # flowadm show-flow | grep uc_
+
+            FLOW                   IPADDR         PROTO LPORT RPORT
+            uc_Msrv_IFACE0_vod     --             tcp   80    --   
+            uc_Msrv_IFACE0_stream0 --             udp   6970  --   
+            uc_Msrv_IFACE0_stream1 --             udp   6971  --   
+            uc_Rr0_IFACE2_low      RMT:3.3.3.3/32 --    --    --   
+            uc_Rr0_IFACE2_high     RMT:3.3.3.2/32 --    --    --   
+          \end{lstlisting}
+        \end{minipage}
 
 
       \subsection{Media preparation}
@@ -1476,14 +1526,20 @@
         The following sequence of commands demonstrates how to prepare a movie to be streamed by Darwin Streaming
         Server (the example leverages ffmpeg and mpeg4ip utilities). First, the data streams are transcoded to MPEG4
         (video) and AAC (audio) formats and saved in an MPEG4 container. Then, hint tracks are appended to the
-        container.
+        container. \\
 
-        \begin{lstlisting}[caption={Media preparation before streaming}]
-          $ ffmpeg -i movie.mpg -vcodec mpeg4 -acodec libfaac movie.mp4
-          $ mp4creator -optimize movie.mp4
-          $ mp4creator -hint=1 movie.mp4
-          $ mp4creator -hint=2 movie.mp4
-        \end{lstlisting}
+        \noindent
+        \begin{minipage}{\textwidth}
+          \begin{lstlisting}[caption={Media preparation before streaming}]
+            $ ffmpeg -i movie.mpg -vcodec mpeg4 \
+                  -acodec libfaac movie.mp4
+            $ mp4creator -optimize movie.mp4
+            $ mp4creator -hint=1 movie.mp4
+            $ mp4creator -hint=2 movie.mp4
+          \end{lstlisting}
+        \end{minipage}
+
+
     \section{The infrastructure operation}
     \label{sec:uc:operation}
 
@@ -1505,7 +1561,12 @@
         \ref{fig:uc:limit} shows bandwidth limitation for a VOD client downloading a movie. After a short period of
         non-limited transmission, the link bandwidth is narrowed to 8Mbps (lowest supported value).
 
+        % TODO v change image
         \begin{figure}[H]
+          \begin{center}
+            \includegraphics[width=.7\textwidth]{img/test-case/exp-all.png}
+          \end{center}
+
           \caption{8Mbps bandwidth limitation}
           \label{fig:uc:limit}
         \end{figure}
@@ -1519,6 +1580,10 @@
         client is favoured over VOD client and it gets most of the available bandwidth.
 
         \begin{figure}[H]
+          \begin{center}
+            \includegraphics[width=.7\textwidth]{img/test-case/exp-all.png}
+          \end{center}
+
           \caption{VOD traffic bandwidth consumption compared to high-priority RTP streams}
         \end{figure}
 
@@ -1531,6 +1596,10 @@
         gets most of the bandwidth and high priority client is favoured over the low priority one.
 
         \begin{figure}[H]
+          \begin{center}
+            \includegraphics[width=.7\textwidth]{img/test-case/exp-stream-client.png}
+          \end{center}
+
           \caption{Distribution of available bandwidth between streaming clients}
         \end{figure}
 
