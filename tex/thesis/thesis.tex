@@ -60,6 +60,9 @@
 \newcommand{\tasklabel}[1]{{\textcolor{Blue}{\textbf{#1}}\label{#1}}}
 \newcommand{\taskref}[1]{\hyperref[#1]{{\textcolor{Blue}{\textbf{#1}}}}}
 
+% listings settings
+\lstset{captionpos=b,frame=single}
+
 % include TikZ styles
 \input{tikz.tex}
 
@@ -1289,35 +1292,30 @@
       \subsection{Virtual appliances}
       \label{ssub:case:prep:va}
 
-      In order to create new zone ( called for example 'mplayer' ) following steps should be taken: \\
+        In order to create new zone (called for example 'mplayer') following steps should be taken:
 
-        \textbf{zonecfg} -z mplayer \\
+        \begin{lstlisting}[caption={New zone creation}]
+          # zonecfg -z mplayer
 
-        create \\
+          create
+          zonecfg:mplayer> set zonepath=/rpool/Appliances/mplayer
+          zonecfg:mplayer> set autoboot=true
+          zonecfg:mplayer> set ip-type=exclusive
+          zonecfg:mplayer> verify
+          zonecfg:mplayer> commit
+          zonecfg:mplayer> exit
 
-        \textbf{zonecfg:mplayer}> set zonepath=/rpool/Appliances/mplayer \\
+          # chmod 700 rpool/Appliances/mplayer
+          # zoneadm -z mplayer install
+        \end{lstlisting}
 
-        \textbf{zonecfg:mplayer}> set autoboot=true \\
+        \noindent
+        After installation zone can be booted and used after logging.
 
-        \textbf{zonecfg:mplayer}> set ip-type=exclusive \\
-
-        \textbf{zonecfg:mplayer}> verify \\
-
-        \textbf{zonecfg:mplayer}> commit \\
-
-        \textbf{zonecfg:mplayer}> exit \\
-
-        \textbf{chmod} 700 rpool/Appliances/mplayer \\
-
-        \textbf{zoneadm} -z mplayer install \\
-
-        After installation zone can be booted and used after logging. \\
-
-        \textbf{zoneadm} -z mplayer boot \\
-
-        \textbf{zlogin} -S mplayer \\
-
-      
+        \begin{lstlisting}[caption={Booting and logging into a zone}]
+          # zoneadm -z mplayer boot
+          # zlogin mplayer
+        \end{lstlisting}
 
         % zfs create rpool/Zones/darwin
         %
@@ -1341,19 +1339,25 @@
         %
         %
 
-        When zone is prepared, it can be transferred to the repository. \\
+        \noindent
+        When zone is prepared, it can be transferred to the repository.
 
-        \textbf{zfs} snapshot -r <path>@SNAPNAME \\
+        \begin{lstlisting}[caption={Taking a zone snapshot}]
+          # zfs snapshot -r <path>@SNAPNAME
+          # zfs send <path>@SNAPNAME > /appliance/<appname>.SNAP
+        \end{lstlisting}
 
-        \textbf{zfs} send <path>@SNAPNAME > /appliance/<appname>.SNAP \\
-        %
+        \noindent
+        Example:
 
-        Example: \\
-        \textbf{zfs} snapshot -r rpool/Appliances/mplayer@SNAP \\
-        \textbf{zfs} send rpool/Appliances/mplayer@SNAP > /appliance/mplayer.SNAP \\
+        \begin{lstlisting}[caption={Publishing a snapshot in NFS repository}]
+          # zfs snapshot -r rpool/Appliances/mplayer@SNAP
+          # zfs send rpool/Appliances/mplayer@SNAP \
+                > /appliance/mplayer.SNAP
+        \end{lstlisting}
 
 
-      Afterwards these exported snapshots may be used by our gui application as desired virtual appliance to be restored. 
+      Afterwards these exported snapshots may be used by our GUI application as desired virtual appliance to be restored. 
         % VOD: thttpd
 
 
@@ -1409,8 +1413,6 @@
         appliances (:Machine, :Router), connectivity (:Interface, :IpAddress, :Switch) and policies (:PriorityPolicy,
         :PortFilter, :IpFilter).
 
-        % TODO ^ QoS na poziomie policy - PriorityPolicy, IpFilter, PortFilter
-
         \begin{figure}[H]
           \includegraphics[width=.9\textwidth]{img/test-case/topology-om.pdf}
 
@@ -1422,7 +1424,31 @@
       
       
       \subsection{Resulting Crossbow and Solaris components}
-      \label{}
+      \label{sub:uc:xbow}
+
+        A successful model instantiation creates a number of Crossbow and Solaris entities. The resulting set contains
+        zones, etherstubs, VNICs and flows that reflect the desired configuration. These entities work together and
+        provide fully operational network topology.
+
+        All the entity names follow the same pattern --- they are prepended with project identifier (\texttt{uc\_}).
+        There are five zones created (one media server, three clients and one router).
+
+        \begin{lstlisting}[caption={All the zones created after model instantiation}]
+          # zoneadm list -cv | egrep ``^uc_''
+        \end{lstlisting}
+
+        Each of the zones has virtual interfaces (VNICs) assigned. Flows are created for some of the interfaces. The
+        server zone and all of the client zones are connected to the router zone with etherstubs.
+
+        \begin{lstlisting}[caption={Etherstubs}]
+          # dladm show-etherstub | egrep ``^uc_''
+        \end{lstlisting}
+
+        \begin{lstlisting}[caption={Virtual interfaces and flows created on top of them}]
+          # dladm show-vnic | egrep ``^uc_''
+
+          # flowadm show-flow | egrep ``^uc_''
+        \end{lstlisting}
 
 
       \subsection{Media preparation}
@@ -1437,12 +1463,12 @@
         (video) and AAC (audio) formats and saved in an MPEG4 container. Then, hint tracks are appended to the
         container.
 
-        \begin{verbatim}
-          ffmpeg -i movie.mpg -vcodec mpeg4 -acodec libfaac movie.mp4
-          mp4creator -optimize movie.mp4
-          mp4creator -hint=1 movie.mp4
-          mp4creator -hint=2 movie.mp4
-        \end{verbatim}
+        \begin{lstlisting}[caption={Media preparation before streaming}]
+          $ ffmpeg -i movie.mpg -vcodec mpeg4 -acodec libfaac movie.mp4
+          $ mp4creator -optimize movie.mp4
+          $ mp4creator -hint=1 movie.mp4
+          $ mp4creator -hint=2 movie.mp4
+        \end{lstlisting}
     \section{The infrastructure operation}
     \label{sec:uc:operation}
 
@@ -1458,10 +1484,7 @@
 
 
       \subsection{Limiting the bandwidth}
-      \label{ssub:}
-
-        % TODO v natychmiastowy efekt jest wazny, bo moze byc uzyty przy automatycznym zarzadzaniu - napisac!
-        % (enhancements?)
+      \label{sub:uc:limit}
 
         Bandwidth is limited to 8Mbps for all the links. The limits can be changed online with immediate effects. Figure
         \ref{fig:uc:limit} shows bandwidth limitation for a VOD client downloading a movie. After a short period of
@@ -1473,8 +1496,12 @@
         \end{figure}
 
 
-      \subsection{Different policies for different types of traffic}
-      \label{ssub:}
+      \subsection{Policies for different types of traffic}
+      \label{sub:uc:traffic}
+
+        A VOD client is downloading a long movie. All the bandwidth is available. Another client connects to the
+        streaming server and requests a number of video streams. As the RTP data is of high priority, the streaming
+        client is favoured over VOD client and it gets most of the available bandwidth.
 
         \begin{figure}[H]
           \caption{VOD traffic bandwidth consumption compared to high-priority RTP streams}
@@ -1482,7 +1509,11 @@
 
 
       \subsection{Client-dependent quality of service}
-      \label{ssub:}
+      \label{sub:uc:client}
+
+        A VOD client is downloading a movie. Two clients connect to the streaming server and request a number of video
+        streams. One of the streaming clients has low priority assigned, the other one is high priority. RTP streaming
+        gets most of the bandwidth and high priority client is favoured over the low priority one.
 
         \begin{figure}[H]
           \caption{Distribution of available bandwidth between streaming clients}
@@ -1493,6 +1524,7 @@
     \label{sec:uc:enhance}
 
       % * enables QoS policies
+      % * effects available instantaneously (automatic management/adjustment)
       % * virtual --- flexible
 
     \section*{Summary}
