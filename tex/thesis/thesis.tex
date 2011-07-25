@@ -441,7 +441,7 @@
         The technology allows for running a number of isolated instances of operating system sharing CPU time,
         physical network bandwidth, filesystem contents and binary code. Sharing of these resources can greatly improve
         overall system efficiency and reduce the amount of occupied memory. The speed of network communication between
-        different zones can also be improved thanks to ,,short-circuited'' traffic (i.e. omitting the layers below IP in
+        different zones can also be improved thanks to ,,short-circuited'' traffic (ie. omitting the layers below IP in
         the OSI/ISO stack). The instances are able to execute applications with minimum overhead introduced mainly due
         to accessing commands and libraries through the lofs (loopback filesystem) \cite{price,fsag}.
 
@@ -1168,21 +1168,21 @@
   \chapter{Case Study}
 
     The chapter describes the infrastructure that was built using the implemented system. Steps necessary to restore the
-    infrastructure are listed and described. A number of tests were performed to evaluate the created system. Resulting
-    experimental data is presented and discussed.
+    configuration are listed and described. A number of tests were performed to evaluate the created system and
+    topologies it allows to create. Resulting experimental data is presented and discussed.
 
     Section \ref{sec:uc:description} introduces the overall view of the topology that was created. Main components are
-    described and QoS requirements are discussed.
+    described and QoS requirements discussed.
 
     Section \ref{sec:uc:diff} discusses Quality of Service requirements in more detail. Types of service are presented
     and appropriate network-level policies described. The policies are assigned to network components.
 
-    Section \ref{sec:uc:prep} describes the steps needed to set up the topology. The steps include virtual appliance
+    Section \ref{sec:uc:prep} describes the stages needed to set up the topology. The steps include virtual appliance
     creation and publication, topology design, determining the quality policy and instantiation. Domain model of the
     designed topology and resulting low-level entities are listed.
 
-    Section \ref{sec:uc:operation} presents the results of experiments performed to verify the requirements of the
-    system. The section focuses on Quality of Service-related aspects --- it verifies definition, management and
+    Section \ref{sec:uc:operation} presents the results of experiments performed to verify requirements the system has
+    to meet. The section focuses on Quality of Service-related aspects --- it verifies definition, management and
     operation of the policies.
 
     Section \ref{sec:uc:enhance} lists the advantages of using the proposed system and approach to create, manage and
@@ -1193,96 +1193,124 @@
     \section{Scenario description}
     \label{sec:uc:description}
 
-      The test case used is inspired by multimedia systems. The problems of quality-aware transmission arise naturally
-      in multimedia-oriented networks. Moreover, there are classes of traffic with non-uniform quality requirements. As
-      far as audio and video streaming is concerned, data must be supplied to the end user with special focus on
-      minimizing the delay and jitter.
-
-      The types of multimedia services map directly to QoS policies that are required. Table \ref{tab:uc:qos} shows the
-      mapping.
-
-      \begin{table}[H]
-        \begin{center}
-          \begin{tabular}{|c|c|c|}
-            \hline
-            type of traffic     & bandwidth & delay tolerance \\
-            \hline \hline
-            real-time streaming & high      & low \\
-            \hline
-            video on demand     & high      & high  \\
-            \hline
-          \end{tabular}
-        \end{center}
-
-        \caption{Multimedia network traffic and its requirements}
-        \label{tab:uc:qos}
-      \end{table}
-
-      The most demanding type of multimedia data is undoubtedly real-time streaming. The high priority data has to be
-      favoured in order to provide desired level of quality --- precedence when accessing transport media and low-jitter
-      transfer. This allows for low-delay streaming with small input data buffers.
-      % TODO < zmienic? zrodlo?
-
-      Video on demand data is of less priority. It is assumed that the user is not going to utilize the data as it is
-      being downloaded. This assumption loosens the transmission requirements and allows to treat VOD traffic as
-      medium-priority or even best-effort data (no CIR).  % TODO < citation?
-
-      The network topology built is an attempt to model simple yet real environment used to transmit multimedia data.
-      There is a streaming server without user differentiation mechanisms (with respect to quality of transmission) and
-      an HTTP server handling VOD requests. The clients are able to connect to the streaming server and start streaming
-      sessions. They can also download video served by the HTTP daemon.
-
-      Client and server components are placed in different subnetworks that, in turn, are connected with a QoS-aware
-      router which provides one more level the policies can be defined at. Rules defined for the router's interfaces
-      specify fine-grained policies for clients in subnetworks regardless of the ones defined at the server level.
+      The test case is inspired by multimedia systems. The problems of quality-aware transmission arise naturally
+      in multimedia-oriented networks. Moreover, there are easily-identifiable classes of traffic with non-uniform
+      quality requirements. This characteristics make multimedia networks a reasonable choice when considering tests
+      focused on quality requirements verification.
       
-      % TODO ^ ladniej!
+      Also, complex topologies are built to enable multimedia transmission. The components that comprise these networks
+      include, among others, specialized media servers, routers and client machines. This variety allows to demonstrate
+      the usefulness of the created systems in the process of designing such topologies.
 
-      Taking this approach, it is easy to enable QoS-aware networking leveraging relatively simple applications. The
-      aspects of choosing server and client implementations and providing quality of service become orthogonal and the
-      whole design remains clear and maintainable.
+
+      \subsection{Types of service}
       
-      Figure \ref{fig:cs:scenario} presents an overview of the network structure and client configuration. No details
-      are depicted, only basic structure.
-    
-      \begin{figure}[H]
-        \begin{center}
-          \includegraphics[width=0.8\textwidth]{img/test-case/diagram.pdf}
-        \end{center}
+        As already stated, there are classes of traffic (or service types) that, by their nature, require different
+        amounts of available resources (such as bandwidth, processing priority, etc.). The types of multimedia services
+        map directly to QoS policies required. Table \ref{tab:uc:qos} shows the mapping.
 
-        \caption{High-level view of the created topology}
-        \label{fig:cs:scenario}
-      \end{figure}
+        \begin{table}[H]
+          \begin{center}
+            \begin{tabular}{|c|c|c|}
+              \hline
+              service type        & bandwidth & delay tolerance \\
+              \hline \hline
+              real-time streaming & high      & low \\
+              \hline
+              video on demand     & high      & high  \\
+              \hline
+            \end{tabular}
+          \end{center}
+
+          % TODO uzupelnic; czy zrodlo?
+
+          \caption{Multimedia network traffic and its requirements}
+          \label{tab:uc:qos}
+        \end{table}
+
+        The most demanding type of multimedia data is undoubtedly real-time streaming. The high priority data has to be
+        favoured in order to provide desired level of quality --- precedence when accessing transport media and
+        low-jitter transfer. This allows for low-delay streaming with small input data buffers on the client side.
+
+        Video on demand data is of less priority. It is assumed that the user is not going to utilize the data as it is
+        being downloaded. This assumption loosens the transmission requirements and allows to treat VOD traffic as
+        medium-priority or even best-effort data (no CIR).
+
+
+      \subsection{Topology overview}
+
+        The network topology built is an attempt to model simple yet real environment used to transmit multimedia data.
+        There is a streaming server without user differentiation mechanisms (with respect to quality of transmission)
+        and an HTTP server handling VOD requests. The clients connect to the streaming server and start streaming
+        sessions. They can also download video served by the HTTP daemon.
+
+        Client and server components are placed in different subnetworks that, in turn, are connected with a QoS-aware
+        router which provides one more level the policies can be defined at. Rules defined for the router's interfaces
+        specify fine-grained policies for clients in subnetworks in addition to the ones defined at the server level.
+
+        Taking this approach, it is easy to enable QoS-aware networking leveraging relatively simple applications. The
+        aspects of choosing server and client implementations and providing quality of service become orthogonal and the
+        whole design remains clear and maintainable. Figure \ref{fig:cs:scenario} presents an overview of the network
+        structure and client configuration.
+      
+        \begin{figure}[H]
+          \begin{center}
+            \includegraphics[width=0.8\textwidth]{img/test-case/diagram.pdf}
+          \end{center}
+
+          \caption{High-level view of the created topology}
+          \label{fig:cs:scenario}
+        \end{figure}
       
 
-    \section{Service type and client differentiation}
-    \label{sec:uc:diff}
+      \subsection{Service and client differentiation}
+      \label{sub:uc:diff}
 
-      Three traffic classes are distinguished with respect to service type:
+        The traffic is classified based on two properties: type of service (RTP, HTTP) and recipient address. Three
+        traffic classes are distinguished with respect to service type:
 
-      \begin{itemize}
-        \item high priority RTP streaming --- UDP traffic with source ports 6970 and 6971, used by streaming client 0
-              and streaming client 1 in LAN1 subnetwork,
-        \item low priority Video On Demand --- TCP traffic with source port 80, used by the VOD client 0,
-        \item medium priority ordinary traffic (all the other data).
-      \end{itemize}
+        \begin{itemize}
 
-      Furthermore, the streaming clients inside the LAN1 subnetwork are assigned different priority values. Client 0 is
-      favoured and has high priority for RTP data, whereas client 1 is assigned low priority.
+          \item high priority RTP streaming
+
+                UDP traffic with source ports 6970 and 6971, used by streaming client 0
+                and streaming client 1 in LAN1 subnetwork,
+
+          \item low priority Video On Demand
+          
+                TCP traffic with source port 80, used by the VOD client 0,
+
+          \item medium priority ordinary traffic
+          
+                all the other data.
+
+        \end{itemize}
+
+        Furthermore, the streaming clients inside the LAN1 subnetwork are assigned different priority values. Client 0 is
+        favoured and has high priority for RTP data, whereas client 1 is assigned low priority. Client 0 in LAN2
+        is not assigned any priority explicitly.
 
 
     \section{Preparation of the environment}
     \label{sec:uc:prep}
 
+      General steps while building the environment are: virtual appliance preparation, topology design and
+      instantiation. Virtual appliances are created manually and published in an NFS repository. Then, they are used as
+      building blocks when designing the network. Finally, the virtual infrastructure is instantiated, i.e. all the
+      underlying low-level components, like zones, etherstubs, VNICs and flows, are created.
+
+
       \subsection{Virtual appliances}
       \label{ssub:case:prep:va}
 
-        In order to create new zone (called for example 'mplayer') following steps should be taken: \\
+        Listing \ref{lst:uc:prep:create} shows the initial steps when creating new zones. In this case, the zone is
+        called \texttt{mplayer} and it contains a streaming client. At first, new ZFS pool is created to host the zone's
+        filesystem, then basic configuration is performed and the zone is installed. \\
 
         \noindent
         \begin{minipage}{\textwidth}
-          \begin{lstlisting}[caption={New zone creation}]
-            # zfs create rpool/Zones/darwin
+          \begin{lstlisting}[caption={New zone creation},label={lst:uc:prep:create}]
+            # zfs create rpool/Zones/mplayer
 
             # zonecfg -z mplayer
 
@@ -1300,39 +1328,34 @@
         \end{minipage}
 
         \noindent
-        It may be necessary to modify \texttt{/etc/shadow} file to be able to access the zone with zlogin. \\
+        It may be necessary to modify \texttt{/etc/shadow} file as in listing \ref{lst:uc:prep:sed} to be able to access
+        the zone with \texttt{zlogin}. \\
 
         \noindent
         \begin{minipage}{\textwidth}
-          \begin{lstlisting}[caption={\texttt{/etc/shadow} file adjustment}]
+          \begin{lstlisting}[caption={\texttt{/etc/shadow} file adjustment},label={lst:uc:prep:sed}]
             # sed s/root::/root:NP:/ /etc/shadow
           \end{lstlisting}
         \end{minipage}
 
-        After installation the zone can be booted and used after logging. \\
+        \noindent
+        After installation the zone can be booted and used after logging (listing \ref{lst:uc:prep:boot}). \\
 
         \noindent
         \begin{minipage}{\textwidth}
-          \begin{lstlisting}[caption={Booting and logging into a zone}]
+          \begin{lstlisting}[caption={Booting and logging into a zone},label={lst:uc:prep:boot}]
             # zoneadm -z mplayer boot
             # zlogin mplayer
           \end{lstlisting}
         \end{minipage}
 
-        \noindent All the required software should be installed now. When the zone is prepared, a ZFS snapshot can be
-        taken and transferred to the repository. \\
+        \noindent
+        All the required software should be installed now. When the zone is prepared, a ZFS snapshot can be taken and
+        transferred to the repository (listing \ref{lst:uc:prep:snap}). \\
 
         \noindent
         \begin{minipage}{\textwidth}
-          \begin{lstlisting}[caption={Taking a zone snapshot}]
-            # zfs snapshot -r <path>@SNAPNAME
-            # zfs send <path>@SNAPNAME > /appliance/<appname>.SNAP
-          \end{lstlisting}
-        \end{minipage} \\
-
-        \noindent
-        \begin{minipage}{\textwidth}
-          \begin{lstlisting}[caption={Publishing a snapshot in NFS repository}]
+          \begin{lstlisting}[caption={Publishing a snapshot in NFS repository},label={lst:uc:prep:snap}]
             # zfs snapshot -r rpool/Appliances/mplayer@SNAP
             # zfs send rpool/Appliances/mplayer@SNAP \
                   > /appliance/mplayer.SNAP
@@ -1351,22 +1374,22 @@
           \item designation of physical machine(s) to host the topology,
           \item appliance-to-host assignment,
           \item enabling network connection between nodes, addressing, routing setup,
-          \item adding QoS policies.
+          \item defining QoS policies.
         \end{enumerate}
 
-        The topology consists of router appliance (able to forward IP packets between its directly-attached interfaces),
-        server appliance (with Darwin Streaming Server and thttpd HTTP server installed) and client appliance (mplayer
-        with RTP streaming support enabled). All the appliances are instantiated on a single physical host.
+        The topology consists of router (forwards IP packets between its directly-attached interfaces), server (with
+        Darwin Streaming Server and thttpd HTTP server installed) and client appliances (mplayer compiled with RTP
+        streaming support enabled). All the appliances are instantiated on a single physical host.
 
         Present are three subnetworks:
 
         \begin{itemize}
-          \item 1.1.1.0/24 contains only the server appliance (1.1.1.2),
-          \item 2.2.2.0/24 with one VOD client (2.2.2.2),
-          \item 3.3.3.0/24 with two streaming clients (3.3.3.2, 3.3.3.3).
+          \item 1.1.1.0/24 contains only the server appliance (addressed 1.1.1.2),
+          \item 2.2.2.0/24 with one VOD client (addressed 2.2.2.2),
+          \item 3.3.3.0/24 with two streaming clients (addressed 3.3.3.2 and 3.3.3.3).
         \end{itemize}
 
-        The router appliance, with three interfaces addressed 1.1.1.1, 2.2.2.1 and 3.3.3.1, links the subnetworks and
+        The router appliance, with three interfaces (addressed 1.1.1.1, 2.2.2.1 and 3.3.3.1) links the subnetworks and
         provides network-level connectivity. Each of the appliances has additional entries in its routing table.
 
         Quality of Service assurance is composed of two main stages:
@@ -1377,9 +1400,9 @@
           \item traffic is divided into classes and policies are assigned to the classes.
         \end{itemize}
 
-        The service differentiation is based on local port numbers and users are differentiated with respect to their
-        network addresses so the filters that have to be applied are PortFilter and IpFilter. PortFilter specifies a
-        triple \mbox{(port number, location, protocol)} --- the example for RTP is \mbox{(6970, LOCAL, UDP)}. IpFilter
+        Service differentiation is based on local port numbers and users are differentiated with respect to their
+        network addresses. To achieve this, PortFilter and IpFilter are applied. PortFilter specifies a triple
+        \mbox{(port number, location, protocol)} --- the example for RTP is \mbox{(6970, LOCAL, UDP)}. IpFilter
         specifies a triple \mbox{(IP address, netmask, location)} --- the example for a client in 1.1.1.0/24 subnetwork
         is \mbox{(1.1.1.2, 24, REMOTE)}.
 
@@ -1387,8 +1410,8 @@
         priority (LOW, MEDIUM, HIGH) have to be applied to specific interfaces.
 
         Figure \ref{fig:cs:topo} presents the complete topology built with domain model elements. It includes virtual
-        appliances (:Machine, :Router), connectivity (:Interface, :IpAddress, :Switch) and policies (:PriorityPolicy,
-        :PortFilter, :IpFilter).
+        appliances (:Machine, :Router), connectivity (:Interface, :IpAddress, :Switch), policies (:PriorityPolicy,
+        :BandwidthPolicy) and filters (:PortFilter, :IpFilter).
 
         \begin{figure}[H]
           \includegraphics[width=.9\textwidth]{img/test-case/topology-om.pdf}
@@ -1397,7 +1420,7 @@
           \label{fig:cs:topo}
         \end{figure}
 
-        % TODO ^ maxbw!
+        % TODO ^ maxbw! pokolorowac?
       
       
       \subsection{Resulting Crossbow and Solaris components}
@@ -1408,11 +1431,12 @@
         provide fully operational network topology.
 
         All the entity names follow the same pattern --- they are prepended with project identifier (\texttt{uc\_}).
-        There are five zones created (one media server, three clients and one router). \\
+        There are five zones created, as shown in listing \ref{lst:uc:xbow:zone} (one media server, three clients and
+        one router). \\
 
         \noindent
         \begin{minipage}{\textwidth}
-          \begin{lstlisting}[caption={All the zones created after model instantiation}]
+          \begin{lstlisting}[caption={All the zones created after model instantiation},label={lst:uc:xbow:zone}]
             # zoneadm list -cv | grep uc_
 
             NAME      STATUS   PATH                        BRAND   IP    
@@ -1425,11 +1449,12 @@
         \end{minipage}
 
         Each of the zones has virtual interfaces (VNICs) assigned. Flows are created for some of the interfaces. The
-        server zone and all of the client zones are connected to the router zone with etherstubs. \\
+        server zone and all of the client zones are connected to the router zone with etherstubs. Listing
+        \ref{lst:uc:xbow:ether} enumerates the etherstubs, VNICs and flows are shown in listing \ref{lst:uc:xbow:vnic} \\
 
         \noindent
         \begin{minipage}{\textwidth}
-          \begin{lstlisting}[caption={Etherstubs}]
+          \begin{lstlisting}[caption={Etherstubs},label={lst:uc:xbow:ether}]
             # dladm show-etherstub | grep uc_
 
             LINK
@@ -1441,7 +1466,7 @@
 
         \noindent
         \begin{minipage}{\textwidth}
-          \begin{lstlisting}[caption={Virtual interfaces and flows created on top of them}]
+          \begin{lstlisting}[caption={Virtual interfaces and flows created on top of them},label={lst:uc:xbow:vnic}]
             # dladm show-vnic | grep uc_
 
             LINK             OVER    MACADDRESS       MACADDRTYPE
@@ -1469,18 +1494,19 @@
       \subsection{Media preparation}
       \label{sub:}
 
-        For a movie to be streamed, hint tracks have to be created. Hints are meta-data that provide information on
-        how to stream audio and video tracks. This information is then used by the server when dividing the media into
+        For a movie to be streamed, hint tracks have to be created. Hints are meta-data that provide information on how
+        to stream audio and video tracks. This information is then used by the server when dividing the media into
         packets and sending them via the network.
 
-        The following sequence of commands demonstrates how to prepare a movie to be streamed by Darwin Streaming
-        Server (the example leverages ffmpeg and mpeg4ip utilities). First, the data streams are transcoded to MPEG4
-        (video) and AAC (audio) formats and saved in an MPEG4 container. Then, hint tracks are appended to the
-        container. \\
+        The sequence of commands in listing \ref{lst:uc:media:prep} demonstrates how to prepare a movie to be streamed
+        by Darwin Streaming Server (the example leverages ffmpeg\footnote{available at \url{http://www.ffmpeg.org}} and
+        mpeg4ip\footnote{available at \url{http://mpeg4ip.sourceforge.net}} utilities). First, the data streams are
+        transcoded to MPEG4 (video) and AAC (audio) formats and saved in an MPEG4 container. Then, hint tracks are
+        appended to the container. \\
 
         \noindent
         \begin{minipage}{\textwidth}
-          \begin{lstlisting}[caption={Media preparation before streaming}]
+          \begin{lstlisting}[caption={Media preparation before streaming},label={lst:uc:media:prep}]
             $ ffmpeg -i movie.mpg -vcodec mpeg4 \
                   -acodec libfaac movie.mp4
             $ mp4creator -optimize movie.mp4
@@ -1494,14 +1520,21 @@
     \label{sec:uc:operation}
 
       The traffic data is gathered as follows: each host node has tshark utility installed. It is set up to monitor all
-      the traffic on the server interface and write it to a file (dump.cap). When the gathering process is finished, the
-      data is handed to wireshark and analyzed - graphs with throughput and jitter values are generated to show the
-      interdependencies between the streams of data.
+      the traffic on the server interface and write it to a file (as shown in listing \ref{lst:uc:op:tshark}). When the
+      gathering process is finished, the data is handed to wireshark and analyzed - graphs with throughput and jitter
+      values are generated to show the interdependencies between the streams of data. \\
+
+      \noindent
+      \begin{minipage}{\textwidth}
+        \begin{lstlisting}[caption={Monitoring network traffic with tshark},label={lst:uc:op:tshark}]
+          # TODO
+        \end{lstlisting}
+      \end{minipage}
 
       The tests include verifying that the set up bandwidth limitations work on per-client basis (TODO), different
       service types are treated according to the policy and streaming client differentiation requirements are satisfied.
       The main metric used is bandwidth each of the streams is assigned. Also, jitter is analyzed to estimate the
-      Quality of Experience the user gets when watching streaming media.
+      Quality of Experience the user gets when watching streaming media (TODO).
 
 
       \subsection{Limiting the bandwidth}
@@ -1557,9 +1590,7 @@
     \section{Enhancements provided by the solution}
     \label{sec:uc:enhance}
 
-      % * virtual --- flexible
-
-      The implemented system provides extensive support for all the stages that comprise virtual network management.
+      The implemented system provides extensive support for most of the stages that comprise virtual network management.
       There are two main goals the system is designed to achieve: to limit the time spent by the administrator to create
       and manage the topology and to make the process as intuitive as possible.
 
@@ -1567,13 +1598,13 @@
       \subsection{Topology design}
       \label{sub:uc:enhance:design}
 
-        The GUI console displays the topology in a form of a graph --- with virtual appliances (or switches) as nodes
+        The GUI console displays the topology in the form of a graph --- with virtual appliances (or switches) as nodes
         and connections as edges. With the approach it is easy to visualize the structure of the network so that it can
         be quickly understood and adjusted.
 
         All the essential aspects of the network design are configurable with GUI wizards. The system provides an easy
-        way to set up addressing, routing and quality policies. Also, NFS repository access is integrated. Input data
-        describing the model is validated while being entered by the user. 
+        way to set up addressing, routing and quality policies. Also, appliance repository access is integrated. Input
+        data describing the model is validated while being entered by the user. 
 
 
       \subsection{Infrastructure instantiation}
@@ -1595,7 +1626,7 @@
       \label{sub:uc:enhance:online}
 
         With online modification support it is easy to adjust the system without breaking its operation. The quality
-        policies, for example, already instantiated can be changed, when needed.
+        policies, for example, already instantiated can be changed, whenever needed.
 
         Even more sophisticated control is possible. For example, additional rule-based component could be developed and
         integrated with the system to allow automatic adjustment based on statistical data.
@@ -1605,7 +1636,8 @@
       \label{sub:uc:enhance:monitoring}
 
         Historical data can be accessed. There are customizable usage charts that can display bandwidth usage for
-        policies and interfaces.
+        policies and interfaces. Also, load on the host machine can be monitored to help designer assess which machines
+        to choose when assigning the appliances.
 
 
     \section*{Summary}
