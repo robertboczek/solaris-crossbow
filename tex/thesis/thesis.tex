@@ -255,32 +255,135 @@
   \chapter{Requirements analysis}
     
     \section*{Chapter overview}
+	
+		This chapter focuses mainly on earlier conducted requirements analysis and extracted conclusions. Established goal 
+		was to create system supporting creation of any requested, fully isolated network structure with 
+		virtual network elements ( etherstubs, VNics ) and demanded resources ( zones ) recovered from selected ( previously
+		prepared ) snapshots and fully monitored network traffic. This target implicated necessity of creating functional 
+		and non-functional specification in order to avoid ambiguities and skipping essential services. All these issues 
+		are described and considered in the first two chapters.		
+		
+		Section \ref{sec:req:func} presents requested behaviors (functions or services) of the system that
+			support user goals, tasks or activities.
+			
+		Section \ref{sec:req:nonfunc} describes adopted non-functional requirements towards newly created system.
+		
 
     \section{Functional requirements}
+	
+		\label{sec:req:func}
+		
+		All services of the system have been divided into three groups: accounting, discovery and instantiation.
+                These division have been performed based on the quality of the functionality.  
 
       \subsection{Instantiation}
+		\label{sec:req:func:inst}
+	  
+		Most of functionalities neccessary during process of network instantiation ( also alteration , deletion ) would be:
+		
+		\begin{itemize}
+			\item{Creation any requested virtual network element: etherstub, VNic, }
+			\item{Creation any requested resource from available snapshots, }
+			\item{Assignation any number of links to resource, }
+			\item{Resource ( zone ) routing table modification, }
+			\item{Defining QoS limits to links and flows, }
+			\item{Modification or deletion of each property and element previously mentioned. }
+		\end{itemize}
+		
 
       \subsection{Discovery}
+		\label{sec:req:func:disc}
+		
+		During the process of discovery following functionalities should be accessible:
+		
+		\begin{itemize}
+			\item{Discovery and assembly of links, resources from the same project, }
+			\item{Detection of links assigned to a specified resource, }
+			\item{Discovery of flows attached to a link. }
+		\end{itemize}
+
 
       \subsection{Accounting}  % kz: raczej Monitoring
-
+		\label{sec:req:func:acc}
+		
+		In terms of accounting, following functionalities for properties and elements should be provided:
+		
+		\begin{itemize}
+			\item{Monitoring of each link's bandwidth, }
+			\item{Checking each link's, flow's network traffic ( input / output ) statistics, }
+			\item{Displaying network traffic load chart of selected link or flow from specified time period. }
+		\end{itemize}
 
     \section{Non-functional requirements}
+	
+		\label{sec:req:nonfunc}
+	
+		Non-functional requirements also called \textbf{qualities} of a system could be distincted between 
+		the executing system and the work products ( created during system development ). Executing system are related
+		to user goals and are refered as run-time qualities, whereas work products are driven by the development organization’s
+		goals and refered as development-time qualities \cite{nonfunctional}. 
+
+                \medskip
+		
+		Requested run-time qualities:
+		\begin{itemize}
+			\item{usability - usage should be intuitive, system should be efficient,}
+			\item{operational scalability - system should support additional users or sites, }
+			\item{configurability - configurable properties should be easy to set,}
+			\item{adaptable - ability to adapt to changing conditions ( adding removing new nodes ),}
+			\item{fault tolerance - system should be resistant for minor erros.}
+		\end{itemize}
+		
+		\medskip
+		
+		Requested development-time qualities:
+		\begin{itemize}
+			\item{evolvability - support for new functionalities or adjustement to new technologies,}
+			\item{extensibility - ability to add new earlier unspecified functionalities, }
+			\item{composability - system should be created in form of composable components, }
+			\item{reusability - ability to (re)use in future systems.}
+		\end{itemize}
+		
 
     \section{Underlying environment characteristics}
+	
+		Underlying environment should be a composition of a fully independent nodes. However, a few requisites
+		must be fulfilled by each node:
+		
+		\begin{itemize}
+			\item{Each OS should have the crossbow functionality provided, }
+			\item{Network accessibility between nodes must be ensured. }
+		\end{itemize}
+		
+	%TODO ta czesc tak srednio mi tu pasuje!!!
 
     \section{General approach and problems it imposes}
+	
+		Selected approach towards problem was 
 
       \subsection{Load balancing / Deployment}
+	  
+		Although at first load balancing was planned, created system does not support it. This matter is further 
+		discussed in \textbf{'Further work'} section in the \textbf{Summary} chapter.
+		
+		In terms of deployment, potential problems are easy to indicate. Use of Jims functionality and related JMX 
+		features stresses the lack of transactional support. Although in our system in case of errors introduced changes
+		are usually removed, there is no guarantee that it will acutally happen. Due to possible further errors caused during 
+		restoring previous system state. In that case these partial changes must be removed manually from each node
+		involved in this failing deployment attempt which generally imposes specialistic knowledge of underlying environment. 
 
       \subsection{Infrastructure isolation}
+	  
+		Network isolation is provided thanks to the Crossbow functionality which is more accuratly described in the chapter
+		about Solaris OS features. 
+		
+		%TODO what about resource isolation CPU/MEM ? 
 
       \subsection{Broadcast domain preservation}
+	  
+		
 
       \subsection{Constraints}
-
-
-    \section*{Summary}
 
 
   \chapter{Solaris 10, Solaris 11 and OpenSolaris}
@@ -957,9 +1060,11 @@
 	Section \ref{sec:impl:env} informs about implementational environment aspects like requested operating system, libraries presence or
 	necessary programs to be build and installed. 
 
-    Section \ref{sec:impl:comp} describes in detail created components facilitating crossbow usage.
+        Section \ref{sec:impl:comp} describes in detail created components facilitating crossbow usage.
 
-    Section \ref{sec:impl:low} lists low level functions used in created system.
+        Section \ref{sec:impl:model} outlines domain model transformation details.
+
+        Section \ref{sec:impl:low} lists low level functions used in created system.
 	
 	Section \ref{sec:impl:build} presents all necessary steps required for platform build completion.
 
@@ -1086,12 +1191,112 @@
           \end{center}
           \caption{Jims-crossbow components, shared libraries and crossbow native libraries relationship}
         \end{figure} 
-    \section{Domain model transformation details}
-        
 
+
+    \section{Domain model transformation details}
+        \label{sec:impl:model}
+	
+		To allow conversion between gui designed network structure (like in the figure below) to zones and crossbow
+		entities on the server side new domain transformation model was proposed. 
+		
+		\begin{figure}[H]
+          \begin{center}
+            \includegraphics[width=0.9\textwidth]{img/impl/network_structure_example.png}
+          \end{center}
+          \caption{Example of a network structure to be converted to object model}
+        \end{figure} 
+		
+		In general four main class types were distinguished: Appliance, Switch, Interface, Policy. 
+		
+		\medskip
+		
+		\textbf{Appliance} is an equivalent of a zone to be created from one of existing snapshots. Appliances could be also
+		extended to Routers (with assigned static routes) which on the server side are seen as two appliances created under 
+		different etherstubs with routing tables modified and assigned interfaces enabling connectivity between appliances
+		working under these two etherstubs. 		
+		
+		\textbf{Switch} is implied as crossbow etherstub.
+		
+		\textbf{Interface} is converted to VNic and assigned to created zones. 
+		
+		\textbf{Policy} should be seen as a demand towards desired network traffic shape. Policy has assigned 
+		Flow Object with detailed values and flow type. These objects could be assigned directly to exisitng
+		interfaces or exist as detached crossbow flows.
+		
+		\begin{figure}[H]
+          \begin{center}
+            \includegraphics[width=1.2\textwidth, angle=90]{img/impl/resource-object-model.png}
+          \end{center}
+          \caption{Resource object transformation model}
+        \end{figure}
+		
+		\begin{figure}[H]
+          \begin{center}
+            \includegraphics[width=0.9\textwidth]{img/impl/resource-object-model-example.png}
+          \end{center}
+          \caption{Resource object transformation model example}
+        \end{figure}
+		
+		Created model was designed in order to comply requirement of multiple deployments so that only introduced
+		changes were applied in already deployed project. Due to this issue to apply changes \textbf{instantiate(ObjectModel objModel, Actions actions)}
+		method from \textbf{SupervisorMBean} must be invoked where ObjectModel class aggregates all domain model objects and
+		Actions object encapsulates all actions to be done to every single domain model object. These actions would be:
+		\begin{itemize}
+			\item{ADD - adds new resource,}
+			\item{REM - removes this resource,}
+			\item{UPD - updates existing resource,}
+			\item{NOOP - no changes are applied.}
+		\end{itemize}
 
     \section{Low-level functions access}
 	\label{sec:impl:low}
+	
+		Jims layered architecture implicated the demand for an approach towards accessing low-level funtions. 
+		In developed application these approaches were adjusted to existing conditions so that for accessing functions from 
+		shared libraries JNA ( Java Native Access ) was used and for doing more complex operations on low-level 
+		scripts were written and Java ProcessBuilder invoked. Created jims-crossbow module containes shared library 
+		allowing CRUD operations which subsequently are being accessed by JNA, whereas most of jims low-level access was done
+		through running shell scripts. Although running scripts by ProcessBuilder is faster in some cases accessing
+		native libraries through libraries like JNA or JNI gives more configurational advantage and does not require
+		shell script writting ability.
+		
+		The code below presents abbreviated example of JNA access to native libraries.
+
+		\begin{verbatim}
+		
+		public interface LinkHandle extends Library {
+		
+		        public int set_ip_address(String link, String address);
+			
+		}
+		
+		public class JNALinkHelper implements LinkHelper {
+    
+		        protected LinkHandle handle = null;
+
+		        public static final String LIB_NAME = "libjims-crossbow-native-lib-link-3.0.0.so";
+
+		        /**
+		        * Creates the helper object and initializes underlying handler.
+		        *
+		        * @param libraryPath Path to native library
+		        */
+		        public JNALinkHelper( String libraryPath ) {
+
+		                String filePath = libraryPath + File.separator + LIB_NAME;
+		                handle = ( LinkHandle ) Native.loadLibrary( filePath, LinkHandle.class );
+
+		                handle.init();
+		        }
+			
+		        public int setIpAddress(String link, String ipAddress)
+                                 throws LinkException, ValidationException {
+
+		                return handle.set_ip_address(link, ipAddress);
+
+		        }
+		}
+		\end{verbatim}
 
 
     \section{Building and running the platform}
