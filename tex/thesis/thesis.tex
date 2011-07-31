@@ -258,8 +258,8 @@
 	
 		This chapter focuses mainly on earlier conducted requirements analysis and extracted conclusions. Established goal 
 		was to create system supporting creation of any requested, fully isolated network structure with 
-		virtual network elements ( etherstubs, VNics ) and demanded resources ( zones ) recovered from selected ( previously
-		prepared ) snapshots and fully monitored network traffic. This target implicated necessity of creating functional 
+		virtual network elements and demanded resources recovered from selected ( previously
+		prepared ) repository and fully monitored network traffic. This target implicated necessity of creating functional 
 		and non-functional specification in order to avoid ambiguities and skipping essential services. All these issues 
 		are described and considered in the first two chapters.		
 		
@@ -279,14 +279,14 @@
       \subsection{Instantiation}
 		\label{sec:req:func:inst}
 	  
-		Most of functionalities neccessary during process of network instantiation ( also alteration , deletion ) would be:
+		Most of functionalities neccessary during process of network instantiation ( also alteration and \\ deletion ) would be:
 		
 		\begin{itemize}
-			\item{Creation any requested virtual network element: etherstub, VNic, }
-			\item{Creation any requested resource from available snapshots, }
+			\item{Creation of any requested virtual network element, }
+			\item{Creation of any requested resource from repository, }
 			\item{Assignation any number of links to resource, }
-			\item{Resource ( zone ) routing table modification, }
-			\item{Defining QoS limits to links and flows, }
+			\item{Resource routing table modification, }
+			\item{Defining QoS limits to links and flows ( limits traffic assigned to specific network traffic \\ type ), }
 			\item{Modification or deletion of each property and element previously mentioned. }
 		\end{itemize}
 		
@@ -1221,7 +1221,8 @@
 		
 		\textbf{Policy} should be seen as a demand towards desired network traffic shape. Policy has assigned 
 		Flow Object with detailed values and flow type. These objects could be assigned directly to exisitng
-		interfaces or exist as detached crossbow flows.
+		interfaces or exist as detached crossbow flows. Four types of flows have been created: AnyFilter, PortFilter, 
+                TransportFilter, IpFilter. Distinction between filters have been to allow easier network traffic classification. 
 		
 		\begin{figure}[H]
           \begin{center}
