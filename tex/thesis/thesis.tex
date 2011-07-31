@@ -1389,8 +1389,7 @@
     operation of the policies.
 
     Section \ref{sec:uc:enhance} lists the advantages of using the proposed system and approach to create, manage and
-    monitor QoS-aware virtual topologies. Highlighted are the aspects that are particularly helpful when preparing the
-    case study.
+    monitor QoS-aware virtual topologies. Aspects particularly helpful when preparing the case study are highlighted.
 
 
     \section{Scenario description}
@@ -1584,7 +1583,7 @@
         Darwin Streaming Server and thttpd HTTP server installed) and client appliances (mplayer compiled with RTP
         streaming support enabled). All the appliances are instantiated on a single physical host.
 
-        Present are three subnetworks:
+        There are three subnetworks:
 
         \begin{itemize}
           \item 1.1.1.0/24 contains only the server appliance (addressed 1.1.1.2),
@@ -1773,20 +1772,20 @@
         \end{figure}
 
 
-      \subsection{Client-dependent quality of service}
-      \label{sub:uc:client}
+      % \subsection{Client-dependent quality of service}
+      % \label{sub:uc:client}
 
-        A VOD client is downloading a movie. Two clients connect to the streaming server and request a number of video
-        streams. One of the streaming clients has low priority assigned, the other one is high priority. RTP streaming
-        gets most of the bandwidth and high priority client is favoured over the low priority one.
+      %   A VOD client is downloading a movie. Two clients connect to the streaming server and request a number of video
+      %   streams. One of the streaming clients has low priority assigned, the other one is high priority. RTP streaming
+      %   gets most of the bandwidth and high priority client is favoured over the low priority one.
 
-        \begin{figure}[H]
-          \begin{center}
-            \includegraphics[width=.7\textwidth]{img/test-case/exp-stream-client.png}
-          \end{center}
+      %   \begin{figure}[H]
+      %     \begin{center}
+      %       \includegraphics[width=.7\textwidth]{img/test-case/exp-stream-client.png}
+      %     \end{center}
 
-          \caption{Distribution of available bandwidth between streaming clients}
-        \end{figure}
+      %     \caption{Distribution of available bandwidth between streaming clients}
+      %   \end{figure}
 
 
     \section{Enhancements provided by the solution}
