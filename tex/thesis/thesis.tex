@@ -1007,23 +1007,29 @@
     \section*{Chapter overview}
 
       The \nameref{sec:domain-model} section describes the transformations performed by the system's components in order
-      to instantiate/deploy an object model. These include simple one-node instantiation as well as more complex
+      to instantiate (deploy) an object model. These include simple one-node instantiation as well as more complex
       multi-node instantiations.
 
       % tutaj tez kilka slow i JIMSie i integracji + co to daje
 
-        \begin{figure}[H]
-          \begin{center}
-            \includegraphics[width=0.8\textwidth]{img/architecture/layered_architecture.pdf}
-          \end{center}
-          \caption{Layered system architecture}
-        \end{figure}  
-
 
     \section{High-level design}
 
+      \begin{figure}[H]
+        \begin{center}
+          \includegraphics[width=\textwidth]{img/architecture/scope.pdf}
+        \end{center}
+      \end{figure}
+
 
     \section{System components and their responsibilities}
+
+      \begin{figure}[H]
+        \begin{center}
+          \includegraphics[width=\textwidth]{img/architecture/iaas-components.pdf}
+        \end{center}
+      \end{figure}
+
 
       \subsection{Assigner}
 
@@ -1033,6 +1039,15 @@
 
 
     \section{Crossbow resources instrumentation}
+
+      % TODO pgf/tikz
+
+      \begin{figure}[H]
+        \begin{center}
+          \includegraphics[width=0.8\textwidth]{img/architecture/layered_architecture.pdf}
+        \end{center}
+        \caption{Layered system architecture}
+      \end{figure}  
 
 
     \section{Domain model and data flows} \label{sec:domain-model}
@@ -1055,111 +1070,118 @@
     
     \section*{Chapter overview}
 	
-	This chapter focuses mainly on implementational details, especially on most interesting aspects of our system.
+      This chapter focuses mainly on implementational details, especially on most interesting aspects of our system.
 		
-	Section \ref{sec:impl:env} informs about implementational environment aspects like requested operating system, libraries presence or
-	necessary programs to be build and installed. 
+      Section \ref{sec:impl:env} informs about implementational environment aspects like requested operating system,
+      libraries presence or necessary programs to be build and installed. 
 
-        Section \ref{sec:impl:comp} describes in detail created components facilitating crossbow usage.
+      Section \ref{sec:impl:comp} describes in detail created components facilitating crossbow usage.
 
-        Section \ref{sec:impl:model} outlines domain model transformation details.
+      Section \ref{sec:impl:model} outlines domain model transformation details.
 
-        Section \ref{sec:impl:low} lists low level functions used in created system.
+      Section \ref{sec:impl:low} lists low level functions used in created system.
 	
-	Section \ref{sec:impl:build} presents all necessary steps required for platform build completion.
+      Section \ref{sec:impl:build} presents all necessary steps required for platform build completion.
+
 
     \section{Implementation environment}
-	\label{sec:impl:env}
-	
-		JIMS Extensions for Resource Monitoring and Management of Solaris 10 provides general architecture for monitoring and management
-		applications written in Java. 
-	
-		JIMS architecture is generally based on JMX ( Java Management Extensions ) - technology for distributed resource management. These managed 
-		resources in JMX are represented by MBeans which are simple Java objects registered at MBean Server under specific ObjectName. \cite{jims}
-	
-		\begin{figure}[H]
-          \begin{center}
-            \includegraphics[width=0.9\textwidth]{img/jims/jmx.png}
-          \end{center}
-          \caption{JMX architecture \cite{jims}}
-		\end{figure}
-	
-		JMX provides also services such as:
-		\begin{itemize}
-			\item{Notifications,}
-			\item{MLet ( downloading dynamic modules ).}
-		\end{itemize}
-	
-		JIMS ( JMX based Infrastructure Monitoring System ) supports monitoring and management under both Linux and Solaris platforms. 
-		Due to Jims features such as: easy maintenance ( automatic modules downloading ), extensibility ( possibility of adding additional modules ) integrating 
-		with Jims newly	developed module ( jims-crossbow ) was quite an easy task. \cite{jims}
-	
-		\begin{figure}[H]
-          \begin{center}
-            \includegraphics[width=0.9\textwidth]{img/jims/jims.png}
-          \end{center}
-          \caption{JIMS architecture \cite{jims}}
-		\end{figure}
-	 
-		Jims services( MBeans ) enabling creating, reading and changing properties of zones and projects were extensively used in our system
-		during deploying ( creating ) requested network structure. For more information about JIMS project please refer to the bibliography.	
-	
-		\medskip
-	
-		For the purpose of this paper two applications were implemented:
-	
-		\begin{itemize}
-			\item{Jims module for crossbow,}
-			\item{Gui application.}
-		\end{itemize}
-	
-		\medskip
-	
-		In case of jims-crossbow module the implementation environment must consist:
-		\begin{itemize}
-			\item{gcc compiler - for building jims-crossbow shared librarires,}
-			\item{dladm, flowadm libraries.}
-		\end{itemize}
-	
-		The demand for crossbow libraries ( flowadm, dladm ) implicated that implementation environment must have been solaris 11 
-		or any other system supporting crossbow.
-	
-		Gui application was developed in java using swt and swing graphic libraries. Project was managed with maven and thanks to 
-		maven profiles feature can be build and run on operating systems like:
-		\begin{itemize}
-			\item{Solaris,}
-			\item{Linux x86,}
-			\item{Windows x86.}
-		\end{itemize}
-		Swt core libraries for these operating systems were provided in repository, so the only requirements is to have one
-		of the already mentioned operating system and installed: java se 1.6 and maven 2.x.
+    \label{sec:impl:env}
 
+      JIMS Extensions for Resource Monitoring and Management of Solaris 10 provides general architecture for monitoring
+      and management applications written in Java. 
+
+      JIMS architecture is generally based on JMX ( Java Management Extensions ) - technology for distributed resource
+      management. These managed resources in JMX are represented by MBeans which are simple Java objects registered at
+      MBean Server under specific ObjectName \cite{jims}.
+    
+      \begin{figure}[H]
+        \begin{center}
+          \includegraphics[width=0.9\textwidth]{img/jims/jmx.png}
+        \end{center}
+        \caption{JMX architecture \cite{jims}}
+      \end{figure}
+	
+      JMX provides also services such as:
+
+      \begin{itemize}
+        \item Notifications,
+        \item MLet (downloading dynamic modules).
+      \end{itemize}
+	
+      JIMS (JMX based Infrastructure Monitoring System) supports monitoring and management under both Linux and Solaris
+      platforms.  Due to Jims features such as: easy maintenance (automatic modules downloading), extensibility
+      (possibility of adding additional modules) integrating with Jims newly	developed module (jims-crossbow) was quite
+      an easy task \cite{jims}.
+    
+      \begin{figure}[H]
+        \begin{center}
+          \includegraphics[width=0.9\textwidth]{img/jims/jims.png}
+        \end{center}
+        \caption{JIMS architecture \cite{jims}}
+      \end{figure}
+	 
+      Jims services(MBeans) enabling creating, reading and changing properties of zones and projects were extensively
+      used in our system during deploying (creating) requested network structure. For more information about JIMS
+      project please refer to the bibliography.	
+    
+      \medskip
+	
+      For the purpose of this paper two applications were implemented:
+	
+      \begin{itemize}
+        \item Jims module for crossbow,
+        \item GUI application.
+      \end{itemize}
+	
+      \medskip
+	
+      In case of jims-crossbow module the implementation environment must consist:
+
+      \begin{itemize}
+        \item gcc compiler - for building jims-crossbow shared librarires,
+        \item dladm, flowadm libraries.
+      \end{itemize}
+	
+      The demand for crossbow libraries (flowadm, dladm) implicated that implementation environment must have been
+      Solaris 11 or any other system supporting crossbow.
+    
+      GUI application was developed in java using swt and swing graphic libraries. Project was managed with maven and
+      thanks to maven profiles feature can be build and run on operating systems like:
+
+      \begin{itemize}
+        \item Solaris,
+        \item Linux x86,
+        \item Windows x86.
+      \end{itemize}
+
+      SWT core libraries for these operating systems were provided in repository, so the only requirements is to have
+      one of the already mentioned operating system and installed: Java se 1.6 and maven 2.x.
 		
 		
     \section{Crossbow components implementational details}
-	\label{sec:impl:comp}
+    \label{sec:impl:comp}
 	
-		In terms of crossbow components two kinds of them have been distinguished:
-		
-		\begin{itemize}
-			\item{Managers,}
-			\item{Entities.}
-		\end{itemize}
-		
-		Managers basically provide operations for entity discovery and general management. The following managers have 
-		been created:
-		\begin{itemize}
-			\item{VNicManager,}
-			\item{EtherstubManager,}
-			\item{FlowManager.}
-		\end{itemize}
-		
-		Another component type is entity which is basically equivalent of single crossbow entity like VNic, Etherstub. These entities
-		appear as MBean's and are registed at MBeanServer's. Each bean contains basic information about entity like name, assigned 
-		properties and other attributes depending on their type. Operations for altering properties, parameters, ip address are 
-		provided as well.
-		
-		Three figures below depicts in detail each manager and their corresponding entity.
+      In terms of crossbow components two kinds of them have been distinguished:
+
+      \begin{itemize}
+        \item Managers,
+        \item Entities.
+      \end{itemize}
+
+      Managers basically provide operations for entity discovery and general management. The following managers have
+      been created:
+
+      \begin{itemize}
+        \item VNicManager,
+        \item EtherstubManager,
+        \item FlowManager.
+      \end{itemize}
+
+      Another component type is entity which is basically equivalent of single crossbow entity like VNic, Etherstub.
+      These entities appear as MBeans and are registered at MBean servers. Each bean contains basic information about
+      entity like name, assigned properties and other attributes depending on their type. Operations for altering
+      properties, parameters, ip address are provided as well. Three figures below depicts in detail each manager and
+      their corresponding entity.
 
         \begin{figure}[H]
           \begin{center}
@@ -1182,163 +1204,169 @@
           \caption{Flow class diagram}
         \end{figure}        
 
-		Due to the fact that managers and entities have been separated and that each entity is an individual MBean
-		these entities can be accessed not only from java code but also be viewed and modified from jconsole.
-		
-		\begin{figure}[H]
-          \begin{center}
-            \includegraphics[width=0.9\textwidth]{img/impl/crossbowLibsDiagram.png}
-          \end{center}
-          \caption{Jims-crossbow components, shared libraries and crossbow native libraries relationship}
-        \end{figure} 
+      Due to the fact that managers and entities have been separated and that each entity is an individual MBean these
+      entities can be accessed not only from java code but also be viewed and modified from jconsole.
+
+      \begin{figure}[H]
+        \begin{center}
+          \includegraphics[width=0.9\textwidth]{img/impl/crossbowLibsDiagram.png}
+        \end{center}
+        \caption{Jims-crossbow components, shared libraries and crossbow native libraries relationship}
+      \end{figure} 
 
 
     \section{Domain model transformation details}
-        \label{sec:impl:model}
-	
-		To allow conversion between gui designed network structure (like in the figure below) to zones and crossbow
-		entities on the server side new domain transformation model was proposed. 
-		
-		\begin{figure}[H]
-          \begin{center}
-            \includegraphics[width=0.9\textwidth]{img/impl/network_structure_example.png}
-          \end{center}
-          \caption{Example of a network structure to be converted to object model}
-        \end{figure} 
-		
-		In general four main class types were distinguished: Appliance, Switch, Interface, Policy. 
-		
+    \label{sec:impl:model}
+
+      To allow conversion between gui designed network structure (like in the figure below) to zones and crossbow
+      entities on the server side new domain transformation model was proposed. 
+      
+      \begin{figure}[H]
+        \begin{center}
+          \includegraphics[width=0.9\textwidth]{img/impl/network_structure_example.png}
+        \end{center}
+        \caption{Example of a network structure to be converted to object model}
+      \end{figure} 
+
+      In general four main class types were distinguished: Appliance, Switch, Interface, Policy.
+
 		\medskip
-		
-		\textbf{Appliance} is an equivalent of a zone to be created from one of existing snapshots. Appliances could be also
-		extended to Routers (with assigned static routes) which on the server side are seen as two appliances created under 
-		different etherstubs with routing tables modified and assigned interfaces enabling connectivity between appliances
-		working under these two etherstubs. 		
-		
-		\textbf{Switch} is implied as crossbow etherstub.
-		
-		\textbf{Interface} is converted to VNic and assigned to created zones. 
-		
-		\textbf{Policy} should be seen as a demand towards desired network traffic shape. Policy has assigned 
-		Flow Object with detailed values and flow type. These objects could be assigned directly to exisitng
-		interfaces or exist as detached crossbow flows.
-		
-		\begin{figure}[H]
-          \begin{center}
-            \includegraphics[width=1.2\textwidth, angle=90]{img/impl/resource-object-model.png}
-          \end{center}
-          \caption{Resource object transformation model}
-        \end{figure}
-		
-		\begin{figure}[H]
-          \begin{center}
-            \includegraphics[width=0.9\textwidth]{img/impl/resource-object-model-example.png}
-          \end{center}
-          \caption{Resource object transformation model example}
-        \end{figure}
-		
-		Created model was designed in order to comply requirement of multiple deployments so that only introduced
-		changes were applied in already deployed project. Due to this issue to apply changes \textbf{instantiate(ObjectModel objModel, Actions actions)}
-		method from \textbf{SupervisorMBean} must be invoked where ObjectModel class aggregates all domain model objects and
-		Actions object encapsulates all actions to be done to every single domain model object. These actions would be:
-		\begin{itemize}
-			\item{ADD - adds new resource,}
-			\item{REM - removes this resource,}
-			\item{UPD - updates existing resource,}
-			\item{NOOP - no changes are applied.}
-		\end{itemize}
+
+      \textbf{Appliance} is an equivalent of a zone to be created from one of existing snapshots. Appliances could be
+      also extended to Routers (with assigned static routes) which on the server side are seen as two appliances created
+      under different etherstubs with routing tables modified and assigned interfaces enabling connectivity between
+      appliances working under these two etherstubs.
+
+      \textbf{Switch} is implied as crossbow etherstub.
+
+      \textbf{Interface} is converted to VNic and assigned to created zones.
+
+      \textbf{Policy} should be seen as a demand towards desired network traffic shape. Policy has assigned Flow Object
+      with detailed values and flow type. These objects could be assigned directly to existing interfaces or exist as
+      detached crossbow flows.
+
+      \begin{figure}[H]
+        \begin{center}
+          \includegraphics[width=1.2\textwidth, angle=90]{img/impl/resource-object-model.png}
+        \end{center}
+        \caption{Resource object transformation model}
+      \end{figure}
+
+      \begin{figure}[H]
+        \begin{center}
+          \includegraphics[width=0.9\textwidth]{img/impl/resource-object-model-example.png}
+        \end{center}
+        \caption{Resource object transformation model example}
+      \end{figure}
+
+      Created model was designed in order to comply requirement of multiple deployments so that only introduced changes
+      were applied in already deployed project. Due to this issue to apply changes \textbf{instantiate(ObjectModel
+      objModel, Actions actions)} method from \textbf{SupervisorMBean} must be invoked where ObjectModel class
+      aggregates all domain model objects and Actions object encapsulates all actions to be done to every single domain
+      model object. These actions would be:
+
+      \begin{itemize}
+        \item ADD - adds new resource,
+        \item REM - removes this resource,
+        \item UPD - updates existing resource,
+        \item NOOP - no changes are applied.
+      \end{itemize}
 
     \section{Low-level functions access}
-	\label{sec:impl:low}
-	
-		Jims layered architecture implicated the demand for an approach towards accessing low-level funtions. 
-		In developed application these approaches were adjusted to existing conditions so that for accessing functions from 
-		shared libraries JNA ( Java Native Access ) was used and for doing more complex operations on low-level 
-		scripts were written and Java ProcessBuilder invoked. Created jims-crossbow module containes shared library 
-		allowing CRUD operations which subsequently are being accessed by JNA, whereas most of jims low-level access was done
-		through running shell scripts. Although running scripts by ProcessBuilder is faster in some cases accessing
-		native libraries through libraries like JNA or JNI gives more configurational advantage and does not require
-		shell script writting ability.
-		
-		The code below presents abbreviated example of JNA access to native libraries.
+    \label{sec:impl:low}
 
-		\begin{verbatim}
-		
-		public interface LinkHandle extends Library {
-		
-		        public int set_ip_address(String link, String address);
-			
-		}
-		
-		public class JNALinkHelper implements LinkHelper {
-    
-		        protected LinkHandle handle = null;
+      JIMS layered architecture implicated the demand for an approach towards accessing low-level funtions. In developed
+      application these approaches were adjusted to existing conditions so that for accessing functions from shared
+      libraries JNA (Java Native Access) was used and for doing more complex operations on low-level scripts were
+      written and Java ProcessBuilder invoked. Created jims-crossbow module containes shared library allowing CRUD
+      operations which subsequently are being accessed by JNA, whereas most of jims low-level access was done through
+      running shell scripts. Although running scripts by ProcessBuilder is faster in some cases accessing native
+      libraries through libraries like JNA or JNI gives more configurational advantage and does not require shell script
+      writing ability.
 
-		        public static final String LIB_NAME = "libjims-crossbow-native-lib-link-3.0.0.so";
+      Listing \ref{lst:impl:low:jna} presents abbreviated example of JNA access to native libraries. \\
 
-		        /**
-		        * Creates the helper object and initializes underlying handler.
-		        *
-		        * @param libraryPath Path to native library
-		        */
-		        public JNALinkHelper( String libraryPath ) {
-
-		                String filePath = libraryPath + File.separator + LIB_NAME;
-		                handle = ( LinkHandle ) Native.loadLibrary( filePath, LinkHandle.class );
-
-		                handle.init();
-		        }
-			
-		        public int setIpAddress(String link, String ipAddress)
-                                 throws LinkException, ValidationException {
-
-		                return handle.set_ip_address(link, ipAddress);
-
-		        }
-		}
-		\end{verbatim}
+      \noindent
+      \begin{minipage}{\textwidth}
+        \begin{lstlisting}[caption={Native library access with JNA},label={lst:impl:low:jna},language=Java]
+        
+        public interface LinkHandle extends Library {
+          public int set_ip_address(String link, String address);
+        }
+        
+        public class JNALinkHelper implements LinkHelper {
+        
+          protected LinkHandle handle = null;
+        
+          public static final String LIB_NAME
+            = "libjims-crossbow-native-lib-link-3.0.0.so";
+        
+          /**
+           * Creates the helper object and initializes underlying handler.
+           *
+           * @param libraryPath Path to native library
+           */
+          public JNALinkHelper(String libraryPath) {
+            String filePath = libraryPath + File.separator + LIB_NAME;
+            handle = (LinkHandle) Native.loadLibrary(filePath,
+                                                     LinkHandle.class);
+        
+            handle.init();
+          }
+          
+          public int setIpAddress(String link, String ipAddress)
+            throws LinkException, ValidationException {
+        
+            return handle.set_ip_address(link, ipAddress);
+          }
+        }
+        \end{lstlisting}
+      \end{minipage}
 
 
     \section{Building and running the platform}
-	\label{sec:impl:build}
+    \label{sec:impl:build}
 
-        		To build and run the platform the following prerequisits are required:
-		\begin{itemize}
-			\item{Java SE 1.6, maven,}
-			\item{jims sources downloaded,}
-			\item{jims-crossbow module downloaded from \\ https://github.com/robertboczek/solaris\-crossbow/tree/master/code.}
-		\end{itemize}
-		
-		Afterwards jims project must be built. Detailed description of how to build jims is in \textbf{README} file located
-		in the main catalog of jims sources. One of the most common problems are missing jars that unfortunately must be 
-		manually downloaded and installed in the local repository.
-		
-		
-		Subsequently jims-crossbow module should be copied to the main folder containing jims and then build. The script 
-		\textbf{inst-crossbow-lib.sh} must be	later executed to copy shared libraries *.so files to /usr/lib folder.
-		
-		If everything went well another step is running jims :
-		\begin{itemize}
-			\item{jims-gateway: .../jims-gateway/bin/jims-agent.sh [-b host\_address] start|stop|restart,}
-			\item{jims-agent: .../jims-agent/bin/jims-agent.sh [-b host\_address] start|stop|restart.}
-		\end{itemize}
-		
-		We should run just single jims-gateway and on the rest nodes as many jims-agents as we require. For more information about \textbf{jims} 
-		and its architecture please refer to:
-		%TODO znalezc jakis tutorial do jims i opis architektury
-		
-		
-		If jims-agent or jims-gateway did not started it is worth to see logs files, located respectively at target/.../jims-agent/var/jims/log/agent.log
-		and target/.../jims-gateway/var/jims/log/agent.log
-		
-		It also recommended to have logs opened during jims start to see whether any exception was thrown ( \textbf{tail -f target/.../jims\-gateway/var/jims/log/agent.log} )
-		
-		Jims has jmx-based architecture so each jims-agent and jims-gateway can be accessed through jconsole. In order to do that start 
-		jconsole, select remote process and enter type: \\ \textbf{service:jmx:rmi:///jndi/rmi://address:port/jims} where \textbf{address} and 
-		\textbf{port} is concrete address and port under which jims was started. \textbf{JConsole} allows browsing registered mbeans and 
-		performing CRUD operations. Especially in case of the crossbow module it allows these operations as
-		the figure below presents:
-		
+      To build and run the platform the following prerequisites are required:
+
+      \begin{itemize}
+        \item Java SE 1.6, maven,
+        \item jims sources downloaded,
+        \item jims-crossbow module downloaded from \\ https://github.com/robertboczek/solaris\-crossbow/tree/master/code.
+      \end{itemize}
+
+      Afterwards JIMS project must be built. Detailed description of how to build JIMS is in \textbf{README} file
+      located in the main catalog of jims sources. One of the most common problems are missing jars that unfortunately
+      must be manually downloaded and installed in the local repository.
+
+      Subsequently jims-crossbow module should be copied to the main folder containing jims and then build. The script
+      \textbf{inst-crossbow-lib.sh} must be	later executed to copy shared libraries *.so files to /usr/lib folder.
+
+      If everything went well another step is running JIMS:
+
+      \begin{itemize}
+        \item jims-gateway: .../jims-gateway/bin/jims-agent.sh [-b host\_address] start|stop|restart,
+        \item jims-agent: .../jims-agent/bin/jims-agent.sh [-b host\_address] start|stop|restart.
+      \end{itemize}
+
+      We should run just single jims-gateway and on the rest nodes as many jims-agents as we require. For more
+      information about \textbf{jims} and its architecture please refer to:
+
+      % TODO znalezc jakis tutorial do jims i opis architektury
+
+
+      If jims-agent or jims-gateway did not started it is worth to see logs files, located respectively at
+      target/.../jims-agent/var/jims/log/agent.log and target/.../jims-gateway/var/jims/log/agent.log
+
+      It also recommended to have logs opened during JIMS start to see whether any exception was thrown (\textbf{tail
+      -f target/.../jims\-gateway/var/jims/log/agent.log})
+
+      JIMS has JMX-based architecture so each jims-agent and jims-gateway can be accessed through jconsole. In order to do that start 
+      jconsole, select remote process and enter type: \\ \textbf{service:jmx:rmi:///jndi/rmi://address:port/jims} where \textbf{address} and 
+      \textbf{port} is concrete address and port under which jims was started. \textbf{JConsole} allows browsing registered mbeans and 
+      performing CRUD operations. Especially in case of the crossbow module it allows these operations as
+      the figure below presents:
+
 		\begin{figure}[H]
                   \begin{center}
                     \includegraphics[width=1.0\textwidth]{img/impl/jconsole.png}
@@ -1346,7 +1374,7 @@
                   \caption{The Crossbow module registered MBeans example}
                 \end{figure}
 		
-		To simplify working with our system gui application was created. It is located in jims/jims-crossbow/jims-crossbow-gui catalog. Application 
+		To simplify working with our system GUI application was created. It is located in jims/jims-crossbow/jims-crossbow-gui catalog. Application 
 		may be imported to eclipse and then build and run or build using maven (\textbf{ mvn assembly:assembly }) and run 
                 \textbf{java -cp target/jims-crossbow-gui-3.0.0-exe.jar org.jims.modules.crossbow.gui.Gui}
 
@@ -1772,20 +1800,20 @@
         \end{figure}
 
 
-      % \subsection{Client-dependent quality of service}
-      % \label{sub:uc:client}
+      \subsection{Client-dependent quality of service}
+      \label{sub:uc:client}
 
-      %   A VOD client is downloading a movie. Two clients connect to the streaming server and request a number of video
-      %   streams. One of the streaming clients has low priority assigned, the other one is high priority. RTP streaming
-      %   gets most of the bandwidth and high priority client is favoured over the low priority one.
+        A VOD client is downloading a movie. Two clients connect to the streaming server and request a number of video
+        streams. One of the streaming clients has low priority assigned, the other one is high priority. RTP streaming
+        gets most of the bandwidth and high priority client is favoured over the low priority one.
 
-      %   \begin{figure}[H]
-      %     \begin{center}
-      %       \includegraphics[width=.7\textwidth]{img/test-case/exp-stream-client.png}
-      %     \end{center}
+        \begin{figure}[H]
+          \begin{center}
+            \includegraphics[width=.7\textwidth]{img/test-case/exp-all.png}
+          \end{center}
 
-      %     \caption{Distribution of available bandwidth between streaming clients}
-      %   \end{figure}
+          \caption{Distribution of available bandwidth between streaming clients}
+        \end{figure}
 
 
     \section{Enhancements provided by the solution}
