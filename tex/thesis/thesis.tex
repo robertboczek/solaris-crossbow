@@ -61,7 +61,7 @@
 \newcommand{\taskref}[1]{\hyperref[#1]{{\textcolor{Blue}{\textbf{#1}}}}}
 
 % listings settings
-\lstset{captionpos=b,frame=single}
+\lstset{captionpos=b,frame=single,tabsize=2}
 
 % include TikZ styles
 \input{tikz.tex}
@@ -313,8 +313,9 @@
 		\end{itemize}
 
     \section{Non-functional requirements}
-	
 		\label{sec:req:nonfunc}
+
+    % TODO model obiektowy jak najbardziej niezalezny od systemu pod spodem
 	
 		Non-functional requirements also called \textbf{qualities} of a system could be distincted between 
 		the executing system and the work products ( created during system development ). Executing system are related
@@ -1142,6 +1143,11 @@
 
         % TODO seq. diagram
 
+        \noindent
+        \begin{minipage}{\textwidth}
+          \lstinputlisting[caption={Supervisor component public interface},label={lst:arch:iface:supervisor},language=Java]{lst/arch-iface-supervisor.java}
+        \end{minipage}
+
 
       \subsection{Worker}
 
@@ -1149,7 +1155,12 @@
         versa). Workers do not transform the model in any way --- all they do is provide well-defined rules for
         instantiation (also: naming schemes) and discovery. Multiple workers are managed by the supervisor.
 
-        Public interface of worker component is presented in listing \ref{lst:arch:iface:worker}.
+        Public interface of worker component is presented in listing \ref{lst:arch:iface:worker}. \\
+
+        \noindent
+        \begin{minipage}{\textwidth}
+          \lstinputlisting[caption={Worker component public interface},label={lst:arch:iface:worker},language=Java]{lst/arch-iface-worker.java}
+        \end{minipage}
 
 
     \section{Crossbow resources instrumentation}
