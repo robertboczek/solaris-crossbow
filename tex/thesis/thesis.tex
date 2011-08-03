@@ -1016,27 +1016,260 @@
     % \section{The environment}  TODO tutaj? wymagania? kontekst?
 
     % TODO kilka widokow:  jmx (manager+entity), iaas (nad jmx), statystyki
-    % TODO osobny opis do jmx!
 
 
-    % OUR SYSTEM                     +<-- model            <--+
-    %                                v    instantiate         ^  discover
-    % HOST SYSTEM
+    \section{Architecture overview}
+
+      When considered at a very high level, the architecture of the system as a whole is layer-based. There are three
+      main layers, each specifying a set of its own interfaces. The higher the layer is placed in the stack, the more
+      complex interface it exposes.
+
+      The three layers, as depicted in figure \ref{fig:arch:layers}, are:
+
+      \begin{itemize}
+
+        \item Infrastructure management layer
+
+              contains components that help design, instantiate and manage network topologies,
+
+        \item Resource instrumentation layer
+
+              is an abstraction layer over resources provided by the underlying system,
+
+        \item Underlying resources layer
+
+              represents all the resources made available by host operating system.
+
+      \end{itemize}
+
+      All the operations (e.g. topology modification) performed by infrastructure management layer go down the stack
+      and, after proper transformations, result in persistent changes to underlying resources. Conversely, the state of
+      low-level resources can be expressed in terms of the domain model used by the highest layer (discovery process).
+
+      \begin{figure}[H]
+        \begin{center}
+          \begin{tikzpicture}[start chain,
+                              node distance=1mm,
+                              every node/.style={terminal, minimum width=7cm}]
+
+            \node (infr)                 {Infrastructure management};
+            \node (inst) [below=of infr] {Resource instrumentation layer};
+            \node (undr) [below=of inst] {Underlying resources};
+          \end{tikzpicture}
+        \end{center}
+
+        \caption{Layered system architecture}
+        \label{fig:arch:layers}
+      \end{figure}
+
+      % TODO deployment / srodowisko dzialania
 
 
-    \section{High-level design}
+    \section{Crossbow resources instrumentation}
 
-      % TODO opis srodowiska - ,,soft'' + sprzet pod spodem i ich cel
-
-      The specific character of the system --- running in a distributed environment, moderate complexity --- requires
-      proper architectural model. The model should allow to design the elements of the system to be highly cohesive and
-      maintain coupling as loose as possible. Each component has its own well-defined role and exposes a set of
-      operations to interact with others.
-
-      % TODO dodac: system rozproszony, latwe skalowanie
+      The main responsibility of resource instrumentation subsystem is to provide a consistent way to create and manage
+      resources of the underlying operating system. This abstract layer can be further leveraged to build more
+      sophisticated systems on top of it.
+      
+      % Also, there is an abstract mechanism provided that allows to embed
+      % entities that represent the resources in third-party containers (e.g. JMX servers).
 
 
-      \subsection{Main use cases}  % TODO change!
+      \subsection{Separation of concerns}
+
+        There are two classes of objects present at this level --- Entity objects that are abstractions representing
+        resources of specific type and exposing appropriate interfaces, and Manager objects used to perform basic
+        coarse-grained operations (such as creation, deletion, modification) on resources they manage.
+
+        \begin{figure}[H]
+          \begin{center}
+          \end{center}
+
+          \caption{Manager-entity relationship (TODO!)}
+        \end{figure}
+
+        % TODO obrazek manager-entity
+
+
+        \subsubsection{Entity objects}
+
+          Entity objects represent instances of a resource type. Each entity object class exposes an interface to manage
+          the resource it is associated with. Fine-grained management is possible with entity objects --- single
+          properties can be accessed and manipulated.
+
+
+        \subsubsection{Manager objects}
+
+          Each manager subtype is associated with a single class of resources. The subtype can be thought of as a
+          gateway exposing methods to manage collection of resources. The responsibilities of manager objects include
+          resource discovery, creation, modification and removal. Managers maintain lists of resources present in the
+          system and provide ways to access them (as entity objects). The resources can also be published in external repositories.
+
+          % TODO tutaj seq. diagram?
+          % TODO _publisher_ w managerach
+
+
+      \subsection{Layered design}
+
+        \begin{figure}[H]
+          \begin{center}
+            \begin{tikzpicture}[start chain,
+                                node distance=1mm,
+                                every node/.style={terminal, minimum width=4.5cm}]
+
+              % TODO node distance + alignment
+
+              \node (jmx)  [minimum width=9cm]             {Java Management Extensions};
+              \node (midl) [below right=of jmx.south west] {shell scripts};  \node (midr) [right=of midl] {native libraries};
+              \node (lowl) [below=of midl]                 {flowadm, dladm}; \node (lowr) [right=of lowl] {libdladm, libflowadm};
+            \end{tikzpicture}
+          \end{center}
+
+          \caption{Layered system architecture}
+        \end{figure}
+
+        % TODO pgf/tikz
+
+        % \begin{figure}[H]
+        %   \begin{center}
+        %     \includegraphics[width=0.8\textwidth]{img/architecture/layered_architecture.pdf}
+        %   \end{center}
+        %   \caption{}
+        % \end{figure}  
+
+
+      \subsection{Manageable Solaris OS resources}
+
+        % TODO tutaj lista/schemat wszystkiego, czym mozemy zarzadzac przez mbeany
+
+
+    \section{Virtual infrastructure management}
+
+      Virtual infrastructure management system is built on top of the instrumentation layer. Leveraging entity and
+      manager objects, it provides high-level mechanisms to manage and monitor complex network topologies and quality
+      policies associated with them.
+
+
+      \subsection{High-level design}
+
+        % TODO opis srodowiska - ,,soft'' + sprzet pod spodem i ich cel
+
+        The specific character of the system --- running in a distributed environment, moderate complexity --- requires
+        proper architectural model. The model should allow to design the elements of the system to be highly cohesive
+        and maintain coupling as loose as possible. Each component has its own well-defined role and exposes a set of
+        operations to interact with others.
+
+        % TODO dodac: system rozproszony, latwe skalowanie
+
+        \begin{figure}[H]
+          \begin{center}
+            \includegraphics[width=\textwidth]{img/architecture/scope.pdf}
+          \end{center}
+
+          \caption{High-level architectural view}
+          \label{fig:arch:hl}
+        \end{figure}
+
+
+      \subsection{Domain model and data flows}
+      \label{sec:domain-model}
+
+        Created object model allows describing network structure contaning of: switches, resources with attached
+        addressable interfaces and flows with policies. Figure below presents concrete classes and their dependencies.
+        
+
+        \subsubsection{Static data model}
+
+          \begin{figure}[H]
+            \begin{center}
+              \includegraphics[angle=90, height=0.9\textwidth]{img/impl/resource-object-model.png}
+            \end{center}
+            \caption{Resource object model and their relationships}
+          \end{figure}
+
+
+        \subsubsection{Modeling assignments}
+
+
+        \subsubsection{Actions}
+
+          \begin{figure}[H]
+            \begin{center}
+              \includegraphics{img/architecture/actions.png}
+            \end{center}
+
+            \caption{Actions}
+          \end{figure}
+
+
+      \subsection{System components and their responsibilities}
+
+        % TODO interfejsy!
+
+        \begin{figure}[H]
+          \begin{center}
+            \includegraphics[width=\textwidth]{img/architecture/iaas-components.pdf}
+          \end{center}
+        \end{figure}
+
+
+        \subsubsection{Virtual Appliance Repository}
+
+          The main responsibility of Virtual Appliance repository is to maintain the list and provide access to virtual
+          appliances created. It is used in two phases: the design phase to select appliances that are to be deployed,
+          and instantiation phase to serve virtual appliance images. \\
+
+          \noindent
+          \begin{minipage}{\textwidth}
+            \lstinputlisting[caption={Virtual Appliance Repository public interface},label={lst:arch:iface:repo},language=Java]{lst/arch-iface-repo.java}
+          \end{minipage}
+          
+
+        \subsubsection{Assigner}
+
+          The optional assigner module can handle entire assignment stage and make it fully automatic. To be able to do
+          this, it has to be configured with a set of rules and has to continuously collect data about physical nodes
+          load. If the assigner component is not present, logical model has to be assigned manually to available host
+          machines.
+
+
+        \subsubsection{Supervisor}
+
+          Supervisor component manages all the worker nodes present in the system. Its responsibility is to perform
+          preliminary model transformations (if needed --- for example, when using multiple host machines), divide the
+          topology model according to the assignment rules and ask appropriate worker nodes to instantiate resulting
+          parts.
+
+          Supervisor delegates most of the work to worker nodes. Transactional operations can be provided at this level
+          by extending the supervisor's behaviour to rollback after one of the worker nodes fails. \\
+
+          % TODO seq. diagram
+
+          \noindent
+          \begin{minipage}{\textwidth}
+            \lstinputlisting[caption={Supervisor public interface},label={lst:arch:iface:supervisor},language=Java]{lst/arch-iface-supervisor.java}
+          \end{minipage}
+
+
+        \subsubsection{Worker}
+
+          Worker components perform all the low-level operations, including model to underlying entity mapping (and vice
+          versa). Workers do not transform the model in any way --- all they do is provide well-defined rules for
+          instantiation (also: naming schemes) and discovery. Multiple workers are managed by the supervisor.
+
+          Public interface of worker component is presented in listing \ref{lst:arch:iface:worker}. \\
+
+          \noindent
+          \begin{minipage}{\textwidth}
+            \lstinputlisting[caption={Worker public interface},label={lst:arch:iface:worker},language=Java]{lst/arch-iface-worker.java}
+          \end{minipage}
+
+
+        % \subsection{Main use cases}  % TODO change!
+
+
+
+      \subsection{Main data flows and cooperation of the components}
 
         \subsubsection{Instantiation}
 
@@ -1055,17 +1288,18 @@
           amount of data transferred. Historical data is also made available.
 
 
-      \subsection{Important stages}  % TODO change!
+        % \subsection{Important stages}  % TODO change!
 
-        There are three main stages identified when working with the topologies. There is a purely logical stage that
-        does not require any knowledge of the underlying environment --- the operations involve manipulating the domain
-        model to create or update the virtual topology. There is a assignment stage which results in association between
-        the model and physical resources. Finally, the actual deployment takes place in model instantiation stage ---
-        logical elements are mapped to low-level ones after performing necessary transformations.
+          There are three main stages identified when working with the topologies. There is a purely logical stage that
+          does not require any knowledge of the underlying environment --- the operations involve manipulating the
+          domain model to create or update the virtual topology. There is a assignment stage which results in
+          association between the model and physical resources. Finally, the actual deployment takes place in model
+          instantiation stage --- logical elements are mapped to low-level ones after performing necessary
+          transformations.
 
-        % TODO obrazek:
-        %                     logmod                  assoc              inst
-        %                     MANUAL    (aided) MANUAL or AUTOMATIC    AUTOMATIC
+          % TODO obrazek:
+          %                     logmod                  assoc              inst
+          %                     MANUAL    (aided) MANUAL or AUTOMATIC    AUTOMATIC
 
 
         \subsubsection{Logical model definition}
@@ -1093,116 +1327,6 @@
           The final, entirely automatic, step is to map the logical model and assignments to actual components created
           on the host machines. This involves a series of transformations to adjust the model to capabilities of the
           underlying environment and satisfy other requirements, e.g. topology isolation.
-
-
-      \begin{figure}[H]
-        \begin{center}
-          \includegraphics[width=\textwidth]{img/architecture/scope.pdf}
-        \end{center}
-
-        \caption{High-level architectural view}
-        \label{fig:arch:hl}
-      \end{figure}
-
-
-    \section{System components and their responsibilities}
-
-      % TODO interfejsy!
-
-      \begin{figure}[H]
-        \begin{center}
-          \includegraphics[width=\textwidth]{img/architecture/iaas-components.pdf}
-        \end{center}
-      \end{figure}
-
-
-      \subsection{Virtual Appliance Repository}
-
-        The main responsibility of Virtual Appliance repository is to maintain the list and provide access to virtual
-        appliances created. It is used in two phases: the design phase to select appliances that are to be deployed, and
-        instantiation phase to serve virtual appliance images.
-        
-
-      \subsection{Assigner}
-
-        The optional assigner module can handle entire assignment stage and make it fully automatic. To be able to do
-        this, it has to be configured with a set of rules and has to continuously collect data about physical nodes
-        load. If the assigner component is not present, logical model has to be assigned manually to available host
-        machines.
-
-
-      \subsection{Supervisor}
-
-        Supervisor component manages all the worker nodes present in the system. Its responsibility is to perform
-        preliminary model transformations (if needed --- for example, when using multiple host machines), divide the
-        topology model according to the assignment rules and ask appropriate worker nodes to instantiate resulting
-        parts.
-
-        Supervisor delegates most of the work to worker nodes. Transactional operations can be provided at this level by
-        extending the supervisor's behaviour to rollback after one of the worker nodes fails.
-
-        % TODO seq. diagram
-
-        \noindent
-        \begin{minipage}{\textwidth}
-          \lstinputlisting[caption={Supervisor component public interface},label={lst:arch:iface:supervisor},language=Java]{lst/arch-iface-supervisor.java}
-        \end{minipage}
-
-
-      \subsection{Worker}
-
-        Worker components perform all the low-level operations, including model to underlying entity mapping (and vice
-        versa). Workers do not transform the model in any way --- all they do is provide well-defined rules for
-        instantiation (also: naming schemes) and discovery. Multiple workers are managed by the supervisor.
-
-        Public interface of worker component is presented in listing \ref{lst:arch:iface:worker}. \\
-
-        \noindent
-        \begin{minipage}{\textwidth}
-          \lstinputlisting[caption={Worker component public interface},label={lst:arch:iface:worker},language=Java]{lst/arch-iface-worker.java}
-        \end{minipage}
-
-
-    \section{Crossbow resources instrumentation}
-
-      \begin{figure}[H]
-        \begin{center}
-          \begin{tikzpicture}[start chain,
-                              node distance=0mm,
-                              every node/.style={terminal, minimum width=4.5cm}]
-
-            % TODO node distance + alignment
-
-            \node (jmx)  [minimum width=9cm]             {Java Management Extensions};
-            \node (midl) [below right=of jmx.south west] {shell scripts};  \node (midr) [right=of midl] {native libraries};
-            \node (lowl) [below=of midl]                 {flowadm, dladm}; \node (lowr) [right=of lowl] {libdladm, libflowadm};
-          \end{tikzpicture}
-        \end{center}
-
-        \caption{Layered system architecture}
-      \end{figure}
-
-      % TODO pgf/tikz
-
-      % \begin{figure}[H]
-      %   \begin{center}
-      %     \includegraphics[width=0.8\textwidth]{img/architecture/layered_architecture.pdf}
-      %   \end{center}
-      %   \caption{}
-      % \end{figure}  
-
-
-    \section{Domain model and data flows} \label{sec:domain-model}
-
-      Created object model allows describing network structure contaning of: switches, resources with attached
-      addressable interfaces and flows with policies. Figure below presents concrete classes and their dependencies. 
-
-        \begin{figure}[H]
-          \begin{center}
-            \includegraphics[angle=90, height=0.9\textwidth]{img/impl/resource-object-model.png}
-          \end{center}
-          \caption{Resource object model and their relationships}
-        \end{figure}        
 
 
     \section*{Summary}
@@ -1891,6 +2015,7 @@
         system is not available.
 
         % TODO progress bar, czy tutaj, czy w implementacji?
+        % TODO nawiazanie do deploymentu z va (chapter: solaris)
 
 
       \subsection{Online modifications}
