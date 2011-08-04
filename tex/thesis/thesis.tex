@@ -1064,6 +1064,15 @@
 
       % TODO deployment / srodowisko dzialania
 
+      \begin{figure}[H]
+        \begin{center}
+          \includegraphics[width=.8\textwidth]{img/architecture/deployment.pdf}
+        \end{center}
+
+        \caption{Operating environment}
+        \label{fig:arch:deployment}
+      \end{figure}
+
 
     \section{Crossbow resources instrumentation}
 
@@ -1265,11 +1274,18 @@
           \end{minipage}
 
 
-        % \subsection{Main use cases}  % TODO change!
-
-
-
       \subsection{Main data flows and cooperation of the components}
+
+        % TODO
+        %
+        % * 3 glowne flowy: instantiation, discovery, monitoring
+        % * w kazdym wydzielone komponenty, przez ktore przeplywaja dane
+        % * opis przeplywu i transformacji
+        %
+        % * PLAN:
+        %   + definicja
+        %   + przeplyw ogolnie (schemat tutaj?)
+        %   + transformacje dosc szczegolowo
 
         \subsubsection{Instantiation}
 
@@ -1287,9 +1303,6 @@
           Topology operation can be monitored with high degree of granularity. Single flows can be inspected to see the
           amount of data transferred. Historical data is also made available.
 
-
-        % \subsection{Important stages}  % TODO change!
-
           There are three main stages identified when working with the topologies. There is a purely logical stage that
           does not require any knowledge of the underlying environment --- the operations involve manipulating the
           domain model to create or update the virtual topology. There is a assignment stage which results in
@@ -1305,8 +1318,9 @@
         \subsubsection{Logical model definition}
 
           This is the first stage the user is exposed to. The main task is to create a virtual network topology
-          comprising logical networking components (belong to Layer 2 and 3 of the OSI/ISO model) and virtual appliances
-          --- specialized virtual machines. After the topology is created, IP addressing is provided and routing set up.
+          comprising logical networking components (belonging to Layer 2 and 3 of the OSI/ISO model) and virtual
+          appliances --- specialized virtual machines. After the topology is created, IP addressing is provided and
+          routing set up.
 
           % TODO appliance repo tutaj?
 
