@@ -1065,6 +1065,15 @@
 
       % TODO deployment / srodowisko dzialania
 
+      \begin{figure}[H]
+        \begin{center}
+          \includegraphics[width=.8\textwidth]{img/architecture/deployment.pdf}
+        \end{center}
+
+        \caption{Operating environment}
+        \label{fig:arch:deployment}
+      \end{figure}
+
 
     \section{Crossbow resources instrumentation}
 
@@ -1200,6 +1209,8 @@
         parts of a topology and underlying physical resources, actions model is used to express the operations that can
         be applied to elements of a topology.
 
+        % TODO merge assignments,actions->descriptors?
+        
 
         \subsubsection{Static data model}
 
@@ -1223,6 +1234,14 @@
         \subsubsection{Modeling assignments}
 
           Assignments model is decoupled from the static data.
+
+          \begin{figure}[H]
+            \begin{center}
+              \includegraphics[scale=.5]{img/architecture/assignments.pdf}
+            \end{center}
+
+            \caption{Assignments}
+          \end{figure}
 
 
         \subsubsection{Actions}
@@ -1299,15 +1318,52 @@
           \end{minipage}
 
 
-        % \subsection{Main use cases}  % TODO change!
-
-
-
       \subsection{Main data flows and cooperation of the components}
+
+        % TODO
+        %
+        % * 3 glowne flowy: instantiation, discovery, monitoring
+        % * w kazdym wydzielone komponenty, przez ktore przeplywaja dane
+        % * opis przeplywu i transformacji
+        %
+        % * PLAN:
+        %   + definicja
+        %   + przeplyw ogolnie (schemat tutaj?)
+        %   + transformacje dosc szczegolowo
 
         \subsubsection{Instantiation}
 
-          Instantiation is the process of transforming a logical model to fully operational virtual network.
+          Instantiation is the process of transforming a logical model to fully operational virtual network. There are
+          three main stages that constitute the complete process:
+
+          \begin{enumerate}
+
+            \item Logical model definition
+
+              This is the first stage the user is exposed to. The main task is to create a virtual network topology
+              comprising logical networking components (belonging to Layer 2 and 3 of the OSI/ISO model) and virtual
+              appliances --- specialized virtual machines. After the topology is created, IP addressing is provided and
+              routing set up.
+
+              % TODO appliance repo tutaj?
+
+              Finally, Quality of Service policies are determined to classify and differentiate the traffic.
+
+            \item Physical resource selection and assignment
+
+              After the model is defined, it can be associated with underlying physical resources. There are two
+              possible ways of performing the assignment --- it can be done manually with supplied utilities or special
+              component can suggest ,,best'' solution based on, for example, current workload and predefined set of
+              rules. The latter approach is particularly useful when working with complex systems that should be able to
+              adjust themselves automatically to balance the load.
+
+            \item Model instantiation
+
+              The final, entirely automatic, step is to map the logical model and assignments to actual components
+              created on the host machines. This involves a series of transformations to adjust the model to
+              capabilities of the underlying environment and satisfy other requirements, e.g. topology isolation.
+                  
+          \end{enumerate}
 
 
         \subsubsection{Discovery}
@@ -1315,14 +1371,26 @@
           Instantiated topology, together with applied addressing, routing table entries and quality policies, can be
           discovered, i.e. corresponding object model can be recreated.
 
+          The discovery process can be seen as an inverse of instantiation: (although it is initialized by the
+          user/GUI/Supervisor TODO)
+
+          \begin{enumerate}
+
+            \item the system resources are inspected by each of the Worker nodes and parts of the model are created
+                  independently,
+
+            \item Partial results are collected and merged by the Supervisor. Redundant data is removed and necessary
+                  transformations performed,
+
+            \item Complete model is passed further (e.g. to the GUI component)
+          
+          \end{enumerate}
+
 
         \subsubsection{Monitoring}
 
           Topology operation can be monitored with high degree of granularity. Single flows can be inspected to see the
           amount of data transferred. Historical data is also made available.
-
-
-        % \subsection{Important stages}  % TODO change!
 
           There are three main stages identified when working with the topologies. There is a purely logical stage that
           does not require any knowledge of the underlying environment --- the operations involve manipulating the
@@ -1334,34 +1402,6 @@
           % TODO obrazek:
           %                     logmod                  assoc              inst
           %                     MANUAL    (aided) MANUAL or AUTOMATIC    AUTOMATIC
-
-
-        \subsubsection{Logical model definition}
-
-          This is the first stage the user is exposed to. The main task is to create a virtual network topology
-          comprising logical networking components (belong to Layer 2 and 3 of the OSI/ISO model) and virtual appliances
-          --- specialized virtual machines. After the topology is created, IP addressing is provided and routing set up.
-
-          % TODO appliance repo tutaj?
-
-          Finally, Quality of Service policies are determined to classify and differentiate the traffic.
-
-
-        \subsubsection{Physical resource selection and assignment}
-
-          After the model is defined, it can be associated with underlying physical resources. There are two possible
-          ways of performing the assignment --- it can be done manually with supplied utilities or special component can
-          suggest ,,best'' solution based on, for example, current workload and predefined set of rules. The latter
-          approach is particularly useful when working with complex systems that should be able to adjust themselves
-          automatically to balance the load.
-
-
-        \subsubsection{Model instantiation}
-
-          The final, entirely automatic, step is to map the logical model and assignments to actual components created
-          on the host machines. This involves a series of transformations to adjust the model to capabilities of the
-          underlying environment and satisfy other requirements, e.g. topology isolation.
-
 
     \section*{Summary}
 
