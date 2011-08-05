@@ -48,9 +48,9 @@
 \usepackage{color}
 \usepackage{hyperref}
 \usepackage{tikz}
+\usepackage{pgf-umlsd}
 % \usepackage[toc,acronym]{glossaries}
-\usetikzlibrary{positioning,chains,backgrounds,fit,scopes}
-% \usetikzlibrary{chains}
+\usetikzlibrary{positioning,chains,fit,scopes}
 
 \newcommand{\code}[1]{\begin{tt}{#1}\end{tt}}
 
@@ -1018,6 +1018,15 @@
     
       % TODO kontekst
 
+      \begin{figure}[H]
+        \begin{center}
+          \includegraphics[width=.8\textwidth]{img/architecture/deployment.pdf}
+        \end{center}
+
+        \caption{Operating environment}
+        \label{fig:arch:deployment}
+      \end{figure}
+
 
     \section{Architecture overview}
 
@@ -1064,15 +1073,6 @@
       \end{figure}
 
       % TODO deployment / srodowisko dzialania
-
-      \begin{figure}[H]
-        \begin{center}
-          \includegraphics[width=.8\textwidth]{img/architecture/deployment.pdf}
-        \end{center}
-
-        \caption{Operating environment}
-        \label{fig:arch:deployment}
-      \end{figure}
 
 
     \section{Crossbow resources instrumentation}
@@ -1333,6 +1333,13 @@
 
         \subsubsection{Instantiation}
 
+          There are three main stages identified when working with the topologies. There is a purely logical stage that
+          does not require any knowledge of the underlying environment --- the operations involve manipulating the
+          domain model to create or update the virtual topology. There is a assignment stage which results in
+          association between the model and physical resources. Finally, the actual deployment takes place in model
+          instantiation stage --- logical elements are mapped to low-level ones after performing necessary
+          transformations.
+
           Instantiation is the process of transforming a logical model to fully operational virtual network. There are
           three main stages that constitute the complete process:
 
@@ -1365,6 +1372,55 @@
                   
           \end{enumerate}
 
+          \begin{figure}[H]
+
+            \centering
+
+            \begin{sequencediagram}
+
+              \newthread{gui}{GUI}
+              \newinst[2]{sup}{Supervisor}
+              \newinst[4]{wrks}{Worker}
+              \newinst[2]{var}{VA Repository}
+
+              \begin{call}{gui}{getApplianceIDs()}{var}{appliance IDs}
+              \end{call}
+
+              \begin{call}{gui}{instantiate(model)}{sup}{}
+                \begin{callself}{sup}{transform(model)}{}
+                \end{callself}
+                \begin{sdblock}{loop}{for each worker with model assigned}
+                  \begin{call}{sup}{instantiate(parts of the model)}{wrks}{}
+                    \begin{call}{wrks}{getAppliance(id)}{var}{virtual appliance}
+                    \end{call}
+                  \end{call}
+                \end{sdblock}
+              \end{call}
+            
+            \end{sequencediagram}
+
+            \caption{Topology instantiation}
+          
+          \end{figure}
+
+          % TODO
+          %
+          %          GUI               -->   Supervisor  -->    Worker*
+          %    (topology definition)
+          %
+          %           ^                                            ^
+          %         VArepo                                       VArepo
+          %
+          %
+
+
+          % TODO obrazek:
+          %                     logmod                  assoc              inst
+          %                     MANUAL    (aided) MANUAL or AUTOMATIC    AUTOMATIC
+
+
+          % TODO co rozumiemy przez topologie? (topology=layout+qos)
+
 
         \subsubsection{Discovery}
 
@@ -1382,10 +1438,34 @@
             \item Partial results are collected and merged by the Supervisor. Redundant data is removed and necessary
                   transformations performed,
 
-            \item Complete model is passed further (e.g. to the GUI component)
+            \item Complete model is passed further (e.g. to the GUI component).
           
-
           \end{enumerate}
+
+          \begin{figure}[H]
+
+            \centering
+
+            \begin{sequencediagram}
+
+              \newthread{gui}{GUI}
+              \newinst[2]{sup}{Supervisor}
+              \newinst[4]{wrk}{Worker}
+
+              \begin{call}{gui}{discover()}{sup}{model}
+                \begin{sdblock}{loop}{for each worker}
+                  \begin{call}{sup}{discover()}{wrk}{parts of the model}
+                  \end{call}
+                \end{sdblock}
+                \begin{callself}{sup}{merge(parts of the model)}{model}
+                \end{callself}
+              \end{call}
+            
+            \end{sequencediagram}
+
+            \caption{Topology discovery}
+          
+          \end{figure}
 
 
         \subsubsection{Monitoring}
@@ -1393,16 +1473,29 @@
           Topology operation can be monitored with high degree of granularity. Single flows can be inspected to see the
           amount of data transferred. Historical data is also made available.
 
-          There are three main stages identified when working with the topologies. There is a purely logical stage that
-          does not require any knowledge of the underlying environment --- the operations involve manipulating the
-          domain model to create or update the virtual topology. There is a assignment stage which results in
-          association between the model and physical resources. Finally, the actual deployment takes place in model
-          instantiation stage --- logical elements are mapped to low-level ones after performing necessary
-          transformations.
+          The StatisticsGatherer component performs the translation between domain models.
 
-          % TODO obrazek:
-          %                     logmod                  assoc              inst
-          %                     MANUAL    (aided) MANUAL or AUTOMATIC    AUTOMATIC
+          \begin{figure}[H]
+
+            \centering
+
+            \begin{sequencediagram}
+
+              \newthread{gui}{GUI}
+              \newinst[2]{gat}{StatisticsGatherer}
+              \newinst[2]{ent}{Entity object}
+
+              \begin{call}{gui}{getStatistics()}{gat}{statistics}
+                \begin{call}{gat}{getStatistics()}{ent}{statistics}
+                \end{call}
+              \end{call}
+            
+            \end{sequencediagram}
+
+            \caption{Topology monitoring}
+          
+          \end{figure}
+
 
     \section*{Summary}
 
