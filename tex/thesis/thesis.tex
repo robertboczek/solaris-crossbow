@@ -1011,11 +1011,12 @@
     multi-node instantiations.
 
     % tutaj tez kilka slow i JIMSie i integracji + co to daje
-
-
-    % \section{The environment}  TODO tutaj? wymagania? kontekst?
-
     % TODO kilka widokow:  jmx (manager+entity), iaas (nad jmx), statystyki
+
+
+    \section{Operating environment}
+    
+      % TODO kontekst
 
 
     \section{Architecture overview}
@@ -1053,7 +1054,7 @@
                               every node/.style={terminal, minimum width=7cm}]
 
             \node (infr)                 {Infrastructure management};
-            \node (inst) [below=of infr] {Resource instrumentation layer};
+            \node (inst) [below=of infr] {Resource instrumentation};
             \node (undr) [below=of inst] {Underlying resources};
           \end{tikzpicture}
         \end{center}
@@ -1068,8 +1069,8 @@
     \section{Crossbow resources instrumentation}
 
       The main responsibility of resource instrumentation subsystem is to provide a consistent way to create and manage
-      resources of the underlying operating system. This abstract layer can be further leveraged to build more
-      sophisticated systems on top of it.
+      resources of the underlying operating system. This general-purpose abstraction layer can easily be expanded when
+      needed and further leveraged to build more sophisticated systems on top of it.
       
       % Also, there is an abstract mechanism provided that allows to embed
       % entities that represent the resources in third-party containers (e.g. JMX servers).
@@ -1083,6 +1084,13 @@
 
         \begin{figure}[H]
           \begin{center}
+            \begin{tikzpicture}[node distance=4cm]
+
+             \node (ent) [terminal] {Entity};
+             \node (man) [terminal, left=of ent] {Manager}
+               edge [->] node [auto] {create, publish,delete} (ent);
+
+            \end{tikzpicture}
           \end{center}
 
           \caption{Manager-entity relationship (TODO!)}
@@ -1095,7 +1103,13 @@
 
           Entity objects represent instances of a resource type. Each entity object class exposes an interface to manage
           the resource it is associated with. Fine-grained management is possible with entity objects --- single
-          properties can be accessed and manipulated.
+          properties can be accessed and manipulated (a subset of Flow public interface is presented in listing
+          \ref{lst:arch:iface:flow}). \\
+
+          \noindent
+          \begin{minipage}{\textwidth}
+            \lstinputlisting[caption={Selected methods of entity interface},label={lst:arch:iface:flow},language=Java]{lst/arch-iface-flow.java}
+          \end{minipage}
 
 
         \subsubsection{Manager objects}
@@ -1103,7 +1117,13 @@
           Each manager subtype is associated with a single class of resources. The subtype can be thought of as a
           gateway exposing methods to manage collection of resources. The responsibilities of manager objects include
           resource discovery, creation, modification and removal. Managers maintain lists of resources present in the
-          system and provide ways to access them (as entity objects). The resources can also be published in external repositories.
+          system and provide ways to access them (as entity objects). The resources can also be published in external
+          repositories. \\
+
+          \noindent
+          \begin{minipage}{\textwidth}
+            \lstinputlisting[caption={Selected methods of manager interface},label={lst:arch:iface:flowmanager},language=Java]{lst/arch-iface-flowmanager.java}
+          \end{minipage}
 
           % TODO tutaj seq. diagram?
           % TODO _publisher_ w managerach
@@ -1138,7 +1158,7 @@
         % \end{figure}  
 
 
-      \subsection{Manageable Solaris OS resources}
+      \subsection{Instrumented Solaris OS resources}
 
         % TODO tutaj lista/schemat wszystkiego, czym mozemy zarzadzac przez mbeany
 
@@ -1174,11 +1194,23 @@
       \subsection{Domain model and data flows}
       \label{sec:domain-model}
 
-        Created object model allows describing network structure contaning of: switches, resources with attached
-        addressable interfaces and flows with policies. Figure below presents concrete classes and their dependencies.
-        
+        A dedicated domain model was created for the virtual infrastructure management layer. It describes higher-level
+        entities and operations that can be performed. The model is divided into three logical groups --- static data
+        describes resources and their interdependencies, assignment model is used to denote the association between
+        parts of a topology and underlying physical resources, actions model is used to express the operations that can
+        be applied to elements of a topology.
+
 
         \subsubsection{Static data model}
+
+          As far as networking domain is considered, the model covers three main aspects:
+
+          \begin{itemize}
+            \item available entities --- equivalent to the set of resources that can be used to build a network
+                  topology,
+            \item allowed interconnections --- reflecting % TODO
+            \item Quality of Service policies --- classify traffic and determine priorities.
+          \end{itemize}
 
           \begin{figure}[H]
             \begin{center}
@@ -1189,6 +1221,8 @@
 
 
         \subsubsection{Modeling assignments}
+
+          Assignments model is decoupled from the static data.
 
 
         \subsubsection{Actions}
