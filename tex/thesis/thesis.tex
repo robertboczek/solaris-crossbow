@@ -595,7 +595,8 @@
             \begin{tikzpicture}[start chain,
                                 node distance=5mm,
                                 every node/.style={on chain, join, terminal},
-                                every join/.style={->}]
+                                every join/.style={->},
+                                text depth=.25ex]
 
               \node {preparation};
               \node {pre-installation};
@@ -616,11 +617,12 @@
 
         \begin{figure}[H]
           \begin{center}
-            \begin{tikzpicture}[node distance=5mm,]
+            \begin{tikzpicture}[node distance=5mm]
 
-              { [start chain, every node/.style={terminal, on chain, join, text width=3cm}, every join/.style={->}]
+              { [start chain, every node/.style={terminal, on chain, join, text width=3cm}, every join/.style={->},
+              align=center]
 
-                { [every on chain/.style={text width=3.5cm}]
+                { [every on chain/.style={text width=3.5cm}, text depth=.25ex, align=center]
 
                   \node (prep)                 {preparation};
                   \node (pre)  [below=of prep] {pre-installation};
@@ -1015,9 +1017,19 @@
 
 
     \section{Operating environment}
-    
-      % TODO kontekst
 
+      As depicted in figure \ref{fig:arch:deployment}, the system is designed to operate in a distributed environment
+      --- the bottommost layer of the operating environment is an IP network of physical machines. Each of the machines
+      is running an instance of Solaris Operating System with support for Crossbow technology. None of the nodes is
+      favoured over the others. The instances of operating system have Java Virtual Machine deployed and are capable of
+      running JMX Agent which is used to host components of the system.
+
+      In addition to these basic specification, pure JMX Agents (i.e. agents without any components registered) can be
+      enriched with third-party software and thus enable complete set of functionality implemented. With pure JMX Agents
+      only single-node management is possible and limited to Crossbow networking resources. After integration with JIMS
+      the system gains awareness of the whole distributed environment, has access to extensive mechanisms for
+      controlling containers and can be used to create and manage complex virtual network topologies.
+    
       \begin{figure}[H]
         \begin{center}
           \includegraphics[width=.8\textwidth]{img/architecture/deployment.pdf}
@@ -1032,35 +1044,40 @@
 
       When considered at a very high level, the architecture of the system as a whole is layer-based. There are three
       main layers, each specifying a set of its own interfaces. The higher the layer is placed in the stack, the more
-      complex interface it exposes.
-
-      The three layers, as depicted in figure \ref{fig:arch:layers}, are:
+      complex interface it exposes. The three layers, as shown in figure \ref{fig:arch:layers}, are:
 
       \begin{itemize}
 
         \item Infrastructure management layer
 
-              contains components that help design, instantiate and manage network topologies,
+              contains components that help design, instantiate and manage network topologies, \\
+              can possibly span multiple physical machines, \\
+              requires JIMS installation to operate,
 
         \item Resource instrumentation layer
 
-              is an abstraction layer over resources provided by the underlying system,
+              is an abstraction layer over resources provided by the underlying system, \\
+              present on each of the physical hosts, \\
+              network-based interoperability between nodes is not supported,
 
         \item Underlying resources layer
 
-              represents all the resources made available by host operating system.
+              represents all the resources made available by host operating system, \\
+              can be managed with vendor-supplied low-level utilities and libraries.
 
       \end{itemize}
 
       All the operations (e.g. topology modification) performed by infrastructure management layer go down the stack
-      and, after proper transformations, result in persistent changes to underlying resources. Conversely, the state of
-      low-level resources can be expressed in terms of the domain model used by the highest layer (discovery process).
+      and, after necessary transformations, result in persistent changes to underlying resources. Conversely, the state
+      of low-level resources can be expressed in terms of the domain model used by the highest layer (discovery
+      process).
 
       \begin{figure}[H]
         \begin{center}
           \begin{tikzpicture}[start chain,
                               node distance=1mm,
-                              every node/.style={terminal, minimum width=7cm}]
+                              every node/.style={terminal, minimum width=7cm},
+                              text depth=.25ex]
 
             \node (infr)                 {Infrastructure management};
             \node (inst) [below=of infr] {Resource instrumentation};
@@ -1072,40 +1089,35 @@
         \label{fig:arch:layers}
       \end{figure}
 
-      % TODO deployment / srodowisko dzialania
-
 
     \section{Crossbow resources instrumentation}
 
       The main responsibility of resource instrumentation subsystem is to provide a consistent way to create and manage
       resources of the underlying operating system. This general-purpose abstraction layer can easily be expanded when
       needed and further leveraged to build more sophisticated systems on top of it.
-      
-      % Also, there is an abstract mechanism provided that allows to embed
-      % entities that represent the resources in third-party containers (e.g. JMX servers).
 
 
       \subsection{Separation of concerns}
 
-        There are two classes of objects present at this level --- Entity objects that are abstractions representing
-        resources of specific type and exposing appropriate interfaces, and Manager objects used to perform basic
-        coarse-grained operations (such as creation, deletion, modification) on resources they manage.
+        There are two classes of objects present at this level (figure \ref{fig:arch:manent}) --- Entity objects that
+        are abstractions representing resources of specific type and exposing appropriate interfaces, and Manager
+        objects used to perform basic coarse-grained operations (such as creation, deletion, modification) on resources
+        they manage.
 
         \begin{figure}[H]
           \begin{center}
-            \begin{tikzpicture}[node distance=4cm]
+            \begin{tikzpicture}[node distance=4cm, text depth=.25ex]
 
              \node (ent) [terminal] {Entity};
              \node (man) [terminal, left=of ent] {Manager}
-               edge [->] node [auto] {create, publish,delete} (ent);
+               edge [->] node [auto] {create, publish, delete} (ent);
 
             \end{tikzpicture}
           \end{center}
 
-          \caption{Manager-entity relationship (TODO!)}
+          \caption{Manager and entity objects interoperability}
+          \label{fig:arch:manent}
         \end{figure}
-
-        % TODO obrazek manager-entity
 
 
         \subsubsection{Entity objects}
@@ -1134,68 +1146,88 @@
             \lstinputlisting[caption={Selected methods of manager interface},label={lst:arch:iface:flowmanager},language=Java]{lst/arch-iface-flowmanager.java}
           \end{minipage}
 
-          % TODO tutaj seq. diagram?
-          % TODO _publisher_ w managerach
+          Sequence diagram in figure \ref{fig:arch:pub} shows the process of creating new entity object. After creation,
+          the object is published in a repository to make it accessible for other components.
+
+          \begin{figure}[H]
+
+            \centering
+
+            \begin{sequencediagram}
+
+              \newthread{cli}{Client}
+              \newinst[2]{man}{Manager}
+              \newinst[1]{lib}{Native library}
+              \newinst[1]{pub}{Publisher}
+
+              \begin{call}{cli}{create(entity)}{man}{}
+                \begin{call}{man}{create(entity)}{lib}{}
+                \end{call}
+                \begin{sdblock}{if publisher attached}{}
+                  \begin{call}{man}{publish(entity)}{pub}{id}
+                  \end{call}
+                \end{sdblock}
+              \end{call}
+            
+            \end{sequencediagram}
+
+            \caption{Entity creation scheme with optional publication}
+            \label{fig:arch:pub}
+          
+          \end{figure}
 
 
       \subsection{Layered design}
+
+        Both the Manager and Entity objects share the same three-layer internal design as presented in figure
+        \ref{fig:arch:laydes}. The objects themselves are exposed as Java Management Extensions beans. To implement the
+        interface, either shell scripts or native libraries (or both) are used depending on the complexity of an
+        operation. At the lower level, command line programs or native calls are executed, respectively.
 
         \begin{figure}[H]
           \begin{center}
             \begin{tikzpicture}[start chain,
                                 node distance=1mm,
-                                every node/.style={terminal, minimum width=4.5cm}]
+                                every node/.style={terminal, minimum width=4.5cm},
+                                text height=1.5ex, text depth=.25ex]
 
-              % TODO node distance + alignment
-
-              \node (jmx)  [minimum width=9cm]             {Java Management Extensions};
-              \node (midl) [below right=of jmx.south west] {shell scripts};  \node (midr) [right=of midl] {native libraries};
-              \node (lowl) [below=of midl]                 {flowadm, dladm}; \node (lowr) [right=of lowl] {libdladm, libflowadm};
+              \node (jmx)  [minimum width=9.15cm] {Java Management Extensions};
+              \node (midl) [below=of jmx.south west, anchor=north west] {shell scripts};  \node (midr) [right=of midl] {native libraries};
+              \node (lowl) [below=of midl] {flowadm, dladm};                              \node (lowr) [right=of lowl] {libdladm, libflowadm};
             \end{tikzpicture}
           \end{center}
 
           \caption{Layered system architecture}
+          \label{fig:arch:laydes}
         \end{figure}
-
-        % TODO pgf/tikz
-
-        % \begin{figure}[H]
-        %   \begin{center}
-        %     \includegraphics[width=0.8\textwidth]{img/architecture/layered_architecture.pdf}
-        %   \end{center}
-        %   \caption{}
-        % \end{figure}  
 
 
       \subsection{Instrumented Solaris OS resources}
 
-        % TODO tutaj lista/schemat wszystkiego, czym mozemy zarzadzac przez mbeany
+        % TODO diagram czy nie?
 
+        All the important Crossbow resources are instrumented (Manager:Entity pairs are created). This includes NICs
+        (Network Interface Cards), VNICs (Virtual Network Interface Cards), VLANs (Virtual LANs), Etherstubs and Flows.
+        All the components are loosely coupled and can be used independently.
+        
 
     \section{Virtual infrastructure management}
 
       Virtual infrastructure management system is built on top of the instrumentation layer. Leveraging entity and
-      manager objects, it provides high-level mechanisms to manage and monitor complex network topologies and quality
-      policies associated with them.
+      manager objects and JIMS project, it provides high-level mechanisms to manage and monitor complex network
+      topologies and quality policies associated with them.
 
 
-      \subsection{High-level design}
+      \subsection{High-level functionality overview}
 
-        % TODO opis srodowiska - ,,soft'' + sprzet pod spodem i ich cel
-
-        The specific character of the system --- running in a distributed environment, moderate complexity --- requires
-        proper architectural model. The model should allow to design the elements of the system to be highly cohesive
-        and maintain coupling as loose as possible. Each component has its own well-defined role and exposes a set of
-        operations to interact with others.
-
-        % TODO dodac: system rozproszony, latwe skalowanie
+        % TODO tekst
 
         \begin{figure}[H]
           \begin{center}
             \includegraphics[width=\textwidth]{img/architecture/scope.pdf}
           \end{center}
 
-          \caption{High-level architectural view}
+          \caption{Main stages of operation}
           \label{fig:arch:hl}
         \end{figure}
 
@@ -1203,14 +1235,14 @@
       \subsection{Domain model and data flows}
       \label{sec:domain-model}
 
-        A dedicated domain model was created for the virtual infrastructure management layer. It describes higher-level
+        Dedicated domain model was created for the virtual infrastructure management layer. It describes higher-level
         entities and operations that can be performed. The model is divided into three logical groups --- static data
         describes resources and their interdependencies, assignment model is used to denote the association between
         parts of a topology and underlying physical resources, actions model is used to express the operations that can
         be applied to elements of a topology.
 
         % TODO merge assignments,actions->descriptors?
-        
+
 
         \subsubsection{Static data model}
 
@@ -1257,7 +1289,10 @@
 
       \subsection{System components and their responsibilities}
 
-        % TODO interfejsy!
+        The specific character of the system --- running in a distributed environment, moderate complexity --- requires
+        proper architectural model. The model should allow to design the elements of the system to be highly cohesive
+        and maintain coupling as loose as possible. Each component has its own well-defined role and exposes a set of
+        operations to interact with others.
 
         \begin{figure}[H]
           \begin{center}
@@ -1503,6 +1538,7 @@
   \chapter{Implementation}
 
     % TODO nie ma bazy danych - opisac, gdzie sa trzymane dane
+    % TODO dodac (pod)sekcje o weryfikacji - wszystkie testy
     
     \section*{Chapter overview}
 	
@@ -1727,6 +1763,8 @@
         \lstinputlisting[caption={Native library access with
         JNA},label={lst:impl:low:jna},language=Java]{lst/impl-jna.java}
       \end{minipage}
+
+      % TODO dorzucic kawalek kodu w C
 
 
     \section{Building and running the platform}
