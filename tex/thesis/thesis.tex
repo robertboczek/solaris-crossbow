@@ -1013,7 +1013,6 @@
     multi-node instantiations.
 
     % tutaj tez kilka slow i JIMSie i integracji + co to daje
-    % TODO kilka widokow:  jmx (manager+entity), iaas (nad jmx), statystyki
 
 
     \section{Operating environment}
@@ -1249,17 +1248,30 @@
           As far as networking domain is considered, the model covers three main aspects:
 
           \begin{itemize}
-            \item available entities --- equivalent to the set of resources that can be used to build a network
-                  topology,
-            \item allowed interconnections --- reflecting % TODO
+            \item available entities --- the set of resources that can be used to build a network topology,
+            \item allowed interconnections --- reflecting real-world connections between networking hardware,
             \item Quality of Service policies --- classify traffic and determine priorities.
           \end{itemize}
 
           \begin{figure}[H]
             \begin{center}
-              \includegraphics[angle=90, height=0.9\textwidth]{img/impl/resource-object-model.png}
+              \includegraphics[width=0.7\textwidth]{img/architecture/om-entities.pdf}
             \end{center}
-            \caption{Resource object model and their relationships}
+            \caption{Object model --- entities}
+          \end{figure}
+
+          \begin{figure}[H]
+            \begin{center}
+              \includegraphics[width=0.7\textwidth]{img/architecture/om-ic.pdf}
+            \end{center}
+            \caption{Object model --- interconnections}
+          \end{figure}
+
+          \begin{figure}[H]
+            \begin{center}
+              \includegraphics[width=0.7\textwidth]{img/architecture/om-policy.pdf}
+            \end{center}
+            \caption{Object model --- policies}
           \end{figure}
 
 
@@ -1280,7 +1292,7 @@
 
           \begin{figure}[H]
             \begin{center}
-              \includegraphics{img/architecture/actions.png}
+              \includegraphics[scale=.5]{img/architecture/actions.pdf}
             \end{center}
 
             \caption{Actions}
