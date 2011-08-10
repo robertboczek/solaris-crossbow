@@ -1034,7 +1034,7 @@
           \includegraphics[width=.8\textwidth]{img/architecture/deployment.pdf}
         \end{center}
 
-        \caption{Operating environment}
+        \caption{Deployment diagram for the system}
         \label{fig:arch:deployment}
       \end{figure}
 
@@ -1212,14 +1212,21 @@
 
     \section{Virtual infrastructure management}
 
-      Virtual infrastructure management system is built on top of the instrumentation layer. Leveraging entity and
+      Virtual infrastructure management subsystem is built on top of the instrumentation layer. Leveraging entity and
       manager objects and JIMS project, it provides high-level mechanisms to manage and monitor complex network
       topologies and quality policies associated with them.
 
 
       \subsection{High-level functionality overview}
+      \label{sub:arch:hl}
 
-        % TODO tekst
+        Figure \ref{fig:arch:hl} shows main stages of the management process together with general flows of data and is
+        the starting point when identifying and designing coarse-grained components. The stages presented map to
+        implemented components of the system that were implemented --- User Interface to design, manipulate and monitor
+        the topology, nodes responsible for discovery of available physical hosts, and mappers which translate between
+        logical model and underlying resources.
+
+        % TODO zwezic ten diagram
 
         \begin{figure}[H]
           \begin{center}
@@ -1240,44 +1247,53 @@
         parts of a topology and underlying physical resources, actions model is used to express the operations that can
         be applied to elements of a topology.
 
-        % TODO merge assignments,actions->descriptors?
-
 
         \subsubsection{Static data model}
 
           As far as networking domain is considered, the model covers three main aspects:
 
           \begin{itemize}
+
             \item available entities --- the set of resources that can be used to build a network topology,
-            \item allowed interconnections --- reflecting real-world connections between networking hardware,
+
+                  \begin{figure}[H]
+                    \begin{center}
+                      \includegraphics[width=0.7\textwidth]{img/architecture/om-entities.pdf}
+                    \end{center}
+                    \caption{Object model --- entities}
+                  \end{figure}
+
+            \item allowed interconnections --- reflecting a subset of real-world connections between networking
+                  hardware,
+
+                  \begin{figure}[H]
+                    \begin{center}
+                      \includegraphics[width=0.7\textwidth]{img/architecture/om-ic.pdf}
+                    \end{center}
+                    \caption{Object model --- interconnections}
+                  \end{figure}
+
             \item Quality of Service policies --- classify traffic and determine priorities.
+
+                  \begin{figure}[H]
+                    \begin{center}
+                      \includegraphics[width=0.7\textwidth]{img/architecture/om-policy.pdf}
+                    \end{center}
+                    \caption{Object model --- policies}
+                  \end{figure}
+
           \end{itemize}
-
-          \begin{figure}[H]
-            \begin{center}
-              \includegraphics[width=0.7\textwidth]{img/architecture/om-entities.pdf}
-            \end{center}
-            \caption{Object model --- entities}
-          \end{figure}
-
-          \begin{figure}[H]
-            \begin{center}
-              \includegraphics[width=0.7\textwidth]{img/architecture/om-ic.pdf}
-            \end{center}
-            \caption{Object model --- interconnections}
-          \end{figure}
-
-          \begin{figure}[H]
-            \begin{center}
-              \includegraphics[width=0.7\textwidth]{img/architecture/om-policy.pdf}
-            \end{center}
-            \caption{Object model --- policies}
-          \end{figure}
 
 
         \subsubsection{Modeling assignments}
 
-          Assignments model is decoupled from the static data.
+          The assignment descriptor is used together with static data model to map entities to physical nodes. The
+          descriptor is created automatically or by the user before instantiating the model as well as during the
+          discovery stage when it is constructed by low-level components of the implemented system.
+
+          The annotation part of the descriptor can be used to carry additional entity-specific properties that have to
+          be passed between components. It can also be used to hold auxiliary data while performing internal
+          transformations of the model.
 
           \begin{figure}[H]
             \begin{center}
@@ -1289,6 +1305,14 @@
 
 
         \subsubsection{Actions}
+
+          When managing the topology, actions play crucial role --- they describe, for each element of the model, the
+          operation that is going to be performed. Actions are assigned not globally for the model but on per-object
+          basis --- the approach that introduces more flexibility and efficiency.
+
+          There are three types actions designed. The object in the model can be created (ADD, as in instantiation
+          phase), deleted (REM, typically performed after topology discovery) or modified (UPD, for entities that
+          support on-line property adjustment).
 
           \begin{figure}[H]
             \begin{center}
@@ -1306,18 +1330,30 @@
         and maintain coupling as loose as possible. Each component has its own well-defined role and exposes a set of
         operations to interact with others.
 
+        The components presented in figure \ref{fig:arch:comp} reflect the three main stages of operation shown in
+        subsection \ref{sub:arch:hl}. Boundaries were introduced to make the partition even clearer. The following
+        subsections describe the components in more detail and provide listings with most important methods of exposed
+        interfaces.
+
+        % TODO dorysowac granice
+
         \begin{figure}[H]
           \begin{center}
             \includegraphics[width=\textwidth]{img/architecture/iaas-components.pdf}
           \end{center}
+
+          \caption{Components of the system}
+          \label{fig:arch:comp}
         \end{figure}
 
 
         \subsubsection{Virtual Appliance Repository}
 
-          The main responsibility of Virtual Appliance repository is to maintain the list and provide access to virtual
-          appliances created. It is used in two phases: the design phase to select appliances that are to be deployed,
-          and instantiation phase to serve virtual appliance images. \\
+          The main responsibility of Virtual Appliance Repository is to maintain the list of and provide access to
+          virtual appliances created. It is used in two phases: the design phase to select appliances that are to be
+          deployed, and instantiation phase to serve virtual appliance images. \\
+
+          % TODO komentarze przy metodach w interfejsach!
 
           \noindent
           \begin{minipage}{\textwidth}
@@ -1343,8 +1379,6 @@
           Supervisor delegates most of the work to worker nodes. Transactional operations can be provided at this level
           by extending the supervisor's behaviour to rollback after one of the worker nodes fails. \\
 
-          % TODO seq. diagram
-
           \noindent
           \begin{minipage}{\textwidth}
             \lstinputlisting[caption={Supervisor public interface},label={lst:arch:iface:supervisor},language=Java]{lst/arch-iface-supervisor.java}
@@ -1355,7 +1389,7 @@
 
           Worker components perform all the low-level operations, including model to underlying entity mapping (and vice
           versa). Workers do not transform the model in any way --- all they do is provide well-defined rules for
-          instantiation (also: naming schemes) and discovery. Multiple workers are managed by the supervisor.
+          instantiation (including naming schemes) and discovery. Multiple workers are managed by the supervisor.
 
           Public interface of worker component is presented in listing \ref{lst:arch:iface:worker}. \\
 
@@ -1366,17 +1400,6 @@
 
 
       \subsection{Main data flows and cooperation of the components}
-
-        % TODO
-        %
-        % * 3 glowne flowy: instantiation, discovery, monitoring
-        % * w kazdym wydzielone komponenty, przez ktore przeplywaja dane
-        % * opis przeplywu i transformacji
-        %
-        % * PLAN:
-        %   + definicja
-        %   + przeplyw ogolnie (schemat tutaj?)
-        %   + transformacje dosc szczegolowo
 
         \subsubsection{Instantiation}
 
