@@ -1008,14 +1008,29 @@
 
   \chapter{The system architecture}
 
-    The \nameref{sec:domain-model} section describes the transformations performed by the system's components in order
-    to instantiate (deploy) an object model. These include simple one-node instantiation as well as more complex
-    multi-node instantiations.
+    The chapter discusses architectural aspects of the created system. First, the operating environment is discussed
+    together with third-party components used to run the system. Then, general high-level view is described and
+    layers of the system are presented. The remaining sections describe details of the layers.
 
-    % tutaj tez kilka slow i JIMSie i integracji + co to daje
+    Section \ref{sec:arch:env} presents the context of the system. The distributed environment is described and
+    basic requirements with regard to installed software are listed. Also, the way of extending the environment with
+    specialized components is presented.
+
+    Section \ref{sec:arch:over} introduces the design of the system. Main layers (or subsystems) are identified together
+    with corresponding responsibilities. General aspects of layer interoperability are described.
+
+    Section \ref{sec:arch:inst} provides in-depth description of resource instrumentation layer. Its internal design is
+    presented and main classes of objects analyzed. Interactions between the objects are depicted and, finally, the
+    listing showing all the crucial classes belonging to the layer follows.
+
+    Section \ref{sec:arch:vi} describes the topmost layer of the whole system --- virtual infrastructure management. The
+    layer functionality is presented, then data model used is introduced and discussed and main components of the layer
+    are described together with their interdependencies and interactions. Extensive description of the layer's three
+    main use-cases --- instantiation, discovery, monitoring --- follows.
 
 
     \section{Operating environment}
+    \label{sec:arch:env}
 
       As depicted in figure \ref{fig:arch:deployment}, the system is designed to operate in a distributed environment
       --- the bottommost layer of the operating environment is an IP network of physical machines. Each of the machines
@@ -1040,6 +1055,7 @@
 
 
     \section{Architecture overview}
+    \label{sec:arch:over}
 
       When considered at a very high level, the architecture of the system as a whole is layer-based. There are three
       main layers, each specifying a set of its own interfaces. The higher the layer is placed in the stack, the more
@@ -1090,6 +1106,7 @@
 
 
     \section{Crossbow resources instrumentation}
+    \label{sec:arch:inst}
 
       The main responsibility of resource instrumentation subsystem is to provide a consistent way to create and manage
       resources of the underlying operating system. This general-purpose abstraction layer can easily be expanded when
@@ -1211,10 +1228,11 @@
         
 
     \section{Virtual infrastructure management}
+    \label{sec:arch:vi}
 
       Virtual infrastructure management subsystem is built on top of the instrumentation layer. Leveraging entity and
-      manager objects and JIMS project, it provides high-level mechanisms to manage and monitor complex network
-      topologies and quality policies associated with them.
+      manager objects and components of the JIMS project, it provides high-level mechanisms to manage and monitor
+      complex network topologies and quality policies associated with them.
 
 
       \subsection{High-level functionality overview}
@@ -1330,7 +1348,7 @@
         and maintain coupling as loose as possible. Each component has its own well-defined role and exposes a set of
         operations to interact with others.
 
-        The components presented in figure \ref{fig:arch:comp} reflect the three main stages of operation shown in
+        The components presented in figure \ref{fig:arch:comp} reflect three main stages of operation shown in
         subsection \ref{sub:arch:hl}. Boundaries were introduced to make the partition even clearer. The following
         subsections describe the components in more detail and provide listings with most important methods of exposed
         interfaces.
@@ -1352,8 +1370,6 @@
           The main responsibility of Virtual Appliance Repository is to maintain the list of and provide access to
           virtual appliances created. It is used in two phases: the design phase to select appliances that are to be
           deployed, and instantiation phase to serve virtual appliance images. \\
-
-          % TODO komentarze przy metodach w interfejsach!
 
           \noindent
           \begin{minipage}{\textwidth}
@@ -1403,9 +1419,9 @@
 
         \subsubsection{Instantiation}
 
-          There are three main stages identified when working with the topologies. There is a purely logical stage that
+          There are three main stages identified when working with the topologies. There is a purely logical one that
           does not require any knowledge of the underlying environment --- the operations involve manipulating the
-          domain model to create or update the virtual topology. There is a assignment stage which results in
+          domain model to create or update the virtual topology. There is an assignment stage which results in
           association between the model and physical resources. Finally, the actual deployment takes place in model
           instantiation stage --- logical elements are mapped to low-level ones after performing necessary
           transformations.
@@ -1418,19 +1434,16 @@
             \item Logical model definition
 
               This is the first stage the user is exposed to. The main task is to create a virtual network topology
-              comprising logical networking components (belonging to Layer 2 and 3 of the OSI/ISO model) and virtual
-              appliances --- specialized virtual machines. After the topology is created, IP addressing is provided and
-              routing set up.
-
-              % TODO appliance repo tutaj?
-
-              Finally, Quality of Service policies are determined to classify and differentiate the traffic.
+              comprising logical networking components (belonging to Layer 2 and 3 of the \mbox{OSI/ISO} model) and
+              virtual appliances --- specialized virtual machines. After the topology is created, IP addressing is
+              provided and routing set up. Finally, Quality of Service policies are determined to classify and
+              differentiate the traffic.
 
             \item Physical resource selection and assignment
 
               After the model is defined, it can be associated with underlying physical resources. There are two
               possible ways of performing the assignment --- it can be done manually with supplied utilities or special
-              component can suggest ,,best'' solution based on, for example, current workload and predefined set of
+              component can suggest optimal solution based on, for example, current workload and predefined set of
               rules. The latter approach is particularly useful when working with complex systems that should be able to
               adjust themselves automatically to balance the load.
 
@@ -1438,7 +1451,7 @@
 
               The final, entirely automatic, step is to map the logical model and assignments to actual components
               created on the host machines. This involves a series of transformations to adjust the model to
-              capabilities of the underlying environment and satisfy other requirements, e.g. topology isolation.
+              capabilities of the underlying environment and satisfy other requirements like topology isolation.
                   
           \end{enumerate}
 
@@ -1453,11 +1466,11 @@
               \newinst[4]{wrks}{Worker}
               \newinst[2]{var}{VA Repository}
 
-              \begin{call}{gui}{getApplianceIDs()}{var}{appliance IDs}
+              \begin{call}{gui}{getIds()}{var}{appliance IDs}
               \end{call}
 
               \begin{call}{gui}{instantiate(model)}{sup}{}
-                \begin{callself}{sup}{transform(model)}{}
+                \begin{callself}{sup}{transform(model)}{adjusted model}
                 \end{callself}
                 \begin{sdblock}{loop}{for each worker with model assigned}
                   \begin{call}{sup}{instantiate(parts of the model)}{wrks}{}
@@ -1473,21 +1486,9 @@
           
           \end{figure}
 
-          % TODO
-          %
-          %          GUI               -->   Supervisor  -->    Worker*
-          %    (topology definition)
-          %
-          %           ^                                            ^
-          %         VArepo                                       VArepo
-          %
-          %
-
-
-          % TODO obrazek:
+          % TODO obrazek (???):
           %                     logmod                  assoc              inst
           %                     MANUAL    (aided) MANUAL or AUTOMATIC    AUTOMATIC
-
 
           % TODO co rozumiemy przez topologie? (topology=layout+qos)
 
@@ -1495,20 +1496,18 @@
         \subsubsection{Discovery}
 
           Instantiated topology, together with applied addressing, routing table entries and quality policies, can be
-          discovered, i.e. corresponding object model can be recreated.
-
-          The discovery process can be seen as an inverse of instantiation: (although it is initialized by the
-          user/GUI/Supervisor TODO)
+          discovered, i.e. object model that describes it can be recreated. The discovery process is an inverse of
+          instantiation, it is composed of three phases (as shown in figure \ref{fig:arch:seqdis}):
 
           \begin{enumerate}
 
-            \item the system resources are inspected by each of the Worker nodes and parts of the model are created
-                  independently,
+            \item The system resources are inspected by each of the Worker nodes and parts of the model together with
+                  Assignment descriptors are created independently,
 
-            \item Partial results are collected and merged by the Supervisor. Redundant data is removed and necessary
+            \item partial results are collected and merged by the Supervisor. Redundant data is removed and necessary
                   transformations performed,
 
-            \item Complete model is passed further (e.g. to the GUI component).
+            \item complete model is passed further (e.g. to the GUI component).
           
           \end{enumerate}
 
@@ -1534,6 +1533,7 @@
             \end{sequencediagram}
 
             \caption{Topology discovery}
+            \label{fig:arch:seqdis}
           
           \end{figure}
 
@@ -1543,7 +1543,9 @@
           Topology operation can be monitored with high degree of granularity. Single flows can be inspected to see the
           amount of data transferred. Historical data is also made available.
 
-          The StatisticsGatherer component performs the translation between domain models.
+          The StatisticsGatherer component performs the translation between domain models, for example it is able to map
+          Policy to corresponding Flow and retrieve traffic statistics. The operation in shown in figure
+          \ref{fig:arch:seqmon}.
 
           \begin{figure}[H]
 
@@ -1563,6 +1565,7 @@
             \end{sequencediagram}
 
             \caption{Topology monitoring}
+            \label{fig:arch:seqmon}
           
           \end{figure}
 
