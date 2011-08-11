@@ -114,7 +114,7 @@
 	Currently there are three existing models performing QoS in the IP network:
 
 	\begin{enumerate}
-    \item best effort,
+                \item best effort,
 		\item Intserv,
 		\item Diffserv.
 	\end{enumerate}
@@ -1597,9 +1597,9 @@
 	
       Section \ref{sec:impl:build} presents all necessary steps required for platform build completion.
 	  
-	  Section \ref{sec:impl:verif} briefly highlights system verfication.
+      Section \ref{sec:impl:verif} briefly highlights system verfication.
 	  
-	  Section \ref{sec:impl:persist} describes adopted approach to data persistance.
+      Section \ref{sec:impl:persist} describes adopted approach to data persistance.
 
 
     \section{Implementation environment}
@@ -1810,8 +1810,6 @@
         JNA},label={lst:impl:low:jna},language=Java]{lst/impl-jna.java}
       \end{minipage}
 
-      % TODO dorzucic kawalek kodu w C
-
 
     \section{Building and running the platform}
     \label{sec:impl:build}
@@ -1903,7 +1901,7 @@
 		be then serialized into file and second on the jims nodes. During creation, discovery, removing network elements precise
 		naming conventions are preserved. Due to this convention whole network is persistent and does not require any additional 
 		databases or files. Since generated names are complex manual modification or creation of elements is not recommended as 
-                it is easy to make hard to find bugs. Created Gui is provided for this functions.
+                it is easy to make hard to find bugs. Created Gui is provided for this purposes.
 
                 With regard to statistics flow statistics are gathered and managed by operating system whereas 
 		VNic's traffic load is gathered starting from JIMS restart.
