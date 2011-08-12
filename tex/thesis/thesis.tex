@@ -1220,11 +1220,41 @@
 
       \subsection{Instrumented Solaris OS resources}
 
-        % TODO diagram czy nie?
-
         All the important Crossbow resources are instrumented (Manager:Entity pairs are created). This includes NICs
         (Network Interface Cards), VNICs (Virtual Network Interface Cards), VLANs (Virtual LANs), Etherstubs and Flows.
         All the components are loosely coupled and can be used independently.
+
+        \begin{figure}[H]
+          \begin{center}
+            \begin{tikzpicture}[every node/.style={minimum width=2.5cm},
+                                text height=1.5ex, text depth=.25ex]
+
+              \node (eflow) [terminal] {FlowMBean};
+              \node (mflow) [terminal, below=of eflow] {FlowManager}
+                edge [->] node [auto] {manages} (eflow);
+
+              \node (eether) [terminal, minimum width=3.5cm, right=of eflow] {EtherstubMBean};
+              \node (mether) [terminal, minimum width=3.5cm, below=of eether] {EtherstubManager}
+                edge [->] node [auto] {} (eether);
+
+              \node (enic) [terminal, right=of eether] {NICMBean};
+              \node (mnic) [terminal, below=of enic] {NICManager}
+                edge [->] node [auto] {} (enic);
+
+              \node (evnic) [terminal, right=of enic] {VNICMBean};
+              \node (mvnic) [terminal, below=of evnic] {VNICManager}
+                edge [->] node [auto] {} (evnic);
+
+              \node (evlan) [terminal, right=of evnic] {VLANMBean};
+              \node (mvlan) [terminal, below=of evlan] {VLANManager}
+                edge [->] node [auto] {} (evlan);
+              
+            \end{tikzpicture}
+          \end{center}
+
+          \caption{Instrumented resources}
+          \label{fig:arch:instr}
+        \end{figure}
         
 
     \section{Virtual infrastructure management}
