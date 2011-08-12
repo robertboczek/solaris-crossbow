@@ -87,14 +87,21 @@
 	In today's world every successful organisation is based on properly designed communication network. These networks
 	must deal with delay-sensitive data such as video images, real-time voice or mission-critical data. Therefore
 	must provide safe, predicatable and sometimes guaranteed services. Accomplishing the required Quality of 
-	Sevice(QoS) by controlling the delay, delay variation(jitter), bandwidth, packet loss parameters is deeply 
-	hidden secret of most successful end-to-end business applications. 
-	http://www.cisco.com/en/US/products/ps6558/products\_ios\_technology\_home.html
+	Sevice ( QoS ) by controlling the delay, delay variation(jitter), bandwidth and packet loss parameters is deeply 
+	hidden secret of most successful end-to-end business applications. Technologies like Ethernet did not foresee future 
+	necessity of providing supporting QoS therefore implementing QoS solutions over the Internet is such a demanding issue. 
+	%http://www.cisco.com/en/US/products/ps6558/products\_ios\_technology\_home.html
+	
+	Increasing popularity of virtualization, isolation and resource reservation in contemporary systems encourages to 
+	further reseach. Computing models like \textbf{Cloud computing}, \textbf{Grid computing} are becoming a standard and it 
+	is definately worth knowing at least the basic concepts.
 	
 	%TODO dopisac o rezerwacji zasobow i izolacji
+	\medskip
 	
-	Due to raising concern and importance of these issues in these paper we decided to have more insight into one of 
-	possible approaches	to this matter which is Solaris OS and the Crossbow technology. 
+	Due to raising concern and importance of these issues this paper takes more insight into one of 
+	possible approaches	to those matters which is Solaris OS and the Crossbow technology. In this study, system supporting 
+	multilevel virtualization of networking resources with isolated network and QoS elements is taken into consideration.
 
 
   \chapter{Context}  % TODO ładniej
@@ -107,7 +114,7 @@
 	Currently there are three existing models performing QoS in the IP network:
 
 	\begin{enumerate}
-    \item best effort,
+                \item best effort,
 		\item Intserv,
 		\item Diffserv.
 	\end{enumerate}
@@ -1604,9 +1611,6 @@
 
 
   \chapter{Implementation}
-
-    % TODO nie ma bazy danych - opisac, gdzie sa trzymane dane
-    % TODO dodac (pod)sekcje o weryfikacji - wszystkie testy
     
     \section*{Chapter overview}
 	
@@ -1622,6 +1626,10 @@
       Section \ref{sec:impl:low} lists low level functions used in created system.
 	
       Section \ref{sec:impl:build} presents all necessary steps required for platform build completion.
+	  
+      Section \ref{sec:impl:verif} briefly highlights system verfication.
+	  
+      Section \ref{sec:impl:persist} describes adopted approach to data persistance.
 
 
     \section{Implementation environment}
@@ -1832,8 +1840,6 @@
         JNA},label={lst:impl:low:jna},language=Java]{lst/impl-jna.java}
       \end{minipage}
 
-      % TODO dorzucic kawalek kodu w C
-
 
     \section{Building and running the platform}
     \label{sec:impl:build}
@@ -1862,8 +1868,6 @@
 
       We should run just single jims-gateway and on the rest nodes as many jims-agents as we require. For more
       information about \textbf{jims} and its architecture please refer to:
-
-      % TODO znalezc jakis tutorial do jims i opis architektury
 
 
       If jims-agent or jims-gateway did not started it is worth to see logs files, located respectively at
@@ -1904,7 +1908,33 @@
 			\item{Detailed information about links and flows like bandwidth load presented in charts from requested time periods or just simple numbers,}
 			\item{Automatic logging using ssh to selected ( already deployed ) nodes and opening gui-type terminal.}
 		\end{itemize}
+		
+		
+	\section{System verification}
+		\ref{sec:impl:verif}
+		
+		Complexity of created system implies necessity of preparing tools verifing correctness of the system. In order to achieve 
+		this verification tests on each level of our system were prepared. Starting from ( low-level ) shared libraries, where unit tests
+		for methods in \textbf{C} were implemented, through JMX level ( with mocks ) up to integration tests testing creating whole 
+		network structure.
+		
+		Additionally verification on the gui side of the system was provided where network to be created is verified in respect of 
+		proper names, ip addresses, etc.
+		
+		
+		
+	\section{Data persistance}
+		\ref{sec:impl:persist}
 
+		Although created system does provide data persistance in databases or any other formats persistance is provided. 
+		Persistance is provided on two levels: first is on gui level where user may save created network structure that would
+		be then serialized into file and second on the jims nodes. During creation, discovery, removing network elements precise
+		naming conventions are preserved. Due to this convention whole network is persistent and does not require any additional 
+		databases or files. Since generated names are complex manual modification or creation of elements is not recommended as 
+                it is easy to make hard to find bugs. Created Gui is provided for this purposes.
+
+                With regard to statistics flow statistics are gathered and managed by operating system whereas 
+		VNic's traffic load is gathered starting from JIMS restart.
 
     \section*{Summary}
 
@@ -2326,30 +2356,49 @@
 
     \section*{Chapter overview}
 
-      Bibliography \cite{mittelbach2004} test.
-	
-		
+	  This chapter summarizes the outcome of research in the area of network virtualization with special regard to 
+	  Solaris and the Crossbow package and its functionalities. 
+	  
+	  Section \ref{sub:sum:concl} briefly concludes research results and test-case results.
+	  Section \ref{sub:sum:achieved} outlines realized goals.
+	  Section \ref{sub:sum:further} considers possible improvments that might be introduced to created system.
 
     \section{Conclusions}
-	
+		\label{sub:sum:concl}
 		
-
+		Deep investigation during work on this paper allowed better understanding of concepts like network virtualization,
+		resource reservation. Preformed tests additionally outlined the significance of these issues and how important they
+		are in terms of success of developed system. Encountered complex problems only confirmed that although very useful 
+		they are also quite demanding and require comprehensive knowledge in all computer areas.
+		
     \section{Achieved goals}
-
-      % * drastyczne przyspieszenie konfiguracji systemu w porownaniu do recznego ustawiania
-      % * widok w postaci grafu
+		\label{sub:sum:achieved}
+		
+		In terms of achieved goals not all were successfully finished. Time shortage and lack of people did not allow 
+		for as deep	insight look at this issue as was initially planned. However, some objectives are really worth to
+		be mentioned:
+	  
+		\begin{itemize}
+			\item{Significant improvement in system configuration in comparision to manual configurating,}
+			\item{Presenting network in clear way ( graph format ),}
+		\end{itemize}
+		
+	    Hopefully presented system and whole concept of network virtualization, resource allocation and isolation 
+		would encourage reader to further issue investigation.
+		
 		
 
     \section{Further work}
-
-      % * semi-automatic snapshot creation (select an existing zone and transfer to the repository)
+		\label{sub:sum:further}
 	
       In terms of the future work there are many improvements that might be implemented. Probably the largest component,
       which was initially plannned was automatic resource assigner, that would run and perform automatic resource
       assignments to nodes that run under lowest load. This assigner with attached rule based system would gather data
       about the load on each node and based on that decide what and where instantiate. Presented and discussed system in
-      this thesis lacks that functionality. Instead, it offers manual assignments, where user selects on which node his
-      virtual resources should be created.
+      this thesis lacks that functionality. Instead, it offers manual assignments, where user selects on which node new
+      virtual resources should be created. Another not implemented yet welcomed would be semi-automatic snapshot creation. 
+	  Currently user can create solaris zone from existing snaphot and use it. Functionality where created resource could be 
+	  converted to snapshot and then transfered to the repository would definately improve the usability of the system.
 
 
   \bibliographystyle{plain}
