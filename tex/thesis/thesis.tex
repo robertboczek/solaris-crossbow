@@ -1010,7 +1010,8 @@
       Solaris 10 OS seems to be ideal cross-platform choice for customers dealing with management of high level
       services, complex system administration and high costs. It is the only open operating system which has proven
       results running from every critical enterprise databases to high performance Web farms that is why Solaris OS is
-      becoming strategic platform for today's constantly growing demands towards operating systems \cite{solaris_operating_system}. 
+      becoming strategic platform for today's constantly growing demands towards operating systems
+      \cite{solaris_operating_system}. 
 
 
   \chapter{The system architecture}
@@ -1233,20 +1234,20 @@
 
         \begin{figure}[H]
           \begin{center}
-            \begin{tikzpicture}[every node/.style={minimum width=2.5cm},
+            \begin{tikzpicture}[every node/.style={minimum width=4.5cm},
                                 text height=1.5ex, text depth=.25ex]
 
               \node (eflow) [terminal] {FlowMBean};
               \node (mflow) [terminal, below=of eflow] {FlowManager}
                 edge [->] node [auto] {manages} (eflow);
 
-              \node (eether) [terminal, minimum width=3.5cm, right=of eflow] {EtherstubMBean};
-              \node (mether) [terminal, minimum width=3.5cm, below=of eether] {EtherstubManager}
+              \node (eether) [terminal, right=of eflow] {EtherstubMBean};
+              \node (mether) [terminal, below=of eether] {EtherstubManager}
                 edge [->] node [auto] {} (eether);
 
-              \node (enic) [terminal, right=of eether] {NICMBean};
+              \node (enic) [terminal, below=of mflow] {NICMBean};
               \node (mnic) [terminal, below=of enic] {NICManager}
-                edge [->] node [auto] {} (enic);
+                edge [->] node [auto] {manages} (enic);
 
               \node (evnic) [terminal, right=of enic] {VNICMBean};
               \node (mvnic) [terminal, below=of evnic] {VNICManager}
@@ -1608,6 +1609,16 @@
 
 
     \section*{Summary}
+
+      The chapter provided description and discussion of the system's architecture. The high-level layered design was
+      presented and its advantages listed. Flexible and easily-expandable resources instrumentation layer was analyzed.
+      The layer provides general-purpose abstractions over low-level system resources.  Finally, the topmost layer,
+      virtual infrastructure management, used to build complex virtual network topologies was introduced.
+
+      The design satisfies requirements the system has to meet and ensures easy expansion when necessary. Thanks to low
+      coupling, new components can be integrated whenever additional functionality is needed. The created system can
+      scale to support large topology models deployed on a number of physical host preserving small amount of time
+      needed for instantiation process.
 
 
   \chapter{Implementation}
