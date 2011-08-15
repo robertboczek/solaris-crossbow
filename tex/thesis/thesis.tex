@@ -1846,11 +1846,18 @@
 			writing ability.
 
 			Listing \ref{lst:impl:low:jna} presents abbreviated example of JNA access to native libraries. \\
+			Listing \ref{lst:impl:low:jna} presents abbreviated example of JNA access to native libraries. The corresponding
+			native code in C language is shown in figure \ref{lst:impl:low:jnac}. \\
+ 	
+	
+			\noindent
+				\begin{minipage}{\textwidth}
+				\lstinputlisting[caption={Native library access with JNA (Java code)},label={lst:impl:low:jna},language=Java]{lst/impl-jna.java}
+			\end{minipage}  
 
 			\noindent
 			\begin{minipage}{\textwidth}
-				\lstinputlisting[caption={Native library access with
-				JNA},label={lst:impl:low:jna},language=Java]{lst/impl-jna.java}
+				\lstinputlisting[caption={Native library access with JNA (Native code)},label={lst:impl:low:jnac},language=C]{lst/impl-jna.c}
 			\end{minipage}
 
 
