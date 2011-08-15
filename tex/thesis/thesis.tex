@@ -344,6 +344,7 @@
 		
 		Requested development-time qualities:
 		\begin{itemize}
+			\item{independent and reusable object model - created model should be general without system specific details, }
 			\item{evolvability - support for new functionalities or adjustement to new technologies,}
 			\item{extensibility - ability to add new earlier unspecified functionalities, }
 			\item{composability - system should be created in form of composable components, }
@@ -876,13 +877,13 @@
         Etherstubs management commands are presented and how bandwidth and priority values might be assigned to these
         elements.
   
-        \begin{enumerate}
+        \begin{itemize}
           \item \# dladm create-vnic vnic1 -l e1000g0 - creates new VNIC \textbf{vnic1} over existing NIC \textbf{e1000g0},
           \item \# dladm create-etherstub ether00 - creates new Etherstub \textbf{ether00},
           \item \# dladm show-linkprop vnic11 - lists all properties assigned to \textbf{vnic11} link,
           \item \# dladm set-linkprop -pmaxbw=1000 vnic11 - assignes 1Mbps bandwith limit to \textbf{vnic11} link,
           \item \# dladm set-linkprop -ppriority=low vnic11 - assignes low priority to \textbf{vnic11} link.
-        \end{enumerate}
+        \end{itemize}
   
         More examples can be found in \textbf{man dladm}.
 
@@ -890,11 +891,11 @@
 
         \textbf{flowadm} is the admin command for flow management. It might be used as follows:     
 
-        \begin{enumerate}
+        \begin{itemize}
           \item \# flowadm show-flow -l e1000g0 - displays all flows assigned to link \textbf{e1000g0},
           \item \# flowadm add-flow -l e1000g0 -a transport=udp udpflow - creates new flow assigned to link
                 \textbf{e1000g0} for all udp packets.
-        \end{enumerate}
+        \end{itemize}
 
         More information about \textbf{flowadm} and \textbf{dladm} tools can be found in manual.
 
@@ -1632,18 +1633,29 @@
 		
       Section \ref{sec:impl:env} informs about implementational environment aspects like requested operating system,
       libraries presence or necessary programs to be build and installed. 
+	  
+	  Section \ref{sec:impl:module} concerns about implemented crossbow module for JIMS
+	  
+		\quad Subsection \ref{sec:impl:general} initially introduces to crossbow module requirements.
 
-      Section \ref{sec:impl:comp} describes in detail created components facilitating crossbow usage.
+		\quad Subsection \ref{sec:impl:comp} describes in detail created components facilitating crossbow usage.
+		
+		\quad Subsection \ref{sec:impl:low} lists low level functions used in created system.
 
-      Section \ref{sec:impl:model} outlines domain model transformation details.
-
-      Section \ref{sec:impl:low} lists low level functions used in created system.
+		\quad Subsection \ref{sec:impl:model} outlines domain model transformation details.
+		
+		\quad Subsection \ref{sec:impl:infrastructure} highlights created infrastructure allowing easy integrating with gui.
+		
+		\quad Subsection \ref{sec:impl:persist} describes adopted approach to data persistance.
+		
+	  
+	  Section \ref{sec:impl:gui} concerns about gui application.
+	  
+	  Section \ref{sec:impl:verif} briefly highlights system verfication.
 	
-      Section \ref{sec:impl:build} presents all necessary steps required for platform build completion.
+	  Section \ref{sec:impl:build} presents all necessary steps required for platform build completion.
 	  
-      Section \ref{sec:impl:verif} briefly highlights system verfication.
-	  
-      Section \ref{sec:impl:persist} describes adopted approach to data persistence.
+		
 
 
     \section{Implementation environment}
@@ -1671,8 +1683,8 @@
       \end{itemize}
 	
       JIMS (JMX based Infrastructure Monitoring System) supports monitoring and management under both Linux and Solaris
-      platforms.  Due to Jims features such as: easy maintenance (automatic modules downloading), extensibility
-      (possibility of adding additional modules) integrating with Jims newly	developed module (jims-crossbow) was quite
+      platforms.  Due to Jims features such as: easy maintenance ( automatic modules downloading ), extensibility
+      (possibility of adding additional modules) integrating with Jims newly developed module ( jims-crossbow ) was quite
       an easy task \cite{jims}.
     
       \begin{figure}[H]
@@ -1682,8 +1694,8 @@
         \caption{JIMS architecture \cite{jims}}
       \end{figure}
 	 
-      Jims services(MBeans) enabling creating, reading and changing properties of zones and projects were extensively
-      used in our system during deploying (creating) requested network structure. For more information about JIMS
+      Jims services( MBeans ) enabling creating, reading and changing properties of zones and projects were extensively
+      used in our system during deploying ( creating ) requested network structure. For more information about JIMS
       project please refer to the bibliography.	
     
       \medskip
@@ -1694,8 +1706,8 @@
         \item Jims module for crossbow,
         \item GUI application.
       \end{itemize}
-	
-      \medskip
+	  
+	  \medskip
 	
       In case of jims-crossbow module the implementation environment must consist:
 
@@ -1704,7 +1716,7 @@
         \item dladm, flowadm libraries.
       \end{itemize}
 	
-      The demand for crossbow libraries (flowadm, dladm) implicated that implementation environment must have been
+      The demand for crossbow libraries ( flowadm, dladm ) implicated that implementation environment must have been
       Solaris 11 or any other system supporting crossbow.
     
       GUI application was developed in java using swt and swing graphic libraries. Project was managed with maven and
@@ -1718,150 +1730,286 @@
 
       SWT core libraries for these operating systems were provided in repository, so the only requirements is to have
       one of the already mentioned operating system and installed: Java se 1.6 and maven 2.x.
-		
-		
-    \section{Crossbow components implementational details}
-    \label{sec:impl:comp}
+	  
+	  \medskip
+	  
+	  Detailed description of these two appliactions are provided in two separate sections beneath. 
+	  
+	  \section{Crossbow module for Jims}
+		\label{sec:impl:module}
 	
-      In terms of crossbow components two kinds of them have been distinguished:
+		\subsection{General information}
+			\label{sec:impl:general}
+		
+			To provide fully functionate system allowing all expected functionalities ( described in requirement analysys section )
+			new module called \"jims-crossbow\" was implemented. Created module consists three projects:
+			\begin{itemize}
+				\item{Crossbow model components - performing crossbow like operations ( \textbf{jims/jims-crossbow/jims-crossbow-mbean} )}
+				\item{Domain model transformation responsible for describing domain with actions 
+					( described in separate section ) ( \textbf{jims/jims-crossbow/jims-crossbow-model} )}
+				\item{Infrastructure project for high-level management ( \textbf{jims/jims-crossbow/jims-crossbow-infrastructure} )}
+			\end{itemize}
+		
+		\subsection{Crossbow components implementation details}
+			\label{sec:impl:comp}
+	
+		In terms of crossbow components, two kinds of them have been distinguished:
 
-      \begin{itemize}
-        \item Managers,
-        \item Entities.
-      \end{itemize}
+		\begin{itemize}
+			\item Managers,
+			\item Entities.
+		\end{itemize}
 
-      Managers basically provide operations for entity discovery and general management. The following managers have
-      been created:
+		Managers basically provide operations for entity discovery and general management. The following managers have
+		been created:
 
-      \begin{itemize}
-        \item VNicManager,
-        \item EtherstubManager,
-        \item FlowManager.
-      \end{itemize}
+		\begin{itemize}
+			\item VNicManager,
+			\item EtherstubManager,
+			\item FlowManager.
+		\end{itemize}
 
-      Another component type is entity which is basically equivalent of single crossbow entity like VNic, Etherstub.
-      These entities appear as MBeans and are registered at MBean servers. Each bean contains basic information about
-      entity like name, assigned properties and other attributes depending on their type. Operations for altering
-      properties, parameters, ip address are provided as well. Three figures below depicts in detail each manager and
-      their corresponding entity.
+		Another component type is entity which is basically equivalent of single crossbow entity like VNic, Etherstub.
+		These entities appear as MBeans and are registered at MBean servers. Each bean contains basic information about
+		entity like name, assigned properties and other attributes depending on their type. Operations for altering
+		properties, parameters, ip address are provided as well. Three figures below depicts in detail each manager and
+		their corresponding entity.
 
         \begin{figure}[H]
           \begin{center}
-            \includegraphics[width=0.9\textwidth]{img/impl/etherstub.png}
+            \includegraphics[width=1.2\textwidth, angle=90]{img/impl/etherstub.png}
           \end{center}
           \caption{Etherstub class diagram}
         \end{figure}        
 
         \begin{figure}[H]
           \begin{center}
-            \includegraphics[width=0.9\textwidth]{img/impl/link.png}
+            \includegraphics[width=1.2\textwidth, angle=90]{img/impl/link.png}
           \end{center}
           \caption{Link (VNic, Nic) class diagram}
         \end{figure}        
 
         \begin{figure}[H]
           \begin{center}
-            \includegraphics[width=0.9\textwidth]{img/impl/flow.png}
+            \includegraphics[width=1.2\textwidth, angle=90]{img/impl/flow.png}
           \end{center}
           \caption{Flow class diagram}
         \end{figure}        
 
-      Due to the fact that managers and entities have been separated and that each entity is an individual MBean these
-      entities can be accessed not only from java code but also be viewed and modified from jconsole.
+		Due to the fact that managers and entities have been separated and that each entity is an individual MBean these
+		entities can be accessed not only from java code but also be viewed and modified from jconsole.
 
-      \begin{figure}[H]
-        \begin{center}
-          \includegraphics[width=0.9\textwidth]{img/impl/crossbowLibsDiagram.pdf}
-        \end{center}
-        \caption{Jims-crossbow components, shared libraries and crossbow native libraries relationship}
-      \end{figure} 
+		\begin{figure}[H]
+			\begin{center}
+			\includegraphics[width=0.9\textwidth]{img/impl/crossbowLibsDiagram.pdf}
+			\end{center}
+			\caption{Jims-crossbow components, shared libraries and crossbow native libraries relationship}
+		\end{figure} 
+		
+		\subsection{Low-level functions access}
+			\label{sec:impl:low}
+
+			JIMS layered architecture implicated the demand for an approach towards accessing low-level funtions. In developed
+			application these approaches were adjusted to existing conditions so that for accessing functions from shared
+			libraries JNA (Java Native Access) was used and for doing more complex operations on low-level scripts were
+			written and Java ProcessBuilder invoked. Created jims-crossbow module containes shared library allowing CRUD
+			operations which subsequently are being accessed by JNA, whereas most of jims low-level access was done through
+			running shell scripts. Although running scripts by ProcessBuilder is faster in some cases accessing native
+			libraries through libraries like JNA or JNI gives more configurational advantage and does not require shell script
+			writing ability.
+
+			Listing \ref{lst:impl:low:jna} presents abbreviated example of JNA access to native libraries. \\
+
+			\noindent
+			\begin{minipage}{\textwidth}
+				\lstinputlisting[caption={Native library access with
+				JNA},label={lst:impl:low:jna},language=Java]{lst/impl-jna.java}
+			\end{minipage}
 
 
-    \section{Domain model transformation details}
-    \label{sec:impl:model}
+		\subsection{Domain model transformation details}
+			\label{sec:impl:model}
 
-      To allow conversion between gui designed network structure (like in the figure below) to zones and crossbow
-      entities on the server side new domain transformation model was proposed. 
+		To allow conversion between gui designed network structure (like in the figure below, more about gui in separate subsection) to
+                zones and crossbow entities on the server side new domain transformation model was proposed. 
       
-      \begin{figure}[H]
-        \begin{center}
-          \includegraphics[width=0.9\textwidth]{img/impl/network_structure_example.png}
-        \end{center}
-        \caption{Example of a network structure to be converted to object model}
-      \end{figure} 
+		\begin{figure}[H]
+			\begin{center}
+			\includegraphics[width=1.0\textwidth]{img/impl/network_structure_example.png}
+			\end{center}
+			\caption{Example of a network structure to be converted to object model.}
+		\end{figure} 
 
-      In general four main class types were distinguished: Appliance, Switch, Interface, Policy.
+		In general four main class types were distinguished: Appliance, Switch, Interface, Policy.
 
 		\medskip
 
-      \textbf{Appliance} is an equivalent of a zone to be created from one of existing snapshots. Appliances could be
-      also extended to Routers (with assigned static routes) which on the server side are seen as two appliances created
-      under different etherstubs with routing tables modified and assigned interfaces enabling connectivity between
-      appliances working under these two etherstubs.
+		\textbf{Appliance} is an equivalent of a zone to be created from one of existing snapshots. Appliances could be
+		also extended to Routers (with assigned static routes) which on the server side are seen as two appliances created
+		under different etherstubs with routing tables modified and assigned interfaces enabling connectivity between
+		appliances working under these two etherstubs. \\
+		\textbf{Switch} is implied as crossbow etherstub. \\
+		\textbf{Interface} is converted to VNic and assigned to created zones. \\
+		\textbf{Policy} should be seen as a demand towards desired network traffic shape. Policy has assigned Flow Object
+		with detailed values and flow type. These objects could be assigned directly to existing interfaces or exist as
+		detached crossbow flows.
 
-      \textbf{Switch} is implied as crossbow etherstub.
+		\begin{figure}[H]
+			\begin{center}
+				\includegraphics[width=1.2\textwidth, angle=90]{img/impl/resource-object-model.png}
+			\end{center}
+			\caption{Resource object transformation model}
+		\end{figure}
 
-      \textbf{Interface} is converted to VNic and assigned to created zones.
+		\begin{figure}[H]
+			\begin{center}
+				\includegraphics[width=0.9\textwidth]{img/impl/resource-object-model-example.png}
+			\end{center}
+			\caption{Resource object transformation model example}
+		\end{figure}
 
-      \textbf{Policy} should be seen as a demand towards desired network traffic shape. Policy has assigned Flow Object
-      with detailed values and flow type. These objects could be assigned directly to existing interfaces or exist as
-      detached crossbow flows.
+		Created model was designed in order to comply requirement of multiple deployments so that only introduced changes
+		were applied in already deployed project. Due to this issue to apply changes \textbf{instantiate(ObjectModel
+		objModel, Actions actions)} method from \textbf{SupervisorMBean} must be invoked where ObjectModel class
+		aggregates all domain model objects and Actions object encapsulates all actions to be done to every single domain
+		model object. These actions would be:
 
-      \begin{figure}[H]
-        \begin{center}
-          \includegraphics[width=1.2\textwidth, angle=90]{img/impl/resource-object-model.png}
-        \end{center}
-        \caption{Resource object transformation model}
-      \end{figure}
+		\begin{itemize}
+			\item {ADD - adds new resource,}
+			\item {REM - removes this resource,}
+			\item {UPD - updates existing resource,}
+			\item {NOOP - no changes are applied.}
+		\end{itemize}
+		
+		\subsection{Crossbow infrastructure project}
+			\label{sec:impl:infrastructure}
+			
+			As already mentioned whole system is based on JMX technology and externs existing JIMS project. All that
+			provides separation layer. Operations provided by MBean's may invoked from created GUI, JConsole or even
+			from own applications by just adapting to existing interfaces and object names. 
+			
+			Existing high-level MBean are described and discussed the table below:
 
-      \begin{figure}[H]
-        \begin{center}
-          \includegraphics[width=0.9\textwidth]{img/impl/resource-object-model-example.png}
-        \end{center}
-        \caption{Resource object transformation model example}
-      \end{figure}
+			\begin{table}[ht]
+				\caption{High-level management MBeans}
+				\centering % used for centering table
+				\begin{tabular}{llp{4cm}}
+					\hline \hline
+					Bean & ObjectName & Description \\
+					\hline
+					SupervisorMBean & \textbf{Crossbow:type=Supervisor} & Main Bean runs whole instantiation process ( distributes model to parts 
+						and passes them to proper Worker \\
+					\hline
+					WorkerMBean & \textbf{Crossbow:type=XBowWorker} & Responsible for instantiating on  \newline
+                                                this node given model with regard to specified  actions\\
+					\hline
+					RepoManagerMBean & \textbf{Crossbow:type=RepoManager} & Allows getting/setting path to projects placement, \newline returns all 
+						existing projects from working path \\
+					\hline
+					FlowManagerMBean & \textbf{Crossbow:type=FlowManager} & Provides CRUD operations for Flows \\
+					\hline
+					EtherstubManagerMBean & \textbf{Crossbow:type=EtherstubManager} & Provides CRUD operations for etherstubs \\
+					\hline
+					VNicManagerMBean & \textbf{Crossbow:type=VNicManager} & Provides CRUD operations for VNics \\
+					\hline
+					VlanManagerMBean & \textbf{Crossbow:type=VlanManager} & co to robi? \\
+					\hline
+					StatisticGathererMBean & \textbf{Crossbow:type=StatisticsGatherer} & Provides statistics for \
+						interface or flow from specified time period \\
+					\hline
+					CrossbowNotificationMBean & \textbf{Crossbow:type=CrossbowNotification} & Returns progress of deployment, \newline
+						logs with major information \\
+					\hline
+				\end{tabular}
+			\end{table}
+			
+		
+		\subsection{Data persistance}
+			\label{sec:impl:persist}
 
-      Created model was designed in order to comply requirement of multiple deployments so that only introduced changes
-      were applied in already deployed project. Due to this issue to apply changes \textbf{instantiate(ObjectModel
-      objModel, Actions actions)} method from \textbf{SupervisorMBean} must be invoked where ObjectModel class
-      aggregates all domain model objects and Actions object encapsulates all actions to be done to every single domain
-      model object. These actions would be:
+			Although created system does provide data persistance in databases or any other formats persistance is provided. 
+			Persistance is provided on two levels: first is on gui level where user may save created network structure that would
+			be then serialized into file and second on the jims nodes. During creation, discovery, removing network elements precise
+			naming conventions are preserved. Due to this convention whole network is persistent and does not require any additional 
+			databases or files. Since generated names are complex manual modification or creation of elements is not recommended as 
+			it is easy to make hard to find bugs. Created Gui is provided for this purposes.
 
-      \begin{itemize}
-        \item ADD - adds new resource,
-        \item REM - removes this resource,
-        \item UPD - updates existing resource,
-        \item NOOP - no changes are applied.
-      \end{itemize}
+			With regard to statistics flow statistics are gathered and managed by operating system whereas 
+			VNic's traffic load is gathered starting from JIMS restart.
+		
+		\subsection{System verification}
+			\label{sec:impl:verif}
+		
+			Complexity of created system implies necessity of preparing tools verifing correctness of the system. In order to achieve 
+			this verification tests on each level of our system were prepared. Starting from ( low-level ) shared libraries, where unit tests
+			for methods in \textbf{C} were implemented, through JMX level ( with mocks ) up to integration tests testing creating whole 
+			network structure.
+		
+			Additionally verification on the gui side of the system was provided where network to be created is verified in respect of 
+			proper names, ip addresses, etc.
 
-    \section{Low-level functions access}
-    \label{sec:impl:low}
+	\section{Gui application}
+		\label{sec:impl:gui}
+		
+		Created gui application facilitates usage of JIMS and newly implemented crossbow module for JIMS. Apart from project verification 
+                performed in the pre-instantiation stage, gui application is based on invocating JMX Bean's operation and presenting received responses.
 
-      JIMS layered architecture implicated the demand for an approach towards accessing low-level funtions. In developed
-      application these approaches were adjusted to existing conditions so that for accessing functions from shared
-      libraries JNA (Java Native Access) was used and for doing more complex operations on low-level scripts were
-      written and Java ProcessBuilder invoked. Created jims-crossbow module containes shared library allowing CRUD
-      operations which subsequently are being accessed by JNA, whereas most of jims low-level access was done through
-      running shell scripts. Although running scripts by ProcessBuilder is faster in some cases accessing native
-      libraries through libraries like JNA or JNI gives more configurational advantage and does not require shell script
-      writing ability.
+		Implemented gui application allows:
+		\begin{itemize}
+			\item{Connecting to jims-gateway,}
+			\item{Creating, modifying and removing desired network structure with requested virtual appliances,}
+			\item{Discovering already created projects,}
+			\item{Detailed information about links and flows like bandwidth load presented in charts for requested \
+				time periods,}
+			\item{Automatic logging using ssh to selected ( already deployed ) nodes and opening gui-type terminal.}
+		\end{itemize}		
 
-      Listing \ref{lst:impl:low:jna} presents abbreviated example of JNA access to native libraries. The corresponding
-      native code in C language is shown in figure \ref{lst:impl:low:jnac}. \\
+		\begin{figure}[H]
+			\begin{center}
+				\includegraphics[width=1.0\textwidth]{img/impl/gui.png}
+			\end{center}
+			\caption{Gui application}
+		\end{figure}
 
-      \noindent
-      \begin{minipage}{\textwidth}
-        \lstinputlisting[caption={Native library access with JNA (Java code)},label={lst:impl:low:jna},language=Java]{lst/impl-jna.java}
-      \end{minipage}
+        \begin{figure}[H]
 
-      \noindent
-      \begin{minipage}{\textwidth}
-        \lstinputlisting[caption={Native library access with JNA (Native code)},label={lst:impl:low:jnac},language=C]{lst/impl-jna.c}
-      \end{minipage}
+            \centering
+
+            \begin{sequencediagram}
+
+              \newthread{gui}{GUI}
+              \newinst[2]{gtmt}{GraphToModelTranslator}
+              \newinst[4]{xbownotif}{CrossbowNotification}
+			  \newinst[3]{progress}{ProgressShell}
+              \newinst[2]{sup}{Supervisor}
+
+              \begin{call}{gui}{createActions(model, NetworkStructureHelper)}{gtmt}{Actions}
+              \end{call}
+
+              \begin{call}{gui}{resetTotal(int numberOfNodes)}{xbownotif}{}
+			  \end{call}
+			  
+			  \begin{call}{gui}{instantiate(model)}{sup}
+			  \end{call}
+			  
+			  \begin{call}{gui}{open()}{progress}
+				\begin{sdblock}{loop}{while !deployed}
+                  \begin{call}{progress}{getProgress()}{xbownotif}{progress}
+				  \end{call}
+				  \begin{call}{progress}{getNewLogs()}{xbownotif}{logs}
+				  \end{call}
+                \end{sdblock}
+			  \end{call}
+            \end{sequencediagram}
+
+            \caption{Gui side instantiation process}
+          
+          \end{figure}
+		
 
 
     \section{Building and running the platform}
-    \label{sec:impl:build}
+		\label{sec:impl:build}
 
       To build and run the platform the following prerequisites are required:
 
@@ -1872,7 +2020,7 @@
       \end{itemize}
 
       Afterwards JIMS project must be built. Detailed description of how to build JIMS is in \textbf{README} file
-      located in the main catalog of jims sources. One of the most common problems are missing jars that unfortunately
+      located at the main catalog of jims sources. One of the most common problems are missing jars that unfortunately
       must be manually downloaded and installed in the local repository.
 
       Subsequently jims-crossbow module should be copied to the main folder containing jims and then build. The script
@@ -1885,13 +2033,11 @@
         \item jims-agent: .../jims-agent/bin/jims-agent.sh [-b host\_address] start|stop|restart.
       \end{itemize}
 
-      We should run just single jims-gateway and on the rest nodes as many jims-agents as we require. For more
-      information about \textbf{jims} and its architecture please refer to:
-
+      On the main node just single jims-gateway should be run and on the rest nodes as many jims-agents as it is required. For more
+      information about \textbf{jims} and its architecture please refer to bibliography.
 
       If jims-agent or jims-gateway did not started it is worth to see logs files, located respectively at
       target/.../jims-agent/var/jims/log/agent.log and target/.../jims-gateway/var/jims/log/agent.log
-
       It also recommended to have logs opened during JIMS start to see whether any exception was thrown (\textbf{tail
       -f target/.../jims\-gateway/var/jims/log/agent.log})
 
@@ -1901,61 +2047,16 @@
       performing CRUD operations. Especially in case of the crossbow module it allows these operations as
       the figure below presents:
 
-		\begin{figure}[H]
-                  \begin{center}
-                    \includegraphics[width=1.0\textwidth]{img/impl/jconsole.png}
-                  \end{center}
-                  \caption{The Crossbow module registered MBeans example}
-                \end{figure}
-		
-		To simplify working with our system GUI application was created. It is located in jims/jims-crossbow/jims-crossbow-gui catalog. Application 
-		may be imported to eclipse and then build and run or build using maven (\textbf{ mvn assembly:assembly }) and run 
-                \textbf{java -cp target/jims-crossbow-gui-3.0.0-exe.jar org.jims.modules.crossbow.gui.Gui}
-
-		\begin{figure}[H]
-                  \begin{center}
-                    \includegraphics[width=1.0\textwidth]{img/impl/gui.png}
-                  \end{center}
-                  \caption{Gui application}
-                \end{figure}
-		
-		Implemented gui application allows:
-		\begin{itemize}
-			\item{Connecting to jims-gateway,}
-			\item{Creating, modifying and removing desired network structure with requested virtual appliances,}
-			\item{Discovering already created projects,}
-			\item{Detailed information about links and flows like bandwidth load presented in charts from requested time periods or just simple numbers,}
-			\item{Automatic logging using ssh to selected ( already deployed ) nodes and opening gui-type terminal.}
-		\end{itemize}
-		
-		
-	\section{System verification}
-		\ref{sec:impl:verif}
-		
-		Complexity of created system implies necessity of preparing tools verifing correctness of the system. In order to achieve 
-		this verification tests on each level of our system were prepared. Starting from ( low-level ) shared libraries, where unit tests
-		for methods in \textbf{C} were implemented, through JMX level ( with mocks ) up to integration tests testing creating whole 
-		network structure.
-		
-		Additionally verification on the gui side of the system was provided where network to be created is verified in respect of 
-		proper names, ip addresses, etc.
-		
-		
-		
-	\section{Data persistence}
-		\ref{sec:impl:persist}
-
-		Although created system does provide data persistence in databases or any other formats persistence is provided. 
-		Persistance is provided on two levels: first is on gui level where user may save created network structure that would
-		be then serialized into file and second on the jims nodes. During creation, discovery, removing network elements precise
-		naming conventions are preserved. Due to this convention whole network is persistent and does not require any additional 
-		databases or files. Since generated names are complex manual modification or creation of elements is not recommended as 
-                it is easy to make hard to find bugs. Created Gui is provided for this purposes.
-
-                With regard to statistics flow statistics are gathered and managed by operating system whereas 
-		VNic's traffic load is gathered starting from JIMS restart.
-
-    \section*{Summary}
+	  \begin{figure}[H]
+        \begin{center}
+            \includegraphics[width=1.0\textwidth]{img/impl/jconsole.png}
+        \end{center}
+        \caption{The Crossbow module registered MBeans example}
+      \end{figure}
+	  
+	  Building gui, which is located at \textbf{jims/jims-crossbow/jims-crossbow-gui}, requires just maven. Application may 
+	  be imported to eclipse and then built and run or built from console using maven (\textbf{ mvn assembly:assembly })
+	  and executed \textbf{java -cp target/jims-crossbow-gui-3.0.0-exe.jar org.jims.modules.crossbow.gui.Gui}
 
 
   \chapter{Case Study}
@@ -2385,7 +2486,7 @@
     \section{Conclusions}
 		\label{sub:sum:concl}
 		
-		Deep investigation during work on this paper allowed better understanding of concepts like network virtualization,
+		Deep investigation during work on this paper allowed better understanding concepts like network virtualization,
 		resource reservation. Preformed tests additionally outlined the significance of these issues and how important they
 		are in terms of success of developed system. Encountered complex problems only confirmed that although very useful 
 		they are also quite demanding and require comprehensive knowledge in all computer areas.
@@ -2394,16 +2495,16 @@
 		\label{sub:sum:achieved}
 		
 		In terms of achieved goals not all were successfully finished. Time shortage and lack of people did not allow 
-		for as deep	insight look at this issue as was initially planned. However, some objectives are really worth to
+		for as deep insight look at this issue as was initially planned. However, some objectives are really worth to
 		be mentioned:
 	  
 		\begin{itemize}
 			\item{Significant improvement in system configuration in comparision to manual configurating,}
-			\item{Presenting network in clear way ( graph format ),}
+			\item{Presenting network in clear way ( graph format ).}
 		\end{itemize}
 		
 	    Hopefully presented system and whole concept of network virtualization, resource allocation and isolation 
-		would encourage reader to further issue investigation.
+	    would encourage reader to do own research in this area.
 		
 		
 
@@ -2411,13 +2512,13 @@
 		\label{sub:sum:further}
 	
       In terms of the future work there are many improvements that might be implemented. Probably the largest component,
-      which was initially plannned was automatic resource assigner, that would run and perform automatic resource
+      which was initially plannned, was automatic resource assigner, that would run and perform automatic resource
       assignments to nodes that run under lowest load. This assigner with attached rule based system would gather data
       about the load on each node and based on that decide what and where instantiate. Presented and discussed system in
       this thesis lacks that functionality. Instead, it offers manual assignments, where user selects on which node new
       virtual resources should be created. Another not implemented yet welcomed would be semi-automatic snapshot creation. 
-	  Currently user can create solaris zone from existing snaphot and use it. Functionality where created resource could be 
-	  converted to snapshot and then transfered to the repository would definately improve the usability of the system.
+      Currently user can create solaris zone from existing snaphot and use it. Functionality where created resource could be 
+      converted to snapshot and then transfered to the repository would definately improve the usability of the system.
 
 
   \bibliographystyle{plain}
