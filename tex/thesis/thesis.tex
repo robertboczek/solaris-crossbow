@@ -1245,6 +1245,13 @@
               \node (mether) [terminal, below=of eether] {EtherstubManager}
                 edge [->] node [auto] {} (eether);
 
+            \end{tikzpicture}
+
+            \bigskip
+
+            \begin{tikzpicture}[every node/.style={minimum width=4.5cm},
+                                text height=1.5ex, text depth=.25ex]
+
               \node (enic) [terminal, below=of mflow] {NICMBean};
               \node (mnic) [terminal, below=of enic] {NICManager}
                 edge [->] node [auto] {manages} (enic);
@@ -1391,8 +1398,6 @@
         subsections describe the components in more detail and provide listings with most important methods of exposed
         interfaces.
 
-        % TODO dorysowac granice
-
         \begin{figure}[H]
           \begin{center}
             \includegraphics[width=\textwidth]{img/architecture/iaas-components.pdf}
@@ -1524,10 +1529,6 @@
           
           \end{figure}
 
-          % TODO obrazek (???):
-          %                     logmod                  assoc              inst
-          %                     MANUAL    (aided) MANUAL or AUTOMATIC    AUTOMATIC
-
           % TODO co rozumiemy przez topologie? (topology=layout+qos)
 
 
@@ -1610,6 +1611,8 @@
 
     \section*{Summary}
 
+      % TODO napisac tu cos sensownego
+
       The chapter provided description and discussion of the system's architecture. The high-level layered design was
       presented and its advantages listed. Flexible and easily-expandable resources instrumentation layer was analyzed.
       The layer provides general-purpose abstractions over low-level system resources.  Finally, the topmost layer,
@@ -1640,7 +1643,7 @@
 	  
       Section \ref{sec:impl:verif} briefly highlights system verfication.
 	  
-      Section \ref{sec:impl:persist} describes adopted approach to data persistance.
+      Section \ref{sec:impl:persist} describes adopted approach to data persistence.
 
 
     \section{Implementation environment}
@@ -1843,12 +1846,17 @@
       libraries through libraries like JNA or JNI gives more configurational advantage and does not require shell script
       writing ability.
 
-      Listing \ref{lst:impl:low:jna} presents abbreviated example of JNA access to native libraries. \\
+      Listing \ref{lst:impl:low:jna} presents abbreviated example of JNA access to native libraries. The corresponding
+      native code in C language is shown in figure \ref{lst:impl:low:jnac}. \\
 
       \noindent
       \begin{minipage}{\textwidth}
-        \lstinputlisting[caption={Native library access with
-        JNA},label={lst:impl:low:jna},language=Java]{lst/impl-jna.java}
+        \lstinputlisting[caption={Native library access with JNA (Java code)},label={lst:impl:low:jna},language=Java]{lst/impl-jna.java}
+      \end{minipage}
+
+      \noindent
+      \begin{minipage}{\textwidth}
+        \lstinputlisting[caption={Native library access with JNA (Native code)},label={lst:impl:low:jnac},language=C]{lst/impl-jna.c}
       \end{minipage}
 
 
@@ -1934,10 +1942,10 @@
 		
 		
 		
-	\section{Data persistance}
+	\section{Data persistence}
 		\ref{sec:impl:persist}
 
-		Although created system does provide data persistance in databases or any other formats persistance is provided. 
+		Although created system does provide data persistence in databases or any other formats persistence is provided. 
 		Persistance is provided on two levels: first is on gui level where user may save created network structure that would
 		be then serialized into file and second on the jims nodes. During creation, discovery, removing network elements precise
 		naming conventions are preserved. Due to this convention whole network is persistent and does not require any additional 
