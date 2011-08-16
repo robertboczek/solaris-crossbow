@@ -232,13 +232,33 @@
 
     \section{Multilevel network virtualization}
 
+      The problem of networking resources virtualization is multifaceted. There are many aspects at various levels that
+      may be considered --- virtualization at the Data Link Layer of the OSI/ISO model with VLAN technology, providing
+      software equivalents of equipment used by higher network layers (e.g. virtual routers), or creating fully virtual
+      networks with Quality of Service guarantees. The section provides an in-depth description of these techniques
+      together with examples of technologies used.
+
+
       \subsection{Virtual network resources}
+
+        % implementacje software-owe: router, firewall
+        % warstwa lacza danych: VLANy
+        % VPNy?
+
 
       \subsection{Fine-grained QoS control}
 
+        % logiczne kanaly/flowy
+
+
       \subsection{Virtual appliances}
 
+        % ogolnie o podejsciu, przyklady
+
+
       \subsection{,,Network in a box'' concept}
+
+        % cala siec skonsolidowana w jednej maszynie, (zalety, wady,)? przyklady
 
 
     \section{Applications and benefits of virtual infrastructures}
@@ -258,6 +278,7 @@
         At the beginning the IaaS was just renting dedicated servers services from supplier. Nowadays thanks to
         virtualization these are most often virtual machines. In the former case user paid for the concrete hardware
         (box), now client typically pays on a per-use basis.
+
 
       \subsection{The role of resource virtualization in the SOA stack}
 
@@ -1650,12 +1671,12 @@
 
 		\quad Subsection \ref{sec:impl:model} outlines domain model transformation details.
 		
-		\quad Subsection \ref{sec:impl:infrastructure} highlights created infrastructure allowing easy integrating with gui.
+		\quad Subsection \ref{sec:impl:infrastructure} highlights created infrastructure allowing easy integrating with GUI.
 		
 		\quad Subsection \ref{sec:impl:persist} describes adopted approach to data persistance.
 		
 	  
-	  Section \ref{sec:impl:gui} concerns about gui application.
+	  Section \ref{sec:impl:gui} concerns about GUI application.
 	  
 	  Section \ref{sec:impl:verif} briefly highlights system verfication.
 	
@@ -1836,7 +1857,7 @@
 		\subsection{Domain model transformation details}
 			\label{sec:impl:model}
 
-		To allow conversion between gui designed network structure (like in the figure below, more about gui in separate subsection) to
+		To allow conversion between GUI designed network structure (like in the figure below, more about GUI in separate subsection) to
                 zones and crossbow entities on the server side new domain transformation model was proposed. 
       
 		\begin{figure}[H]
@@ -1934,11 +1955,11 @@
 			\label{sec:impl:persist}
 
 			Although created system does provide data persistance in databases or any other formats persistance is provided. 
-			Persistance is provided on two levels: first is on gui level where user may save created network structure that would
+			Persistance is provided on two levels: first is on GUI level where user may save created network structure that would
 			be then serialized into file and second on the jims nodes. During creation, discovery, removing network elements precise
 			naming conventions are preserved. Due to this convention whole network is persistent and does not require any additional 
 			databases or files. Since generated names are complex manual modification or creation of elements is not recommended as 
-			it is easy to make hard to find bugs. Created Gui is provided for this purposes.
+			it is easy to make hard to find bugs. Created GUI is provided for this purposes.
 
 			With regard to statistics flow statistics are gathered and managed by operating system whereas 
 			VNic's traffic load is gathered starting from JIMS restart.
@@ -1951,30 +1972,30 @@
 			for methods in \textbf{C} were implemented, through JMX level ( with mocks ) up to integration tests testing creating whole 
 			network structure.
 		
-			Additionally verification on the gui side of the system was provided where network to be created is verified in respect of 
+			Additionally verification on the GUI side of the system was provided where network to be created is verified in respect of 
 			proper names, ip addresses, etc.
 
-	\section{Gui application}
+	\section{GUI application}
 		\label{sec:impl:gui}
 		
-		Created gui application facilitates usage of JIMS and newly implemented crossbow module for JIMS. Apart from project verification 
-                performed in the pre-instantiation stage, gui application is based on invocating JMX Bean's operation and presenting received responses.
+		Created GUI application facilitates usage of JIMS and newly implemented crossbow module for JIMS. Apart from project verification 
+                performed in the pre-instantiation stage, GUI application is based on invocating JMX Bean's operation and presenting received responses.
 
-		Implemented gui application allows:
+		Implemented GUI application allows:
 		\begin{itemize}
 			\item{Connecting to jims-gateway,}
 			\item{Creating, modifying and removing desired network structure with requested virtual appliances,}
 			\item{Discovering already created projects,}
 			\item{Detailed information about links and flows like bandwidth load presented in charts for requested \
 				time periods,}
-			\item{Automatic logging using ssh to selected ( already deployed ) nodes and opening gui-type terminal.}
+			\item{Automatic logging using ssh to selected ( already deployed ) nodes and opening GUI-type terminal.}
 		\end{itemize}		
 
 		\begin{figure}[H]
 			\begin{center}
 				\includegraphics[width=1.0\textwidth]{img/impl/gui.png}
 			\end{center}
-			\caption{Gui application}
+			\caption{GUI application}
 		\end{figure}
 
         \begin{figure}[H]
@@ -2008,7 +2029,7 @@
               \end{call}
             \end{sequencediagram}
 
-            \caption{Gui side instantiation process}
+            \caption{GUI side instantiation process}
           
           \end{figure}
 		
@@ -2060,7 +2081,7 @@
         \caption{The Crossbow module registered MBeans example}
       \end{figure}
 	  
-	  Building gui, which is located at \textbf{jims/jims-crossbow/jims-crossbow-gui}, requires just maven. Application may 
+	  Building GUI, which is located at \textbf{jims/jims-crossbow/jims-crossbow-gui}, requires just maven. Application may 
 	  be imported to eclipse and then built and run or built from console using maven (\textbf{ mvn assembly:assembly })
 	  and executed \textbf{java -cp target/jims-crossbow-gui-3.0.0-exe.jar org.jims.modules.crossbow.gui.Gui}
 
