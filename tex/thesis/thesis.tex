@@ -108,21 +108,21 @@
 
   \chapter{Context}  % TODO ładniej
 
-	Constantly growing demand for bandwidth in networks (especially VoD, VoIP, RT) raises the question: 'Whether it 
-	is better to increase available bandwidth of networks or to build intelligent systems managing users traffic?'. 
-	As high bandwidth is just not enough because there are other equally important transmission parameters (delay,
-	jitter, package missing	tolerance) there seems to be just one correct answer for this question. Creating
-	such systems is not an easy task and many groups such as IETF (The Internet Engineering Task Force) are working on this problem. 
-	Currently there are three existing models performing QoS in the IP network:
+    Constantly growing demand for bandwidth in networks (especially VoD, VoIP, RT) raises the question: 'Whether it is
+    better to increase available bandwidth of networks or to build intelligent systems managing users traffic?'.  As
+    high bandwidth is just not enough because there are other equally important transmission parameters (delay, jitter,
+    package missing	tolerance) there seems to be just one correct answer for this question. Creating such systems is not
+    an easy task and many groups such as IETF (The Internet Engineering Task Force) are working on this problem.
+    Currently there are three existing models performing QoS in the IP network:
 
-	\begin{enumerate}
-                \item best effort,
-		\item Intserv,
-		\item Diffserv.
-	\end{enumerate}
-	
-	These models are discussed in more details in the following section.
-	
+    \begin{enumerate}
+      \item best effort,
+      \item Intserv,
+      \item Diffserv.
+    \end{enumerate}
+
+    These models are discussed in more details in the following section.
+
 
     \section{QoS-aware networking}
 
@@ -130,95 +130,99 @@
       % wykl. Luke-a?)
       %
       % w szczegolach o QoS na IP
-	  QoS (Quality of Service) is an issue in all types of networks such as IP, Token Ring, Frame Relay or even ATM. Each of them
-	  adapted specific approach towards this matter. IP network for instance is non-deterministic although there is
-	  a possiblity of packet classification using CoS (Class of Service) field. Token Ring on the other hand is deterministic
-	  and allows using priority to distinct traffic. Last but not least ATM creates virtual path between sender and receiver and sets
-	  QoS parameters. Despite the fact that all approaches are very interesting and meaningful this paper focuses mainly on the IP 
-	  network and its approach to QoS.
+
+      QoS (Quality of Service) is an issue in all types of networks such as IP, Token Ring, Frame Relay or even ATM.
+      Each of them adapted specific approach towards this matter. IP network for instance is non-deterministic although
+      there is a possiblity of packet classification using CoS (Class of Service) field. Token Ring on the other hand is
+      deterministic and allows using priority to distinct traffic. Last but not least ATM creates virtual path between
+      sender and receiver and sets QoS parameters. Despite the fact that all approaches are very interesting and
+      meaningful this paper focuses mainly on the IP network and its approach to QoS.
 
       % IntServ, DiffServ, inne
-	  Nowadays the IETF (The Internet Engineering Task Force) is working on two approaches
-	  beyond the basic best-effort service to provide more advanced handling of packets and providing requested level 
-	  of bandwidth and delay which are:
 
-    \begin{enumerate}
-      \item integrated services --- reserves resources necessary to provide the service along path,
-      \item differentiated services --- do not require resource reservation along path
-    \end{enumerate}
-	
-		\subsection{DiffServ}
-		
-			Due to clear need for relatively simple and coarse methods of providing differentiated classes
-			of service for Internet traffic, to support various types of applications, and specific business
-			requirements. The differentiated service approach to providing quality of service in networks 
-			employs a small, well-defined set of building blocks from which a variety of aggregate behaviors
-			may be built. \cite{qos}
-			
-			DiffServ works with traffic stream containing many complex microflows which among the same stream have:
+      Nowadays the IETF (The Internet Engineering Task Force) is working on two approaches beyond the basic best-effort
+      service to provide more advanced handling of packets and providing requested level of bandwidth and delay which
+      are:
 
-			\begin{itemize}
-				\item Same QoS requirements,
-				\item Traverses domain towards the same direction.
-			\end{itemize}
-			
-			Microflow is a flow between applications and is identified mainly by:
+      \begin{enumerate}
+        \item integrated services --- reserves resources necessary to provide the service along path,
+        \item differentiated services --- do not require resource reservation along path
+      \end{enumerate}
 
-			\begin{enumerate}
-				\item Source and/or Destination Address,
-				\item Transport protocol,
-				\item Source and/or Destination Port.
-			\end{enumerate}
-			
-			\begin{figure}[H]
-				\begin{center}
-					\includegraphics[width=.7\textwidth]{img/qos/diffserv.png}
-				\end{center}
-				\caption{DiffServ domain}
-			\end{figure} %TODO podac zrodlo obrazka ( wyklad z systemow multimedialnych dotyczacy QoS )
-			
-      DiffServ domain is a set of nodes with consistent QoS policy (for example network managed by the same ISP or
-      intranet). Routers within domain are didvided into two groups: boundary routers and core routers. Boundary router
-      performs traffic classification, packet marking, traffic metering, traffic control (policing, shaping) where core
-      routers pass packets according to PHB(Per Hop Behaviour - more about them later) and sometimes changes DSCP
-      labels.			
-			
-			This architecture distinguishes two major components: packet marking using the IPv4 ToS byte or TC in
-			IPv6 and PHBs(Per Hop Behaviour).
-			\medskip
-			Redefined ToS field now uses 6 bits for packet classification and is called Differentiated Services 
-			Codepoint(DSCP). 
-			PHB defines how packet should be treated due to its priority. Accepted policy should be consistent
-			within all domain.
-			
-		\subsection{IntServ}
-			
-			Integrated services beyond the basic best-effort service defined in two RFCs provide two levels of 
-			service for IP which are called Controlled-Load Service and Guaranteed Service. Both 
-			require information about the traffic to be generated. 
-			
-			Guaranteed Service type should be used in applications with real time demands as it provides
-			guaranteed bandwidth and delay, whereas Controlled-Load Service does not give full guarantee
-			and should be used with application less sensitive for packets loss or delay.
-			
-			IntServ requires resource reservation for certain flows or aggregated data streams. The reservation 
-			operation is available thanks to RSVP protocol. Due to this reservation session initialization 
-			lasts much longer than in DiffServ.
-			
-		{DiffServ vs IntServ}
-		
-			\begin{table}[ht]
-				\caption{DiffServ, IntServ comparison}
-				\centering % used for centering table
-				\begin{tabular}{c c}
-					\hline \hline
-					IntServ & DiffServ \\
-					Stateful & Stateless \\
-					Not scalable & Scalable \\
-					Stream oriented & Processing single packets \\
-					\hline
-				\end{tabular}
-			\end{table}
+
+      \subsection{DiffServ}
+
+        Due to clear need for relatively simple and coarse methods of providing differentiated classes of service for
+        Internet traffic, to support various types of applications, and specific business requirements. The
+        differentiated service approach to providing quality of service in networks employs a small, well-defined set of
+        building blocks from which a variety of aggregate behaviors may be built. \cite{qos}
+
+        DiffServ works with traffic stream containing many complex microflows which among the same stream have:
+
+        \begin{itemize}
+          \item Same QoS requirements,
+          \item Traverses domain towards the same direction.
+        \end{itemize}
+
+        Microflow is a flow between applications and is identified mainly by:
+
+        \begin{enumerate}
+          \item Source and/or Destination Address,
+          \item Transport protocol,
+          \item Source and/or Destination Port.
+        \end{enumerate}
+
+        \begin{figure}[H]
+          \begin{center}
+            \includegraphics[width=.7\textwidth]{img/qos/diffserv.png}
+          \end{center}
+          \caption{DiffServ domain}
+        \end{figure} %TODO podac zrodlo obrazka ( wyklad z systemow multimedialnych dotyczacy QoS )
+
+        DiffServ domain is a set of nodes with consistent QoS policy (for example network managed by the same ISP or
+        intranet). Routers within domain are didvided into two groups: boundary routers and core routers. Boundary
+        router performs traffic classification, packet marking, traffic metering, traffic control (policing, shaping)
+        where core routers pass packets according to PHB(Per Hop Behaviour - more about them later) and sometimes
+        changes DSCP labels.
+
+        This architecture distinguishes two major components: packet marking using the IPv4 ToS byte or TC in IPv6 and
+        PHBs(Per Hop Behaviour).
+
+        \medskip
+
+        Redefined ToS field now uses 6 bits for packet classification and is called Differentiated Services
+        Codepoint(DSCP). PHB defines how packet should be treated due to its priority. Accepted policy should be
+        consistent within all domain.
+
+
+      \subsection{IntServ}
+
+        Integrated services beyond the basic best-effort service defined in two RFCs provide two levels of service for
+        IP which are called Controlled-Load Service and Guaranteed Service. Both require information about the traffic
+        to be generated. 
+
+        Guaranteed Service type should be used in applications with real time demands as it provides guaranteed
+        bandwidth and delay, whereas Controlled-Load Service does not give full guarantee and should be used with
+        application less sensitive for packets loss or delay.
+
+        IntServ requires resource reservation for certain flows or aggregated data streams. The reservation operation is
+        available thanks to RSVP protocol. Due to this reservation session initialization lasts much longer than in
+        DiffServ.
+
+        {DiffServ vs IntServ}
+
+        \begin{table}[ht]
+          \caption{DiffServ, IntServ comparison}
+          \centering % used for centering table
+          \begin{tabular}{c c}
+            \hline \hline
+            IntServ         & DiffServ \\
+            Stateful        & Stateless \\
+            Not scalable    & Scalable \\
+            Stream oriented & Processing single packets \\
+            \hline
+          \end{tabular}
+        \end{table}
 
 
     \section{Resource virtualization approaches}
@@ -244,16 +248,16 @@
       \subsection{Improving server-side infrastructure scalability}
 
       \subsection{Infrastructure as a service}
-	  
-	  The IAAS( Infrastructure as a service ) sometimes also called Hardware as a Service (HaaS) is one of three 
-	  cloud computing models, the other two are: Software as a Service (SaaS) and Platform as a Service (PaaS). 
-	  This service is based on providing by the supplier whole scalable IT infrastructure depending on user demand 
-	  such as virtualized hardware. The service provider owns the equipment and is responsible for housing,
-	  running and maintaining it.  
-	  
-	  At the beginning the IaaS was just renting dedicated servers services from supplier. Nowadays thanks to virtualization 
-	  these are most often virtual machines. In the former case user paid for the concrete hardware (box), now client 
-	  typically pays on a per-use basis.
+
+        The IAAS (Infrastructure as a service) sometimes also called Hardware as a Service (HaaS) is one of three cloud
+        computing models, the other two are: Software as a Service (SaaS) and Platform as a Service (PaaS).  This
+        service is based on providing by the supplier whole scalable IT infrastructure depending on user demand such as
+        virtualized hardware. The service provider owns the equipment and is responsible for housing, running and
+        maintaining it.
+
+        At the beginning the IaaS was just renting dedicated servers services from supplier. Nowadays thanks to
+        virtualization these are most often virtual machines. In the former case user paid for the concrete hardware
+        (box), now client typically pays on a per-use basis.
 
       \subsection{The role of resource virtualization in the SOA stack}
 
