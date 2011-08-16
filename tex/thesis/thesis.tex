@@ -1979,27 +1979,27 @@
 
               \newthread{gui}{GUI}
               \newinst[2]{gtmt}{GraphToModelTranslator}
-              \newinst[4]{xbownotif}{CrossbowNotification}
-			  \newinst[3]{progress}{ProgressShell}
-              \newinst[2]{sup}{Supervisor}
+              \newinst{xbownotif}{CrossbowNotification}
+              \newinst{progress}{ProgressShell}
+              \newinst{sup}{Supervisor}
 
               \begin{call}{gui}{createActions(model, NetworkStructureHelper)}{gtmt}{Actions}
               \end{call}
 
               \begin{call}{gui}{resetTotal(int numberOfNodes)}{xbownotif}{}
-			  \end{call}
-			  
-			  \begin{call}{gui}{instantiate(model)}{sup}
-			  \end{call}
-			  
-			  \begin{call}{gui}{open()}{progress}
-				\begin{sdblock}{loop}{while !deployed}
-                  \begin{call}{progress}{getProgress()}{xbownotif}{progress}
-				  \end{call}
-				  \begin{call}{progress}{getNewLogs()}{xbownotif}{logs}
-				  \end{call}
-                \end{sdblock}
-			  \end{call}
+              \end{call}
+
+              \begin{call}{gui}{instantiate(model)}{sup}{}
+              \end{call}
+
+              \begin{call}{gui}{open()}{progress}{}
+              \begin{sdblock}{loop}{while !deployed}
+                \begin{call}{progress}{getProgress()}{xbownotif}{progress}
+                \end{call}
+                \begin{call}{progress}{getNewLogs()}{xbownotif}{logs}
+                \end{call}
+              \end{sdblock}
+              \end{call}
             \end{sequencediagram}
 
             \caption{Gui side instantiation process}
