@@ -79,23 +79,23 @@
   \listoffigures
 
   \newpage
-	\begin{center}
 	\vspace*{2in}
-	{\it We would like to acknowledge the support and assistance given us by professor Krzysztof Zieliński and Marcin Jarząb. Their generously contributed ideas, 
-		feedback and advice was of great help to us.}
-	\\
-	{\it Finally, we would like to thank to our parents,  for their support and encouragement.}
+
+	\begin{center}
+    \textit{We would like to acknowledge the support and assistance given us by professor Krzysztof~Zieliński and
+            Marcin~Jarząb. Their generously contributed ideas, feedback and advice was of great help to us. \\
+            Finally, we would like to thank to our parents and friends, for their support and encouragement.}
   \end{center}
 
   \newpage
-	\begin{center}
 	\vspace*{2in}
-	{\it Thesis work contribution:}\\
-	
-	{\it Chapters written together ( 2, 4, 8 ), } \\
-	{\it Chapters written by Dawid ( 5, 7 ) ,} \\
-	{\it Chapters written by Robert ( 1, 3, 6 ), } \\
-	{\it Implementation work performed together. }
+
+	\begin{center}
+    \textit{Thesis work contribution: \\
+            Chapters written together (2, 4, 8), \\
+            Chapters written by Dawid (\ref{chap:arch}, \ref{chap:cs}), \\
+            Chapters written by Robert (1, 3, 6), \\
+            Implementation work performed together.}
   \end{center}
 
   \chapter{Introduction}
@@ -245,6 +245,12 @@
 
       % TODO classify and define virtualization types
 
+      \subsection{Full virtualization}
+
+      \subsection{Partial virtualization}
+
+      \subsection{OS-level virtualization}
+
 
     \section{Multilevel network virtualization}
 
@@ -255,9 +261,40 @@
       together with examples of technologies used.
 
 
+      \subsection{Types of virtual networks}
+
+        Virtualized networks belong to one of two main classes --- internal or external. Internal virtualization
+        utilizes a single machine to create a logical network topology inside, whereas external virtualization means
+        using existing physical infrastructure (comprising multiple nodes) to build subnetworks on top of it.
+
+        As far as internal virtualization is considered, the main building blocks are virtual network interface cards
+        and virtual switches. These components build logical links between virtual appliances (counterparts of physical
+        machines). Examples of internal virtualization solutions include Xen domains (TODO sprawdzic), VirtualBox
+        internal networks and Solaris Containers with Crossbow technology.
+
+        External virtualization is implemented with Layer 2 switches aware of VLAN technology. With these devices,
+        entire network is split into fully-isolated parts, each becoming a new independent network. Routers can then be
+        used to establish connectivity between selected subnetworks.
+
+        The approaches listed can be interoperate to create hybrid topologies with some parts of a network using
+        internal virtualization and some using external one. The approaches to network virtualization are depicted in
+        figure \ref{fig:ctx:nvtypes}
+
+        % TODO v obrazek z porownaniem
+
+        \begin{figure}[H]
+          \caption{Types of virtual networks}
+          \label{fig:ctx:nvtypes}
+        \end{figure}
+
+
+        % TODO ref do System Administration Guide: Network Interfaces and Network Virtualization
+
+
       \subsection{Virtual network resources}
 
         % implementacje software-owe: router, firewall
+        % VNIC
         % warstwa lacza danych: VLANy
         % VPNy?
 
@@ -265,15 +302,20 @@
       \subsection{Fine-grained QoS control}
 
         % logiczne kanaly/flowy
+        % ATM?
 
 
       \subsection{Virtual appliances}
 
         % ogolnie o podejsciu, przyklady
+        % can serve various purposes - ordinary network nodes (app layer: workstations, servers, proxy?) but also
+        % routers, firewalls, load balancers
+        % IMPORTANT: often host a single application
 
 
       \subsection{,,Network in a box'' concept}
 
+        % zbiera do kupy: internal virtualization, virtual devices, qos control, virtual appliances
         % cala siec skonsolidowana w jednej maszynie, (zalety, wady,)? przyklady
 
 
@@ -1059,6 +1101,7 @@
 
 
   \chapter{The system architecture}
+  \label{chap:arch}
 
     The chapter discusses architectural aspects of the created system. First, the operating environment is discussed
     together with third-party components used to run the system. Then, general high-level view is described and
@@ -2110,6 +2153,7 @@
 
 
   \chapter{Case Study}
+  \label{chap:cs}
 
     The chapter describes the infrastructure that was built using the implemented system. Steps necessary to restore the
     configuration are listed and described. A number of tests were performed to evaluate the created system and
