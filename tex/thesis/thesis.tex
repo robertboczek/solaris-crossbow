@@ -255,22 +255,23 @@
     \section{Multilevel network virtualization}
 
       The problem of networking resources virtualization is multifaceted. There are many aspects at various levels that
-      may be considered --- virtualization at the Data Link Layer of the OSI/ISO model with VLAN technology, providing
-      software equivalents of equipment used by higher network layers (e.g. virtual routers), or creating fully virtual
+      should be considered --- virtualization at the Data Link Layer of the OSI/ISO model, providing software
+      equivalents of equipment used by higher network layers (e.g. virtual routers), or creating fully virtualized
       networks with Quality of Service guarantees. The section provides an in-depth description of these techniques
       together with examples of technologies used.
 
 
       \subsection{Types of virtual networks}
 
-        Virtualized networks belong to one of two main classes --- internal or external. Internal virtualization
-        utilizes a single machine to create a logical network topology inside, whereas external virtualization means
-        using existing physical infrastructure (comprising multiple nodes) to build subnetworks on top of it.
+        Virtualized networks belong to one of two main classes --- internal or external \cite{nsag}. Internal
+        virtualization utilizes a single machine to create a logical network topology inside, whereas external
+        virtualization means using existing physical infrastructure (comprising multiple nodes) to build subnetworks on
+        top of it.
 
         As far as internal virtualization is considered, the main building blocks are virtual network interface cards
-        and virtual switches. These components build logical links between virtual appliances (counterparts of physical
-        machines). Examples of internal virtualization solutions include Xen domains (TODO sprawdzic), VirtualBox
-        internal networks and Solaris Containers with Crossbow technology.
+        and virtual switches. These components establish logical links between virtual appliances (counterparts of
+        physical machines). Examples of internal virtualization solutions include Xen domains (TODO sprawdzic),
+        VirtualBox internal networks \cite{vboxum} and Solaris Containers with Crossbow technology.
 
         External virtualization is implemented with Layer 2 switches aware of VLAN technology. With these devices,
         entire network is split into fully-isolated parts, each becoming a new independent network. Routers can then be
@@ -288,15 +289,30 @@
         \end{figure}
 
 
-        % TODO ref do System Administration Guide: Network Interfaces and Network Virtualization
+      \subsection{Virtualized network devices}
 
+        Two approaches can be distinguished: physical devices are partitioned to create logical entities with assigned
+        resources or software-based solutions are used to create independent virtualized components with the same
+        behaviour as their physical counterparts. Virtualization here means both creating virtual as well as logical
+        resources. Both methods can be applied at various layers of the OSI/ISO model.
 
-      \subsection{Virtual network resources}
+        Data Link layer virtual resources can be created --- these include virtual switches and virtual network
+        interface cards built on top of them. Virtual routers can connect network segments the same way as physical
+        ones. More sophisticated examples include software implementations of firewalls and load balancers.
 
-        % implementacje software-owe: router, firewall
-        % VNIC
+        Logical devices require specialized hardware and the approach is used mainly in high-end solutions. VLAN
+        (Virtual Local Area Network) technology is one of the most widely used partitioning techniques within Data Link
+        layer --- ports of a switch are grouped to provide separate broadcast domains. Another technique, used to
+        merge geographically distributed segments and create single Layer 2 segment is VPLS () \cite{moreno}.
+
+        % DATA-PATH VIRT
         % warstwa lacza danych: VLANy
         % VPNy?
+
+        logical
+        - physical resource partitioning and assignment
+        - Layer2: partitionable NICs, VLAN, VPLS
+        - Layer3: VRF
 
 
       \subsection{Fine-grained QoS control}
