@@ -74,10 +74,18 @@
 
 % BEGIN Acronyms
 
+\newacronym{acr:atm}{ATM}{Asynchronous Transfer Mode}
+\newacronym{acr:cos}{CoS}{Class of Service}
+\newacronym{acr:ietf}{IETF}{Internet Engineering Task Force}
 \newacronym{acr:jims}{JIMS}{JMX-based Infrastructure Monitoring System}
 \newacronym{acr:jmx}{JMX}{Java Management Extensions}
+\newacronym{acr:osi}{OSI}{Open Systems Interconnection}
+\newacronym{acr:phb}{PHB}{Per-Hop Behaviour}
 \newacronym{acr:qos}{QoS}{Quality of Service}
 \newacronym{acr:vlan}{VLAN}{Virtual Local Area Network}
+\newacronym{acr:vod}{VOD}{Video on Demand}
+\newacronym{acr:vpls}{VPLS}{Virtual Private LAN Service}
+\newacronym{acr:vrf}{VRF}{Virtual Routing and Forwarding}
 
 \makeglossaries
 
@@ -141,12 +149,12 @@
 
   \chapter{Context}  % TODO ładniej
 
-    Constantly growing demand for bandwidth in networks (especially VoD, VoIP, RT) raises the question: 'Whether it is
-    better to increase available bandwidth of networks or to build intelligent systems managing users traffic?'.  As
-    high bandwidth is just not enough because there are other equally important transmission parameters (delay, jitter,
-    package missing	tolerance) there seems to be just one correct answer for this question. Creating such systems is not
-    an easy task and many groups such as IETF (The Internet Engineering Task Force) are working on this problem.
-    Currently there are three existing models performing \gls{acr:qos} in the IP network:
+    Constantly growing demand for bandwidth in networks (especially \gls{acr:vod}, VoIP, RT) raises the question:
+    'Whether it is better to increase available bandwidth of networks or to build intelligent systems managing users
+    traffic?'.  As high bandwidth is just not enough because there are other equally important transmission parameters
+    (delay, jitter, package missing	tolerance) there seems to be just one correct answer for this question. Creating
+    such systems is not an easy task and many groups such as \gls{acr:ietf} are working on this problem.  Currently
+    there are three existing models performing \gls{acr:qos} in the IP network:
 
     \begin{enumerate}
       \item best effort,
@@ -164,16 +172,16 @@
       %
       % w szczegolach o QoS na IP
 
-      \gls{acr:qos} (Quality of Service) is an issue in all types of networks such as IP, Token Ring, Frame Relay or even ATM.
+      \gls{acr:qos} is an issue in all types of networks such as IP, Token Ring, Frame Relay or even \gls{acr:atm}.
       Each of them adapted specific approach towards this matter. IP network for instance is non-deterministic although
-      there is a possiblity of packet classification using CoS (Class of Service) field. Token Ring on the other hand is
-      deterministic and allows using priority to distinct traffic. Last but not least ATM creates virtual path between
-      sender and receiver and sets \gls{acr:qos} parameters. Despite the fact that all approaches are very interesting and
-      meaningful this paper focuses mainly on the IP network and its approach to \gls{acr:qos}.
+      there is a possiblity of packet classification using \gls{acr:cos} field. Token Ring on the other hand is
+      deterministic and allows using priority to distinct traffic. Last but not least \gls{acr:atm} creates virtual path
+      between sender and receiver and sets \gls{acr:qos} parameters. Despite the fact that all approaches are very
+      interesting and meaningful this paper focuses mainly on the IP network and its approach to \gls{acr:qos}.
 
       % IntServ, DiffServ, inne
 
-      Nowadays the IETF (The Internet Engineering Task Force) is working on two approaches beyond the basic best-effort
+      Nowadays the \gls{acr:ietf} is working on two approaches beyond the basic best-effort
       service to provide more advanced handling of packets and providing requested level of bandwidth and delay which
       are:
 
@@ -215,17 +223,16 @@
         DiffServ domain is a set of nodes with consistent \gls{acr:qos} policy (for example network managed by the same ISP or
         intranet). Routers within domain are didvided into two groups: boundary routers and core routers. Boundary
         router performs traffic classification, packet marking, traffic metering, traffic control (policing, shaping)
-        where core routers pass packets according to PHB(Per Hop Behaviour - more about them later) and sometimes
-        changes DSCP labels.
+        where core routers pass packets according to \gls{acr:phb} and sometimes changes DSCP labels.
 
         This architecture distinguishes two major components: packet marking using the IPv4 ToS byte or TC in IPv6 and
-        PHBs(Per Hop Behaviour).
+        \gls{acr:phb}.
 
         \medskip
 
         Redefined ToS field now uses 6 bits for packet classification and is called Differentiated Services
-        Codepoint(DSCP). PHB defines how packet should be treated due to its priority. Accepted policy should be
-        consistent within all domain.
+        Codepoint(DSCP). \gls{acr:phb} defines how packet should be treated due to its priority. Accepted policy should
+        be consistent within all domain.
 
 
       \subsection{IntServ}
@@ -272,10 +279,10 @@
     \section{Multilevel network virtualization}
 
       The problem of networking resources virtualization is multifaceted. There are many aspects at various levels that
-      should be considered --- virtualization at the Data Link Layer of the OSI/ISO model, providing software
+      should be considered --- virtualization at the Data Link Layer of the \gls{acr:osi} model, providing software
       equivalents of equipment used by higher network layers (e.g. virtual routers), or creating fully virtualized
-      networks with Quality of Service guarantees. The section provides an in-depth description of these techniques
-      together with examples of technologies used.
+      networks with Quality of Service guarantees. The section provides an overview of these techniques together with
+      examples of technologies used.
 
 
       \subsection{Types of virtual networks}
@@ -290,15 +297,15 @@
         physical machines). Examples of internal virtualization solutions include Xen domains (TODO sprawdzic),
         VirtualBox internal networks \cite{vboxum} and Solaris Containers with Crossbow technology.
 
-        External virtualization is implemented with Layer 2 switches aware of \gls{acr:vlan} technology. With these devices,
-        entire network is split into fully-isolated parts, each becoming a new independent network. Routers can then be
-        used to establish connectivity between selected subnetworks.
+        External virtualization is implemented with Layer 2 switches aware of \gls{acr:vlan} technology. With these
+        devices, entire network is split into fully-isolated parts, each becoming a new independent network. Routers can
+        then be used to establish connectivity between selected subnetworks.
 
         The approaches listed can be interoperate to create hybrid topologies with some parts of a network using
-        internal virtualization and some using external one. The approaches to network virtualization are depicted in
-        figure \ref{fig:ctx:nvtypes}
-
-        % TODO v obrazek z porownaniem
+        internal virtualization and some using external one. Figure \ref{fig:ctx:nvtypes} depicts an example of a
+        network topology that uses both internal and external virtualization.
+        
+        % TODO v obrazek
 
         \begin{figure}[H]
           \caption{Types of virtual networks}
@@ -308,28 +315,32 @@
 
       \subsection{Virtualized network devices}
 
-        Two approaches can be distinguished: physical devices are partitioned to create logical entities with assigned
-        resources or software-based solutions are used to create independent virtualized components with the same
-        behaviour as their physical counterparts. Virtualization here means both creating virtual as well as logical
-        resources. Both methods can be applied at various layers of the OSI/ISO model.
+        Virtualized network devices (i.e. nodes used to build network paths between boundary machines providing or
+        consuming services) include mostly those belonging to second and third layer of the \gls{acr:osi} model
+        (e.g. switches and routers, respectively). However, devices that are assigned to higher layers are subject to
+        virtualization, too.
+
+        Two virtualization approaches can be distinguished: partitioning of physical devices in order to create logical
+        entities with assigned resources or software-based solutions used to build independent virtualized components
+        with the same behaviour as their physical counterparts. Both methods can be applied at various layers of the
+        \gls{acr:osi} model. In the context of network devices, virtualization means creating both virtual as well as
+        logical resources.
 
         Data Link layer virtual resources can be created --- these include virtual switches and virtual network
         interface cards built on top of them. Virtual routers connect network segments the same way as physical ones.
         More sophisticated examples include software implementations of firewalls and load balancers.
 
-        Logical devices require specialized hardware and the approach is used mainly in high-end solutions. \gls{acr:vlan}
-        technology is one of the most widely used partitioning techniques within Data Link layer --- ports of a switch
-        are grouped to provide separate broadcast domains. Another technique, used to merge geographically distributed
-        segments and create single Layer 2 segment is VPLS () \cite{moreno}.
+        Logical devices require specialized hardware and the approach is used mainly in high-end solutions.
+        \gls{acr:vlan} technology is one of the most widely used partitioning techniques within Data Link layer ---
+        ports of a switch are grouped to provide separate broadcast domains. Another technique, used to merge
+        geographically distributed segments and create single Layer 2 segment is \gls{acr:vpls} \cite{moreno}.
+        \gls{acr:vrf} is used to create logical routing entities on top of physical partitioning-capable routers.
+
+        % TODO obrazek z warstwami i przykladami? (niekoniecznie)
 
         % DATA-PATH VIRT
         % warstwa lacza danych: VLANy
         % VPNy?
-
-        logical
-        - physical resource partitioning and assignment
-        - Layer2: partitionable NICs, VLAN, VPLS
-        - Layer3: VRF
 
 
       \subsection{Fine-grained QoS control}
@@ -2250,7 +2261,7 @@
         low-jitter transfer. This allows for low-delay streaming with small input data buffers on the client side.
 
         Video on demand data is of less priority. It is assumed that the user is not going to utilize the data as it is
-        being downloaded. This assumption loosens the transmission requirements and allows to treat VOD traffic as
+        being downloaded. This assumption loosens the transmission requirements and allows to treat \gls{acr:vod} traffic as
         medium-priority or even best-effort data (no CIR).
 
 
@@ -2258,7 +2269,7 @@
 
         The network topology built is an attempt to model simple yet real environment used to transmit multimedia data.
         There is a streaming server without user differentiation mechanisms (with respect to quality of transmission)
-        and an HTTP server handling VOD requests. The clients connect to the streaming server and start streaming
+        and an HTTP server handling \gls{acr:vod} requests. The clients connect to the streaming server and start streaming
         sessions. They can also download video served by the HTTP daemon.
 
         Client and server components are placed in different subnetworks that, in turn, are connected with a \gls{acr:qos}-aware
@@ -2295,7 +2306,7 @@
 
           \item low priority Video On Demand
           
-                TCP traffic with source port 80, used by the VOD client 0,
+                TCP traffic with source port 80, used by the \gls{acr:vod} client 0,
 
           \item medium priority ordinary traffic
           
@@ -2378,7 +2389,7 @@
 
         \begin{itemize}
           \item 1.1.1.0/24 contains only the server appliance (addressed 1.1.1.2),
-          \item 2.2.2.0/24 with one VOD client (addressed 2.2.2.2),
+          \item 2.2.2.0/24 with one \gls{acr:vod} client (addressed 2.2.2.2),
           \item 3.3.3.0/24 with two streaming clients (addressed 3.3.3.2 and 3.3.3.3).
         \end{itemize}
 
@@ -2489,7 +2500,7 @@
       \label{sub:uc:limit}
 
         Bandwidth is limited to 8Mbps for all the links. The limits can be changed online with immediate effects. Figure
-        \ref{fig:uc:limit} shows bandwidth limitation for a VOD client downloading a movie. After a short period of
+        \ref{fig:uc:limit} shows bandwidth limitation for a \gls{acr:vod} client downloading a movie. After a short period of
         transmission rate limited to 24Mbps, the link bandwidth is narrowed to 8Mbps (lowest supported value).
 
         \begin{figure}[H]
@@ -2505,9 +2516,9 @@
       \subsection{Policies for different types of traffic}
       \label{sub:uc:traffic}
 
-        A VOD client is downloading a long movie. All the bandwidth is available. Another client connects to the
+        A \gls{acr:vod} client is downloading a long movie. All the bandwidth is available. Another client connects to the
         streaming server and requests a number of video streams. As the RTP data is of high priority, the streaming
-        client is favoured over VOD client and it gets most of the available bandwidth.
+        client is favoured over \gls{acr:vod} client and it gets most of the available bandwidth.
 
         \begin{figure}[H]
           \begin{center}
@@ -2521,7 +2532,7 @@
       \subsection{Client-dependent quality of service}
       \label{sub:uc:client}
 
-        A VOD client is downloading a movie. Two clients connect to the streaming server and request a number of video
+        A \gls{acr:vod} client is downloading a movie. Two clients connect to the streaming server and request a number of video
         streams. One of the streaming clients has low priority assigned, the other one is high priority. RTP streaming
         gets most of the bandwidth and high priority client is favoured over the low priority one.
 
