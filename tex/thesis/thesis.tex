@@ -49,6 +49,7 @@
 \usepackage{hyperref}
 \usepackage{tikz}
 \usepackage{pgf-umlsd}
+\usepackage[acronym]{glossaries}
 % \usepackage[toc,acronym]{glossaries}
 \usetikzlibrary{positioning,chains,fit,scopes}
 
@@ -70,19 +71,34 @@
 \title{Component-based system for management of multilevel virtualization of networking resources}
 \author{Robert Boczek \and Dawid Ciepliński}
 
+
+% BEGIN Acronyms
+
+\newacronym{acr:jims}{JIMS}{JMX-based Infrastructure Monitoring System}
+\newacronym{acr:jmx}{JMX}{Java Management Extensions}
+\newacronym{acr:qos}{QoS}{Quality of Service}
+\newacronym{acr:vlan}{VLAN}{Virtual Local Area Network}
+
+\makeglossaries
+
+% END   Acronyms
+
+
 \begin{document}
 
   \maketitle
-    
+
   \tableofcontents
 
   \listoffigures
+
+  \printglossaries
 
   \newpage
 	\vspace*{2in}
 
 	\begin{center}
-    \textit{We would like to acknowledge the support and assistance given us by professor Krzysztof~Zieliński and
+    \textit{We would like to acknowledge the support and assistance given us by professor~Krzysztof~Zieliński and
             Marcin~Jarząb. Their generously contributed ideas, feedback and advice was of great help to us. \\
             Finally, we would like to thank to our parents and friends, for their support and encouragement.}
   \end{center}
@@ -102,13 +118,14 @@
 
     % QoS, rezerwacja zasobów, izolacja we współczesnych systemach informatycznych	
 	
-	In today's world every successful organisation is based on properly designed communication network. These networks
-	must deal with delay-sensitive data such as video images, real-time voice or mission-critical data. Therefore
-	must provide safe, predicatable and sometimes guaranteed services. Accomplishing the required Quality of 
-	Sevice ( QoS ) by controlling the delay, delay variation(jitter), bandwidth and packet loss parameters is deeply 
-	hidden secret of most successful end-to-end business applications. Technologies like Ethernet did not foresee future 
-	necessity of providing supporting QoS therefore implementing QoS solutions over the Internet is such a demanding issue. 
-	%http://www.cisco.com/en/US/products/ps6558/products\_ios\_technology\_home.html
+  In today's world every successful organisation is based on properly designed communication network. These networks
+  must deal with delay-sensitive data such as video images, real-time voice or mission-critical data. Therefore must
+  provide safe, predicatable and sometimes guaranteed services. Accomplishing the required \gls{acr:qos} by controlling
+  the delay, delay variation(jitter), bandwidth and packet loss parameters is deeply hidden secret of most successful
+  end-to-end business applications. Technologies like Ethernet did not foresee future necessity of providing supporting
+  \gls{acr:qos} therefore implementing \gls{acr:qos} solutions over the Internet is such a demanding issue. 
+
+  %http://www.cisco.com/en/US/products/ps6558/products\_ios\_technology\_home.html
 	
 	Increasing popularity of virtualization, isolation and resource reservation in contemporary systems encourages to 
 	further reseach. Computing models like \textbf{Cloud computing}, \textbf{Grid computing} are becoming a standard and it 
@@ -119,7 +136,7 @@
 	
 	Due to raising concern and importance of these issues this paper takes more insight into one of 
 	possible approaches	to those matters which is Solaris OS and the Crossbow technology. In this study, system supporting 
-	multilevel virtualization of networking resources with isolated network and QoS elements is taken into consideration.
+	multilevel virtualization of networking resources with isolated network and \gls{acr:qos} elements is taken into consideration.
 
 
   \chapter{Context}  % TODO ładniej
@@ -129,7 +146,7 @@
     high bandwidth is just not enough because there are other equally important transmission parameters (delay, jitter,
     package missing	tolerance) there seems to be just one correct answer for this question. Creating such systems is not
     an easy task and many groups such as IETF (The Internet Engineering Task Force) are working on this problem.
-    Currently there are three existing models performing QoS in the IP network:
+    Currently there are three existing models performing \gls{acr:qos} in the IP network:
 
     \begin{enumerate}
       \item best effort,
@@ -147,12 +164,12 @@
       %
       % w szczegolach o QoS na IP
 
-      QoS (Quality of Service) is an issue in all types of networks such as IP, Token Ring, Frame Relay or even ATM.
+      \gls{acr:qos} (Quality of Service) is an issue in all types of networks such as IP, Token Ring, Frame Relay or even ATM.
       Each of them adapted specific approach towards this matter. IP network for instance is non-deterministic although
       there is a possiblity of packet classification using CoS (Class of Service) field. Token Ring on the other hand is
       deterministic and allows using priority to distinct traffic. Last but not least ATM creates virtual path between
-      sender and receiver and sets QoS parameters. Despite the fact that all approaches are very interesting and
-      meaningful this paper focuses mainly on the IP network and its approach to QoS.
+      sender and receiver and sets \gls{acr:qos} parameters. Despite the fact that all approaches are very interesting and
+      meaningful this paper focuses mainly on the IP network and its approach to \gls{acr:qos}.
 
       % IntServ, DiffServ, inne
 
@@ -176,7 +193,7 @@
         DiffServ works with traffic stream containing many complex microflows which among the same stream have:
 
         \begin{itemize}
-          \item Same QoS requirements,
+          \item Same \gls{acr:qos} requirements,
           \item Traverses domain towards the same direction.
         \end{itemize}
 
@@ -195,7 +212,7 @@
           \caption{DiffServ domain}
         \end{figure} %TODO podac zrodlo obrazka ( wyklad z systemow multimedialnych dotyczacy QoS )
 
-        DiffServ domain is a set of nodes with consistent QoS policy (for example network managed by the same ISP or
+        DiffServ domain is a set of nodes with consistent \gls{acr:qos} policy (for example network managed by the same ISP or
         intranet). Routers within domain are didvided into two groups: boundary routers and core routers. Boundary
         router performs traffic classification, packet marking, traffic metering, traffic control (policing, shaping)
         where core routers pass packets according to PHB(Per Hop Behaviour - more about them later) and sometimes
@@ -273,7 +290,7 @@
         physical machines). Examples of internal virtualization solutions include Xen domains (TODO sprawdzic),
         VirtualBox internal networks \cite{vboxum} and Solaris Containers with Crossbow technology.
 
-        External virtualization is implemented with Layer 2 switches aware of VLAN technology. With these devices,
+        External virtualization is implemented with Layer 2 switches aware of \gls{acr:vlan} technology. With these devices,
         entire network is split into fully-isolated parts, each becoming a new independent network. Routers can then be
         used to establish connectivity between selected subnetworks.
 
@@ -297,13 +314,13 @@
         resources. Both methods can be applied at various layers of the OSI/ISO model.
 
         Data Link layer virtual resources can be created --- these include virtual switches and virtual network
-        interface cards built on top of them. Virtual routers can connect network segments the same way as physical
-        ones. More sophisticated examples include software implementations of firewalls and load balancers.
+        interface cards built on top of them. Virtual routers connect network segments the same way as physical ones.
+        More sophisticated examples include software implementations of firewalls and load balancers.
 
-        Logical devices require specialized hardware and the approach is used mainly in high-end solutions. VLAN
-        (Virtual Local Area Network) technology is one of the most widely used partitioning techniques within Data Link
-        layer --- ports of a switch are grouped to provide separate broadcast domains. Another technique, used to
-        merge geographically distributed segments and create single Layer 2 segment is VPLS () \cite{moreno}.
+        Logical devices require specialized hardware and the approach is used mainly in high-end solutions. \gls{acr:vlan}
+        technology is one of the most widely used partitioning techniques within Data Link layer --- ports of a switch
+        are grouped to provide separate broadcast domains. Another technique, used to merge geographically distributed
+        segments and create single Layer 2 segment is VPLS () \cite{moreno}.
 
         % DATA-PATH VIRT
         % warstwa lacza danych: VLANy
@@ -392,7 +409,7 @@
 			\item{Creation of any requested resource from repository, }
 			\item{Assignation any number of links to resource, }
 			\item{Resource routing table modification, }
-			\item{Defining QoS limits to links and flows ( limits traffic assigned to specific network traffic \\ type ), }
+			\item{Defining \gls{acr:qos} limits to links and flows ( limits traffic assigned to specific network traffic \\ type ), }
 			\item{Modification or deletion of each property and element previously mentioned. }
 		\end{itemize}
 		
@@ -474,7 +491,7 @@
 		Although at first load balancing was planned, created system does not support it. This matter is further 
 		discussed in \textbf{'Further work'} section in the \textbf{Summary} chapter.
 		
-		In terms of deployment, potential problems are easy to indicate. Use of Jims functionality and related JMX 
+		In terms of deployment, potential problems are easy to indicate. Use of \gls{acr:jims} functionality and related \gls{acr:jmx} 
 		features stresses the lack of transactional support. Although in our system in case of errors introduced changes
 		are usually removed, there is no guarantee that it will acutally happen. Due to possible further errors caused during 
 		restoring previous system state. In that case these partial changes must be removed manually from each node
@@ -518,7 +535,7 @@
     Section \ref{sec:sol:xbow} introduces Solaris Crossbow - lightweight network virtualization environment. The
     section starts with general description of the technology. Next, components crucial to efficiency improvement are
     presented in detail. Etherstubs, VNICs and flows are described. These are building blocks used to create
-    virtualized network elements and apply QoS policies. The section ends with the comparison between Crossbow and
+    virtualized network elements and apply \gls{acr:qos} policies. The section ends with the comparison between Crossbow and
     DiffServ and a method of integration of these two solutions is presented.
 
     Section \ref{sec:sol:res} provides an overview of resource control methods offered by the Solaris OS. The types
@@ -549,9 +566,9 @@
       subsystem enabled, it is possible to capture detailed accounting data even for single processes. Gathered data
       include CPU usage, number of bytes received or transmitted per DiffServ or Crossbow flow and more.
 
-      As far as multiple physical machines are considered, there is also support for VLANs (Virtual Local Area Network).
-      Thanks to VLAN tagging support, it is possible to build systems that guarantee the quality of service from the
-      lowest levels up, even for services belonging to different systems and consolidated within single physical machine.
+      As far as multiple physical machines are considered, there is also support for \gls{acr:vlan}.  Thanks to \gls{acr:vlan}
+      tagging support, it is possible to build systems that guarantee the quality of service from the lowest levels up,
+      even for services belonging to different systems and consolidated within single physical machine.
 
       \begin{figure}[H]
         % TODO expand
@@ -775,7 +792,7 @@
 
       It is generally acknowledged that Crossbow was invented in China in 341 B.C but it was in middle ages when 
       it earned its recognition. Very easy in use and simultaneously very effective. The Solaris Crossbow mechanism 
-      for QoS are just like real crossbows, very efficient in comparison to other existing QoS mechanisms and this
+      for \gls{acr:qos} are just like real crossbows, very efficient in comparison to other existing \gls{acr:qos} mechanisms and this
       similarity indicates the project name origin.
 
 
@@ -910,15 +927,15 @@
           Virtual NICs (VNICs) each containing their own lane are the key element in crossbow architecture. There is no
           difference between NIC and VNIC in administration, as they are all treated as data links. Every VNIC has an
           assigned lane and flow classifier which classifies received packets by VNIC's MAC address and sometimes by the
-          VLAN tag.  If created with a VLAN tag, protocols like GVRP or MVRP may be used to register the VLAN tag with
-          the physical switches too \cite{crossbow}.	
+          \gls{acr:vlan} tag.  If created with a \gls{acr:vlan} tag, protocols like GVRP or MVRP may be used to register the
+          \gls{acr:vlan} tag with the physical switches too \cite{crossbow}.	
 
           In terms of sharing bandwidth, Crossbow enables administrative control of bandwidth for every single VNIC. The
           bandwidth of the link is implemented by regulating the periodic intake of incoming packets per dedicated lane.
           The network stack allows only as many packets as it was assigned to specific VNIC. The lane picks more packets
-          when the next period begins. In case of regulating the speed of transmited bandwidth it is much easier as the
+          when the next period begins. In case of regulating the speed of transmitted bandwidth it is much easier as the
           network stack can either control the application that is generating the stream of packets or just drop the
-          excessive amount of packets.  These mechanisms are also used in flows QoS described and discussed later in
+          excessive amount of packets.  These mechanisms are also used in flows \gls{acr:qos} described and discussed later in
           this paper \cite{crossbow}.
 
 
@@ -1011,15 +1028,15 @@
         Crossbow, unlike DiffServ, does not require special hardware, although if it is present it can boost overall
         operation performance \cite{xbow-vertically}.
 
-        DiffServ, on the other hand, provides sophisticated QoS mechanisms that require proper hardware (DiffServ-aware
+        DiffServ, on the other hand, provides sophisticated \gls{acr:qos} mechanisms that require proper hardware (DiffServ-aware
         routers) to be present for it to work. DiffServ is standardized (RFC 2475) and offers a multiplicity of
         classification, marking, policing and traffic shaping alternatives \cite{rfc2475}. Special fields (called DSCP)
         contained in IP packet's header are used to carry processing-related information with packets. The approach can
-        be used with complex networks, comprising a number of routers with QoS awareness.
+        be used with complex networks, comprising a number of routers with \gls{acr:qos} awareness.
 
         These two environments complement one another rather than compete. Crossbow supports flow matching based on the
         DSCP field value. DSCP field generation is planned but not yet supported. It is possible (although, at the
-        moment, only partially) to integrate these and build a comprehensive end-to-end networking solution with QoS
+        moment, only partially) to integrate these and build a comprehensive end-to-end networking solution with \gls{acr:qos}
         support and virtualized components.
 
         \begin{figure}[H]
@@ -1071,8 +1088,7 @@
           \includegraphics[width=.7\textwidth]{img/rctrl.png}
         \end{center}
         
-        \caption{Solaris system multilevel architecture and its resource control sets (source: http://oracle.com)}
-                          %@todo add preceise url}
+        \caption{Solaris system multilevel architecture and its resource control sets (source: http://oracle.com)} %@todo add precise url}
 		  \end{figure}
 
 
@@ -1147,11 +1163,11 @@
       --- the bottommost layer of the operating environment is an IP network of physical machines. Each of the machines
       is running an instance of Solaris Operating System with support for Crossbow technology. None of the nodes is
       favoured over the others. The instances of operating system have Java Virtual Machine deployed and are capable of
-      running JMX Agent which is used to host components of the system.
+      running \gls{acr:jmx} Agent which is used to host components of the system.
 
-      In addition to these basic specification, pure JMX Agents (i.e. agents without any components registered) can be
-      enriched with third-party software and thus enable complete set of functionality implemented. With pure JMX Agents
-      only single-node management is possible and limited to Crossbow networking resources. After integration with JIMS
+      In addition to these basic specification, pure \gls{acr:jmx} Agents (i.e. agents without any components registered) can be
+      enriched with third-party software and thus enable complete set of functionality implemented. With pure \gls{acr:jmx} Agents
+      only single-node management is possible and limited to Crossbow networking resources. After integration with \gls{acr:jims}
       the system gains awareness of the whole distributed environment, has access to extensive mechanisms for
       controlling containers and can be used to create and manage complex virtual network topologies.
     
@@ -1178,7 +1194,7 @@
 
               contains components that help design, instantiate and manage network topologies, \\
               can possibly span multiple physical machines, \\
-              requires JIMS installation to operate,
+              requires \gls{acr:jims} installation to operate,
 
         \item Resource instrumentation layer
 
@@ -1332,8 +1348,8 @@
       \subsection{Instrumented Solaris OS resources}
 
         All the important Crossbow resources are instrumented (Manager:Entity pairs are created). This includes NICs
-        (Network Interface Cards), VNICs (Virtual Network Interface Cards), VLANs (Virtual LANs), Etherstubs and Flows.
-        All the components are loosely coupled and can be used independently.
+        (Network Interface Cards), VNICs (Virtual Network Interface Cards), \gls{acr:vlan}, Etherstubs and Flows.  All
+        the components are loosely coupled and can be used independently.
 
         \begin{figure}[H]
           \begin{center}
@@ -1379,7 +1395,7 @@
     \label{sec:arch:vi}
 
       Virtual infrastructure management subsystem is built on top of the instrumentation layer. Leveraging entity and
-      manager objects and components of the JIMS project, it provides high-level mechanisms to manage and monitor
+      manager objects and components of the \gls{acr:jims} project, it provides high-level mechanisms to manage and monitor
       complex network topologies and quality policies associated with them.
 
 
@@ -1736,7 +1752,7 @@
       Section \ref{sec:impl:env} informs about implementational environment aspects like requested operating system,
       libraries presence or necessary programs to be build and installed. 
 	  
-	  Section \ref{sec:impl:module} concerns about implemented crossbow module for JIMS
+	  Section \ref{sec:impl:module} concerns about implemented crossbow module for \gls{acr:jims}
 	  
 		\quad Subsection \ref{sec:impl:general} initially introduces to crossbow module requirements.
 
@@ -1763,12 +1779,12 @@
     \section{Implementation environment}
     \label{sec:impl:env}
 
-      JIMS Extensions for Resource Monitoring and Management of Solaris 10 provides general architecture for monitoring
-      and management applications written in Java. 
+      \gls{acr:jims} Extensions for Resource Monitoring and Management of Solaris 10 provides general architecture for
+      monitoring and management applications written in Java. 
 
-      JIMS architecture is generally based on JMX ( Java Management Extensions ) - technology for distributed resource
-      management. These managed resources in JMX are represented by MBeans which are simple Java objects registered at
-      MBean Server under specific ObjectName \cite{jims}.
+      \gls{acr:jims} architecture is generally based on \gls{acr:jmx} - technology for distributed resource management.
+      These managed resources in \gls{acr:jmx} are represented by MBeans which are simple Java objects registered at MBean Server
+      under specific ObjectName \cite{jims}.
     
       \begin{figure}[H]
         \begin{center}
@@ -1777,16 +1793,16 @@
         \caption{JMX architecture \cite{jims}}
       \end{figure}
 	
-      JMX provides also services such as:
+      \gls{acr:jmx} provides also services such as:
 
       \begin{itemize}
         \item Notifications,
         \item MLet (downloading dynamic modules).
       \end{itemize}
 	
-      JIMS (JMX based Infrastructure Monitoring System) supports monitoring and management under both Linux and Solaris
-      platforms.  Due to Jims features such as: easy maintenance ( automatic modules downloading ), extensibility
-      (possibility of adding additional modules) integrating with Jims newly developed module ( jims-crossbow ) was quite
+      \gls{acr:jims} supports monitoring and management under both Linux and Solaris
+      platforms.  Due to \gls{acr:jims} features such as: easy maintenance ( automatic modules downloading ), extensibility
+      (possibility of adding additional modules) integrating with \gls{acr:jims} newly developed module ( jims-crossbow ) was quite
       an easy task \cite{jims}.
     
       \begin{figure}[H]
@@ -1796,8 +1812,8 @@
         \caption{JIMS architecture \cite{jims}}
       \end{figure}
 	 
-      Jims services( MBeans ) enabling creating, reading and changing properties of zones and projects were extensively
-      used in our system during deploying ( creating ) requested network structure. For more information about JIMS
+      \gls{acr:jims} services( MBeans ) enabling creating, reading and changing properties of zones and projects were extensively
+      used in our system during deploying ( creating ) requested network structure. For more information about \gls{acr:jims}
       project please refer to the bibliography.	
     
       \medskip
@@ -1805,7 +1821,7 @@
       For the purpose of this paper two applications were implemented:
 	
       \begin{itemize}
-        \item Jims module for crossbow,
+        \item \gls{acr:jims} module for crossbow,
         \item GUI application.
       \end{itemize}
 	  
@@ -1837,7 +1853,7 @@
 	  
 	  Detailed description of these two appliactions are provided in two separate sections beneath. 
 	  
-	  \section{Crossbow module for Jims}
+	  \section{Crossbow module for JIMS}
 		\label{sec:impl:module}
 	
 		\subsection{General information}
@@ -1911,11 +1927,11 @@
 		\subsection{Low-level functions access}
 			\label{sec:impl:low}
 
-			JIMS layered architecture implicated the demand for an approach towards accessing low-level funtions. In developed
+			\gls{acr:jims} layered architecture implicated the demand for an approach towards accessing low-level funtions. In developed
 			application these approaches were adjusted to existing conditions so that for accessing functions from shared
 			libraries JNA (Java Native Access) was used and for doing more complex operations on low-level scripts were
 			written and Java ProcessBuilder invoked. Created jims-crossbow module containes shared library allowing CRUD
-			operations which subsequently are being accessed by JNA, whereas most of jims low-level access was done through
+			operations which subsequently are being accessed by JNA, whereas most of \gls{acr:jims} low-level access was done through
 			running shell scripts. Although running scripts by ProcessBuilder is faster in some cases accessing native
 			libraries through libraries like JNA or JNI gives more configurational advantage and does not require shell script
 			writing ability.
@@ -1993,7 +2009,7 @@
 		\subsection{Crossbow infrastructure project}
 			\label{sec:impl:infrastructure}
 			
-			As already mentioned whole system is based on JMX technology and externs existing JIMS project. All that
+			As already mentioned whole system is based on \gls{acr:jmx} technology and externs existing \gls{acr:jims} project. All that
 			provides separation layer. Operations provided by MBean's may invoked from created GUI, JConsole or even
 			from own applications by just adapting to existing interfaces and object names. 
 			
@@ -2038,20 +2054,20 @@
 
 			Although created system does provide data persistance in databases or any other formats persistance is provided. 
 			Persistance is provided on two levels: first is on GUI level where user may save created network structure that would
-			be then serialized into file and second on the jims nodes. During creation, discovery, removing network elements precise
+			be then serialized into file and second on the \gls{acr:jims} nodes. During creation, discovery, removing network elements precise
 			naming conventions are preserved. Due to this convention whole network is persistent and does not require any additional 
 			databases or files. Since generated names are complex manual modification or creation of elements is not recommended as 
 			it is easy to make hard to find bugs. Created GUI is provided for this purposes.
 
 			With regard to statistics flow statistics are gathered and managed by operating system whereas 
-			VNic's traffic load is gathered starting from JIMS restart.
+			VNic's traffic load is gathered starting from \gls{acr:jims} restart.
 		
 		\subsection{System verification}
 			\label{sec:impl:verif}
 		
 			Complexity of created system implies necessity of preparing tools verifing correctness of the system. In order to achieve 
 			this verification tests on each level of our system were prepared. Starting from ( low-level ) shared libraries, where unit tests
-			for methods in \textbf{C} were implemented, through JMX level ( with mocks ) up to integration tests testing creating whole 
+			for methods in \textbf{C} were implemented, through \gls{acr:jmx} level ( with mocks ) up to integration tests testing creating whole 
 			network structure.
 		
 			Additionally verification on the GUI side of the system was provided where network to be created is verified in respect of 
@@ -2060,8 +2076,8 @@
 	\section{GUI application}
 		\label{sec:impl:gui}
 		
-		Created GUI application facilitates usage of JIMS and newly implemented crossbow module for JIMS. Apart from project verification 
-                performed in the pre-instantiation stage, GUI application is based on invocating JMX Bean's operation and presenting received responses.
+		Created GUI application facilitates usage of \gls{acr:jims} and newly implemented crossbow module for \gls{acr:jims}. Apart from project verification 
+                performed in the pre-instantiation stage, GUI application is based on invocating \gls{acr:jmx} Bean's operation and presenting received responses.
 
 		Implemented GUI application allows:
 		\begin{itemize}
@@ -2124,18 +2140,18 @@
 
       \begin{itemize}
         \item Java SE 1.6, maven,
-        \item jims sources downloaded,
+        \item \gls{acr:jims} sources downloaded,
         \item jims-crossbow module downloaded from \\ https://github.com/robertboczek/solaris\-crossbow/tree/master/code.
       \end{itemize}
 
-      Afterwards JIMS project must be built. Detailed description of how to build JIMS is in \textbf{README} file
-      located at the main catalog of jims sources. One of the most common problems are missing jars that unfortunately
+      Afterwards \gls{acr:jims} project must be built. Detailed description of how to build \gls{acr:jims} is in \textbf{README} file
+      located at the main catalog of \gls{acr:jims} sources. One of the most common problems are missing jars that unfortunately
       must be manually downloaded and installed in the local repository.
 
-      Subsequently jims-crossbow module should be copied to the main folder containing jims and then build. The script
+      Subsequently jims-crossbow module should be copied to the main folder containing \gls{acr:jims} and then build. The script
       \textbf{inst-crossbow-lib.sh} must be	later executed to copy shared libraries *.so files to /usr/lib folder.
 
-      If everything went well another step is running JIMS:
+      If everything went well another step is running \gls{acr:jims}:
 
       \begin{itemize}
         \item jims-gateway: .../jims-gateway/bin/jims-agent.sh [-b host\_address] start|stop|restart,
@@ -2143,16 +2159,16 @@
       \end{itemize}
 
       On the main node just single jims-gateway should be run and on the rest nodes as many jims-agents as it is required. For more
-      information about \textbf{jims} and its architecture please refer to bibliography.
+      information about \textbf{\gls{acr:jims}} and its architecture please refer to bibliography.
 
       If jims-agent or jims-gateway did not started it is worth to see logs files, located respectively at
       target/.../jims-agent/var/jims/log/agent.log and target/.../jims-gateway/var/jims/log/agent.log
-      It also recommended to have logs opened during JIMS start to see whether any exception was thrown (\textbf{tail
+      It also recommended to have logs opened during \gls{acr:jims} start to see whether any exception was thrown (\textbf{tail
       -f target/.../jims\-gateway/var/jims/log/agent.log})
 
-      JIMS has JMX-based architecture so each jims-agent and jims-gateway can be accessed through jconsole. In order to do that start 
+      \gls{acr:jims} has \gls{acr:jmx}-based architecture so each jims-agent and jims-gateway can be accessed through jconsole. In order to do that start 
       jconsole, select remote process and enter type: \\ \textbf{service:jmx:rmi:///jndi/rmi://address:port/jims} where \textbf{address} and 
-      \textbf{port} is concrete address and port under which jims was started. \textbf{JConsole} allows browsing registered mbeans and 
+      \textbf{port} is concrete address and port under which \gls{acr:jims} was started. \textbf{JConsole} allows browsing registered mbeans and 
       performing CRUD operations. Especially in case of the crossbow module it allows these operations as
       the figure below presents:
 
@@ -2176,7 +2192,7 @@
     topologies it allows to create. Resulting experimental data is presented and discussed.
 
     Section \ref{sec:uc:description} introduces the overall view of the topology that was created. Main components are
-    described and QoS requirements are discussed in more detail. Types of service are presented and appropriate
+    described and \gls{acr:qos} requirements are discussed in more detail. Types of service are presented and appropriate
     network-level policies described. The policies are assigned to network components.
 
     Section \ref{sec:uc:prep} describes the stages needed to set up the topology. The steps include virtual appliance
@@ -2188,7 +2204,7 @@
     operation of the policies.
 
     Section \ref{sec:uc:enhance} lists the advantages of using the proposed system and approach to create, manage and
-    monitor QoS-aware virtual topologies. Aspects particularly helpful when preparing the case study are highlighted.
+    monitor \gls{acr:qos}-aware virtual topologies. Aspects particularly helpful when preparing the case study are highlighted.
 
 
     \section{Scenario description}
@@ -2208,7 +2224,7 @@
       
         As already stated, there are classes of traffic (or service types) that, by their nature, require different
         amounts of available resources (such as bandwidth, processing priority, etc.). The types of multimedia services
-        map directly to QoS policies required. Table \ref{tab:uc:qos} shows the mapping.
+        map directly to \gls{acr:qos} policies required. Table \ref{tab:uc:qos} shows the mapping.
 
         \begin{table}[H]
           \begin{center}
@@ -2245,11 +2261,11 @@
         and an HTTP server handling VOD requests. The clients connect to the streaming server and start streaming
         sessions. They can also download video served by the HTTP daemon.
 
-        Client and server components are placed in different subnetworks that, in turn, are connected with a QoS-aware
+        Client and server components are placed in different subnetworks that, in turn, are connected with a \gls{acr:qos}-aware
         router which provides one more level the policies can be defined at. Rules defined for the router's interfaces
         specify fine-grained policies for clients in subnetworks in addition to the ones defined at the server level.
 
-        Taking this approach, it is easy to enable QoS-aware networking leveraging relatively simple applications. The
+        Taking this approach, it is easy to enable \gls{acr:qos}-aware networking leveraging relatively simple applications. The
         aspects of choosing server and client implementations and providing quality of service become orthogonal and the
         whole design remains clear and maintainable. Figure \ref{fig:cs:scenario} presents an overview of the network
         structure and client configuration.
@@ -2351,7 +2367,7 @@
           \item designation of physical machine(s) to host the topology,
           \item appliance-to-host assignment,
           \item enabling network connection between nodes, addressing, routing setup,
-          \item defining QoS policies.
+          \item defining \gls{acr:qos} policies.
         \end{enumerate}
 
         The topology consists of router (forwards IP packets between its directly-attached interfaces), server (with
