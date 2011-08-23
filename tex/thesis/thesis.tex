@@ -344,12 +344,6 @@
         % VPNy?
 
 
-      \subsection{Fine-grained QoS control}
-
-        % logiczne kanaly/flowy
-        % ATM?
-
-
       \subsection{Virtual appliances}
       \label{sub:}
 
@@ -358,17 +352,15 @@
         % routers, firewalls, load balancers
         % IMPORTANT: often host a single application
 
-        % TODO przeniesc tu o VA z sekcji o solku i posprzatac tam
+        % Solaris Zones, together with other components of the Solaris OS, constitute a complete framework that
+        % implements virtual appliance approach to systems management.
 
         Virtual appliance is a \textit{pre-built, pre-configured, ready-to-run (enterprise) application packaged along
-        with an optimized operating system inside a virtual machine} \cite{changhua}. Solaris Zones, together with other
-        components of the Solaris OS, constitute a complete framework that implements virtual appliance approach to
-        systems management.
-
-        The main problem virtual appliances can solve is the complexity and duration of application deployment process.
-        In general, a service deployment can be described as comprising the following stages: preparation (learning the
-        dependencies), pre-installation, installation and post-installation. With traditional (non-virtualized)
-        approach, these stages have to be repeated every time a service is deployed on different machines.
+        with an optimized operating system inside a virtual machine} \cite{changhua}. The main problem virtual
+        appliances can solve is the complexity and duration of application deployment process.  In general, a service
+        deployment can be described as comprising the following stages: preparation (learning the dependencies),
+        pre-installation, installation and post-installation. With traditional (non-virtualized) approach, these stages
+        have to be repeated every time a service is deployed on different machines.
 
         \begin{figure}[H]
           \begin{center}
@@ -425,10 +417,12 @@
           \caption{Deployment process with virtual appliances. Stage 1 is executed once.}
         \end{figure}
 
-        It is possible to prepare sets of virtual appliances containing traditional services (such as application
-        servers, database servers or media servers) as well as highly specialized networking-focused appliances that can
-        act as routers, firewalls or load balancers. These Virtual (Network) Appliances, together with other components
-        provided by Solaris OS, can be leveraged to build fully virtual network topologies.
+        It is possible to prepare sets of virtual appliances containing traditional services (such as application,
+        database or media servers) as well as highly specialized networking-focused appliances that can act as routers,
+        firewalls or load balancers.
+        
+        % These Virtual (Network) Appliances, together with other components provided by Solaris OS, can be leveraged to
+        % build fully virtual network topologies.
 
         \begin{figure}[H]
           \begin{center}
@@ -612,26 +606,26 @@
     % TODO  actually, Solaris 10, Solaris 11 and OpenSolaris are described here!
 
     The chapter provides an overview of Oracle Solaris operating system and evaluates it as a platform for resource
-    virtualization. The chapter describes Solaris 11 Express release of the system, as it is the first release
-    (together with OpenSolaris) with Crossbow technology integrated. Special emphasis is put on the networking-related
-    aspects of virtualization. Thus, the Solaris Crossbow technology is described in detail.
+    virtualization. The chapter describes Solaris 11 Express release of the system, as it is the first release (together
+    with OpenSolaris) with Crossbow technology integrated. Special emphasis is put on the networking-related aspects of
+    virtualization. Thus, the Solaris Crossbow technology is described in detail.
 
     Section \ref{sec:sol:general} contains introductory information about the system. A short historical note is
     presented and general description follows. Main components of the system are introduced and described.
     
-    Each of the remaining sections describe in more detail these parts of the operating system that are extensively
-    used by the implemented system. Section \ref{sec:sol:containers} investigates the Solaris Zones technology. After
+    Each of the remaining sections describe in more detail these parts of the operating system that are extensively used
+    by the implemented system. Section \ref{sec:sol:containers} investigates the Solaris Zones technology. After
     defining the concept of zones, zone lifecycle model is presented, the achieved level of process isolation is
     described and discussion of Zones advantages in comparison to non-virtualized environments follows.
 
-    Section \ref{sec:sol:xbow} introduces Solaris Crossbow - lightweight network virtualization environment. The
-    section starts with general description of the technology. Next, components crucial to efficiency improvement are
-    presented in detail. Etherstubs, VNICs and flows are described. These are building blocks used to create
-    virtualized network elements and apply \gls{acr:qos} policies. The section ends with the comparison between Crossbow and
-    DiffServ and a method of integration of these two solutions is presented.
+    Section \ref{sec:sol:xbow} introduces Solaris Crossbow - lightweight network virtualization environment. The section
+    starts with general description of the technology. Next, components crucial to efficiency improvement are presented
+    in detail. Etherstubs, VNICs and flows are described. These are building blocks used to create virtualized network
+    elements and apply \gls{acr:qos} policies. The section ends with the comparison between Crossbow and DiffServ and a
+    method of integration of these two solutions is presented.
 
-    Section \ref{sec:sol:res} provides an overview of resource control methods offered by the Solaris OS. The types
-    of resource management mechanisms (constraints, partitioning and scheduling) are identified and defined. Resource
+    Section \ref{sec:sol:res} provides an overview of resource control methods offered by the Solaris OS. The types of
+    resource management mechanisms (constraints, partitioning and scheduling) are identified and defined. Resource
     control hierarchy used by the system is depicted and explained. Also, the accounting facility is described. The
     types of resources extended accounting can work with are enumerated and examples of data that can be gathered are
     listed.
