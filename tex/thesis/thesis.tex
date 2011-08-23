@@ -350,11 +350,92 @@
 
 
       \subsection{Virtual appliances}
+      \label{sub:}
 
         % ogolnie o podejsciu, przyklady
         % can serve various purposes - ordinary network nodes (app layer: workstations, servers, proxy?) but also
         % routers, firewalls, load balancers
         % IMPORTANT: often host a single application
+
+        % TODO przeniesc tu o VA z sekcji o solku i posprzatac tam
+
+        Virtual appliance is a \textit{pre-built, pre-configured, ready-to-run (enterprise) application packaged along
+        with an optimized operating system inside a virtual machine} \cite{changhua}. Solaris Zones, together with other
+        components of the Solaris OS, constitute a complete framework that implements virtual appliance approach to
+        systems management.
+
+        The main problem virtual appliances can solve is the complexity and duration of application deployment process.
+        In general, a service deployment can be described as comprising the following stages: preparation (learning the
+        dependencies), pre-installation, installation and post-installation. With traditional (non-virtualized)
+        approach, these stages have to be repeated every time a service is deployed on different machines.
+
+        \begin{figure}[H]
+          \begin{center}
+            \begin{tikzpicture}[start chain,
+                                node distance=5mm,
+                                every node/.style={on chain, join, terminal},
+                                every join/.style={->},
+                                text depth=.25ex]
+
+              \node {preparation};
+              \node {pre-installation};
+              \node {installation};
+              \node {post-installation};
+            \end{tikzpicture}
+          \end{center}
+
+          \caption{Traditional application deployment stages.}
+        \end{figure}
+
+        % TODO verify the stages
+
+        Virtual appliance approach makes it possible to reduce deployment time significantly \cite{changhua}. This is
+        achieved by performing most of the deployment stages once and storing the configured environment in a virtual
+        appliance. The appliance can then be moved to publicly-available repository for actual deployment on host
+        systems.
+
+        \begin{figure}[H]
+          \begin{center}
+            \begin{tikzpicture}[node distance=5mm]
+
+              { [start chain, every node/.style={terminal, on chain, join, text width=3cm}, every join/.style={->},
+              align=center]
+
+                { [every on chain/.style={text width=3.5cm}, text depth=.25ex, align=center]
+
+                  \node (prep)                 {preparation};
+                  \node (pre)  [below=of prep] {pre-installation};
+                  \node (ins)  [below=of pre]  {installation};
+                  \node (post) [below=of ins]  {post-installation};
+                }
+
+                \node (pub)  [right=of post] {appliance publication};
+                \node (act)  [right=of pub]  {appliance retrieval and activation};
+                \node (adj)  [right=of act]  {configuration adjustment};
+              }
+
+              \begin{pgfonlayer}{background}
+                \node [terminal] (background) [fit=(prep) (post), style=terminal] {};
+              \end{pgfonlayer}
+
+            \end{tikzpicture}
+          \end{center}
+
+          \caption{Deployment process with virtual appliances. Stage 1 is executed once.}
+        \end{figure}
+
+        It is possible to prepare sets of virtual appliances containing traditional services (such as application
+        servers, database servers or media servers) as well as highly specialized networking-focused appliances that can
+        act as routers, firewalls or load balancers. These Virtual (Network) Appliances, together with other components
+        provided by Solaris OS, can be leveraged to build fully virtual network topologies.
+
+        \begin{figure}[H]
+          \begin{center}
+            \includegraphics[width=.7\textwidth]{img/solaris/virtual-appliance-infra.pdf}
+          \end{center}
+
+          \caption{An example of infrastructure utilizing virtual appliances with appliance repository.}
+        \end{figure}
 
 
       \subsection{,,Network in a box'' concept}
@@ -711,88 +792,6 @@
           \end{center}
 
           \caption{Service consolidation within a Solaris OS instance with internal network connectivity}
-        \end{figure}
-
-
-      \subsection{Virtual appliances}
-      \label{sub:}
-
-        Virtual appliance is a \textit{pre-built, pre-configured, ready-to-run (enterprise) application packaged along
-        with an optimized operating system inside a virtual machine} \cite{changhua}. Solaris Zones, together with other
-        components of the Solaris OS, constitute a complete framework that implements virtual appliance approach to
-        systems management.
-
-        The main problem virtual appliances can solve is the complexity and duration of application deployment process.
-        In general, a service deployment can be described as comprising the following stages: preparation (learning the
-        dependencies), pre-installation, installation and post-installation. With traditional (non-virtualized)
-        approach, these stages have to be repeated every time a service is deployed on different machines.
-
-        \begin{figure}[H]
-          \begin{center}
-            \begin{tikzpicture}[start chain,
-                                node distance=5mm,
-                                every node/.style={on chain, join, terminal},
-                                every join/.style={->},
-                                text depth=.25ex]
-
-              \node {preparation};
-              \node {pre-installation};
-              \node {installation};
-              \node {post-installation};
-            \end{tikzpicture}
-          \end{center}
-
-          \caption{Traditional application deployment stages.}
-        \end{figure}
-
-        % TODO verify the stages
-
-        Virtual appliance approach makes it possible to reduce deployment time significantly \cite{changhua}. This is
-        achieved by performing most of the deployment stages once and storing the configured environment in a virtual
-        appliance. The appliance can then be moved to publicly-available repository for actual deployment on host
-        systems.
-
-        \begin{figure}[H]
-          \begin{center}
-            \begin{tikzpicture}[node distance=5mm]
-
-              { [start chain, every node/.style={terminal, on chain, join, text width=3cm}, every join/.style={->},
-              align=center]
-
-                { [every on chain/.style={text width=3.5cm}, text depth=.25ex, align=center]
-
-                  \node (prep)                 {preparation};
-                  \node (pre)  [below=of prep] {pre-installation};
-                  \node (ins)  [below=of pre]  {installation};
-                  \node (post) [below=of ins]  {post-installation};
-                }
-
-                \node (pub)  [right=of post] {appliance publication};
-                \node (act)  [right=of pub]  {appliance retrieval and activation};
-                \node (adj)  [right=of act]  {configuration adjustment};
-              }
-
-              \begin{pgfonlayer}{background}
-                \node [terminal] (background) [fit=(prep) (post), style=terminal] {};
-              \end{pgfonlayer}
-
-            \end{tikzpicture}
-          \end{center}
-
-          \caption{Deployment process with virtual appliances. Stage 1 is executed once.}
-        \end{figure}
-
-        It is possible to prepare sets of virtual appliances containing traditional services (such as application
-        servers, database servers or media servers) as well as highly specialized networking-focused appliances that can
-        act as routers, firewalls or load balancers. These Virtual (Network) Appliances, together with other components
-        provided by Solaris OS,  can be leveraged to build fully virtual network topologies.
-
-        \begin{figure}[H]
-          \begin{center}
-            \includegraphics[width=.7\textwidth]{img/solaris/virtual-appliance-infra.pdf}
-          \end{center}
-
-          \caption{An example of infrastructure utilizing virtual appliances with appliance repository.}
         \end{figure}
 
 
