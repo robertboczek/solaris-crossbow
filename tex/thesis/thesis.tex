@@ -138,7 +138,7 @@
   the delay, delay variation(jitter), bandwidth and packet loss parameters is deeply hidden secret of most successful
   end-to-end business applications. Technologies like Ethernet did not foresee future necessity of providing supporting
   \gls{acr:qos} therefore implementing \gls{acr:qos} solutions over the Internet is such a demanding issue. Incomplete 
- resource reservation provided by most common OS induced 
+ resource reservation provided by most common OS induced further research in field of resource reservation and isolation. 
 
   %http://www.cisco.com/en/US/products/ps6558/products\_ios\_technology\_home.html
 	
@@ -292,21 +292,21 @@
 
     \section{Multilevel network virtualization}
 
+      \subsection{Definition} 
+
+        Network virtualization is based on providing seperate networking environment for every defined groups ( existing within 
+        environment ). For each group logical environments are created over single existing physical network infrastructure. 
+        These created networks provide complete network services so that from the end-user of one of existing groups perspective 
+        dedicated network with policies and dedicted resources are assigned. Network virtualization concerns not only logical 
+        segmentation of the network transport, but also network devices and all other network services. \cite{network_virt}
+
+      \subsection{Overview} 
+
       The problem of networking resources virtualization is multifaceted. There are many aspects at various levels that
       should be considered --- virtualization at the Data Link Layer of the \gls{acr:osi} model, providing software
       equivalents of equipment used by higher network layers (e.g. virtual routers), or creating fully virtualized
       networks with Quality of Service guarantees. The section provides an overview of these techniques together with
       examples of technologies used.
-
-      \subsection{Definition} 
-
-	Network virtualization is an architectural approach to providing a separate logical networking environment for each 
-	group within the enterprise. These logical environments are created over a single shared network infrastructure. 
-	Each logical network provides the corresponding user group with full network services similar to those provided by 
-	a traditional nonvirtualized network. The experience from the end-user perspective is that of having access to a
-	 dedicated network with dedicated resources and independent security policies. Thus, the virtualization of the 
-	network involves the logical segmentation of the network transport, the network devices, and all the network 
-	services. \cite{network_virt}
 
 
       \subsection{Types of virtual networks}
@@ -2011,7 +2011,6 @@
 			libraries through libraries like JNA or JNI gives more configurational advantage and does not require shell script
 			writing ability.
 
-			Listing \ref{lst:impl:low:jna} presents abbreviated example of JNA access to native libraries. \\
 			Listing \ref{lst:impl:low:jna} presents abbreviated example of JNA access to native libraries. The corresponding
 			native code in C language is shown in figure \ref{lst:impl:low:jnac}. \\
  	
