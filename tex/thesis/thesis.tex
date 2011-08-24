@@ -91,6 +91,7 @@
 \newacronym{acr:voip}{VoIP}{Voice over Internet Protocol}
 \newacronym{acr:vpls}{VPLS}{Virtual Private LAN Service}
 \newacronym{acr:vrf}{VRF}{Virtual Routing and Forwarding}
+\newacronym{acr:iaas}{IAAS}{ Infrastructure as a Service }
 
 \makeglossaries
 
@@ -130,27 +131,27 @@
   \chapter{Introduction}
 
     % QoS, rezerwacja zasobów, izolacja we współczesnych systemach informatycznych	
+	
+  In today's world every successful organisation is based on properly designed communication network. These networks
+  must deal with delay-sensitive data such as video images, real-time voice or mission-critical data. Therefore must
+  provide safe, predicatable and sometimes guaranteed services. Accomplishing the required \gls{acr:qos} by controlling
+  the delay, delay variation(jitter), bandwidth and packet loss parameters is deeply hidden secret of most successful
+  end-to-end business applications. Technologies like Ethernet did not foresee future necessity of providing supporting
+  \gls{acr:qos} therefore implementing \gls{acr:qos} solutions over the Internet is such a demanding issue. Incomplete 
+ resource reservation provided by most common OS induced 
 
-    In today's world every successful organisation is based on properly designed communication network. These networks
-    must deal with delay-sensitive data such as video images, real-time voice or mission-critical data. Therefore must
-    provide safe, predicatable and sometimes guaranteed services. Accomplishing the required \gls{acr:qos} by
-    controlling the delay, delay variation(jitter), bandwidth and packet loss parameters is deeply hidden secret of most
-    successful end-to-end business applications. Technologies like Ethernet did not foresee future necessity of
-    providing supporting \gls{acr:qos} therefore implementing \gls{acr:qos} solutions over the Internet is such a
-    demanding issue. 
-
-    %http://www.cisco.com/en/US/products/ps6558/products\_ios\_technology\_home.html
-
-    Increasing popularity of virtualization, isolation and resource reservation in contemporary systems encourages to
-    further research. Computing models like \textbf{Cloud computing}, \textbf{Grid computing} are becoming a standard and
-    it is definitely worth knowing at least the basic concepts.
-
-%TODO dopisac o rezerwacji zasobow i izolacji
-    \medskip
-
-    Due to raising concern and importance of these issues this paper takes more insight into one of possible approaches
-    to those matters which is Solaris OS and the Crossbow technology. In this study, system supporting multilevel
-    virtualization of networking resources with isolated network and \gls{acr:qos} elements is taken into consideration.
+  %http://www.cisco.com/en/US/products/ps6558/products\_ios\_technology\_home.html
+	
+	Increasing popularity of virtualization, isolation and resource reservation in contemporary systems encourages to 
+	further reseach. Computing models like \textbf{Cloud computing}, \textbf{Grid computing} are becoming a standard and it 
+	is definately worth knowing at least the basic concepts.
+	
+	%TODO dopisac o rezerwacji zasobow i izolacji
+	\medskip
+	
+	Due to raising concern and importance of these issues this paper takes more insight into one of 
+	possible approaches	to those matters which is Solaris OS and the Crossbow technology. In this study, system supporting 
+	multilevel virtualization of networking resources with isolated network and \gls{acr:qos} elements is taken into consideration.
 
 
   \chapter{Context}  % TODO ładniej
@@ -296,6 +297,16 @@
       equivalents of equipment used by higher network layers (e.g. virtual routers), or creating fully virtualized
       networks with Quality of Service guarantees. The section provides an overview of these techniques together with
       examples of technologies used.
+
+      \subsection{Definition} 
+
+	Network virtualization is an architectural approach to providing a separate logical networking environment for each 
+	group within the enterprise. These logical environments are created over a single shared network infrastructure. 
+	Each logical network provides the corresponding user group with full network services similar to those provided by 
+	a traditional nonvirtualized network. The experience from the end-user perspective is that of having access to a
+	 dedicated network with dedicated resources and independent security policies. Thus, the virtualization of the 
+	network involves the logical segmentation of the network transport, the network devices, and all the network 
+	services. \cite{network_virt}
 
 
       \subsection{Types of virtual networks}
@@ -485,20 +496,44 @@
 
     \section{Applications and benefits of virtual infrastructures}
 
+	Each IT company some day faces the challenge of partially utilized servers, low level of performance, low 
+	scalability and high complexity. Although there is no perfect solution for all those issues, virtual infrastructure
+	 is an approach gaining recently more and more supporters.  
+
+	Things like lowering hardware, power and space requirements may be obtained thanks to accepting these 
+	approach. Beyond just system efficiency growth also effort necessary to put in configurating system is smaller. 
+
       \subsection{Testing and simulations}
+
+	Virtual infrustructure gives ability to provision new applications easily and quickly. As it is presented and described in more
+	detail in chapter \ref{chap:cs} creating any network struture consisting of any number of virtual elements is easier than ever 
+	thanks to virtualized infrastructure. 
 
       \subsection{Improving server-side infrastructure scalability}
 
+
+	According to Exforsys Inc. following features and capabilities support server infrastructure scalability:
+	
+	\begin{itemize}
+		\item{Server Consolidation and Containment  - reduces  server sprawl by 
+			consolidating systems into virtual machines,}
+		\item{Legacy Application Re-hosting - legacy systems may be migrated to new highly reliable virtual machines,}
+		\item{Accelerating Development Cycles - servers may be immediately re-provisioned,}
+		\item{Business Continuity - due to system's files encapsulation replication 
+			and restoration on any target server is fast and easy. \cite{vib}}
+	\end{itemize}
+
       \subsection{Infrastructure as a service}
 
-        The \gls{acr:iaas} sometimes also called Hardware as a Service (HaaS) is one of three cloud computing models,
-        the other two are: Software as a Service (SaaS) and Platform as a Service (PaaS). This service is based on
-        providing by the supplier whole scalable IT infrastructure depending on user demand such as virtualized
-        hardware. The service provider owns the equipment and is responsible for housing, running and maintaining it.
+        The \gls{acr:iaas} sometimes also called Hardware as a Service ( HaaS ) is one of three cloud
+        computing models, the other two are: Software as a Service ( SaaS ) and Platform as a Service  (PaaS ).  This
+        service is based on providing by the supplier whole scalable IT infrastructure depending on user demand such as
+        virtualized hardware. The service provider owns the equipment and is responsible for housing, running and
+        maintaining it.
 
-        At the beginning the \gls{acr:iaas} was just renting dedicated servers services from supplier. Nowadays thanks
-        to virtualization these are most often virtual machines. In the former case user paid for the concrete hardware
-        (box), now client typically pays on a per-use basis.
+        At the beginning the IaaS was just renting dedicated servers services from supplier. Nowadays thanks to
+        virtualization these are most often virtual machines. In the former case user paid for the concrete hardware
+        ( box ), now client typically pays on a per-use basis.
 
 
       \subsection{The role of resource virtualization in the SOA stack}
@@ -614,20 +649,9 @@
 		
 	%TODO ta czesc tak srednio mi tu pasuje!!!
 
-    \section{General approach and problems it imposes}
+    %\section{General approach and problems it imposes}
 	
-		Selected approach towards problem was 
-
-      \subsection{Load balancing / Deployment}
-	  
-		Although at first load balancing was planned, created system does not support it. This matter is further 
-		discussed in \textbf{'Further work'} section in the \textbf{Summary} chapter.
-		
-		In terms of deployment, potential problems are easy to indicate. Use of \gls{acr:jims} functionality and related \gls{acr:jmx} 
-		features stresses the lack of transactional support. Although in our system in case of errors introduced changes
-		are usually removed, there is no guarantee that it will acutally happen. Due to possible further errors caused during 
-		restoring previous system state. In that case these partial changes must be removed manually from each node
-		involved in this failing deployment attempt which generally imposes specialistic knowledge of underlying environment. 
+		%Selected approach towards problem was 
 
       \subsection{Infrastructure isolation}
 	  
@@ -1823,6 +1847,7 @@
 	
 	  Section \ref{sec:impl:build} presents all necessary steps required for platform build completion.
 	  
+          Section \ref{sec:impl:problems} discusses load balancing, deployment problems and other potentially hard to solve issues.
 		
 
 
@@ -2232,6 +2257,19 @@
 	  Building GUI, which is located at \textbf{jims/jims-crossbow/jims-crossbow-gui}, requires just maven. Application may 
 	  be imported to eclipse and then built and run or built from console using maven (\textbf{ mvn assembly:assembly })
 	  and executed \textbf{java -cp target/jims-crossbow-gui-3.0.0-exe.jar org.jims.modules.crossbow.gui.Gui}
+
+
+    \section{Load balancing / Deployment}
+    \label{sec:impl:problems}
+	  
+		Although at first load balancing was planned, created system does not support it. This matter is further 
+		discussed in \textbf{'Further work'} section in the \textbf{Summary} chapter.
+		
+		In terms of deployment, potential problems are easy to indicate. Use of \gls{acr:jims} functionality and related \gls{acr:jmx} 
+		features stresses the lack of transactional support. Although in our system in case of errors introduced changes
+		are usually removed, there is no guarantee that it will acutally happen. Due to possible further errors caused during 
+		restoring previous system state. In that case these partial changes must be removed manually from each node
+		involved in this failing deployment attempt which generally imposes specialistic knowledge of underlying environment. 
 
 
   \chapter{Case Study}
