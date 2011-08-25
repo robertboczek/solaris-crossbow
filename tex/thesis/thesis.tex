@@ -288,11 +288,37 @@
 
       \subsection{Common approaches}
 
-        \subsubsection{Full virtualization}
+	In terms of approaches to resource virtualization, in principle there are three existing acknowledged approaches:
+	\begin{itemize}
+		\item{Full virtualization,}
+		\item{Partial virtualization,}
+		\item{OS-level virtualization.}
+	\end{itemize}
 
-        \subsubsection{Partial virtualization}
+      \subsection{Full virtualization}
 
-        \subsubsection{OS-level virtualization}
+	Technological approach to virtualization also know as emulation of the underlying raw hardware (native execution). This approach
+	may be implemented with two types of hypervisors. The first one runs directly on hardware, whereas the second one requires 
+	another operating system, such as Linux or Windows. There are no restrictions towards operating system being run. It just has to 
+	be supported by the underlying hardware. In terms of running different "guest" operating systems together no limitations exist.
+
+	By now, full virtualization approach implementations for x86 such as Virtual PC, VirtualBox exist and are ready to 
+	use.  (source: http://en.wikipedia.org/wiki/Virtual\_machine)
+
+      \subsection{Partial virtualization}
+
+	Also called emulation of a non-native system is based on allowing software applications written for different computer 
+	hardware architecture to startup. Virtual resource emulate hardware which exists based on detailed specification. 
+	Java virtual machine or 'Open firmware' ,that allows hardware to be run under any kind of CPU, are the most commonly
+	used and known representatives of this approach to resource virtualization. (source: http://en.wikipedia.org/wiki/Virtual\_machine)
+
+      \subsection{OS-level virtualization}
+
+	Operating System-level virtualization is a technology consisting of virtualizing servers on an operating system layer. 
+	Multiple guest OS may be running under the same OS, but unfortunately these guest OS must be the same, although
+	different libraries and distributions are allowed. OS-level virtualization may be often presented as slicing single OS to small partitions ( 
+	sometimes called virtual environments ( VE ) , virtual private servers ( VPS )  or zones ). From the end-user perspective these virtualization
+	is invisible ( user receives guest OS as real server ) (source: http://en.wikipedia.org/wiki/Virtual\_machine)
 
 
     \section{Multilevel network virtualization}
@@ -518,20 +544,18 @@
 
         According to Exforsys Inc. following features and capabilities support server infrastructure scalability:
 	
-        \begin{itemize}
+	\begin{itemize}
+		\item \textit{Server Consolidation and Containment  - reduces  server sprawl by 
+			consolidating systems into virtual machines,}
 
-          \item Server Consolidation and Containment --- reduces server sprawl by consolidating systems into virtual
-                machines,
+		\item \textit{Legacy Application Re-hosting - legacy systems may be migrated to new highly reliable virtual machines,}
 
-          \item Legacy Application Re-hosting --- legacy systems may be migrated to new highly reliable virtual
-                machines,
+		\item \textit{Accelerating Development Cycles - servers may be immediately re-provisioned,}
 
-          \item Accelerating Development Cycles --- servers may be immediately re-provisioned,
+		\item \textit{Business Continuity - due to system's files encapsulation replication 
+			and restoration on any target server is fast and easy. \cite{vib}}
 
-          \item Business Continuity --- due to system's files encapsulation replication and restoration on any target
-                server is fast and easy. \cite{vib}
-
-        \end{itemize}
+	\end{itemize}
 
 
       \subsection{Infrastructure as a service}
