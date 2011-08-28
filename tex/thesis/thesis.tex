@@ -50,6 +50,7 @@
 \usepackage{tikz}
 \usepackage{pgf-umlsd}
 \usepackage[acronym]{glossaries}
+\usepackage{theorem}
 % \usepackage[toc,acronym]{glossaries}
 \usetikzlibrary{positioning,chains,fit,scopes}
 
@@ -75,6 +76,20 @@
 \title{Component-based system for management of multilevel virtualization of networking resources}
 \author{Robert Boczek \and Dawid Ciepliński}
 
+%\department{Electrical and Computer Engineering}
+%\school{AGH UNIVERSITY OF SCIENCE AND TECHNOLOGY}
+%\degree{MSc Thesis}
+
+%\address{Houston, Texas}
+%\donemonth{September} \doneyear{2011} \makeindex
+
+%\committee {
+ %       Supervisor:  prof. dr hab. inż. Krzysztof Zieliński  \\
+  %      Technical supervisor: mgr inż. Marcin Jarząb
+%}
+
+\date{\today}
+
 
 \begin{document}
 
@@ -99,12 +114,12 @@
 	\vspace*{2in}
 
 	\begin{center}
-    \textit{Thesis work contribution: \\
+   	\textit{Thesis work contribution: \\
             Chapters written together (2, 4, 8), \\
             Chapters written by Dawid (\ref{chap:arch}, \ref{chap:cs}), \\
             Chapters written by Robert (1, 3, 6), \\
             Implementation work performed together.}
-  \end{center}
+  	\end{center}
 
   \chapter{Introduction}
 
@@ -123,26 +138,38 @@
 	Increasing popularity of virtualization, isolation and resource reservation in contemporary systems encourages to 
 	further reseach. Computing models like \textbf{Cloud computing}, \textbf{Grid computing} are becoming a standard and it 
 	is definately worth knowing at least the basic concepts.
-	
-	%TODO dopisac o rezerwacji zasobow i izolacji
+
 	\medskip
 	
-	Due to raising concern and importance of these issues this paper takes more insight into one of 
-	possible approaches	to those matters which is Solaris OS and the Crossbow technology. In this study, system supporting 
-	multilevel virtualization of networking resources with isolated network and \gls{acr:qos} elements is taken into consideration.
+ 	The main objective of this thesis and accompanying research was to create a system allowing fast and efficient 
+	manner of creating any requested, virtualized structure with virtualized resources, network elements and \gls{acr:qos} guarantees.
+	Solaris OS together with the Crossbow functionalities is becoming more and more respectable solution in terms of resource virtualization. 
+	Recently supported by network virtualization mechanism contained in the Crossbow module, Solaris OS was seemed to be 
+	suitable environment to proceed further research.  Together with our supervisor's an idea of creating previosuly mentioned system, 
+	which was later called \gls{acr:cm4j}, working under Solaris OS arised. 
+
+	\section{Organisation of thesis}
+
+	Thesis consists 6 chapters apart from this one. Chapter \ref{chap:bck} provides background information about network and resource
+	 virtualization,  \gls{acr:qos} together with describing existing solutions in these areas. \ref{chap:req} is a chapter concering
+	 about essential functionalities acompanied with non-functional requirements. Subsequent chapter \ref{chap:sol} presentes
+	 Solaris OS features with special attention paid to its new functionality: \textit{The Crossbow}. The following
+	 two chapters \ref{chap:arch} and \ref{chap:impl} introduces to system CM4J architectural and implementation details. %todo cos madrego dopisac
+	Part of thesis in which implemented system work and usage is described is \ref{chap:cs}. In order to present all implemented aspects
+	and functionalities of CM4J system scenario with multimedia streaming server, \gls{acr:vod} and end user's differentiation was prepared. 
+	Last chapter \ref{chap:sum} as the title suggests summarizes performed research in the field of virtualization. In that section
+	not only achieved goals are described, but also unachieved objectives are highlighted. Possible improvements and new 
+	functionalties that might be added are also mentioned in this part. 
 
 
-  \chapter{Context}  % TODO ładniej
+  \chapter{Technological background}
+  \label{chap:bck}
 
     The chapter provides background information about the domain the created system manages as well as the environment
-    it runs in. The information presented include networking with various level of \gls{acr:qos} guarantees, overview of
-    virtualization techniques together with technology examples and detailed discussion of networking virtualization.
-    Finally, fields of applications and advantages of using virtual infrastructures are described.
-
-    Section \ref{sec:ctx:qos} describes the problem of providing \gls{acr:qos} in computer networks of different types.
-    The approaches adopted in \gls{acr:atm}, Token Ring and Frame Relay networks are outlined. The remaining part of the
-    section discusses Differentiated~Services and Integrated~Services --- the solutions enabling \gls{acr:qos} in
-    best-effort \gls{acr:ip} networks.
+    it runs in.  Fields of applications and advantages of using virtual infrastructures are described. 
+    Subsequently networking with various level of \gls{acr:qos} guarantees, overview of
+    virtualization techniques together with technology examples and detailed discussion of networking virtualization
+    is presented.
 
     Section \ref{sec:ctx:virt} introduces basic information about resource virtualization. The reasons why
     virtualization is essential in contemporary systems management are discussed. Then, resources that can be
@@ -159,6 +186,11 @@
     and the concept of \gls{acr:iaas} used in cloud computing. A separate subsection is dedicated to virtualization as
     one of the core components in \gls{acr:soa} and \gls{acr:s3} models.
 
+    Section \ref{sec:ctx:qos} describes the problem of providing \gls{acr:qos} in computer networks of different types.
+    The approaches adopted in \gls{acr:atm}, Token Ring and Frame Relay networks are outlined. The remaining part of the
+    section discusses Differentiated~Services and Integrated~Services --- the solutions enabling \gls{acr:qos} in
+    best-effort \gls{acr:ip} networks.
+
     % Constantly growing demand for bandwidth in networks (especially \gls{acr:vod}, \gls{acr:voip}, RT) raises the
     % question: 'Whether it is better to increase available bandwidth of networks or to build intelligent systems managing
     % users traffic?'. As high bandwidth is just not enough because there are other equally important transmission
@@ -173,108 +205,6 @@
     % \end{enumerate}
 
     % These models are discussed in more details in the following section.
-
-
-    \section{QoS-aware networking}
-    \label{sec:ctx:qos}
-
-      % TODO  krotki przeglad QoS w roznych sieciach, nie tylko IP, ale tez ATM, Frame Relay, Token Ring (na podst.
-      % wykl. Luke-a?)
-      %
-      % w szczegolach o QoS na IP
-
-      \gls{acr:qos} is an issue in all types of networks such as \gls{acr:ip}, Token Ring, Frame Relay or even
-      \gls{acr:atm}.  Each of them adapted specific approach towards this matter. \gls{acr:ip} network for instance is
-      non-deterministic although there is a possiblity of packet classification using \gls{acr:cos} field. Token Ring on
-      the other hand is deterministic and allows using priority to distinct traffic. Last but not least \gls{acr:atm}
-      creates virtual path between sender and receiver and sets \gls{acr:qos} parameters. Despite the fact that all
-      approaches are very interesting and meaningful this paper focuses mainly on the \gls{acr:ip} network and its
-      approach to \gls{acr:qos}.
-
-      % IntServ, DiffServ, inne
-
-      Nowadays the \gls{acr:ietf} is working on two approaches beyond the basic best-effort service to provide more
-      advanced handling of packets and providing requested level of bandwidth and delay which are:
-
-      \begin{enumerate}
-        \item integrated services --- reserves resources necessary to provide the service along path,
-        \item differentiated services --- do not require resource reservation along path
-      \end{enumerate}
-
-
-      \subsection{DiffServ}
-
-        Due to clear need for relatively simple and coarse methods of providing differentiated classes of service for
-        Internet traffic, to support various types of applications, and specific business requirements. The
-        differentiated service approach to providing quality of service in networks employs a small, well-defined set of
-        building blocks from which a variety of aggregate behaviors may be built. \cite{qos}
-
-        DiffServ works with traffic stream containing many complex microflows which among the same stream have:
-
-        \begin{itemize}
-          \item Same \gls{acr:qos} requirements,
-          \item Traverses domain towards the same direction.
-        \end{itemize}
-
-        Microflow is a flow between applications and is identified mainly by:
-
-        \begin{enumerate}
-          \item Source and/or Destination Address,
-          \item Transport protocol,
-          \item Source and/or Destination Port.
-        \end{enumerate}
-
-        \begin{figure}[H]
-          \begin{center}
-            \includegraphics[width=.7\textwidth]{img/qos/diffserv.png}
-          \end{center}
-          \caption{DiffServ domain}
-        \end{figure} %TODO podac zrodlo obrazka (wyklad z systemow multimedialnych dotyczacy QoS)
-
-        DiffServ domain is a set of nodes with consistent \gls{acr:qos} policy (for example network managed by the same
-        \gls{acr:isp} or intranet). Routers within domain are divided into two groups: boundary routers and core
-        routers. Boundary router performs traffic classification, packet marking, traffic metering, traffic control
-        (policing, shaping) where core routers pass packets according to \gls{acr:phb} and sometimes changes
-        \gls{acr:dscp} labels.
-
-        This architecture distinguishes two major components: packet marking using the IPv4 ToS byte or TC in IPv6 and
-        \gls{acr:phb}.
-
-        \medskip
-
-        Redefined ToS field now uses 6 bits for packet classification and is called \gls{acr:dscp}. \gls{acr:phb}
-        defines how packet should be treated due to its priority. Accepted policy should be consistent within all
-        domain.
-
-
-      \subsection{IntServ}
-
-        Integrated services beyond the basic best-effort service defined in two \gls{acr:rfc} documents provide two levels of
-        service for \gls{acr:ip} which are called Controlled-Load Service and Guaranteed Service. Both require
-        information about the traffic to be generated. 
-
-        Guaranteed Service type should be used in applications with real time demands as it provides guaranteed
-        bandwidth and delay, whereas Controlled-Load Service does not give full guarantee and should be used with
-        application less sensitive for packets loss or delay.
-
-        IntServ requires resource reservation for certain flows or aggregated data streams. The reservation operation is
-        available thanks to \gls{acr:rsvp}. Due to this reservation session initialization lasts much longer than in
-        DiffServ.
-
-        {DiffServ vs IntServ}
-
-        \begin{table}[ht]
-          \caption{DiffServ, IntServ comparison}
-          \centering % used for centering table
-          \begin{tabular}{c c}
-            \hline \hline
-            IntServ         & DiffServ \\
-            Stateful        & Stateless \\
-            Not scalable    & Scalable \\
-            Stream oriented & Processing single packets \\
-            \hline
-          \end{tabular}
-        \end{table}
 
 
     \section{Resource virtualization}
@@ -602,11 +532,113 @@
           \label{fig:ctx:soa-stack}
         \end{figure}
 
+    \section{QoS-aware networking}
+    \label{sec:ctx:qos}
+
+      % TODO  krotki przeglad QoS w roznych sieciach, nie tylko IP, ale tez ATM, Frame Relay, Token Ring (na podst.
+      % wykl. Luke-a?)
+      %
+      % w szczegolach o QoS na IP
+
+      \gls{acr:qos} is an issue in all types of networks such as \gls{acr:ip}, Token Ring, Frame Relay or even
+      \gls{acr:atm}.  Each of them adapted specific approach towards this matter. \gls{acr:ip} network for instance is
+      non-deterministic although there is a possiblity of packet classification using \gls{acr:cos} field. Token Ring on
+      the other hand is deterministic and allows using priority to distinct traffic. Last but not least \gls{acr:atm}
+      creates virtual path between sender and receiver and sets \gls{acr:qos} parameters. Despite the fact that all
+      approaches are very interesting and meaningful this paper focuses mainly on the \gls{acr:ip} network and its
+      approach to \gls{acr:qos}.
+
+      % IntServ, DiffServ, inne
+
+      Nowadays the \gls{acr:ietf} is working on two approaches beyond the basic best-effort service to provide more
+      advanced handling of packets and providing requested level of bandwidth and delay which are:
+
+      \begin{enumerate}
+        \item integrated services --- reserves resources necessary to provide the service along path,
+        \item differentiated services --- do not require resource reservation along path
+      \end{enumerate}
+
+
+      \subsection{DiffServ}
+
+        Due to clear need for relatively simple and coarse methods of providing differentiated classes of service for
+        Internet traffic, to support various types of applications, and specific business requirements. The
+        differentiated service approach to providing quality of service in networks employs a small, well-defined set of
+        building blocks from which a variety of aggregate behaviors may be built. \cite{qos}
+
+        DiffServ works with traffic stream containing many complex microflows which among the same stream have:
+
+        \begin{itemize}
+          \item Same \gls{acr:qos} requirements,
+          \item Traverses domain towards the same direction.
+        \end{itemize}
+
+        Microflow is a flow between applications and is identified mainly by:
+
+        \begin{enumerate}
+          \item Source and/or Destination Address,
+          \item Transport protocol,
+          \item Source and/or Destination Port.
+        \end{enumerate}
+
+        \begin{figure}[H]
+          \begin{center}
+            \includegraphics[width=.7\textwidth]{img/qos/diffserv.png}
+          \end{center}
+          \caption{DiffServ domain}
+        \end{figure} %TODO podac zrodlo obrazka (wyklad z systemow multimedialnych dotyczacy QoS)
+
+        DiffServ domain is a set of nodes with consistent \gls{acr:qos} policy (for example network managed by the same
+        \gls{acr:isp} or intranet). Routers within domain are divided into two groups: boundary routers and core
+        routers. Boundary router performs traffic classification, packet marking, traffic metering, traffic control
+        (policing, shaping) where core routers pass packets according to \gls{acr:phb} and sometimes changes
+        \gls{acr:dscp} labels.
+
+        This architecture distinguishes two major components: packet marking using the IPv4 ToS byte or TC in IPv6 and
+        \gls{acr:phb}.
+
+        \medskip
+
+        Redefined ToS field now uses 6 bits for packet classification and is called \gls{acr:dscp}. \gls{acr:phb}
+        defines how packet should be treated due to its priority. Accepted policy should be consistent within all
+        domain.
+
+
+      \subsection{IntServ}
+
+        Integrated services beyond the basic best-effort service defined in two \gls{acr:rfc} documents provide two levels of
+        service for \gls{acr:ip} which are called Controlled-Load Service and Guaranteed Service. Both require
+        information about the traffic to be generated. 
+
+        Guaranteed Service type should be used in applications with real time demands as it provides guaranteed
+        bandwidth and delay, whereas Controlled-Load Service does not give full guarantee and should be used with
+        application less sensitive for packets loss or delay.
+
+        IntServ requires resource reservation for certain flows or aggregated data streams. The reservation operation is
+        available thanks to \gls{acr:rsvp}. Due to this reservation session initialization lasts much longer than in
+        DiffServ.
+
+        {DiffServ vs IntServ}
+
+        \begin{table}[ht]
+          \caption{DiffServ, IntServ comparison}
+          \centering % used for centering table
+          \begin{tabular}{c c}
+            \hline \hline
+            IntServ         & DiffServ \\
+            Stateful        & Stateless \\
+            Not scalable    & Scalable \\
+            Stream oriented & Processing single packets \\
+            \hline
+          \end{tabular}
+        \end{table}
+
 
     \section*{Summary}
 
 
   \chapter{Requirements analysis}
+  \label{chap:req}
 
     % TODO use-case diagram
 
@@ -735,6 +767,7 @@
 
 
   \chapter{Solaris 10, Solaris 11 and OpenSolaris}
+  \label{chap:sol}
   
     %TODO change chapter title !!! // Solaris OS as a resource virtualization environment
     % TODO  actually, Solaris 10, Solaris 11 and OpenSolaris are described here!
@@ -1276,7 +1309,7 @@
       \cite{solaris_operating_system}. 
 
 
-  \chapter{The system architecture}
+  \chapter{The CM4J system architecture}
   \label{chap:arch}
 
     The chapter discusses architectural aspects of the created system. First, the operating environment is discussed
@@ -1887,9 +1920,8 @@
       needed for instantiation process.
 
 
-  \chapter{Implementation}
-    
-    \section*{Chapter overview}
+  \chapter{The CM4J implementation}
+  \label{chap:impl}
 	
       This chapter focuses mainly on implementational details, especially on most interesting aspects of our system.
 		
@@ -2756,8 +2788,7 @@
 
 
   \chapter{Summary}
-
-    \section*{Chapter overview}
+  \label{chap:sum}
 
 	  This chapter summarizes the outcome of research in the area of network virtualization with special regard to 
 	  Solaris and the Crossbow package and its functionalities. 
@@ -2811,3 +2842,4 @@
 \end{document}
 
 % vim: et : tw=120 : spelllang=en_us,pl : spell :
+
