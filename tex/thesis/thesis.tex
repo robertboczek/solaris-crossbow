@@ -1937,34 +1937,15 @@
   \chapter{The CM4J implementation}
   \label{chap:impl}
 	
-      This chapter focuses mainly on implementational details, especially on most interesting aspects of our system.
+      This chapter focuses mainly on implementational details, especially on most interesting and complex problems in our system. 
 		
-      Section \ref{sec:impl:env} informs about implementational environment aspects like requested operating system,
-      libraries presence or necessary programs to be build and installed. 
-	  
-	  Section \ref{sec:impl:module} concerns about implemented crossbow module for \gls{acr:jims}
-	  
-		\quad Subsection \ref{sec:impl:general} initially introduces to crossbow module requirements.
+      Section \ref{sec:impl:env} informs about implementation environment aspects like requested operating system,
+      libraries presence or necessary programs to be build and installed. Issues like created components facilitating crossbow usage  (\ref{sec:impl:comp}), 
+      low level function access methods ( \ref{sec:impl:low}), prepared domain model transformation (\ref{sec:impl:model}) and adopted
+     approach to data persistence (\ref{sec:impl:persist}) are mainly discussed in this section.
 
-		\quad Subsection \ref{sec:impl:comp} describes in detail created components facilitating crossbow usage.
-		
-		\quad Subsection \ref{sec:impl:low} lists low level functions used in created system.
-
-		\quad Subsection \ref{sec:impl:model} outlines domain model transformation details.
-		
-		\quad Subsection \ref{sec:impl:infrastructure} highlights created infrastructure allowing easy integrating with \gls{acr:gui}.
-		
-		\quad Subsection \ref{sec:impl:persist} describes adopted approach to data persistence.
-		
-	  
-	  Section \ref{sec:impl:gui} concerns about \gls{acr:gui} application.
-	  
-	  Section \ref{sec:impl:verif} briefly highlights system verfication.
-	
-	  Section \ref{sec:impl:build} presents all necessary steps required for platform build completion.
-	  
-          Section \ref{sec:impl:problems} discusses load balancing, deployment problems and other potentially hard to solve issues.
-		
+    Aspects like implemented system verification (\ref{sec:impl:verif}), detailed description of necessary steps for build completion ( \ref{sec:impl:build}), 
+    load balancing problems and other potentially hard to solve issues (\ref{sec:impl:problems}) are described in the remaining part of this chapter.
 
 
     \section{Implementation environment}
@@ -2044,11 +2025,8 @@
 	  
 	  Detailed description of these two appliactions are provided in two separate sections beneath. 
 	  
-	  \section{Crossbow module for JIMS}
+	  \section{\gls{acr:cm4j}}
 		\label{sec:impl:module}
-	
-		\subsection{General information}
-			\label{sec:impl:general}
 		
 			To provide fully functionate system allowing all expected functionalities (described in requirement analysys section)
 			new module called ''jims-crossbow'' was implemented. Created module consists three projects:
@@ -2951,6 +2929,7 @@
       Currently user can create solaris zone from existing snaphot and use it. Functionality where created resource could be 
       converted to snapshot and then transfered to the repository would definately improve the usability of the system.
 
+  \printglossaries
 
   \printglossaries
 
@@ -2961,4 +2940,3 @@
 \end{document}
 
 % vim: et : tw=120 : spelllang=en_us,pl : spell :
-
