@@ -99,8 +99,6 @@
 
   \listoffigures
 
-  \printglossaries
-
   \newpage
 	\vspace*{2in}
 
@@ -490,19 +488,35 @@
 
       \subsection{Infrastructure as a service}
 
-        The \gls{acr:iaas} sometimes also called \gls{acr:haas} is one of three cloud computing models, the other two
-        are: \gls{acr:saas} and \gls{acr:paas}. This service is based on providing by the supplier whole scalable IT
-        infrastructure depending on user demand such as virtualized hardware. The service provider owns the equipment
-        and is responsible for housing, running and maintaining it.
+        \gls{acr:iaas} refers to providing hardware (network, storage, computing resources) and software (operating
+        system) as a service --- the service provider owns the underlying equipment and is responsible for housing,
+        running and maintenance. The infrastructure can be highly personalized with respect to network topology,
+        \gls{acr:qos} policies, computing power or provided software. The user is charged depending either on the
+        contract signed or resource consumption (pay-per-cycle) \cite{iaas}.
 
-        At the beginning the \gls{acr:iaas} was just renting dedicated servers services from supplier. Nowadays thanks
-        to virtualization these are most often virtual machines. In the former case user paid for the concrete hardware
-        (box), now client typically pays on a per-use basis.
+        The on-demand infrastructure has to fulfil the requirements of flexibility and scalability. Thus, ability to use
+        virtualized resources when providing \gls{acr:iaas} is crucial, both for customer and provider. The customer has
+        access to isolated environment that --- as far as usage is considered --- is not different from a physical one
+        and that can be expanded as needed, whereas the provider consolidates the services and makes efficient use of
+        their hardware resources \cite{iaas}.
+
+        % The \gls{acr:iaas} sometimes also called \gls{acr:haas} is one of three cloud computing models, the other two
+        % are: \gls{acr:saas} and \gls{acr:paas}. This service is based on providing by the supplier whole scalable IT
+        % infrastructure depending on user demand such as virtualized hardware. The service provider owns the equipment
+        % and is responsible for housing, running and maintaining it.
+
+        % At the beginning the \gls{acr:iaas} was just renting dedicated servers services from supplier. Nowadays thanks
+        % to virtualization these are most often virtual machines. In the former case user paid for the concrete hardware
+        % (box), now client typically pays on a per-use basis.
 
 
       \subsection{The role of virtualization in Service-oriented Architecture}
 
-        % TODO tutaj krotko o SOA
+        \gls{acr:soa} is an architectural approach with main focus on building \gls{acr:it} systems as sets of loosely
+        coupled services linked together and utilizing common communication infrastructure to interoperate. Given a
+        business process, a service can be thought of as a repeatable task within the process. Services expose their
+        interfaces, hiding implementation-, organization- or time-dependent details. It is important that the design of
+        the \gls{acr:soa}-compliant system reflects the design of the business process \cite{soa-foundation}.
 
         Virtualization plays important role supporting the \gls{acr:soa}. The Infrastructure Services part of the
         logical model (depicted in figure \ref{fig:ctx:soa-logical}) uses virtualization extensively to provide secure,
@@ -518,10 +532,10 @@
           \label{fig:ctx:soa-logical}
         \end{figure}
 
-        % TODO tutaj o S3
-
-        In \gls{acr:s3}, virtual appliances are leveraged to provide on-demand applications building the Operational
-        Systems layer (figure \ref{fig:ctx:soa-stack}) \cite{soa-stack}.
+        \gls{acr:s3} (figure \ref{fig:ctx:soa-stack}) is a high-level model depicting the functional and nonfunctional
+        layers of an \gls{acr:soa} solution.  The \gls{acr:s3} shows the separation of concerns of the nine layers and
+        imposes a border between service providers and consumers. In \gls{acr:s3}, virtual appliances are leveraged to
+        provide on-demand applications building the Operational Systems layer \cite{soa-stack}.
 
         \begin{figure}[H]
           \begin{center}
@@ -2128,70 +2142,137 @@
 			\end{minipage}
 
 
-		\subsection{Domain model transformation details}
-			\label{sec:impl:model}
+      \subsection{Domain model transformation details}
+      \label{sec:impl:model}
 
-		To allow conversion between \gls{acr:gui} designed network structure (like in the figure below, more about \gls{acr:gui} in separate subsection) to
-                zones and crossbow entities on the server side new domain transformation model was proposed. 
-      
-		\begin{figure}[H]
-			\begin{center}
-			\includegraphics[width=1.0\textwidth]{img/impl/network_structure_example.png}
-			\end{center}
-			\caption{Example of a network structure to be converted to object model.}
-		\end{figure} 
+        To allow conversion between network structure (as seen by the user in \gls{acr:gui} console) and underlying
+        Crossbow components, a series of transformations is performed by Worker and Supervisor (if necessary) nodes.
+        These transformations include simple one-to-one mappings as well as more sophisticated multi-step operations.
+        In-depth description of the transformations follow together with graphical example in figure
+        \ref{fig:impl:transformation}.
 
-		In general four main class types were distinguished: Appliance, Switch, Interface, Policy.
 
-		\medskip
+        \subsubsection{Simple mappings}
 
-		\textbf{Appliance} is an equivalent of a zone to be created from one of existing snapshots. Appliances could be
-		also extended to Routers (with assigned static routes) which on the server side are seen as two appliances created
-		under different etherstubs with routing tables modified and assigned interfaces enabling connectivity between
-		appliances working under these two etherstubs. \\
-		\textbf{Switch} is implied as crossbow etherstub. \\
-		\textbf{Interface} is converted to VNic and assigned to created zones. \\
-		\textbf{Policy} should be seen as a demand towards desired network traffic shape. Policy has assigned Flow Object
-		with detailed values and flow type. These objects could be assigned directly to existing interfaces or exist as
-		detached crossbow flows.
+          This is the class of transformations performed when instantiating or discovering abstractions that map
+          directly to Crossbow components. These include switches, interfaces and policies. Worker component is
+          responsible for performing the transformation. Table \ref{tab:impl:simple-mapping} contains detailed
+          description of the mappings for each of the objects.
 
-		\begin{figure}[H]
-			\begin{center}
-				\includegraphics[width=1.2\textwidth, angle=90]{img/impl/resource-object-model.png}
-			\end{center}
-			\caption{Resource object transformation model}
-		\end{figure}
+          \begin{table}[H]
 
-		\begin{figure}[H]
-			\begin{center}
-				\includegraphics[width=0.9\textwidth]{img/impl/resource-object-model-example.png}
-			\end{center}
-			\caption{Resource object transformation model example}
-		\end{figure}
+            \centering
 
-		Created model was designed in order to comply requirement of multiple deployments so that only introduced changes
-		were applied in already deployed project. Due to this issue to apply changes \textbf{instantiate(ObjectModel
-		objModel, Actions actions)} method from \textbf{SupervisorMBean} must be invoked where ObjectModel class
-		aggregates all domain model objects and Actions object encapsulates all actions to be done to every single domain
-		model object. These actions would be:
+            \begin{tabularx}{\textwidth}{|c|c|X|}
+              \hline
+              Domain model class & Crossbow component & \centering Details \tabularnewline
+              \hline \hline
+              Switch             & Etherstub          & Only name set \\
+              \hline
+              Interface          & \gls{acr:vnic}     & \gls{acr:vnic} created over \gls{acr:nic} or Etherstub \\
+              \hline
+              Interface          & \gls{acr:vlan}     & Logical \gls{acr:vlan}-specific interface; created when working
+                                                        with routers connecting multiple physical nodes \\
+              \hline
+              Policy + Filter    & Flow               & The set of flow's attributes depends on the Filter specified;
+                                                        Policy maps to Flow's properties \\
+              \hline
+            \end{tabularx}
 
-		\begin{itemize}
-			\item {ADD - adds new resource,}
-			\item {REM - removes this resource,}
-			\item {UPD - updates existing resource,}
-			\item {NOOP - no changes are applied.}
-		\end{itemize}
-		
+            \caption{Domain model transformation (simple mappings)}
+            \label{tab:impl:simple-mapping}
+
+          \end{table}
+
+
+        \subsubsection{Appliance to Zone transformation}
+
+          It is necessary for network interfaces to be instantiated before a zone is created. For an Appliance to be
+          fully instantiated, a set of consecutive steps has to be performed:
+
+          \begin{enumerate}
+            \item a proper snapshot is retrieved from appliance repository,
+            \item the zone is configured --- network interfaces are attached,
+            \item the zone is installed and booted,
+            \item routing table is populated with user-defined entries.
+          \end{enumerate}
+
+          Appliances are discovered using the naming scheme --- all the zones in the system are inspected and only these
+          matching the naming pattern are converted to the domain model entities. Then, for each of the discovered
+          appliances, following steps are performed:
+
+          \begin{enumerate}
+            \item routing table entries are discovered,
+            \item interfaces are attached (a part of Interface discovery process).
+          \end{enumerate}
+
+
+        \subsubsection{Routers connecting multiple Worker nodes}
+
+          Topologies that embody different subnetworks and span multiple Worker hosts require special treatment ---
+          traffic isolation has to be preserved and the network operation, from the end user's perspective, should be
+          the same as for network deployed on a single physical machine. To satisfy these requirements, router zones
+          with \gls{acr:vlan} interfaces are created on Worker nodes. The transformation is performed by Supervisor
+          component: the object model is modified by duplicating the routing entity and enabling isolated communication
+          channels for internal communication. Parts of the model are then sent to Worker nodes to finish the
+          instantiation process (figure \ref{fig:impl:router}).
+
+          \begin{figure}[H]
+            % TODO v obrazek
+
+            \centering
+
+            \caption{Internal model transformation for model spanning multiple nodes}
+            \label{fig:impl:router}
+          
+          \end{figure}
+
+          In the case of discovery, the steps are performed in reverse order --- Worker nodes discover, apart from other
+          elements, router zones and \gls{acr:vlan} interfaces and send parts of the object model back to the
+          Supervisor. The routers (together with routing tables) are merged to create single router entity that is
+          placed in the object model. Auxiliary routers and \gls{acr:vlan} are removed from the model.
+
+          \begin{figure}[H]
+
+            \centering
+
+            \caption{TODO}
+            \label{fig:impl:transformation}
+          
+          \end{figure}
+
+        
+        \begin{figure}[H]
+        \begin{center}
+        \includegraphics[width=0.9\textwidth]{img/impl/resource-object-model-example.png}
+        \end{center}
+        \caption{Resource object transformation model example}
+        \end{figure}
+
+        Created model was designed in order to comply requirement of multiple deployments so that only introduced
+        changes were applied in already deployed project. Due to this issue to apply changes
+        \textbf{instantiate(ObjectModel objModel, Actions actions)} method from \textbf{SupervisorMBean} must be invoked
+        where ObjectModel class aggregates all domain model objects and Actions object encapsulates all actions to be
+        done to every single domain model object. These actions would be:
+
+        \begin{itemize}
+        \item {ADD - adds new resource,}
+        \item {REM - removes this resource,}
+        \item {UPD - updates existing resource,}
+        \item {NOOP - no changes are applied.}
+        \end{itemize}
+
+
 		\subsection{Crossbow infrastructure project}
 			\label{sec:impl:infrastructure}
 			
-			As already mentioned whole system is based on \gls{acr:jmx} technology and externs existing \gls{acr:jims} project. All that
-			provides separation layer. Operations provided by MBean's may invoked from created \gls{acr:gui}, JConsole or even
-			from own applications by just adapting to existing interfaces and object names. 
+      As already mentioned whole system is based on \gls{acr:jmx} technology and externs existing \gls{acr:jims}
+      project. All that provides separation layer. Operations provided by MBean's may invoked from created
+      \gls{acr:gui}, JConsole or even from own applications by just adapting to existing interfaces and object names. 
 			
 			Existing high-level MBean are described and discussed the table below:
 
-			\begin{table}[ht]
+			\begin{table}[H]
 				\caption{High-level management MBeans}
 				\centering % used for centering table
 				\begin{tabular}{llp{4cm}}
@@ -2237,17 +2318,44 @@
 
 			With regard to statistics flow statistics are gathered and managed by operating system whereas 
 			VNic's traffic load is gathered starting from \gls{acr:jims} restart.
+
+          \begin{table}[H]
+
+            % TODO  v uzupelnic
+
+            \centering
+          
+            \begin{tabular}{|c|c|c|}
+              \hline
+              Domain model class & Crossbow/Solaris component & Naming scheme                                             \\
+              \hline \hline
+              Switch             & Etherstub                  & \texttt{\{project\}.S\{name\}}                            \\
+              \hline
+              Interface          & \gls{acr:vnic}             & \texttt{\{project\}.\{appliance\}.\{name\}}               \\
+              \hline
+              Policy             & Flow                       & \texttt{\{project\}.\{appliance\}.\{interface\}.\{name\}} \\
+              \hline
+              Appliance          & Zone                       & \texttt{\{project\}.M\{name\}}                            \\
+              \hline
+              Router             & Zone                       & \texttt{\{project\}.R\{name\}}                            \\
+              \hline
+            \end{tabular}
+
+            \caption{Crossbow components naming scheme}
+            \label{tab:impl:naming}
+          
+          \end{table}
 		
 		\subsection{System verification}
 			\label{sec:impl:verif}
 		
-			Complexity of created system implies necessity of preparing tools verifing correctness of the system. In order to achieve 
-			this verification tests on each level of our system were prepared. Starting from (low-level) shared libraries, where unit tests
-			for methods in \textbf{C} were implemented, through \gls{acr:jmx} level (with mocks) up to integration tests testing creating whole 
-			network structure.
+      Complexity of created system implies necessity of preparing tools verifying correctness of the system. In order to
+      achieve this verification tests on each level of our system were prepared. Starting from (low-level) shared
+      libraries, where unit tests for methods in \textbf{C} were implemented, through \gls{acr:jmx} level (with mocks)
+      up to integration tests testing creating whole network structure.
 		
-			Additionally verification on the \gls{acr:gui} side of the system was provided where network to be created is verified in respect of 
-			proper names, ip addresses, etc.
+      Additionally verification on the \gls{acr:gui} side of the system was provided where network to be created is
+      verified in respect of proper names, \gls{acr:ip} addresses, etc.
 
 	\section{GUI application}
 		\label{sec:impl:gui}
@@ -2602,7 +2710,7 @@
           \label{fig:cs:topo}
         \end{figure}
 
-        % TODO ^ maxbw! pokolorowac?
+        % TODO ^ maxbw! pokolorowac!
       
       
       \subsection{Resulting Crossbow and Solaris components}
@@ -2634,6 +2742,15 @@
         \begin{minipage}{\textwidth}
           \lstinputlisting[caption={Virtual interfaces and flows created on top of them},label={lst:uc:xbow:vnic}]{lst/uc-vnic.sh}
         \end{minipage}
+
+        % TODO  v pokolorowac!
+        \begin{figure}[H]
+          \centering
+          \includegraphics[width=.9\textwidth]{img/test-case/topology-xbow.pdf}
+
+          \caption{Network topology transformed to Solaris components}
+          \label{fig:cs:topo-xbow}
+        \end{figure}
 
 
       \subsection{Media preparation}
@@ -2834,6 +2951,8 @@
       Currently user can create solaris zone from existing snaphot and use it. Functionality where created resource could be 
       converted to snapshot and then transfered to the repository would definately improve the usability of the system.
 
+
+  \printglossaries
 
   \bibliographystyle{plain}
   \bibliography{bibliography}
