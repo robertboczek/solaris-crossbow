@@ -2121,7 +2121,7 @@
 			\end{minipage}
 
 
-      \subsection{Domain model transformation details}
+      \subsection{Domain model transformations}
       \label{sec:impl:model}
 
         To allow conversion between network structure (as seen by the user in \gls{acr:gui} console) and underlying
@@ -2197,9 +2197,8 @@
           instantiation process (figure \ref{fig:impl:router}).
 
           \begin{figure}[H]
-            % TODO v obrazek
-
             \centering
+            \includegraphics[width=.9\textwidth]{img/test-case/router.pdf}
 
             \caption{Internal model transformation for model spanning multiple nodes}
             \label{fig:impl:router}
@@ -2221,12 +2220,12 @@
           \end{figure}
 
         
-        \begin{figure}[H]
-        \begin{center}
-        \includegraphics[width=0.9\textwidth]{img/impl/resource-object-model-example.png}
-        \end{center}
-        \caption{Resource object transformation model example}
-        \end{figure}
+        % \begin{figure}[H]
+        % \begin{center}
+        % \includegraphics[width=0.9\textwidth]{img/impl/resource-object-model-example.png}
+        % \end{center}
+        % \caption{Resource object transformation model example}
+        % \end{figure}
 
         Created model was designed in order to comply requirement of multiple deployments so that only introduced
         changes were applied in already deployed project. Due to this issue to apply changes
@@ -2722,6 +2721,9 @@
           \lstinputlisting[caption={Virtual interfaces and flows created on top of them},label={lst:uc:xbow:vnic}]{lst/uc-vnic.sh}
         \end{minipage}
 
+        Figure \ref{fig:cs:topo-xbow} shows the interconnections between resulting Crossbow components. Colors
+        correspond to these in figure \ref{fig:cs:topo}.
+
         % TODO  v pokolorowac!
         \begin{figure}[H]
           \centering
@@ -2930,7 +2932,6 @@
       Currently user can create solaris zone from existing snaphot and use it. Functionality where created resource could be 
       converted to snapshot and then transfered to the repository would definately improve the usability of the system.
 
-  \printglossaries
 
   \printglossaries
 
