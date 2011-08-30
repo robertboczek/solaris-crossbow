@@ -1185,14 +1185,13 @@
         \textbf{dladm} is the admin command for crossbow datalinks elements management. Below a few examples of \gls{acr:vnic}s,
         Etherstubs management commands are presented and how bandwidth and priority values might be assigned to these
         elements.
-  
-        \begin{itemize}
-          \item \# dladm create-vnic vnic1 -l e1000g0 - creates new \gls{acr:vnic} \textbf{vnic1} over existing \gls{acr:nic} \textbf{e1000g0},
-          \item \# dladm create-etherstub ether00 - creates new Etherstub \textbf{ether00},
-          \item \# dladm show-linkprop vnic11 - lists all properties assigned to \textbf{vnic11} link,
-          \item \# dladm set-linkprop -pmaxbw=1000 vnic11 - assignes 1Mbps bandwith limit to \textbf{vnic11} link,
-          \item \# dladm set-linkprop -ppriority=low vnic11 - assignes low priority to \textbf{vnic11} link.
-        \end{itemize}
+
+	\medskip
+
+        \noindent
+        \begin{minipage}{\textwidth}
+          \lstinputlisting[caption={\textbf{dladm} command usage examples},label={lst:uc:xbow:dladm}]{lst/dladm.sh}
+        \end{minipage}
   
         More examples can be found in \textbf{man dladm}.
 
@@ -1200,13 +1199,26 @@
 
         \textbf{flowadm} is the admin command for flow management. It might be used as follows:     
 
-        \begin{itemize}
-          \item \# flowadm show-flow -l e1000g0 - displays all flows assigned to link \textbf{e1000g0},
-          \item \# flowadm add-flow -l e1000g0 -a transport=udp udpflow - creates new flow assigned to link
-                \textbf{e1000g0} for all udp packets.
-        \end{itemize}
+	\medskip
 
-        More information about \textbf{flowadm} and \textbf{dladm} tools can be found in manual.
+        \noindent
+        \begin{minipage}{\textwidth}
+          \lstinputlisting[caption={\textbf{flowadm} command usage examples},label={lst:uc:xbow:flowadm}]{lst/flowadm.sh}
+        \end{minipage}
+
+        More information about \textbf{flowadm} and \textbf{dladm} available options can be found in manual.
+
+      \subsection{Creating zone over VNIC}
+
+	Listing \ref{lst:uc:xbow:vnic-zone} shows an example of assigning VNIC to zones. Exclusive IP zones must be 
+	used when zones are to be used as containers for the virtual network. 
+
+	\medskip
+
+       \noindent
+        \begin{minipage}{\textwidth}
+          \lstinputlisting[caption={Creating an Exclusive IP Zone Over a VNIC example},label={lst:uc:xbow:vnic-zone}]{lst/vnic-zone.sh}
+        \end{minipage}
 
 
       \subsection{Crossbow and Differentiated Services - interoperability}
@@ -1938,11 +1950,12 @@
   \chapter{The CM4J implementation}
   \label{chap:impl}
 	
-      This chapter focuses mainly on implementational details, especially on most interesting and complex problems in our system. 
+      This chapter focuses mainly on implementation details, especially on most interesting and complex problems encountered during the \gls{acr:cm4j} 
+      system implementation process  like integrating with JIMS, accessing low level functions, providing multiple programistic models etc.
 		
       Section \ref{sec:impl:env} informs about implementation environment aspects like requested operating system,
       libraries presence or necessary programs to be build and installed. Issues like created components facilitating crossbow usage  (\ref{sec:impl:comp}), 
-      low level function access methods ( \ref{sec:impl:low}), prepared domain model transformation (\ref{sec:impl:model}) and adopted
+      low level function access methods (\ref{sec:impl:low}), prepared domain model transformation (\ref{sec:impl:model}) and adopted
      approach to data persistence (\ref{sec:impl:persist}) are mainly discussed in this section.
 
     Aspects like implemented system verification (\ref{sec:impl:verif}), detailed description of necessary steps for build completion ( \ref{sec:impl:build}), 
@@ -2942,3 +2955,4 @@
 \end{document}
 
 % vim: et : tw=120 : spelllang=en_us,pl : spell :
+
