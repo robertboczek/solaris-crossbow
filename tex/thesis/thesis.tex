@@ -165,10 +165,9 @@
   \label{chap:bck}
 
     The chapter provides background information about the domain the created system manages as well as the environment
-    it runs in.  Fields of applications and advantages of using virtual infrastructures are described. 
-    Subsequently networking with various level of \gls{acr:qos} guarantees, overview of
-    virtualization techniques together with technology examples and detailed discussion of networking virtualization
-    is presented.
+    it runs in.  Fields of applications and advantages of using virtual infrastructures are described.  Subsequently
+    networking with various level of \gls{acr:qos} guarantees, overview of virtualization techniques together with
+    technology examples and detailed discussion of networking virtualization is presented.
 
     Section \ref{sec:ctx:virt} introduces basic information about resource virtualization. The reasons why
     virtualization is essential in contemporary systems management are discussed. Then, resources that can be
@@ -210,6 +209,8 @@
     \label{sec:ctx:virt}
 
       % TODO tutaj definicja!
+      % TODO napisac, ze to dosc stara idea + troche historii
+      % TODO zmienic na ogolnie uznane zrodlo, nie WIKI!
 
       \subsection{The need for virtualization}
 
@@ -217,37 +218,45 @@
 
       \subsection{Common approaches}
 
-	In terms of approaches to resource virtualization, in principle there are three existing acknowledged approaches:
-	\begin{itemize}
-		\item{Full virtualization,}
-		\item{Partial virtualization,}
-		\item{OS-level virtualization.}
-	\end{itemize}
+        In terms of approaches to resource virtualization, in principle there are three existing acknowledged
+        approaches:
+
+        \begin{itemize}
+          \item{Full virtualization,}
+          \item{Partial virtualization,}
+          \item{OS-level virtualization.}
+        \end{itemize}
+
 
       \subsection{Full virtualization}
 
-	Technological approach to virtualization also know as emulation of the underlying raw hardware (native execution). This approach
-	may be implemented with two types of hypervisors. The first one runs directly on hardware, whereas the second one requires 
-	another operating system, such as Linux or Windows. There are no restrictions towards operating system being run. It just has to 
-	be supported by the underlying hardware. In terms of running different "guest" operating systems together no limitations exist.
+        Technological approach to virtualization also know as emulation of the underlying raw hardware (native
+        execution). This approach may be implemented with two types of hypervisors. The first one runs directly on
+        hardware, whereas the second one requires another operating system, such as Linux or Windows. There are no
+        restrictions towards operating system being run. It just has to be supported by the underlying hardware. In
+        terms of running different "guest" operating systems together no limitations exist.
 
-	By now, full virtualization approach implementations for x86 such as Virtual PC, VirtualBox exist and are ready to 
-	use.  (source: http://en.wikipedia.org/wiki/Virtual\_machine)
+        By now, full virtualization approach implementations for x86 such as Virtual PC, VirtualBox exist and are ready
+        to use. (source: http://en.wikipedia.org/wiki/Virtual\_machine)
+
 
       \subsection{Partial virtualization}
 
-	Also called emulation of a non-native system is based on allowing software applications written for different computer 
-	hardware architecture to startup. Virtual resource emulate hardware which exists based on detailed specification. 
-	Java virtual machine or 'Open firmware' ,that allows hardware to be run under any kind of CPU, are the most commonly
-	used and known representatives of this approach to resource virtualization. (source: http://en.wikipedia.org/wiki/Virtual\_machine)
+        Also called emulation of a non-native system is based on allowing software applications written for different
+        computer hardware architecture to startup. Virtual resource emulate hardware which exists based on detailed
+        specification.  Java virtual machine or 'Open firmware' ,that allows hardware to be run under any kind of CPU,
+        are the most commonly used and known representatives of this approach to resource virtualization. (source:
+        http://en.wikipedia.org/wiki/Virtual\_machine)
+
 
       \subsection{OS-level virtualization}
 
-	Operating System-level virtualization is a technology consisting of virtualizing servers on an operating system layer. 
-	Multiple guest OS may be running under the same OS, but unfortunately these guest OS must be the same, although
-	different libraries and distributions are allowed. OS-level virtualization may be often presented as slicing single OS to small partitions ( 
-	sometimes called virtual environments ( VE ) , virtual private servers ( VPS )  or zones ). From the end-user perspective these virtualization
-	is invisible ( user receives guest OS as real server ) (source: http://en.wikipedia.org/wiki/Virtual\_machine)
+        Operating System-level virtualization is a technology consisting of virtualizing servers on an operating system
+        layer.  Multiple guest OS may be running under the same OS, but unfortunately these guest OS must be the same,
+        although different libraries and distributions are allowed. OS-level virtualization may be often presented as
+        slicing single OS to small partitions (sometimes called virtual environments (VE) , virtual private servers
+        (VPS)  or zones). From the end-user perspective these virtualization is invisible (user receives guest OS as
+        real server) (source: http://en.wikipedia.org/wiki/Virtual\_machine)
 
 
     \section{Multilevel network virtualization}
@@ -289,7 +298,10 @@
         % TODO v obrazek
 
         \begin{figure}[H]
-          \caption{Types of virtual networks}
+          \centering
+          \includegraphics[width=.5\textwidth]{img/ctx/vnet-types.pdf}
+
+          \caption{Internal and external network virtualization}
           \label{fig:ctx:nvtypes}
         \end{figure}
 
@@ -462,11 +474,41 @@
       Beyond just system efficiency growth also effort necessary to put in configuring a system is smaller. 
 
 
-      \subsection{Testing and simulations}
+      \subsection{Simulations and testing}
 
-        Virtual infrastructure gives ability to provision new applications easily and quickly. As it is presented and
-        described in more detail in chapter \ref{chap:cs} creating any network structure consisting of any number of
-        virtual elements is easier than ever thanks to virtualized infrastructure. 
+        Setting up networking environment when testing new protocols or topology operation itself can be hard or even
+        impossible due to the costs. Even if successful, the topology is not flexible and adjustable --- these two
+        crucial requirements for simulations and experimental studies are not met.
+
+        % TODO alternatywa - symulatory
+        
+        Virtual infrastructures offer an alternative approach --- the environment to be tested can be easily created,
+        often within a single physical machine, and used to perform the simulations. The parameters of the whole system
+        can be adjusted whenever needed. Moreover, the approach does not require specialized hardware resources, thus it
+        is cheaper. After necessary tests have been performed, the virtual model can be mapped directly to physical
+        implementation, if necessary.
+
+        The impact of virtualization on software development and testing process is also important. Software development
+        teams can use fully virtualized environments --- reflecting the characteristics of actual ones --- to build,
+        test and deploy software. The resulting flexible environment can be easily duplicated or restored to some
+        specific state when needed.
+
+
+          % create the whole environment easily
+          % change as needed to adjust the parameters
+          % use to do prototyping
+          % use as a model for actual installation
+          % cheaper - software implementation
+          % network protocol testing
+        
+          % testing environment supporting development teams
+          % create environment reflecting the real deployment conditions
+        % adjustable, can be duplicated and restored easily
+
+
+        % Virtual infrastructure gives ability to provision new applications easily and quickly. As it is presented and
+        % described in more detail in chapter \ref{chap:cs} creating any network structure consisting of any number of
+        % virtual elements is easier than ever thanks to virtualized infrastructure. 
 
 
       \subsection{Improving server-side infrastructure scalability}
@@ -524,7 +566,7 @@
         isolated, flexible and reliable execution environment to deploy and run services. Moreover, hardware usage can
         be optimized with single machine hosting multiple virtual environments \cite{soa-foundation}.
 
-        \begin{figure}[H]
+        \begin{figure}[h]
           \begin{center}
             \includegraphics[scale=.5]{img/ctx/soa-logical.png}
           \end{center}
@@ -538,7 +580,7 @@
         imposes a border between service providers and consumers. In \gls{acr:s3}, virtual appliances are leveraged to
         provide on-demand applications building the Operational Systems layer \cite{soa-stack}.
 
-        \begin{figure}[H]
+        \begin{figure}[h]
           \begin{center}
             \includegraphics[scale=.5]{img/ctx/soa-stack.png}
           \end{center}
@@ -546,6 +588,7 @@
           \caption{Logical layers in the SOA Solution Stack}
           \label{fig:ctx:soa-stack}
         \end{figure}
+
 
     \section{QoS-aware networking}
     \label{sec:ctx:qos}
@@ -596,7 +639,7 @@
           \item Source and/or Destination Port.
         \end{enumerate}
 
-        \begin{figure}[H]
+        \begin{figure}[h]
           \begin{center}
             \includegraphics[width=.7\textwidth]{img/qos/diffserv.png}
           \end{center}
@@ -1958,7 +2001,7 @@
       low level function access methods (\ref{sec:impl:low}), prepared domain model transformation (\ref{sec:impl:model}) and adopted
      approach to data persistence (\ref{sec:impl:persist}) are mainly discussed in this section.
 
-    Aspects like implemented system verification (\ref{sec:impl:verif}), detailed description of necessary steps for build completion ( \ref{sec:impl:build}), 
+    Aspects like implemented system verification (\ref{sec:impl:verif}), detailed description of necessary steps for build completion (\ref{sec:impl:build}), 
     load balancing problems and other potentially hard to solve issues (\ref{sec:impl:problems}) are described in the remaining part of this chapter.
 
 
