@@ -49,18 +49,9 @@
 \usepackage{hyperref}
 \usepackage{tikz}
 \usepackage{pgf-umlsd}
+% \usepackage{tikz-uml}
 \usepackage[acronym]{glossaries}
-\usepackage{theorem}
-% \usepackage[toc,acronym]{glossaries}
 \usetikzlibrary{positioning,chains,fit,scopes}
-
-\newcommand{\code}[1]{\begin{tt}{#1}\end{tt}}
-
-\newcommand{\reqlabel}[1]{{\textcolor{Red}{\textbf{#1}}\label{#1}}}
-\newcommand{\reqref}[1]{\hyperref[#1]{{\textcolor{Red}{\textbf{#1}}}}}
-
-\newcommand{\tasklabel}[1]{{\textcolor{Blue}{\textbf{#1}}\label{#1}}}
-\newcommand{\taskref}[1]{\hyperref[#1]{{\textcolor{Blue}{\textbf{#1}}}}}
 
 % listings settings
 \lstset{captionpos=b,frame=single,tabsize=2}
@@ -494,18 +485,6 @@
         specific state when needed.
 
 
-          % create the whole environment easily
-          % change as needed to adjust the parameters
-          % use to do prototyping
-          % use as a model for actual installation
-          % cheaper - software implementation
-          % network protocol testing
-        
-          % testing environment supporting development teams
-          % create environment reflecting the real deployment conditions
-        % adjustable, can be duplicated and restored easily
-
-
         % Virtual infrastructure gives ability to provision new applications easily and quickly. As it is presented and
         % described in more detail in chapter \ref{chap:cs} creating any network structure consisting of any number of
         % virtual elements is easier than ever thanks to virtualized infrastructure. 
@@ -809,8 +788,8 @@
 
       \subsection{Infrastructure isolation}
 	  
-		Network isolation is provided thanks to the Crossbow functionality which is more accuratly described in the chapter
-		about Solaris OS features. 
+    Network isolation is provided thanks to the Crossbow functionality which is more accurately described in the chapter
+    about Solaris OS features. 
 		
 		%TODO what about resource isolation CPU/MEM ? 
     % TODO izolacja podczas wykorzystywania wielu maszyn polaczonych kablem
@@ -1357,7 +1336,7 @@
         \end{itemize}
 
         % TODO what data can be gathered?
-                
+
 
     \section*{Summary}
 
@@ -1705,9 +1684,37 @@
             \item Quality of Service policies --- classify traffic and determine priorities.
 
                   \begin{figure}[H]
-                    \begin{center}
+                    \centering
+
                       \includegraphics[width=0.7\textwidth]{img/architecture/om-policy.pdf}
-                    \end{center}
+
+                      % \begin{tikzpicture}
+                      %   \umlclass{Policy}
+                      %   {
+                      %     + policyId : String
+                      %   }
+                      %   {}
+
+                      %   \umlclass[x=-3, y=-3]{PriorityPolicy}
+                      %   {
+                      %     + priority : LOW / MEDIUM / HIGH
+                      %   }
+                      %   {}
+
+                      %   \umlclass[x=3, y=-3]{BandwidthPolicy}
+                      %   {
+                      %     + limit : int
+                      %   }
+                      %   {}
+
+                      %   \umlemptyclass[x=5]{Filter}
+
+                      %   \umlinherit{PriorityPolicy}{Policy}
+                      %   \umlinherit{BandwidthPolicy}{Policy}
+
+                      %   \umlaggreg{Policy}{Filter}
+                      % \end{tikzpicture}
+
                     \caption{Object model --- policies}
                   \end{figure}
 
@@ -1725,10 +1732,18 @@
           transformations of the model.
 
           \begin{figure}[H]
-            \begin{center}
-              \includegraphics[scale=.5]{img/architecture/assignments.pdf}
-            \end{center}
+            \centering
+            \includegraphics[scale=.5]{img/architecture/assignments.pdf}
 
+            % \begin{tikzpicture}
+            %   \umlclass{Assignments}
+            %   {
+            %     + assignments : Map< Object, String > \\
+            %     + annotations : Map< Object, Object >
+            %   }
+            %   {}
+            % \end{tikzpicture}
+          
             \caption{Assignments}
           \end{figure}
 
@@ -1739,15 +1754,24 @@
           operation that is going to be performed. Actions are assigned not globally for the model but on per-object
           basis --- the approach that introduces more flexibility and efficiency.
 
-          There are three types actions designed. The object in the model can be created (ADD, as in instantiation
-          phase), deleted (REM, typically performed after topology discovery) or modified (UPD, for entities that
-          support on-line property adjustment).
+          There are four types of actions designed. The object in the model can be created (ADD, as in instantiation
+          phase), deleted (REM, typically performed after topology discovery), modified (UPD, for entities that support
+          on-line property adjustment) or no action can be taken at all (NOOP).
 
           \begin{figure}[H]
-            \begin{center}
-              \includegraphics[scale=.5]{img/architecture/actions.pdf}
-            \end{center}
+            \centering
+            % TODO 4 rodzaje akcji!
+            \includegraphics[scale=.5]{img/architecture/actions.pdf}
 
+            % \begin{tikzpicture}
+            %   \umlclass{Action}
+            %   {
+            %     + op : ADD / REM / UPD / NOOP \\
+            %     + resource : Resource
+            %   }
+            %   {}
+            % \end{tikzpicture}
+          
             \caption{Actions}
           \end{figure}
 
@@ -1992,24 +2016,27 @@
 
   \chapter{The CM4J implementation}
   \label{chap:impl}
-	
-      This chapter focuses mainly on implementation details, especially on most interesting and complex problems encountered during the \gls{acr:cm4j} 
-      system implementation process  like integrating with JIMS, accessing low level functions, providing multiple programistic models etc.
-		
-      Section \ref{sec:impl:env} informs about implementation environment aspects like requested operating system,
-      libraries presence or necessary programs to be build and installed. Issues like created components facilitating crossbow usage  (\ref{sec:impl:comp}), 
-      low level function access methods (\ref{sec:impl:low}), prepared domain model transformation (\ref{sec:impl:model}) and adopted
-     approach to data persistence (\ref{sec:impl:persist}) are mainly discussed in this section.
 
-    Aspects like implemented system verification (\ref{sec:impl:verif}), detailed description of necessary steps for build completion (\ref{sec:impl:build}), 
-    load balancing problems and other potentially hard to solve issues (\ref{sec:impl:problems}) are described in the remaining part of this chapter.
+    This chapter focuses mainly on implementation details, especially on most interesting and complex problems
+    encountered during the \gls{acr:cm4j} system implementation process  like integrating with \gls{acr:jims}, accessing
+    low level functions, providing multiple programming models etc.
+
+    Section \ref{sec:impl:env} informs about implementation environment aspects like requested operating system,
+    libraries presence or necessary programs to be build and installed. Issues like created components facilitating
+    crossbow usage (\ref{sec:impl:comp}), low level function access methods (\ref{sec:impl:low}), prepared domain model
+    transformation (\ref{sec:impl:model}) and adopted approach to data persistence (\ref{sec:impl:persist}) are mainly
+    discussed in this section.
+
+    Aspects like implemented system verification (\ref{sec:impl:verif}), detailed description of necessary steps for
+    build completion (\ref{sec:impl:build}), load balancing problems and other potentially hard to solve issues
+    (\ref{sec:impl:problems}) are described in the remaining part of this chapter.
 
 
     \section{Implementation environment}
     \label{sec:impl:env}
 
       \gls{acr:jims} Extensions for Resource Monitoring and Management of Solaris 10 provides general architecture for
-      monitoring and management applications written in Java. 
+      monitoring and management applications written in Java.
 
       \gls{acr:jims} architecture is generally based on \gls{acr:jmx} - technology for distributed resource management.
       These managed resources in \gls{acr:jmx} are represented by MBeans which are simple Java objects registered at MBean Server
@@ -2150,40 +2177,40 @@
 			\caption{Jims-crossbow components, shared libraries and crossbow native libraries relationship}
 		\end{figure} 
 		
-		\subsection{Low-level functions access}
-			\label{sec:impl:low}
+      \subsection{Low-level functions access}
+      \label{sec:impl:low}
 
-			\gls{acr:jims} layered architecture implicated the demand for an approach towards accessing low-level funtions. In developed
-			application these approaches were adjusted to existing conditions so that for accessing functions from shared
-			libraries JNA (Java Native Access) was used and for doing more complex operations on low-level scripts were
-			written and Java ProcessBuilder invoked. Created jims-crossbow module containes shared library allowing CRUD
-			operations which subsequently are being accessed by JNA, whereas most of \gls{acr:jims} low-level access was done through
-			running shell scripts. Although running scripts by ProcessBuilder is faster in some cases accessing native
-			libraries through libraries like JNA or JNI gives more configurational advantage and does not require shell script
-			writing ability.
+        \gls{acr:jims} layered architecture implicated the demand for an approach towards accessing low-level functions.
+        In developed application these approaches were adjusted to existing conditions so that for accessing functions
+        from shared libraries \gls{acr:jna} was used and for doing more complex operations on low-level scripts were
+        written and Java ProcessBuilder invoked. Created jims-crossbow module containes shared library allowing \gls{acr:crud}
+        operations which subsequently are being accessed by \gls{acr:jna}, whereas most of \gls{acr:jims} low-level
+        access was done through running shell scripts. Although running scripts by ProcessBuilder is faster in some
+        cases accessing native libraries through libraries like \gls{acr:jna} or \gls{acr:jni} gives more
+        configurational advantage and does not require shell script writing ability.
 
-			Listing \ref{lst:impl:low:jna} presents abbreviated example of JNA access to native libraries. The corresponding
-			native code in C language is shown in figure \ref{lst:impl:low:jnac}. \\
- 	
-	
-			\noindent
-				\begin{minipage}{\textwidth}
-				\lstinputlisting[caption={Native library access with JNA (Java code)},label={lst:impl:low:jna},language=Java]{lst/impl-jna.java}
-			\end{minipage}  
+        Listing \ref{lst:impl:low:jna} presents abbreviated example of \gls{acr:jna} access to native libraries. The
+        corresponding native code in C language is shown in figure \ref{lst:impl:low:jnac}. \\
 
-			\noindent
-			\begin{minipage}{\textwidth}
-				\lstinputlisting[caption={Native library access with JNA (Native code)},label={lst:impl:low:jnac},language=C]{lst/impl-jna.c}
-			\end{minipage}
+
+        \noindent
+          \begin{minipage}{\textwidth}
+          \lstinputlisting[caption={Native library access with JNA (Java code)},label={lst:impl:low:jna},language=Java]{lst/impl-jna.java}
+        \end{minipage}  
+
+        \noindent
+        \begin{minipage}{\textwidth}
+          \lstinputlisting[caption={Native library access with JNA (Native code)},label={lst:impl:low:jnac},language=C]{lst/impl-jna.c}
+        \end{minipage}
 
 
       \subsection{Domain model transformations}
       \label{sec:impl:model}
 
         To allow conversion between network structure (as seen by the user in \gls{acr:gui} console) and underlying
-        Crossbow components, a series of transformations is performed by Worker and Supervisor (if necessary) nodes.
-        These transformations include simple one-to-one mappings as well as more sophisticated multi-step operations.
-        In-depth description of the transformations follow together with graphical example in figure
+        Crossbow components, a series of transformations is performed by Worker and Supervisor nodes. These
+        transformations include simple one-to-one mappings as well as more sophisticated multi-step operations.
+        In-depth description of the transformations follows together with a graphical example in figure
         \ref{fig:impl:transformation}.
 
 
@@ -2191,18 +2218,17 @@
 
           This is the class of transformations performed when instantiating or discovering abstractions that map
           directly to Crossbow components. These include switches, interfaces and policies. Worker component is
-          responsible for performing the transformation. Table \ref{tab:impl:simple-mapping} contains detailed
+          responsible for performing the transformations. Table \ref{tab:impl:simple-mapping} contains detailed
           description of the mappings for each of the objects.
 
           \begin{table}[H]
-
             \centering
 
             \begin{tabularx}{\textwidth}{|c|c|X|}
               \hline
               Domain model class & Crossbow component & \centering Details \tabularnewline
               \hline \hline
-              Switch             & Etherstub          & Only name set \\
+              Switch             & Etherstub          & The simplest mapping; no attributes set \\
               \hline
               Interface          & \gls{acr:vnic}     & \gls{acr:vnic} created over \gls{acr:nic} or Etherstub \\
               \hline
@@ -2216,14 +2242,13 @@
 
             \caption{Domain model transformation (simple mappings)}
             \label{tab:impl:simple-mapping}
-
           \end{table}
 
 
         \subsubsection{Appliance to Zone transformation}
 
           It is necessary for network interfaces to be instantiated before a zone is created. For an Appliance to be
-          fully instantiated, a set of consecutive steps has to be performed:
+          fully instantiated, a sequence of steps is performed:
 
           \begin{enumerate}
             \item a proper snapshot is retrieved from appliance repository,
@@ -2238,7 +2263,7 @@
 
           \begin{enumerate}
             \item routing table entries are discovered,
-            \item interfaces are attached (a part of Interface discovery process).
+            \item interfaces are attached (this is a part of Interface discovery process).
           \end{enumerate}
 
 
@@ -2249,173 +2274,162 @@
           the same as for network deployed on a single physical machine. To satisfy these requirements, router zones
           with \gls{acr:vlan} interfaces are created on Worker nodes. The transformation is performed by Supervisor
           component: the object model is modified by duplicating the routing entity and enabling isolated communication
-          channels for internal communication. Parts of the model are then sent to Worker nodes to finish the
-          instantiation process (figure \ref{fig:impl:router}).
+          channels for communication between physical hosts. Parts of the model are then sent to Worker nodes to finish
+          the instantiation process (figure \ref{fig:impl:router}).
 
-          \begin{figure}[H]
+          \begin{figure}[h]
             \centering
             \includegraphics[width=.9\textwidth]{img/test-case/router.pdf}
 
             \caption{Internal model transformation for model spanning multiple nodes}
             \label{fig:impl:router}
-          
           \end{figure}
 
-          In the case of discovery, the steps are performed in reverse order --- Worker nodes discover, apart from other
-          elements, router zones and \gls{acr:vlan} interfaces and send parts of the object model back to the
-          Supervisor. The routers (together with routing tables) are merged to create single router entity that is
-          placed in the object model. Auxiliary routers and \gls{acr:vlan} are removed from the model.
+          In the case of discovery, the steps are performed in reverse order --- Worker nodes discover, among others,
+          router zones and \gls{acr:vlan} interfaces and send parts of the object model back to the Supervisor. The
+          routers (together with routing tables) are merged to create single router entity that is placed in the object
+          model. Auxiliary routers and \gls{acr:vlan} are then removed from the model.
 
-          \begin{figure}[H]
-
+          \begin{figure}[h]
             \centering
 
             \caption{TODO}
             \label{fig:impl:transformation}
-          
           \end{figure}
 
-        
-        % \begin{figure}[H]
-        % \begin{center}
-        % \includegraphics[width=0.9\textwidth]{img/impl/resource-object-model-example.png}
-        % \end{center}
-        % \caption{Resource object transformation model example}
-        % \end{figure}
 
-        Created model was designed in order to comply requirement of multiple deployments so that only introduced
-        changes were applied in already deployed project. Due to this issue to apply changes
-        \textbf{instantiate(ObjectModel objModel, Actions actions)} method from \textbf{SupervisorMBean} must be invoked
-        where ObjectModel class aggregates all domain model objects and Actions object encapsulates all actions to be
-        done to every single domain model object. These actions would be:
+      \subsection{Crossbow infrastructure project}
+      \label{sec:impl:infrastructure}
+
+        As already mentioned whole system is based on \gls{acr:jmx} technology and externs existing \gls{acr:jims}
+        project. All that provides separation layer. Operations provided by MBean's may invoked from created
+        \gls{acr:gui}, JConsole or even from own applications by just adapting to existing interfaces and object names. 
+
+        Existing high-level MBean are described and discussed the table below:
+
+        \begin{table}[H]
+          \centering
+
+          \begin{tabular}{llp{4cm}}
+            \hline \hline
+            Bean                      & ObjectName                                  & Description                        \\
+            \hline
+            SupervisorMBean           & \textbf{Crossbow:type=Supervisor}           & Main Bean runs whole instantiation
+                                                                                      process (distributes model to
+                                                                                      parts and passes them to proper
+                                                                                      Worker                             \\
+            \hline
+            WorkerMBean               & \textbf{Crossbow:type=XBowWorker}           & Responsible for instantiating on
+                                                                                      \newline this node given model
+                                                                                      with regard to specified  actions  \\
+            \hline
+            RepoManagerMBean          & \textbf{Crossbow:type=RepoManager}          & Allows getting/setting path to
+                                                                                      projects placement, \newline
+                                                                                      returns all existing projects from
+                                                                                      working path                       \\
+            \hline
+            FlowManagerMBean          & \textbf{Crossbow:type=FlowManager}          & Provides \gls{acr:crud} operations
+                                                                                      for Flows                          \\
+            \hline
+            EtherstubManagerMBean     & \textbf{Crossbow:type=EtherstubManager}     & Provides \gls{acr:crud} operations
+                                                                                      for etherstubs                     \\
+            \hline
+            VNicManagerMBean          & \textbf{Crossbow:type=VNicManager}          & Provides \gls{acr:crud} operations
+                                                                                      for \gls{acr:vnic}s                \\
+            \hline
+            VlanManagerMBean          & \textbf{Crossbow:type=VlanManager}          & TODO co to robi?                   \\
+            \hline
+            StatisticGathererMBean    & \textbf{Crossbow:type=StatisticsGatherer}   & Provides statistics for interface
+                                                                                      or flow for specified time period  \\
+            \hline
+            CrossbowNotificationMBean & \textbf{Crossbow:type=CrossbowNotification} & Returns progress of deployment,
+                                                                                      \newline logs with major
+                                                                                      information                        \\
+            \hline
+          \end{tabular}
+
+          \caption{High-level management MBeans}
+        \end{table}
+			
+		
+      \subsection{Data persistence}
+      \label{sec:impl:persist}
+
+        Although created system does not provide data persistence in databases or any other formats persistence is
+        provided. Persistence is provided on two levels: first is on \gls{acr:gui} level where user may save created
+        network structure that would be then serialized into file and second on the \gls{acr:jims} nodes. During
+        creation, discovery, removing network elements precise naming conventions are preserved. Due to this convention
+        whole network is persistent and does not require any additional databases or files. Since generated names are
+        complex manual modification or creation of elements is not recommended as it is easy to make hard to find bugs.
+        Created \gls{acr:gui} is provided for this purposes.
+
+        With regard to statistics flow statistics are gathered and managed by operating system whereas \gls{acr:vnic}'s
+        traffic load is gathered starting from \gls{acr:jims} restart.
+
+        \begin{table}[H]
+          \centering
+
+          % TODO  v uzupelnic
+          \begin{tabular}{|c|c|c|}
+            \hline
+            Domain model class & Crossbow/Solaris component & Naming scheme                                             \\
+            \hline \hline
+            Switch             & Etherstub                  & \texttt{\{project\}.S\{name\}}                            \\
+            \hline
+            Interface          & \gls{acr:vnic}             & \texttt{\{project\}.\{appliance\}.\{name\}}               \\
+            \hline
+            Policy             & Flow                       & \texttt{\{project\}.\{appliance\}.\{interface\}.\{name\}} \\
+            \hline
+            Appliance          & Zone                       & \texttt{\{project\}.M\{name\}}                            \\
+            \hline
+            Router             & Zone                       & \texttt{\{project\}.R\{name\}}                            \\
+            \hline
+          \end{tabular}
+
+          \caption{Crossbow components naming scheme}
+          \label{tab:impl:naming}
+        \end{table}
+		
+
+      \subsection{System verification}
+      \label{sec:impl:verif}
+		
+        Complexity of created system implies necessity of preparing tools verifying correctness of the system. In order
+        to achieve this verification tests on each level of our system were prepared. Starting from (low-level) shared
+        libraries, where unit tests for methods in \textbf{C} were implemented, through \gls{acr:jmx} level (with mocks)
+        up to integration tests testing creating whole network structure.
+      
+        Additionally verification on the \gls{acr:gui} side of the system was provided where network to be created is
+        verified in respect of proper names, \gls{acr:ip} addresses, etc.
+
+
+      \section{GUI application}
+      \label{sec:impl:gui}
+		
+        Created \gls{acr:gui} application facilitates usage of \gls{acr:jims} and newly implemented Crossbow module for
+        \gls{acr:jims}. Apart from project verification performed in the pre-instantiation stage, \gls{acr:gui}
+        application is based on invocating \gls{acr:jmx} Bean's operation and presenting received responses.
+
+        Implemented \gls{acr:gui} application allows:
 
         \begin{itemize}
-        \item {ADD - adds new resource,}
-        \item {REM - removes this resource,}
-        \item {UPD - updates existing resource,}
-        \item {NOOP - no changes are applied.}
-        \end{itemize}
-
-
-		\subsection{Crossbow infrastructure project}
-			\label{sec:impl:infrastructure}
-			
-      As already mentioned whole system is based on \gls{acr:jmx} technology and externs existing \gls{acr:jims}
-      project. All that provides separation layer. Operations provided by MBean's may invoked from created
-      \gls{acr:gui}, JConsole or even from own applications by just adapting to existing interfaces and object names. 
-			
-			Existing high-level MBean are described and discussed the table below:
-
-			\begin{table}[H]
-				\caption{High-level management MBeans}
-				\centering % used for centering table
-				\begin{tabular}{llp{4cm}}
-					\hline \hline
-					Bean & ObjectName & Description \\
-					\hline
-					SupervisorMBean & \textbf{Crossbow:type=Supervisor} & Main Bean runs whole instantiation process (distributes model to parts 
-						and passes them to proper Worker \\
-					\hline
-					WorkerMBean & \textbf{Crossbow:type=XBowWorker} & Responsible for instantiating on  \newline
-                                                this node given model with regard to specified  actions\\
-					\hline
-					RepoManagerMBean & \textbf{Crossbow:type=RepoManager} & Allows getting/setting path to projects placement, \newline returns all 
-						existing projects from working path \\
-					\hline
-					FlowManagerMBean & \textbf{Crossbow:type=FlowManager} & Provides CRUD operations for Flows \\
-					\hline
-					EtherstubManagerMBean & \textbf{Crossbow:type=EtherstubManager} & Provides CRUD operations for etherstubs \\
-					\hline
-					VNicManagerMBean & \textbf{Crossbow:type=VNicManager} & Provides CRUD operations for VNics \\
-					\hline
-					VlanManagerMBean & \textbf{Crossbow:type=VlanManager} & co to robi? \\
-					\hline
-					StatisticGathererMBean & \textbf{Crossbow:type=StatisticsGatherer} & Provides statistics for \
-						interface or flow from specified time period \\
-					\hline
-					CrossbowNotificationMBean & \textbf{Crossbow:type=CrossbowNotification} & Returns progress of deployment, \newline
-						logs with major information \\
-					\hline
-				\end{tabular}
-			\end{table}
-			
-		
-		\subsection{Data persistence}
-			\label{sec:impl:persist}
-
-			Although created system does provide data persistence in databases or any other formats persistence is provided. 
-			Persistence is provided on two levels: first is on \gls{acr:gui} level where user may save created network structure that would
-			be then serialized into file and second on the \gls{acr:jims} nodes. During creation, discovery, removing network elements precise
-			naming conventions are preserved. Due to this convention whole network is persistent and does not require any additional 
-			databases or files. Since generated names are complex manual modification or creation of elements is not recommended as 
-			it is easy to make hard to find bugs. Created \gls{acr:gui} is provided for this purposes.
-
-			With regard to statistics flow statistics are gathered and managed by operating system whereas 
-			VNic's traffic load is gathered starting from \gls{acr:jims} restart.
-
-          \begin{table}[H]
-
-            % TODO  v uzupelnic
-
-            \centering
-          
-            \begin{tabular}{|c|c|c|}
-              \hline
-              Domain model class & Crossbow/Solaris component & Naming scheme                                             \\
-              \hline \hline
-              Switch             & Etherstub                  & \texttt{\{project\}.S\{name\}}                            \\
-              \hline
-              Interface          & \gls{acr:vnic}             & \texttt{\{project\}.\{appliance\}.\{name\}}               \\
-              \hline
-              Policy             & Flow                       & \texttt{\{project\}.\{appliance\}.\{interface\}.\{name\}} \\
-              \hline
-              Appliance          & Zone                       & \texttt{\{project\}.M\{name\}}                            \\
-              \hline
-              Router             & Zone                       & \texttt{\{project\}.R\{name\}}                            \\
-              \hline
-            \end{tabular}
-
-            \caption{Crossbow components naming scheme}
-            \label{tab:impl:naming}
-          
-          \end{table}
-		
-		\subsection{System verification}
-			\label{sec:impl:verif}
-		
-      Complexity of created system implies necessity of preparing tools verifying correctness of the system. In order to
-      achieve this verification tests on each level of our system were prepared. Starting from (low-level) shared
-      libraries, where unit tests for methods in \textbf{C} were implemented, through \gls{acr:jmx} level (with mocks)
-      up to integration tests testing creating whole network structure.
-		
-      Additionally verification on the \gls{acr:gui} side of the system was provided where network to be created is
-      verified in respect of proper names, \gls{acr:ip} addresses, etc.
-
-	\section{GUI application}
-		\label{sec:impl:gui}
-		
-		Created \gls{acr:gui} application facilitates usage of \gls{acr:jims} and newly implemented crossbow module for \gls{acr:jims}. Apart from project verification 
-                performed in the pre-instantiation stage, \gls{acr:gui} application is based on invocating \gls{acr:jmx} Bean's operation and presenting received responses.
-
-		Implemented \gls{acr:gui} application allows:
-		\begin{itemize}
-			\item{Connecting to jims-gateway,}
-			\item{Creating, modifying and removing desired network structure with requested virtual appliances,}
-			\item{Discovering already created projects,}
-			\item{Detailed information about links and flows like bandwidth load presented in charts for requested \
-				time periods,}
-			\item{Automatic logging using ssh to selected (already deployed) nodes and opening \gls{acr:gui}-type terminal.}
-		\end{itemize}		
-
-		\begin{figure}[H]
-			\begin{center}
-				\includegraphics[width=1.0\textwidth]{img/impl/gui.png}
-			\end{center}
-			\caption{GUI application}
-		\end{figure}
+          \item Connecting to jims-gateway,
+          \item Creating, modifying and removing desired network structure with requested virtual appliances,
+          \item Discovering already created projects,
+          \item Detailed information about links and flows like bandwidth load presented in charts for requested time
+                periods,
+          \item Automatic logging using ssh to selected (already deployed) nodes and opening \gls{acr:gui}-type
+                terminal.
+        \end{itemize}		
 
         \begin{figure}[H]
+          \centering
+          \includegraphics[width=1.0\textwidth]{img/impl/gui.png}
 
+          \caption{GUI application}
+        \end{figure}
+
+        \begin{figure}[H]
             \centering
 
             \begin{sequencediagram}
@@ -2446,7 +2460,6 @@
             \end{sequencediagram}
 
             \caption{GUI side instantiation process}
-          
           \end{figure}
 		
 
@@ -2487,7 +2500,7 @@
       \gls{acr:jims} has \gls{acr:jmx}-based architecture so each jims-agent and jims-gateway can be accessed through jconsole. In order to do that start 
       jconsole, select remote process and enter type: \\ \textbf{service:jmx:rmi:///jndi/rmi://address:port/jims} where \textbf{address} and 
       \textbf{port} is concrete address and port under which \gls{acr:jims} was started. \textbf{JConsole} allows browsing registered mbeans and 
-      performing CRUD operations. Especially in case of the crossbow module it allows these operations as
+      performing \gls{acr:crud} operations. Especially in case of the crossbow module it allows these operations as
       the figure below presents:
 
 	  \begin{figure}[H]
