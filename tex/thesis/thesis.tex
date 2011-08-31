@@ -199,13 +199,25 @@
     \section{Resource virtualization}
     \label{sec:ctx:virt}
 
-      % TODO tutaj definicja!
-      % TODO napisac, ze to dosc stara idea + troche historii
-      % TODO zmienic na ogolnie uznane zrodlo, nie WIKI!
+
+	Resource virtualization is in principle separation application from physical hardware on which it runs. It also allows dividing 
+	single physical hardware to multiple virtualized logical resources, thereby running the software under virtualized resources
+	lowers cost, improves efficiency, introduces isolation and better configurability. 
+
+
 
       \subsection{The need for virtualization}
 
-      \subsection{Resources that can be virtualized}
+	Together with increasing hardware evolution problems with its better utilization arised. Low fault tolerance, no isolation 
+	and poor utilization of available resources implicated the demand of creating an approach overcoming this issues. 
+
+	It was not until 1960s that virtualization was first used for better hardware utilization of some large, mainframe hardware.
+	
+	Today, over 50 years later when computers got more common than ever problems of rigidity and underutilization are still 
+	actual. Nowadays companies like VMWare invest more and more funds in research as they foresee that virtualization will 
+	definately become even more popular and common in the future. \cite{virtualization}
+
+      %\subsection{Resources that can be virtualized} 
 
       \subsection{Common approaches}
 
@@ -221,7 +233,7 @@
 
       \subsection{Full virtualization}
 
-        Technological approach to virtualization also know as emulation of the underlying raw hardware (native
+        Full virtualization is a technological approach to virtualization also know as emulation of the underlying raw hardware (native
         execution). This approach may be implemented with two types of hypervisors. The first one runs directly on
         hardware, whereas the second one requires another operating system, such as Linux or Windows. There are no
         restrictions towards operating system being run. It just has to be supported by the underlying hardware. In
@@ -622,14 +634,14 @@
           \begin{center}
             \includegraphics[width=.7\textwidth]{img/qos/diffserv.png}
           \end{center}
-          \caption{DiffServ domain}
-        \end{figure} %TODO podac zrodlo obrazka (wyklad z systemow multimedialnych dotyczacy QoS)
+          \caption{DiffServ domain \cite{qos2}}
+        \end{figure}
 
         DiffServ domain is a set of nodes with consistent \gls{acr:qos} policy (for example network managed by the same
         \gls{acr:isp} or intranet). Routers within domain are divided into two groups: boundary routers and core
         routers. Boundary router performs traffic classification, packet marking, traffic metering, traffic control
         (policing, shaping) where core routers pass packets according to \gls{acr:phb} and sometimes changes
-        \gls{acr:dscp} labels.
+        \gls{acr:dscp} labels. \cite{qos2}
 
         This architecture distinguishes two major components: packet marking using the IPv4 ToS byte or TC in IPv6 and
         \gls{acr:phb}.
@@ -653,7 +665,7 @@
 
         IntServ requires resource reservation for certain flows or aggregated data streams. The reservation operation is
         available thanks to \gls{acr:rsvp}. Due to this reservation session initialization lasts much longer than in
-        DiffServ.
+        DiffServ. \cite{qos2}
 
         {DiffServ vs IntServ}
 
@@ -1298,7 +1310,7 @@
       zones are efficiently controlled from excessive resource consumption. All these enhacements are available thanks 
       to resource controls (rctls) facility \cite{oracle_admin_guide}.
       
-      Solaris Operating System introduced three types of resource management control mechanisms:
+      Solaris Operating System introduced three types of resource management control mechanisms \cite{oracle_admin_guide}:
 
       \begin{enumerate}
         \item constraints - allows defining set of bounds on used resources for a workload,
@@ -2363,8 +2375,8 @@
         complex manual modification or creation of elements is not recommended as it is easy to make hard to find bugs.
         Created \gls{acr:gui} is provided for this purposes.
 
-        With regard to statistics flow statistics are gathered and managed by operating system whereas \gls{acr:vnic}'s
-        traffic load is gathered starting from \gls{acr:jims} restart.
+        With regard to statistics, flow's statistics are gathered and managed by operating system whereas \gls{acr:vnic}'s
+        traffic load is gathered starting from every single \gls{acr:jims} restart.
 
         \begin{table}[H]
           \centering
@@ -2526,6 +2538,17 @@
 		are usually removed, there is no guarantee that it will acutally happen. Due to possible further errors caused during 
 		restoring previous system state. In that case these partial changes must be removed manually from each node
 		involved in this failing deployment attempt which generally imposes specialistic knowledge of underlying environment. 
+
+    \section*{Summary}
+    \label{sec:impl:summary}
+
+	This chapter introduced to adopted approach to system implementation. Despite the fact that requested functionalities were 
+	very demanding and quite complex final product meets all previously listed funtional requirements. Thanks to used technologies such as \gls{acr:jmx},
+	system with fully independent business layer ( highly coupled MBeans ) were implemented. These technologies also helped with fulfiling defined
+	non-functional requirements like: evolvability, extensibility, composability, etc. Definately one of the biggest advantage of this system 
+	( apart from all delivered functionality provided by \gls{acr:cm4j} ) is reusability as three possible usage models exist. System
+	may be managed from implemented \gls{acr:gui}, running jconsole or even from own developed application where developer
+	can decide which part of \gls{acr:cm4j} he would like to use by just conforming to previously presented and  described interfaces.
 
 
   \chapter{Case Study}
@@ -3011,4 +3034,5 @@
 \end{document}
 
 % vim: et : tw=120 : spelllang=en_us,pl : spell :
+
 
