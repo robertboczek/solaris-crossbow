@@ -2415,8 +2415,8 @@
 
         The network topology built is an attempt to model simple yet real environment used to transmit multimedia data.
         There is a streaming server without user differentiation mechanisms (with respect to quality of transmission)
-        and an HTTP server handling \gls{acr:vod} requests. The clients connect to the streaming server and start streaming
-        sessions. They can also download video served by the HTTP daemon.
+        and an \gls{acr:http} server handling \gls{acr:vod} requests. The clients connect to the streaming server and start streaming
+        sessions. They can also download video served by the \gls{acr:http} daemon.
 
         Client and server components are placed in different subnetworks that, in turn, are connected with a \gls{acr:qos}-aware
         router which provides one more level the policies can be defined at. Rules defined for the router's interfaces
@@ -2440,12 +2440,12 @@
       \subsection{Service and client differentiation}
       \label{sub:uc:diff}
 
-        The traffic is classified based on two properties: type of service (RTP, HTTP) and recipient address. Three
+        The traffic is classified based on two properties: type of service (\gls{acr:rtp}, \gls{acr:http}) and recipient address. Three
         traffic classes are distinguished with respect to service type:
 
         \begin{itemize}
 
-          \item high priority RTP streaming
+          \item high priority \gls{acr:rtp} streaming
 
                 UDP traffic with source ports 6970 and 6971, used by streaming client 0
                 and streaming client 1 in LAN1 subnetwork,
@@ -2461,7 +2461,7 @@
         \end{itemize}
 
         Furthermore, the streaming clients inside the LAN1 subnetwork are assigned different priority values. Client 0 is
-        favoured and has high priority for RTP data, whereas client 1 is assigned low priority. Client 0 in LAN2
+        favoured and has high priority for \gls{acr:rtp} data, whereas client 1 is assigned low priority. Client 0 in LAN2
         is not assigned any priority explicitly.
 
 
@@ -2528,7 +2528,7 @@
         \end{enumerate}
 
         The topology consists of router (forwards \gls{acr:ip} packets between its directly-attached interfaces), server (with
-        Darwin Streaming Server and thttpd HTTP server installed) and client appliances (mplayer compiled with RTP
+        Darwin Streaming Server and thttpd \gls{acr:http} server installed) and client appliances (mplayer compiled with \gls{acr:rtp}
         streaming support enabled). All the appliances are instantiated on a single physical host.
 
         There are three subnetworks:
@@ -2552,7 +2552,7 @@
 
         Service differentiation is based on local port numbers and users are differentiated with respect to their
         network addresses. To achieve this, PortFilter and IpFilter are applied. PortFilter specifies a triple
-        \mbox{(port number, location, protocol)} --- the example for RTP is \mbox{(6970, LOCAL, UDP)}. IpFilter
+        \mbox{(port number, location, protocol)} --- the example for \gls{acr:rtp} is \mbox{(6970, LOCAL, UDP)}. IpFilter
         specifies a triple \mbox{(\gls{acr:ip} address, netmask, location)} --- the example for a client in 1.1.1.0/24 subnetwork
         is \mbox{(1.1.1.2, 24, REMOTE)}.
 
@@ -2663,7 +2663,7 @@
       \label{sub:uc:traffic}
 
         A \gls{acr:vod} client is downloading a long movie. All the bandwidth is available. Another client connects to the
-        streaming server and requests a number of video streams. As the RTP data is of high priority, the streaming
+        streaming server and requests a number of video streams. As the \gls{acr:rtp} data is of high priority, the streaming
         client is favoured over \gls{acr:vod} client and it gets most of the available bandwidth.
 
         \begin{figure}[H]
@@ -2679,7 +2679,7 @@
       \label{sub:uc:client}
 
         A \gls{acr:vod} client is downloading a movie. Two clients connect to the streaming server and request a number of video
-        streams. One of the streaming clients has low priority assigned, the other one is high priority. RTP streaming
+        streams. One of the streaming clients has low priority assigned, the other one is high priority. \gls{acr:rtp} streaming
         gets most of the bandwidth and high priority client is favoured over the low priority one.
 
         \begin{figure}[H]
