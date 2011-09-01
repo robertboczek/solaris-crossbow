@@ -134,8 +134,8 @@
    \section{Thesis statement}
 
 	Having all the above facts taken into account the following thesis statement was proposed:
-	\emph{ System with layered architecture, that would facilitate working with fully isolated virtualized network and resources
-	 grouped by project name, could be created. }
+	\emph{There exists a layered architecture, which enables the construction of a system, that would facilitate working with 
+		fully  isolated virtualized network and resources grouped by project name.}
 
     Due to substantial lack in similar products available on market research in this area was planned.
     The main system responsibilities would be providing fast and efficient manner of creating any requested, 
@@ -3220,19 +3220,30 @@
   \label{chap:sum}
 
 	  This chapter summarizes the outcome of research in the area of network virtualization with special regard to 
-	  Solaris and the Crossbow package and its functionalities. 
-	  
-	  Section \ref{sub:sum:concl} briefly concludes research results and test-case results.
-	  Section \ref{sub:sum:achieved} outlines realized goals.
-	  Section \ref{sub:sum:further} considers possible improvements that might be introduced to created system.
+	  proposed thesis statement.
+
+	
+	  Section \ref{sub:sum:concl} briefly concludes research results and test-case results. Thesis's statement legitimacy and feasibility 
+		is also discussed in this section. Realized goals and objectives are outlined in the section \ref{sub:sum:achieved} yet
+	  possible improvements that might be introduced to created system are considered in the \ref{sub:sum:further} part.
 
     \section{Conclusions}
 		\label{sub:sum:concl}
 		
-		Deep investigation during work on this paper allowed better understanding concepts like network virtualization,
-		resource reservation. Preformed tests additionally outlined the significance of these issues and how important they
-		are in terms of success of developed system. Encountered complex problems only confirmed that although very useful 
-		they are also quite demanding and require comprehensive knowledge in all computer areas.
+		Proposed at the beginning of the thesis statement claming that: 
+		\emph{There exists a layered architecture, which enables the construction of a system, that would facilitate working with 
+		fully  isolated virtualized network and resources grouped by project name } was deeply considered throughout this thesis by 
+		the authors. 
+		In order to fulfil proposed statement detailed requirement analysys were performed. Subsequently in order to comply
+		all definied requirements mentioned in thesis statement layered architectural approach accepted. This approach allowed 
+		to distinguish certain group of independent, highly coupled components. Together these components provided planned
+		system, but each one could be used separately allowing performing operations like: CRUD operations over virtual network elements, 
+		virtual resources management, etc. 
+		
+		Investigation performed during work on this paper allowed the authors to understand concepts like network virtualization,
+		resource reservation in more detailed. Conducted tests additionally outlined the significance of these issues and how important they
+		are in terms of success of proper work of complex systems. Encountered complex problems only confirmed that although very useful 
+		they are also quite demanding and require comprehensive knowledge in all computer areas. 
 		
     \section{Achieved goals}
 		\label{sub:sum:achieved}
@@ -3243,14 +3254,14 @@
 	  
 		\begin{itemize}
 			\item Significant improvement in system configuration in comparison to manual setup,
+			\item Automatic update of the given network parameters,
+			\item Reusability provided thanks to coupled components hidden under well definied interfaces,
 			\item Presenting network in clear way (graph format).
 		\end{itemize}
 		
 	    Hopefully presented system and whole concept of network virtualization, resource allocation and isolation 
 	    would encourage reader to do own research in this area.
 		
-		
-
     \section{Further work}
 		\label{sub:sum:further}
 	
