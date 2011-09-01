@@ -1824,29 +1824,29 @@
                     \centering
 
                       \begin{tikzpicture}
-                        \umlclass[y=1]{Policy}
+                        \umlclass[x=-1, y=1]{Policy}
                         {
                           + policyId : String
                         }
                         {}
 
-                        \umlclass[x=-3, y=-3]{PriorityPolicy}
-                        {
-                          + priority : LOW / MEDIUM / HIGH
-                        }
-                        {}
-
-                        \umlclass[x=3, y=-3]{BandwidthPolicy}
+                        \umlclass[x=-3, y=-2]{BandwidthPolicy}
                         {
                           + limit : int
                         }
                         {}
 
-                        \umlemptyclass[x=5, y=1]{Filter}
+                        \umlclass[x=-3, y=-5]{PriorityPolicy}
+                        {
+                          + priority : LOW / MEDIUM / HIGH
+                        }
+                        {}
 
-                        \umlemptyclass[x=8]{AnyFilter}
+                        \umlemptyclass[x=3, y=1]{Filter}
 
-                        \umlclass[x=8, y=-3]{PortFilter}
+                        \umlemptyclass[x=7, y=-2]{AnyFilter}
+
+                        \umlclass[x=7, y=-5]{PortFilter}
                         {
                           + protocol : String \\
                           + port : int \\
@@ -1854,13 +1854,13 @@
                         }
                         {}
 
-                        \umlclass[x=8, y=-6]{TransportFilter}
+                        \umlclass[x=7, y=-8]{TransportFilter}
                         {
                           + protocol : String
                         }
                         {}
 
-                        \umlclass[x=8, y=-9]{IpFilter}
+                        \umlclass[x=7, y=-11]{IpFilter}
                         {
                           + address : String \\
                           + netmask : int \\
@@ -1868,8 +1868,8 @@
                         }
                         {}
 
-                        \umlinherit{PriorityPolicy}{Policy}
-                        \umlinherit{BandwidthPolicy}{Policy}
+                        \umlinherit[geometry=-|]{PriorityPolicy}{Policy}
+                        \umlinherit[geometry=-|]{BandwidthPolicy}{Policy}
 
                         \umlaggreg{Policy}{Filter}
 
