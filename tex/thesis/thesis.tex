@@ -131,15 +131,19 @@
     further research. Computing models like \textbf{Cloud computing}, \textbf{Grid computing} are becoming a standard
     and it is definitely worth knowing at least the basic concepts.
 
-    \medskip
+   \section{Thesis statement}
 
-    The main objective of this thesis and accompanying research was to create a system allowing fast and efficient
-    manner of creating any requested, virtualized network structure with virtualized resources, network elements and
-    \gls{acr:qos} guarantees. Solaris OS together with the Crossbow functionalities is becoming more and more
-    respectable solution in terms of resource virtualization. Recently supported by network virtualization mechanism
-    contained in the Crossbow module, Solaris OS seemed to be suitable environment to proceed further research.
-    Together with our supervisor's an idea of creating previously mentioned system, which was later called
-    \gls{acr:cm4j}, working under Solaris OS arose.
+	Having all the above facts taken into account the following thesis statement was proposed:
+	\emph{ System with layered architecture, that would facilitate working with fully isolated virtualized network and resources
+	 grouped by project name, could be created. }
+
+    Due to substantial lack in similar products available on market research in this area was planned.
+    The main system responsibilities would be providing fast and efficient manner of creating any requested, 
+    virtualized network structure with virtualized resources, network elements and \gls{acr:qos} guarantees. 
+    Solaris OS together with the Crossbow functionalities is becoming more and more  respectable solution in terms
+    of resource virtualization. Recently supported by network virtualization mechanism contained in the Crossbow 
+    module, Solaris OS seemed to be suitable environment to proceed further research. Detailed discussion about 
+    architectural and  implementation aspects of proposed system were provided in separate chapter's further in the thesis.
 
 
     \section{Organisation of the thesis}
@@ -3249,15 +3253,15 @@
     \section{Further work}
 		\label{sub:sum:further}
 	
-      In terms of the future work there are many improvements that might be implemented. Probably the largest component,
-      which was initially planned, was automatic resource assigner, that would run and perform automatic resource
-      assignments to nodes that run under lowest load. This assigner with attached rule based system would gather data
-      about the load on each node and based on that decide what and where instantiate. Presented and discussed system in
-      this thesis lacks that functionality. Instead, it offers manual assignments, where user selects on which node new
-      virtual resources should be created. Another not implemented yet welcomed would be semi-automatic snapshot
-      creation. Currently user can create Solaris zone from existing snapshot and use it. Functionality where created
-      resource could be converted to snapshot and then transfered to the repository would definitely improve the
-      usability of the system.
+	In terms of the future work there are many welcomed improvements that may be added to the \gls{acr:cm4j} system.
+	Probably the largest component,  which was initially plannned, was automatic resource assigner, that would run and 
+	perform automatic resource assignments to nodes that run under lowest load. This assigner with attached rule based
+	system would gather data about the load on each node and based on that decide what and where instantiate. 
+	Presented and discussed system in this thesis lacks that functionality. Instead, it offers manual assignments, where 
+	user selects on which node new virtual resources should be created. Another not implemented yet welcomed would 
+	be semi-automatic snapshot creation. Currently user can create solaris zone from existing snaphot and use it. 
+	Functionality where created resource could be converted to snapshot and then transfered to the repository would 
+	definately improve the usability of the system.
 
 
   \printglossaries
@@ -3269,3 +3273,4 @@
 \end{document}
 
 % vim: et : tw=120 : spelllang=en_us,pl : spell :
+
