@@ -2596,17 +2596,17 @@
 
           \begin{tabular}{|c|c|c|}
             \hline
-            Domain model class & Solaris component & Naming scheme                                             \\
+            Domain model class & Solaris component & Naming scheme                                                \\
             \hline \hline
-            Switch             & Etherstub         & \texttt{\{project\}.S\{name\}}                            \\
+            Switch             & Etherstub         & \texttt{\{project\}\_S\{name\}}                              \\
             \hline
-            Interface          & \gls{acr:vnic}    & \texttt{\{project\}.\{appliance\}.\{name\}}               \\
+            Interface          & \gls{acr:vnic}    & \texttt{\{project\}\_\{appliance\}\_\{name\}}                \\
             \hline
-            Policy             & Flow              & \texttt{\{project\}.\{appliance\}.\{interface\}.\{name\}} \\
+            Policy             & Flow              & \texttt{\{project\}\_\{appliance\}\_\{interface\}\_\{name\}} \\
             \hline
-            Appliance          & Zone              & \texttt{\{project\}.M\{name\}}                            \\
+            Appliance          & Zone              & \texttt{\{project\}\_M\{name\}}                              \\
             \hline
-            Router             & Zone              & \texttt{\{project\}.R\{name\}}                            \\
+            Router             & Zone              & \texttt{\{project\}\_R\{name\}}                              \\
             \hline
           \end{tabular}
 
