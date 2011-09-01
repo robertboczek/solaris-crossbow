@@ -2794,8 +2794,8 @@
     topologies it allows to create. Resulting experimental data is presented and discussed.
 
     Section \ref{sec:uc:description} introduces the overall view of the topology that was created. Main components are
-    described and \gls{acr:qos} requirements are discussed in more detail. Types of service are presented and appropriate
-    network-level policies described. The policies are assigned to network components.
+    described and \gls{acr:qos} requirements are discussed in more detail. Types of service are presented and
+    appropriate network-level policies described. The policies are assigned to network components.
 
     Section \ref{sec:uc:prep} describes the stages needed to set up the topology. The steps include virtual appliance
     creation and publication, topology design, determining the quality policy and instantiation. Domain model of the
@@ -2813,10 +2813,10 @@
     \section{Scenario description}
     \label{sec:uc:description}
 
-      The test case is inspired by multimedia systems. The problems of quality-aware transmission arise naturally
-      in multimedia-oriented networks. Moreover, there are easily-identifiable classes of traffic with non-uniform
-      quality requirements. This characteristics make multimedia networks a reasonable choice when considering tests
-      focused on quality requirements verification.
+      The test case is inspired by multimedia systems. The problems of quality-aware transmission arise naturally in
+      multimedia-oriented networks. Moreover, there are easily-identifiable classes of traffic with non-uniform quality
+      requirements. This characteristics make multimedia networks a reasonable choice when considering tests focused on
+      quality requirements verification.
       
       Also, complex topologies are built to enable multimedia transmission. The components that comprise these networks
       include, among others, specialized media servers, routers and client machines. This variety allows to demonstrate
@@ -2853,8 +2853,8 @@
         low-jitter transfer. This allows for low-delay streaming with small input data buffers on the client side.
 
         Video on demand data is of less priority. It is assumed that the user is not going to utilize the data as it is
-        being downloaded. This assumption loosens the transmission requirements and allows to treat \gls{acr:vod} traffic as
-        medium-priority or even best-effort data (no \gls{acr:cir}).
+        being downloaded. This assumption loosens the transmission requirements and allows to treat \gls{acr:vod}
+        traffic as medium-priority or even best-effort data (no \gls{acr:cir}).
 
 
       \subsection{Topology overview}
@@ -2907,9 +2907,9 @@
 
         \end{itemize}
 
-        Furthermore, the streaming clients inside the LAN1 subnetwork are assigned different priority values. Client 0 is
-        favoured and has high priority for \gls{acr:rtp} data, whereas client 1 is assigned low priority. Client 0 in LAN2
-        is not assigned any priority explicitly.
+        Furthermore, the streaming clients inside the LAN1 subnetwork are assigned different priority values. Client 0
+        is favoured and has high priority for \gls{acr:rtp} data, whereas client 1 is assigned low priority. Client 0 in
+        LAN2 is not assigned any priority explicitly.
 
 
     \section{Preparation of the environment}
@@ -2917,8 +2917,9 @@
 
       General steps while building the environment are: virtual appliance preparation, topology design and
       instantiation. Virtual appliances are created manually and published in an \gls{acr:nfs} repository. Then, they
-      are used as building blocks when designing the network. Finally, the virtual infrastructure is instantiated, i.e.
-      all the underlying low-level components, like zones, etherstubs, \gls{acr:vnic}s and flows, are created.
+      are used as building blocks when designing the network. Finally, the virtual infrastructure is designed and
+      instantiated (using the \gls{acr:gui} frontend), i.e.  all the underlying low-level components, like zones,
+      etherstubs, \gls{acr:vnic}s and flows, are created.
 
 
       \subsection{Virtual appliances}
