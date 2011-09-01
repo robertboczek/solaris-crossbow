@@ -2112,8 +2112,9 @@
 	  \section{CM4J}
 		\label{sec:impl:module}
 		
-			To provide fully functionate system allowing all expected functionalities (described in requirement analysys section)
+			To provide fully functional system allowing all expected functionalities (described in requirement analysis section)
 			new module called ''jims-crossbow'' was implemented. Created module consists three projects:
+
 			\begin{itemize}
 				\item{Crossbow model components - performing crossbow like operations (\textbf{jims/jims-crossbow/jims-crossbow-mbean})}
 				\item{Domain model transformation responsible for describing domain with actions 
@@ -2369,20 +2370,19 @@
         \begin{table}[H]
           \centering
 
-          % TODO  v uzupelnic
           \begin{tabular}{|c|c|c|}
             \hline
-            Domain model class & Crossbow/Solaris component & Naming scheme                                             \\
+            Domain model class & Solaris component & Naming scheme                                             \\
             \hline \hline
-            Switch             & Etherstub                  & \texttt{\{project\}.S\{name\}}                            \\
+            Switch             & Etherstub         & \texttt{\{project\}.S\{name\}}                            \\
             \hline
-            Interface          & \gls{acr:vnic}             & \texttt{\{project\}.\{appliance\}.\{name\}}               \\
+            Interface          & \gls{acr:vnic}    & \texttt{\{project\}.\{appliance\}.\{name\}}               \\
             \hline
-            Policy             & Flow                       & \texttt{\{project\}.\{appliance\}.\{interface\}.\{name\}} \\
+            Policy             & Flow              & \texttt{\{project\}.\{appliance\}.\{interface\}.\{name\}} \\
             \hline
-            Appliance          & Zone                       & \texttt{\{project\}.M\{name\}}                            \\
+            Appliance          & Zone              & \texttt{\{project\}.M\{name\}}                            \\
             \hline
-            Router             & Zone                       & \texttt{\{project\}.R\{name\}}                            \\
+            Router             & Zone              & \texttt{\{project\}.R\{name\}}                            \\
             \hline
           \end{tabular}
 
