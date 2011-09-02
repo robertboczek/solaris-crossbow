@@ -771,10 +771,50 @@
 		In terms of accounting, following functionalities for properties and elements should be provided:
 		
 		\begin{itemize}
-			\item{Monitoring of each link's bandwidth, }
-			\item{Checking each link's, flow's network traffic (input / output) statistics, }
+			\item{Monitoring of each network virtual element's bandwidth, }
+			\item{Checking each network virtual element's, flow's network traffic (input / output) statistics, }
 			\item{Displaying network traffic load chart of selected link or flow from specified time period. }
 		\end{itemize}
+
+	 \begin{figure}[H]
+          	 \begin{center}
+            \begin{tikzpicture}[rotate=90]
+		\begin{umlsystem}[x=6, y=7, fill=red!10]{The CM4J core system}
+
+			\umlusecase[x=-4, y=4]{creation of network structure}
+			\umlusecase[x=-2, y=5.5, fill=green!20]{CRUD operations for network virtual elements}
+			\umlusecase[x=-6, y=1.5, fill=green!20]{CRUD operations for virtual resources}
+			\umlusecase[x=-6, y=8.5, fill=green!20]{applying QoS limits}
+			\umlusecase[x=0.5, y=5]{network virtual element's bandwidth monitoring}
+			\umlusecase[x=-1, y=0]{network statistics monitoring}
+			\umlusecase[x=-10, y=4]{network project structure discovery}
+			\umlusecase[x=-7, y=1, fill=green!20]{virtual resource discovery}
+			\umlusecase[x=-12, y=1, fill=green!20]{virtual elements discovery}
+			\umlusecase[x=-8, y=7, fill=green!20]{assigned QoS limits discovery}
+		\end{umlsystem}
+
+		\umlactor{user}[y=-6]
+
+		\umlassoc{user}{usecase-1}
+		\umlassoc{user}{usecase-2}
+		\umlassoc{user}{usecase-3}
+		\umlassoc{user}{usecase-5}
+		\umlassoc{user}{usecase-6}
+		\umlassoc{user}{usecase-7}
+		\umlassoc{user}{usecase-8}
+		\umlassoc{user}{usecase-9}
+
+		\umlinclude[name=incl]{usecase-8}{usecase-7}
+		\umlinclude[name=incl]{usecase-9}{usecase-7}
+		\umlinclude[name=incl]{usecase-10}{usecase-7}
+		\umlinclude[name=incl]{usecase-2}{usecase-1}
+		\umlinclude[name=incl]{usecase-3}{usecase-1}
+		\umlinclude[name=incl]{usecase-4}{usecase-1}
+            \end{tikzpicture}
+          \end{center}
+
+          \caption{Functional requirements use-case diagram.}
+        \end{figure}
 
     \section{Non-functional requirements}
 		\label{sec:req:nonfunc}
@@ -834,13 +874,13 @@
 		%TODO what about resource isolation CPU/MEM ? 
     % TODO izolacja podczas wykorzystywania wielu maszyn polaczonych kablem
 
-      \subsection{Broadcast domain preservation}
+     %TODO  \subsection{Broadcast domain preservation} DOPISAC o vlanach
 
         % TODO o vlanach
 	  
 		
 
-      \subsection{Constraints}
+     % \subsection{Constraints}
 
 
   \chapter{Solaris 10, Solaris 11 and OpenSolaris}
@@ -3222,7 +3262,7 @@
 	  This chapter summarizes the outcome of the research authors conducted in the area of network virtualization with special regard to 
 	  proposed thesis statement.
 	
-	  Section \ref{sub:sum:concl} briefly concludes research results and test-case results. Thesis statement legitimacy and feasibility 
+	  Section \ref{sub:sum:concl} briefly concludes research results and test-case results. Thesis statement's legitimacy and feasibility 
 		is also discussed in this section. Realized goals and objectives are outlined in section \ref{sub:sum:achieved} yet
 	  possible improvements that might be introduced to created system are considered in section \ref{sub:sum:further}.
 
@@ -3287,5 +3327,6 @@
 \end{document}
 
 % vim: et : tw=120 : spelllang=en_us,pl : spell :
+
 
 
