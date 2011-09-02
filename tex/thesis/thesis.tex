@@ -68,9 +68,9 @@
 \title{Component-based system for management of multilevel virtualization of networking resources}
 \author{Robert Boczek \and Dawid Ciepliński}
 
-%\department{Electrical and Computer Engineering}
-%\school{AGH UNIVERSITY OF SCIENCE AND TECHNOLOGY}
-%\degree{MSc Thesis}
+% \department{Electrical and Computer Engineering}
+% \school{AGH UNIVERSITY OF SCIENCE AND TECHNOLOGY}
+% \degree{MSc Thesis}
 
 %\address{Houston, Texas}
 %\donemonth{September} \doneyear{2011} \makeindex
@@ -298,8 +298,8 @@
 
         As far as internal virtualization is considered, the main building blocks are virtual network interface cards
         and virtual switches. These components establish logical links between virtual appliances (counterparts of
-        physical machines). Examples of internal virtualization solutions include Xen domains (TODO sprawdzic),
-        VirtualBox internal networks \cite{vboxum} and Solaris Containers with Crossbow technology.
+        physical machines). Examples of internal virtualization solutions include Xen domains, VirtualBox internal
+        networks \cite{vboxum} and Solaris Containers with Crossbow technology.
 
         External virtualization is implemented with Layer 2 switches aware of \gls{acr:vlan} technology. With these
         devices, entire network is split into fully-isolated parts, each becoming a new independent network. Routers can
@@ -309,8 +309,6 @@
         internal virtualization and some using external one. Figure \ref{fig:ctx:nvtypes} depicts an example of a
         network topology that uses both internal and external virtualization.
         
-        % TODO v obrazek
-
         \begin{figure}[H]
           \centering
           \includegraphics[width=.5\textwidth]{img/ctx/vnet-types.pdf}
@@ -345,6 +343,8 @@
 
         % TODO obrazek z warstwami i przykladami? (niekoniecznie)
 
+        % ???
+        %
         % DATA-PATH VIRT
         % warstwa lacza danych: VLANy
         % VPNy?
@@ -420,7 +420,7 @@
             \end{tikzpicture}
           \end{center}
 
-          \caption{Deployment process with virtual appliances. Stage 1 is executed once.}
+          \caption{Deployment process with virtual appliances. Stage 1 is executed once.}  % TODO  < przeniesc Stage 1 do tekstu
         \end{figure}
 
         It is possible to prepare sets of virtual appliances containing traditional services (such as application,
@@ -474,7 +474,7 @@
 
         There are existing virtualization solutions that support the model. The solutions differ in virtualization
         method used, \gls{acr:qos} support and efficiency. Most notable examples include Solaris OS (together with
-        Containers and Crossbow technologies), VMWare and Xen.  % TODO zacytowac tu cos?
+        Containers and Crossbow technologies), VMWare and Xen.
 
 
     \section{Applications and benefits of virtual infrastructures}
@@ -716,8 +716,6 @@
   \chapter{Requirements analysis}
   \label{chap:req}
 
-    % TODO use-case diagram
-
     This chapter focuses mainly on earlier conducted requirements analysis and extracted conclusions. Established goal
     was to create system supporting creation of any requested, fully isolated network structure with virtual network
     elements and demanded resources recovered from selected (previously prepared) repository and fully monitored network
@@ -819,12 +817,12 @@
     \section{Non-functional requirements}
 		\label{sec:req:nonfunc}
 
-    % TODO model obiektowy jak najbardziej niezalezny od systemu pod spodem
+      % TODO model obiektowy jak najbardziej niezalezny od systemu pod spodem
 	
-    Non-functional requirements also called \textbf{qualities} of a system could be distincted between the executing
-    system and the work products (created during system development). Executing system are related to user goals and are
-    referred as run-time qualities, whereas work products are driven by the development organization’s goals and
-    referred as development-time qualities \cite{nonfunctional}. 
+      Non-functional requirements also called \textbf{qualities} of a system could be distincted between the executing
+      system and the work products (created during system development). Executing system are related to user goals and
+      are referred as run-time qualities, whereas work products are driven by the development organization’s goals and
+      referred as development-time qualities \cite{nonfunctional}. 
 
                 \medskip
 		
@@ -1001,9 +999,10 @@
       \subsection{Zone lifecycle}
       \label{sub:}
 
-        A model was created to describe the states in which each zone must exist and its possible transitions. A non-global zone can be
-        in one of six states: \textit{configured}, \textit{incomplete}, \textit{installed}, \textit{ready},
-        \textit{running}, \textit{shutting down or down} \cite{sag}. Figure \ref{fig:sol:lifecycle} depicts the model.
+        A model was created to describe the states in which each zone must exist and its possible transitions. A
+        non-global zone can be in one of six states: \textit{configured}, \textit{incomplete}, \textit{installed},
+        \textit{ready}, \textit{running}, \textit{shutting down or down} \cite{sag}. Figure \ref{fig:sol:lifecycle}
+        depicts the model.
 
         \begin{figure}[H]
           \begin{center}
@@ -1732,8 +1731,6 @@
         implemented components of the system that were implemented --- User Interface to design, manipulate and monitor
         the topology, nodes responsible for discovery of available physical hosts, and mappers which translate between
         logical model and underlying resources.
-
-        % TODO zwezic ten diagram
 
         \begin{figure}[H]
           \begin{center}
@@ -2584,7 +2581,7 @@
 
           \begin{tabular}{llp{4cm}}
             \hline \hline
-            Bean                      & ObjectName                                  & Description                        \\
+            MBean                     & ObjectName                                  & Description                        \\
             \hline
             SupervisorMBean           & \textbf{Crossbow:type=Supervisor}           & Main Bean runs whole instantiation
                                                                                       process (distributes model to
@@ -2592,13 +2589,13 @@
                                                                                       Worker                             \\
             \hline
             WorkerMBean               & \textbf{Crossbow:type=XBowWorker}           & Responsible for instantiating on
-                                                                                      \newline this node given model
-                                                                                      with regard to specified  actions  \\
+                                                                                      this node given model with regard
+                                                                                      to specified  actions              \\
             \hline
             RepoManagerMBean          & \textbf{Crossbow:type=RepoManager}          & Allows getting/setting path to
-                                                                                      projects placement, \newline
-                                                                                      returns all existing projects from
-                                                                                      working path                       \\
+                                                                                      projects placement, returns all
+                                                                                      existing projects from working
+                                                                                      path                               \\
             \hline
             FlowManagerMBean          & \textbf{Crossbow:type=FlowManager}          & Provides \gls{acr:crud} operations
                                                                                       for Flows                          \\
@@ -2609,14 +2606,14 @@
             VNicManagerMBean          & \textbf{Crossbow:type=VNicManager}          & Provides \gls{acr:crud} operations
                                                                                       for \gls{acr:vnic}s                \\
             \hline
-            VlanManagerMBean          & \textbf{Crossbow:type=VlanManager}          & TODO co to robi?                   \\
+            VlanManagerMBean          & \textbf{Crossbow:type=VlanManager}          & \gls{acr:vlan} creation and
+                                                                                      management                         \\
             \hline
             StatisticGathererMBean    & \textbf{Crossbow:type=StatisticsGatherer}   & Provides statistics for interface
                                                                                       or flow for specified time period  \\
             \hline
             CrossbowNotificationMBean & \textbf{Crossbow:type=CrossbowNotification} & Returns progress of deployment,
-                                                                                      \newline logs with major
-                                                                                      information                        \\
+                                                                                      logs with major information        \\
             \hline
           \end{tabular}
 
