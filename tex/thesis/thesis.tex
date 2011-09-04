@@ -1681,12 +1681,15 @@
                                 text height=1.5ex, text depth=.25ex]
 
               \node (eflow) [terminal] {FlowMBean};
-              \node (mflow) [terminal, below=of eflow] {FlowManager}
-                edge [->] node [auto] {manages} (eflow);
+              \node (mflow) [terminal, below=of eflow] {FlowManager};
 
               \node (eether) [terminal, right=of eflow] {EtherstubMBean};
-              \node (mether) [terminal, below=of eether] {EtherstubManager}
-                edge [->] node [auto] {} (eether);
+              \node (mether) [terminal, below=of eether] {EtherstubManager};
+
+              \useasboundingbox (current bounding box);
+
+              \path [->] (mflow)  edge node [auto] {manages} (eflow)
+                         (mether) edge                       (eether);
 
             \end{tikzpicture}
 
@@ -1696,16 +1699,20 @@
                                 text height=1.5ex, text depth=.25ex]
 
               \node (enic) [terminal, below=of mflow] {NICMBean};
-              \node (mnic) [terminal, below=of enic] {NICManager}
-                edge [->] node [auto] {manages} (enic);
+              \node (mnic) [terminal, below=of enic] {NICManager} (enic);
 
               \node (evnic) [terminal, right=of enic] {VNICMBean};
               \node (mvnic) [terminal, below=of evnic] {VNICManager}
                 edge [->] node [auto] {} (evnic);
 
               \node (evlan) [terminal, right=of evnic] {VLANMBean};
-              \node (mvlan) [terminal, below=of evlan] {VLANManager}
-                edge [->] node [auto] {} (evlan);
+              \node (mvlan) [terminal, below=of evlan] {VLANManager};
+
+              \useasboundingbox (current bounding box);
+
+              \path [->] (mnic)  edge node [auto] {manages} (enic)
+                         (mvnic) edge                       (evnic)
+                         (mvlan) edge                       (evlan);
               
             \end{tikzpicture}
           \end{center}
@@ -3151,13 +3158,20 @@
       \label{sub:uc:limit}
 
         Bandwidth is limited to 8Mbps for all the links. The limits can be changed online with immediate effects. Figure
-        \ref{fig:uc:limit} shows bandwidth limitation for a \gls{acr:vod} client downloading a movie. After a short period of
-        transmission rate limited to 24Mbps, the link bandwidth is narrowed to 8Mbps (lowest supported value).
+        \ref{fig:uc:limit} shows bandwidth limitation for a \gls{acr:vod} client downloading a movie. After a short
+        period of transmission rate limited to 24Mbps, the link bandwidth is narrowed to 8Mbps (lowest supported value).
 
         \begin{figure}[H]
-          \begin{center}
-            \includegraphics[width=.7\textwidth]{img/test-case/limit.png}
-          \end{center}
+          \centering
+
+          \begin{tikzpicture}[node distance=0]
+            \node (img) at (0,0) {\includegraphics[width=.7\textwidth]{img/test-case/limit.png}};
+            \node [below=of img.south west] {time $[\mathrm{s}]$};
+
+            \useasboundingbox (current bounding box);
+
+            \node [right=of img.north east] {bandwidth $[\mathrm{MB}/\mathrm{s}]$};
+          \end{tikzpicture}
 
           \caption{8Mbps bandwidth limitation}
           \label{fig:uc:limit}
@@ -3172,9 +3186,16 @@
         client is favoured over \gls{acr:vod} client and it gets most of the available bandwidth.
 
         \begin{figure}[H]
-          \begin{center}
-            \includegraphics[width=.7\textwidth]{img/test-case/vod-rtp.png}
-          \end{center}
+          \centering
+
+          \begin{tikzpicture}[node distance=0]
+            \node (img) at (0,0) {\includegraphics[width=.7\textwidth]{img/test-case/vod-rtp.png}};
+            \node [below=of img.south west] {time $[\mathrm{s}]$};
+
+            \useasboundingbox (current bounding box);
+
+            \node [right=of img.north east] {bandwidth $[\mathrm{MB}/\mathrm{s}]$};
+          \end{tikzpicture}
 
           \caption{VOD traffic bandwidth consumption compared to high-priority RTP streams}
         \end{figure}
@@ -3183,14 +3204,22 @@
       \subsection{Client-dependent quality of service}
       \label{sub:uc:client}
 
-        A \gls{acr:vod} client is downloading a movie. Two clients connect to the streaming server and request a number of video
-        streams. One of the streaming clients has low priority assigned, the other one is high priority. \gls{acr:rtp} streaming
-        gets most of the bandwidth and high priority client is favoured over the low priority one.
+        A \gls{acr:vod} client is downloading a movie. Two clients connect to the streaming server and request a number
+        of video streams. One of the streaming clients has low priority assigned, the other one is high priority.
+        \gls{acr:rtp} streaming gets most of the bandwidth and high priority client is favoured over the low priority
+        one.
 
         \begin{figure}[H]
-          \begin{center}
-            \includegraphics[width=.7\textwidth]{img/test-case/exp-all.png}
-          \end{center}
+          \centering
+
+          \begin{tikzpicture}[node distance=0]
+            \node (img) at (0,0) {\includegraphics[width=.7\textwidth]{img/test-case/exp-all.png}};
+            \node [below=of img.south west] {time $[\mathrm{s}]$};
+
+            \useasboundingbox (current bounding box);
+
+            \node [right=of img.north east] {bandwidth $[\mathrm{MB}/\mathrm{s}]$};
+          \end{tikzpicture}
 
           \caption{Distribution of available bandwidth between streaming clients}
         \end{figure}
