@@ -105,16 +105,15 @@
 
 	\begin{center}
    	\textit{Thesis work contribution: \\
-            Chapters written together (2, 4, 8), \\
+            Chapters written together (\ref{chap:bck}, \ref{chap:sol}, \ref{chap:sum}), \\
             Chapters written by Dawid (\ref{chap:arch}, \ref{chap:cs}), \\
-            Chapters written by Robert (1, 3, 6), \\
+            Chapters written by Robert (\ref{chap:intro}, \ref{chap:req}, \ref{chap:impl}), \\
             Implementation work performed together.}
   	\end{center}
 
 
   \chapter{Introduction}
-
-    % QoS, rezerwacja zasobów, izolacja we współczesnych systemach informatycznych	
+  \label{chap:intro}
 
     In today's world every successful organisation is based on properly designed communication network. These networks
     must deal with delay-sensitive data such as video images, real-time voice or mission-critical data. Therefore must
@@ -513,22 +512,31 @@
         % virtual elements is easier than ever thanks to virtualized infrastructure. 
 
 
-      \subsection{Improving server-side infrastructure scalability}
+      \subsection{Server virtualization benefits}
+        
+        There are multiple advantages of utilizing virtualization in server management. These benefits include, among
+        others, reducing maintenance costs, flexibility and scalability.
 
-        According to Exforsys Inc. following features and capabilities support server infrastructure scalability:
-	
-	\begin{itemize}
-		\item \textit{Server Consolidation and Containment  - reduces  server sprawl by 
-			consolidating systems into virtual machines,}
+        A number of logical servers can run inside single machine at the same time with network connectivity and
+        resource sharing (e.g. read-only file system) enabled, if needed. Thanks to this consolidation, hardware
+        spendings are significantly reduced and the centralized infrastructure is easier to administer. Moreover, the
+        resources can be assigned dynamically, depending on the demand, allowing efficient hardware utilization
+        \cite{server-consolidation}.
 
-		\item \textit{Legacy Application Re-hosting - legacy systems may be migrated to new highly reliable virtual machines,}
+        Depending on virtualization type, the host machine can run either multiple instances of the same operating
+        system (lightweight partitioning) or independent systems provided by different vendors (full virtualization).
+        In both cases, the instances can be fully isolated to prevent interference between applications running inside.
+        The flexibility makes virtualizing complex heterogneous environments easier.
 
-		\item \textit{Accelerating Development Cycles - servers may be immediately re-provisioned,}
+        Replication and restoration on any target machine is simpler with virtualized servers. This property is
+        particularly useful when designing and executing disaster recovery activities --- in case of system failure the
+        whole infrastructures can be reprovisioned immediately, allowing business continuity for crucial services to
+        remain intact \cite{vib}.
 
-		\item \textit{Business Continuity - due to system's files encapsulation replication 
-			and restoration on any target server is fast and easy. \cite{vib}}
-
-	\end{itemize}
+        Finally, legacy systems can also be integrated as a part of virtual infrastructure. Specific software and
+        hardware requirements of these systems can be reconstructed in a virtualized environment to allow seamless
+        migration and interoperation with other virtualized components. The approach allows to reduce substantial
+        expenses associated with legacy systems maintenance that many \gls{acr:it} organizations bear \cite{boers}.
 
 
       \subsection{Infrastructure as a service}
@@ -1672,8 +1680,8 @@
       \subsection{Instrumented Solaris OS resources}
 
         All the important Crossbow resources are instrumented (Manager:Entity pairs are created). This includes
-        \gls{acr:nic}s, \gls{acr:vnic}, \gls{acr:vlan}, Etherstubs and Flows.  All the components are loosely coupled
-        and can be used independently.
+        \gls{acr:nic}s, \gls{acr:vnic}, \gls{acr:vlan}, Etherstubs and Flows. All the components are loosely coupled and
+        can be used independently.
 
         \begin{figure}[H]
           \begin{center}
@@ -3277,6 +3285,11 @@
         Historical data can be accessed. There are customizable usage charts that can display bandwidth usage for
         policies and interfaces. Also, load on the host machine can be monitored to help designer assess which machines
         to choose when assigning the appliances.
+
+
+    \section{Evaluation results}
+
+      % TODO  opisac
 
 
     \section*{Summary}
