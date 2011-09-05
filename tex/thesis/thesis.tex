@@ -118,7 +118,7 @@
     In today's world every successful organisation is based on properly designed communication network. These networks
     must deal with delay-sensitive data such as video images, real-time voice or mission-critical data. Therefore must
     provide safe, predictable and sometimes guaranteed services. Accomplishing the required \gls{acr:qos} by controlling
-    the delay, delay variation(jitter), bandwidth and packet loss parameters is deeply hidden secret of most successful
+    the delay, delay variation (jitter), bandwidth and packet loss parameters is deeply hidden secret of most successful
     end-to-end business applications. Technologies like Ethernet did not foresee future necessity of providing
     supporting \gls{acr:qos} therefore implementing \gls{acr:qos} solutions over the Internet is such a demanding issue.
     Incomplete resource reservation provided by most common OS induced further research in field of resource reservation
@@ -396,8 +396,7 @@
           \begin{center}
             \begin{tikzpicture}[node distance=5mm]
 
-              { [start chain, every node/.style={terminal, on chain, join, text width=3cm}, every join/.style={->},
-              align=center]
+              { [start chain, every node/.style={terminal, on chain, join, text width=3cm}, every join/.style={->}, align=center]
 
                 { [every on chain/.style={text width=3.5cm}, text depth=.25ex, align=center]
 
@@ -512,7 +511,7 @@
         % virtual elements is easier than ever thanks to virtualized infrastructure. 
 
 
-      \subsection{Server virtualization benefits}
+      \subsection{Server virtualization}
         
         There are multiple advantages of utilizing virtualization in server management. These benefits include, among
         others, reducing maintenance costs, flexibility and scalability.
@@ -738,155 +737,153 @@
 
 
     \section{Functional requirements}
-	
-		\label{sec:req:func}
-		
-		All services of the system have been divided into three groups: accounting, discovery and instantiation.
-                These division have been performed based on the quality of the functionality.  
+    \label{sec:req:func}
+
+      All services of the system have been divided into three groups: instantiation, discovery and monitoring. These
+      division have been performed based on the quality of the functionality.
+
 
       \subsection{Instantiation}
-		\label{sec:req:func:inst}
-	  
-    Most of functionalities necessary during process of network instantiation (also alteration and deletion) would be:
-		
-		\begin{itemize}
-			\item Creation of any requested virtual network element,
-			\item Creation of any requested resource from repository,
-			\item Assignation any number of links to resource,
-			\item Resource routing table modification,
-      \item Defining \gls{acr:qos} limits to links and flows (limits traffic assigned to specific network traffic type),
-			\item Modification or deletion of each property and element previously mentioned.
-		\end{itemize}
-		
+      \label{sec:req:func:inst}
+
+        Most of functionalities necessary during process of network instantiation (also alteration and deletion) would
+        be:
+
+        \begin{itemize}
+          \item Creation of any requested virtual network element,
+          \item Creation of any requested resource from repository,
+          \item Assignation any number of links to resource,
+          \item Resource routing table modification,
+          \item Defining \gls{acr:qos} limits to links and flows (limits traffic assigned to specific network traffic type),
+          \item Modification or deletion of each property and element previously mentioned.
+        \end{itemize}
+
 
       \subsection{Discovery}
-		\label{sec:req:func:disc}
-		
-		During the process of discovery following functionalities should be accessible:
-		
-		\begin{itemize}
-			\item Discovery and assembly of links, resources from the same project,
-			\item Detection of links assigned to a specified resource,
-			\item Discovery of flows attached to a link.
-		\end{itemize}
+      \label{sec:req:func:disc}
+
+        During the process of discovery following functionalities should be accessible:
+
+        \begin{itemize}
+          \item Discovery and assembly of links, resources from the same project,
+          \item Detection of links assigned to a specified resource,
+          \item Discovery of flows attached to a link.
+        \end{itemize}
 
 
-      \subsection{Accounting}  % kz: raczej Monitoring
-		\label{sec:req:func:acc}
-		
-		In terms of accounting, following functionalities for properties and elements should be provided:
-		
-		\begin{itemize}
-			\item{Monitoring of each network virtual element's bandwidth, }
-			\item{Checking each network virtual element's, flow's network traffic (input / output) statistics, }
-			\item{Displaying network traffic load chart of selected link or flow from specified time period. }
-		\end{itemize}
+      \subsection{Monitoring}
+      \label{sec:req:func:acc}
 
-	 \begin{figure}[H]
-          	 \begin{center}
-            \begin{tikzpicture}[rotate=90]
-		\begin{umlsystem}[x=6, y=7, fill=red!10]{The CM4J core system}
+        In terms of monitoring, following functionalities for properties and elements should be provided:
 
-			\umlusecase[x=-4, y=4]{creation of network structure}
-			\umlusecase[x=-2, y=5.5, fill=green!20]{CRUD operations for network virtual elements}
-			\umlusecase[x=-6, y=1.5, fill=green!20]{CRUD operations for virtual resources}
-			\umlusecase[x=-6, y=8.5, fill=green!20]{applying QoS limits}
-			\umlusecase[x=0.5, y=5]{network virtual element's bandwidth monitoring}
-			\umlusecase[x=-1, y=0]{network statistics monitoring}
-			\umlusecase[x=-10, y=4]{network project structure discovery}
-			\umlusecase[x=-7, y=1, fill=green!20]{virtual resource discovery}
-			\umlusecase[x=-12, y=1, fill=green!20]{virtual elements discovery}
-			\umlusecase[x=-8, y=7, fill=green!20]{assigned QoS limits discovery}
-		\end{umlsystem}
+        \begin{itemize}
+          \item Monitoring of each network virtual element's bandwidth,
+          \item Checking each network virtual element's, flow's network traffic (input / output) statistics,
+          \item Displaying network traffic load chart of selected link or flow from specified time period.
+        \end{itemize}
 
-		\umlactor{user}[y=-6]
+        \begin{figure}[H]
+          \centering
 
-		\umlassoc{user}{usecase-1}
-		\umlassoc{user}{usecase-2}
-		\umlassoc{user}{usecase-3}
-		\umlassoc{user}{usecase-5}
-		\umlassoc{user}{usecase-6}
-		\umlassoc{user}{usecase-7}
-		\umlassoc{user}{usecase-8}
-		\umlassoc{user}{usecase-9}
+          \begin{tikzpicture}[rotate=90]
+            \begin{umlsystem}[x=6, y=7, fill=red!10]{The CM4J core system}
+              \umlusecase[x=-4, y=4]{creation of network structure}
+              \umlusecase[x=-2, y=5.5, fill=green!20]{CRUD operations for network virtual elements}
+              \umlusecase[x=-6, y=1.5, fill=green!20]{CRUD operations for virtual resources}
+              \umlusecase[x=-6, y=8.5, fill=green!20]{applying QoS limits}
+              \umlusecase[x=0.5, y=5]{network virtual element's bandwidth monitoring}
+              \umlusecase[x=-1, y=0]{network statistics monitoring}
+              \umlusecase[x=-10, y=4]{network project structure discovery}
+              \umlusecase[x=-7, y=1, fill=green!20]{virtual resource discovery}
+              \umlusecase[x=-12, y=1, fill=green!20]{virtual elements discovery}
+              \umlusecase[x=-8, y=7, fill=green!20]{assigned QoS limits discovery}
+            \end{umlsystem}
 
-		\umlinclude[name=incl]{usecase-8}{usecase-7}
-		\umlinclude[name=incl]{usecase-9}{usecase-7}
-		\umlinclude[name=incl]{usecase-10}{usecase-7}
-		\umlinclude[name=incl]{usecase-2}{usecase-1}
-		\umlinclude[name=incl]{usecase-3}{usecase-1}
-		\umlinclude[name=incl]{usecase-4}{usecase-1}
-            \end{tikzpicture}
-          \end{center}
+            \umlactor{user}[y=-6]
+
+            \umlassoc{user}{usecase-1}
+            \umlassoc{user}{usecase-2}
+            \umlassoc{user}{usecase-3}
+            \umlassoc{user}{usecase-5}
+            \umlassoc{user}{usecase-6}
+            \umlassoc{user}{usecase-7}
+            \umlassoc{user}{usecase-8}
+            \umlassoc{user}{usecase-9}
+
+            \umlinclude[name=incl]{usecase-8}{usecase-7}
+            \umlinclude[name=incl]{usecase-9}{usecase-7}
+            \umlinclude[name=incl]{usecase-10}{usecase-7}
+            \umlinclude[name=incl]{usecase-2}{usecase-1}
+            \umlinclude[name=incl]{usecase-3}{usecase-1}
+            \umlinclude[name=incl]{usecase-4}{usecase-1}
+          \end{tikzpicture}
 
           \caption{Functional requirements use-case diagram.}
         \end{figure}
 
+
     \section{Non-functional requirements}
-		\label{sec:req:nonfunc}
+    \label{sec:req:nonfunc}
 
       % TODO model obiektowy jak najbardziej niezalezny od systemu pod spodem
-	
+
       Non-functional requirements also called \textbf{qualities} of a system could be distincted between the executing
       system and the work products (created during system development). Executing system are related to user goals and
       are referred as run-time qualities, whereas work products are driven by the development organization’s goals and
-      referred as development-time qualities \cite{nonfunctional}. 
+      referred as development-time qualities \cite{nonfunctional}.
 
-                \medskip
-		
-		Requested run-time qualities:
-		\begin{itemize}
-			\item usability - usage should be intuitive, system should be efficient,
-			\item operational scalability - system should support additional users or sites,
-			\item configurability - configurable properties should be easy to set,
-			\item adaptable - ability to adapt to changing conditions (adding removing new nodes),
-			\item fault tolerance - system should be resistant to minor errors.
-		\end{itemize}
-		
-		\medskip
-		
-		Requested development-time qualities:
+      \medskip
 
-		\begin{itemize}
-			\item independent and reusable object model - created model should be general without system specific details,
-			\item evolvability - support for new functionalities or adjustment to new technologies,
-			\item extensibility - ability to add new earlier unspecified functionalities,
-			\item composability - system should be created in form of composable components,
-			\item reusability - ability to (re)use in future systems.
-		\end{itemize}
-		
+      Requested run-time qualities:
+
+      \begin{itemize}
+        \item usability - usage should be intuitive, system should be efficient,
+        \item operational scalability - system should support additional users or sites,
+        \item configurability - configurable properties should be easy to set,
+        \item adaptable - ability to adapt to changing conditions (adding removing new nodes),
+        \item fault tolerance - system should be resistant to minor errors.
+      \end{itemize}
+
+      \medskip
+
+      Requested development-time qualities:
+
+      \begin{itemize}
+        \item independent and reusable object model - created model should be general without system specific details,
+        \item evolvability - support for new functionalities or adjustment to new technologies,
+        \item extensibility - ability to add new earlier unspecified functionalities,
+        \item composability - system should be created in form of composable components,
+        \item reusability - ability to (re)use in future systems.
+      \end{itemize}
+
 
     \section{Underlying environment characteristics}
-	
-    Underlying environment should be a composition of a fully independent nodes. However, a few requisites must be
-    fulfilled by each node:
-		
-		\begin{itemize}
-			\item Each OS should have the crossbow functionality provided,
-			\item Network accessibility between nodes must be ensured.
-		\end{itemize}
-		
-	%TODO ta czesc tak srednio mi tu pasuje!!!
+
+      Underlying environment should be a composition of a fully independent nodes. However, a few requisites must be
+      fulfilled by each node:
+
+      \begin{itemize}
+        \item Each OS should have the crossbow functionality provided,
+        \item Network accessibility between nodes must be ensured.
+      \end{itemize}
+
+    %TODO ta czesc tak srednio mi tu pasuje!!!
 
     %\section{General approach and problems it imposes}
 	
 		%Selected approach towards problem was 
 
       \subsection{Infrastructure isolation}
-	  
-    Network isolation is provided thanks to the Crossbow functionality which is more accurately described in the chapter
-    about Solaris OS features. 
-		
-		%TODO what about resource isolation CPU/MEM ? 
-    % TODO izolacja podczas wykorzystywania wielu maszyn polaczonych kablem
 
-     %TODO  \subsection{Broadcast domain preservation} DOPISAC o vlanach
+        Network isolation is provided thanks to the Crossbow functionality which is more accurately described in the
+        chapter about Solaris OS features.
 
+        % TODO what about resource isolation CPU/MEM ? 
+        % TODO izolacja podczas wykorzystywania wielu maszyn polaczonych kablem
+        % TODO  \subsection{Broadcast domain preservation} DOPISAC o vlanach
         % TODO o vlanach
-	  
-		
 
-     % \subsection{Constraints}
+      % \subsection{Constraints}
 
 
   \chapter{Solaris 10, Solaris 11 and OpenSolaris}
@@ -948,7 +945,6 @@
       machine.
 
       \begin{figure}[H]
-        % TODO expand
         \begin{center}
           \includegraphics[width=.7\textwidth]{img/solaris/full-featured.pdf}
         \end{center}
@@ -3078,7 +3074,7 @@
           \label{fig:cs:topo}
         \end{figure}
 
-        % TODO ^ maxbw! pokolorowac!
+        % TODO ^ maxbw!
       
       
       \subsection{Resulting Crossbow and Solaris components}
@@ -3114,7 +3110,6 @@
         Figure \ref{fig:cs:topo-xbow} shows the interconnections between resulting Crossbow components. Colors
         correspond to these in figure \ref{fig:cs:topo}.
 
-        % TODO  v pokolorowac!
         \begin{figure}[H]
           \centering
           \includegraphics[width=.9\textwidth]{img/test-case/topology-xbow.pdf}
@@ -3148,18 +3143,17 @@
 
       The traffic data is gathered as follows: each host node has tshark utility installed. It is set up to monitor all
       the traffic on the server interface and write it to a file (as shown in listing \ref{lst:uc:op:tshark}). When the
-      gathering process is finished, the data is handed to wireshark and analyzed - graphs with throughput and jitter
-      values are generated to show the interdependencies between the streams of data. \\
+      gathering process is finished, the data is handed to wireshark and analyzed - graphs with throughput values are
+      generated to show the interdependencies between the streams of data. \\
 
       \noindent
       \begin{minipage}{\textwidth}
         \lstinputlisting[caption={Monitoring network traffic with tshark},label={lst:uc:op:tshark}]{lst/uc-tshark.sh}
       \end{minipage}
 
-      The tests include verifying that the set up bandwidth limitations work on per-client basis (TODO), different
-      service types are treated according to the policy and streaming client differentiation requirements are satisfied.
-      The main metric used is bandwidth each of the streams is assigned. Also, jitter is analyzed to estimate the
-      Quality of Experience the user gets when watching streaming media (TODO).
+      The tests include verifying that the set up bandwidth limitations work on per-client basis, different service
+      types are treated according to the policy and streaming client differentiation requirements are satisfied. The
+      main metric used is bandwidth each of the streams is assigned.
 
 
       \subsection{Limiting the bandwidth}
@@ -3288,8 +3282,39 @@
 
 
     \section{Evaluation results}
+    \label{sec:uc:eval}
+
+      % TODO dodac info we wstepie
+
+      The case study confirmed the completeness of the implemented system with respect to requirements identified. All
+      major groups of functional requirements --- instantiation, discovery, monitoring --- were verified while working
+      with the topology under test.
+
+      The complete topology together with \gls{acr:qos} policies was created with the \gls{acr:gui} console provided.
+      The console supports the user throughout the processes of design, instantiation, discovery, monitoring and
+      adjustment. Graph network representation used by the \gls{acr:gui} proved to be intuitive and allow easy
+      management of complex networking structures.
+
+      Total deployment time could be substantially reduced thanks to virtual appliances. Created snapshots were
+      published in a repository accessible from the \gls{acr:gui} console and became reusable building blocks of complex
+      topologies, minimizing the number of repetitive tasks administrator would have to perform otherwise.
+
+      The graph view user is presented maps directly to general, implementation-independent domain object model.
+      Internal model transformations and model instantiation itself were verified to be correct. Also, the inverse
+      process of discovery was tested --- input topology was restored using only data persisted in target operating
+      system.
+
+      As the \gls{acr:cm4j} does not use database for data persistence, topology adjustment using non-\gls{acr:gui}
+      tools may seem to be challenging. However, thanks to clear and consistent naming scheme, experienced user is able
+      to tweak an existing topology manually, using utilities provided by the operating system.
+
 
       % TODO  opisac
+      %
+      % * created infrastructure fulfilled the requirements of isolation and QoS policies
+      % * resources instrumented and exposed as MBeans
+      % * the topology can be discovered and gathered statistics analyzed
+      % * more complex scenarios possible
 
 
     \section*{Summary}
