@@ -2864,6 +2864,10 @@
     monitor \gls{acr:qos}-aware virtual topologies. Aspects particularly helpful when preparing the case study are
     highlighted.
 
+    Section \ref{sec:uc:eval} validates the system operation against defined requirements. All the major aspects of
+    instantiation, discovery and monitoring processes are enumerated together with approaches chosen for \gls{acr:cm4j}
+    design and implementation.
+
 
     \section{Scenario description}
     \label{sec:uc:description}
@@ -3284,8 +3288,6 @@
     \section{Evaluation results}
     \label{sec:uc:eval}
 
-      % TODO dodac info we wstepie
-
       The case study confirmed the completeness of the implemented system with respect to requirements identified. All
       major groups of functional requirements --- instantiation, discovery, monitoring --- were verified while working
       with the topology under test.
@@ -3308,13 +3310,19 @@
       tools may seem to be challenging. However, thanks to clear and consistent naming scheme, experienced user is able
       to tweak an existing topology manually, using utilities provided by the operating system.
 
+      Created topologies fulfill the requirements of isolation and traffic differentiation that respects defined
+      \gls{acr:qos} policies. This is achieved thanks to Crossbow technology itself as well as carefully designed object
+      model transformations.
 
-      % TODO  opisac
-      %
-      % * created infrastructure fulfilled the requirements of isolation and QoS policies
-      % * resources instrumented and exposed as MBeans
-      % * the topology can be discovered and gathered statistics analyzed
-      % * more complex scenarios possible
+      Resulting infrastructure can be managed in a multitude of ways. Low-level components are accessible with command
+      line utilities provided by the Crossbow project (flowadm, dladm) and with higher-level native \gls{acr:api}
+      developed as a part of the thesis. Also, \gls{acr:jmx} objects instrumenting Crossbow entities are exposed to
+      allow easy integration with Java platform. Finally, the infrastructure, expressed in terms of the domain model,
+      can be retrieved using the Supervisor component and manipulated with \gls{acr:gui} console.
+
+      Although the topology presented in the chapter is complex, it does not take advantage of all the functionalities
+      implemented. Creation of even more sophisticated designs (like topologies spanning multiple physical nodes with
+      \gls{acr:qos} policies and still preserving traffic isolation) is possible with \gls{acr:cm4j}.
 
 
     \section*{Summary}
