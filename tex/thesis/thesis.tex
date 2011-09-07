@@ -221,19 +221,20 @@
     further research. Computing models like \textbf{Cloud computing}, \textbf{Grid computing} are becoming a standard
     and it is definitely worth knowing at least the basic concepts.
 
-   \section{Thesis statement}
 
-	Having all the above facts taken into account the following thesis statement was proposed:
-	\emph{There exists a  component-based architecture, which enables the construction of a system, that would facilitate working with 
-		fully  isolated virtualized network and resources grouped by project name.}
+    \section{Thesis statement}
 
-    Due to substantial lack in similar products available on market research in this area was planned.
-    The main system responsibilities would be providing fast and efficient manner of creating any requested, 
-    virtualized network structure with virtualized resources, network elements and \gls{acr:qos} guarantees. 
-    Solaris OS together with the Crossbow functionalities is becoming more and more  respectable solution in terms
-    of resource virtualization. Recently supported by network virtualization mechanism contained in the Crossbow 
-    module, Solaris OS seemed to be suitable environment to proceed further research. Detailed discussion about 
-    architectural and  implementation aspects of proposed system were provided in separate chapter's further in the thesis.
+      Having all the above facts taken into account the following thesis statement was proposed: \emph{There exists a
+      component-based architecture, which enables the construction of a system, that would facilitate working with fully
+      isolated virtualized network and resources grouped by project name.}
+
+      Due to substantial lack in similar products available on market research in this area was planned.  The main
+      system responsibilities would be providing fast and efficient manner of creating any requested, virtualized
+      network structure with virtualized resources, network elements and \gls{acr:qos} guarantees.  Solaris OS together
+      with the Crossbow functionalities is becoming more and more  respectable solution in terms of resource
+      virtualization. Recently supported by network virtualization mechanism contained in the Crossbow module, Solaris
+      OS seemed to be suitable environment to proceed further research. Detailed discussion about architectural and
+      implementation aspects of proposed system were provided in separate chapter's further in the thesis.
 
 
     \section{Organization of the thesis}
@@ -3232,6 +3233,8 @@
     \section{The infrastructure operation}
     \label{sec:uc:operation}
 
+      \tikzstyle{chart-label}=[text depth=.25ex]
+
       The traffic data is gathered as follows: each host node has tshark utility installed. It is set up to monitor all
       the traffic on the server interface and write it to a file (as shown in listing \ref{lst:uc:op:tshark}). When the
       gathering process is finished, the data is handed to wireshark and analyzed - graphs with throughput values are
@@ -3285,6 +3288,9 @@
             \node (img) at (0,0) {\includegraphics[width=.7\textwidth]{img/test-case/vod-rtp.png}};
             \node [below=of img.south west] {time $[\mathrm{s}]$};
 
+            \node (rtp)  [below=of img.north west, anchor=north west, shape=rectangle, fill=red] {}; \node (rtp-label)  [right=of rtp, chart-label]  {RTP};
+            \node (http) [below=.2cm of rtp, shape=rectangle, fill=black]                        {}; \node (http-label) [right=of http, chart-label] {VOD};
+
             \useasboundingbox (current bounding box);
 
             \node [right=of img.north east] {bandwidth $[\mathrm{MB}/\mathrm{s}]$};
@@ -3308,6 +3314,10 @@
           \begin{tikzpicture}[node distance=0]
             \node (img) at (0,0) {\includegraphics[width=.7\textwidth]{img/test-case/exp-all.png}};
             \node [below=of img.south west] {time $[\mathrm{s}]$};
+
+            \node (rtp-hp) [below=of img.north west, anchor=north west, shape=rectangle, fill=green] {}; \node (rtp-hp-label) [right=of rtp-hp, chart-label] {high-priority RTP};
+            \node (rtp-lp) [below=.2cm of rtp-hp, shape=rectangle, fill=red]                         {}; \node (rtp-lp-label) [right=of rtp-lp, chart-label] {low-priority RTP};
+            \node (vod)    [below=.2cm of rtp-lp, shape=rectangle, fill=black]                       {}; \node (vod-label)    [right=of vod, chart-label]    {VOD};
 
             \useasboundingbox (current bounding box);
 
