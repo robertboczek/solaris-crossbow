@@ -145,20 +145,20 @@
     architectural and  implementation aspects of proposed system were provided in separate chapter's further in the thesis.
 
 
-    \section{Organisation of the thesis}
+    \section{Organization of the thesis}
 
       Thesis consists 6 chapters apart from this one. Chapter \ref{chap:bck} provides background information about
       network and resource virtualization,  \gls{acr:qos} together with describing existing solutions in these areas.
-      Chapter number \ref{chap:req} is a chapter concering about essential functionalities acompanied with non-functional
-       requirements. Subsequent chapter \ref{chap:sol} presentes Solaris OS features with special attention paid to its new
-      functionality: \textit{The Crossbow}. The following two chapters \ref{chap:arch} and \ref{chap:impl} introduces to
-      system CM4J architectural and implementation details. %todo cos madrego dopisac
+      Chapter number \ref{chap:req} is a chapter concerning about essential functionalities accompanied with
+      non-functional requirements. Subsequent chapter \ref{chap:sol} presents Solaris OS features with special attention
+      paid to its new functionality: \textit{The Crossbow}. The following two chapters \ref{chap:arch} and
+      \ref{chap:impl} introduces to system \gls{acr:cm4j} architectural and implementation details. %todo cos madrego dopisac
       Part of thesis in which implemented system work and usage is described is \ref{chap:cs}. In order to present all
-      implemented aspects and functionalities of CM4J system scenario with multimedia streaming server, \gls{acr:vod}
-      and end user's differentiation was prepared. Last chapter \ref{chap:sum} as the title suggests summarizes
-      performed research in the field of virtualization. In that section not only achieved goals are described, but also
-      unachieved objectives are highlighted. Possible improvements and new functionalities that might be added are also
-      mentioned in this part. 
+      implemented aspects and functionalities of \gls{acr:cm4j} system scenario with multimedia streaming server,
+      \gls{acr:vod} and end user's differentiation was prepared. Last chapter \ref{chap:sum} as the title suggests
+      summarizes performed research in the field of virtualization. In that section not only achieved goals are
+      described, but also unachieved objectives are highlighted. Possible improvements and new functionalities that
+      might be added are also mentioned in this part. 
 
 
   \chapter{Technological background}
@@ -1288,7 +1288,7 @@
   
         \textbf{dladm} is the admin command for crossbow datalinks elements management. Below a few examples of
         \gls{acr:vnic}s, Etherstubs management commands are presented and how bandwidth and priority values might be
-        assigned to these elements.
+        assigned to these elements. \\
 
         \noindent
         \begin{minipage}{\textwidth}
@@ -1299,9 +1299,7 @@
 
         \medskip
 
-        \textbf{flowadm} is the admin command for flow management. It might be used as follows:     
-
-	\medskip
+        \textbf{flowadm} is the admin command for flow management. It might be used as follows: \\
 
         \noindent
         \begin{minipage}{\textwidth}
@@ -1313,9 +1311,7 @@
       \subsection{Creating zone over VNIC}
 
 	Listing \ref{lst:uc:xbow:vnic-zone} shows an example of assigning VNIC to zones. Exclusive IP zones must be 
-	used when zones are to be used as containers for the virtual network. 
-
-	\medskip
+	used when zones are to be used as containers for the virtual network. \\
 
        \noindent
         \begin{minipage}{\textwidth}
