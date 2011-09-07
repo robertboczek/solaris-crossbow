@@ -178,11 +178,6 @@
                   {Supervisor}
                   {Technical supervisor}
 
-  \tableofcontents
-
-  \listoffigures
-
-  \newpage
 	\vspace*{2in}
 
 	\begin{center}
@@ -190,6 +185,10 @@
             Marcin~Jarząb. Their generously contributed ideas, feedback and advice was of great help to us. \\
             Finally, we would like to thank our families and friends, for their support and encouragement.}
   \end{center}
+
+  \tableofcontents
+
+  \listoffigures
 
   \newpage
 	\vspace*{2in}
@@ -812,7 +811,7 @@
       a subject of research.
 
 
-  \chapter{Requirements analysis}
+    \chapter{Requirements analysis}
   \label{chap:req}
 
     This chapter focuses mainly on earlier conducted requirements analysis and extracted conclusions. Established goal
@@ -827,12 +826,54 @@
 
     Section \ref{sec:req:nonfunc} describes adopted non-functional requirements towards newly created system.
 
+   Issues associated with underlying environment characteristics (\ref{sec:req:env}) such as isolation requirements (\ref{sec:req:iso}) and
+   broadcast domain preservation (\ref{sec:req:broadcast}) are discussed in the remaining part of this chapter.
+
 
     \section{Functional requirements}
     \label{sec:req:func}
 
       All services of the system have been divided into three groups: instantiation, discovery and monitoring. These
-      division have been performed based on the quality of the functionality.
+      division have been performed based on the quality of the functionality. 
+
+      \begin{figure}[H]
+          \centering
+
+          \begin{tikzpicture}[rotate=90]
+            \begin{umlsystem}[x=6, y=7, fill=red!10]{The CM4J core system}
+              \umlusecase[x=-4, y=4]{creation of network structure}
+              \umlusecase[x=-2, y=5.5, fill=green!20]{CRUD operations for network virtual elements}
+              \umlusecase[x=-6, y=1.5, fill=green!20]{CRUD operations for virtual resources}
+              \umlusecase[x=-6, y=8.5, fill=green!20]{applying QoS limits}
+              \umlusecase[x=0.5, y=5]{network virtual element's bandwidth monitoring}
+              \umlusecase[x=-1, y=0]{network statistics monitoring}
+              \umlusecase[x=-10, y=4]{network project structure discovery}
+              \umlusecase[x=-7, y=1, fill=green!20]{virtual resource discovery}
+              \umlusecase[x=-12, y=1, fill=green!20]{virtual elements discovery}
+              \umlusecase[x=-8, y=7, fill=green!20]{assigned QoS limits discovery}
+            \end{umlsystem}
+
+            \umlactor{user}[y=-6]
+
+            \umlassoc{user}{usecase-1}
+            \umlassoc{user}{usecase-2}
+            \umlassoc{user}{usecase-3}
+            \umlassoc{user}{usecase-5}
+            \umlassoc{user}{usecase-6}
+            \umlassoc{user}{usecase-7}
+            \umlassoc{user}{usecase-8}
+            \umlassoc{user}{usecase-9}
+
+            \umlinclude[name=incl]{usecase-8}{usecase-7}
+            \umlinclude[name=incl]{usecase-9}{usecase-7}
+            \umlinclude[name=incl]{usecase-10}{usecase-7}
+            \umlinclude[name=incl]{usecase-2}{usecase-1}
+            \umlinclude[name=incl]{usecase-3}{usecase-1}
+            \umlinclude[name=incl]{usecase-4}{usecase-1}
+          \end{tikzpicture}
+
+          \caption{Functional requirements use-case diagram.}
+        \end{figure}
 
 
       \subsection{Instantiation}
@@ -874,44 +915,6 @@
           \item Displaying network traffic load chart of selected link or flow from specified time period.
         \end{itemize}
 
-        \begin{figure}[H]
-          \centering
-
-          \begin{tikzpicture}[rotate=90]
-            \begin{umlsystem}[x=6, y=7, fill=red!10]{The CM4J core system}
-              \umlusecase[x=-4, y=4]{creation of network structure}
-              \umlusecase[x=-2, y=5.5, fill=green!20]{CRUD operations for network virtual elements}
-              \umlusecase[x=-6, y=1.5, fill=green!20]{CRUD operations for virtual resources}
-              \umlusecase[x=-6, y=8.5, fill=green!20]{applying QoS limits}
-              \umlusecase[x=0.5, y=5]{network virtual element's bandwidth monitoring}
-              \umlusecase[x=-1, y=0]{network statistics monitoring}
-              \umlusecase[x=-10, y=4]{network project structure discovery}
-              \umlusecase[x=-7, y=1, fill=green!20]{virtual resource discovery}
-              \umlusecase[x=-12, y=1, fill=green!20]{virtual elements discovery}
-              \umlusecase[x=-8, y=7, fill=green!20]{assigned QoS limits discovery}
-            \end{umlsystem}
-
-            \umlactor{user}[y=-6]
-
-            \umlassoc{user}{usecase-1}
-            \umlassoc{user}{usecase-2}
-            \umlassoc{user}{usecase-3}
-            \umlassoc{user}{usecase-5}
-            \umlassoc{user}{usecase-6}
-            \umlassoc{user}{usecase-7}
-            \umlassoc{user}{usecase-8}
-            \umlassoc{user}{usecase-9}
-
-            \umlinclude[name=incl]{usecase-8}{usecase-7}
-            \umlinclude[name=incl]{usecase-9}{usecase-7}
-            \umlinclude[name=incl]{usecase-10}{usecase-7}
-            \umlinclude[name=incl]{usecase-2}{usecase-1}
-            \umlinclude[name=incl]{usecase-3}{usecase-1}
-            \umlinclude[name=incl]{usecase-4}{usecase-1}
-          \end{tikzpicture}
-
-          \caption{Functional requirements use-case diagram.}
-        \end{figure}
 
 
     \section{Non-functional requirements}
@@ -950,12 +953,13 @@
 
 
     \section{Underlying environment characteristics}
+    \label{sec:req:env}
 
       Underlying environment should be a composition of a fully independent nodes. However, a few requisites must be
       fulfilled by each node:
 
       \begin{itemize}
-        \item Each OS should have the crossbow functionality provided,
+        \item OS must provide network and resource virtualization functionality,
         \item Network accessibility between nodes must be ensured.
       \end{itemize}
 
@@ -966,16 +970,33 @@
 		%Selected approach towards problem was 
 
       \subsection{Infrastructure isolation}
+      \label{sec:req:iso}
 
-        Network isolation is provided thanks to the Crossbow functionality which is more accurately described in the
-        chapter about Solaris OS features.
+
+	Chosen OS must provide mechanism's for network isolation among virtualized elements, virtualized resources must 
+        be isolated as well, so that one's resource CPU/MEM usage did not affect corresponding resources performing other opeartions.
+       % Network isolation is provided thanks to the Crossbow functionality which is more accurately described in the
+        %chapter about Solaris OS features.
 
         % TODO what about resource isolation CPU/MEM ? 
         % TODO izolacja podczas wykorzystywania wielu maszyn polaczonych kablem
-        % TODO  \subsection{Broadcast domain preservation} DOPISAC o vlanach
+         \subsection{Broadcast domain preservation} %DOPISAC o vlanach
+         \label{sec:req:broadcast}
+
+	Every instantiated infrastructure should preserve its broadcast domain in order to achieve network traffic isolation between 
+	different projects as it was proposed in the thesis statement. To achieve that seperate \gls{acr:vlan} per project should be created or any other 
+	equivalent approach should be adopted.
         % TODO o vlanach
 
       % \subsection{Constraints}
+	  
+    \section*{Summary}
+
+	This chapter desribed all the requirements, both functional and non-functional which newly implemented \gls{acr:cm4j} was 
+	to fulfill. Section \ref{sec:req:env} on the other hand presented expectations towards underlying environment. In order to
+	meet all above constraints system had to be implemented on OS supporting network and resource virtualization, with ability to
+	isolate infrastucture and restrict broadcast domain. Subsequent chapter presents Solaris OS, which provides all mentioned characteristics, 
+	and which was finally chosen for \gls{acr:cm4j} underlying OS environment.
 
 
   \chapter{Solaris 10, Solaris 11 and OpenSolaris}
@@ -2509,10 +2530,20 @@
 		\end{itemize}
 
     Another component type is entity which is basically equivalent of single crossbow entity like \gls{acr:vnic},
-    Etherstub. These entities appear as MBeans and are registered at MBean servers. Each bean contains basic information
-    about entity like name, assigned properties and other attributes depending on their type. Operations for altering
-    properties, parameters, \gls{acr:ip} address are provided as well. Three figures below depicts in detail each
-    manager and their corresponding entity.
+    Etherstub. These entities appear as MBeans and are registered at MBean servers and may be distinguished by name. Each bean contains basic information
+    about entity like name, assigned properties and other attributes depending on their type. For example VNic entity provides following operations and attributes:
+
+	\begin{itemize}
+		\item Plumb / unplumb opeartion, 
+		\item Setting interface up or down operation,
+		\item Reading and updating MAC, ip address,
+		\item Getting parent link name operation,
+		\item Checking whether \gls{acr:vnic} was created under Etherstub or \gls{acr:nic},
+		\item Reading / adding properties such as bandwidth limit,  \gls{acr:vnic} packets priority.
+	\end{itemize}
+
+	As already mentioned each entities operation's are adjusted to their needs. Three figures below depicts in detail each manager and their corresponding entity.
+
 
         \begin{figure}[H]
           \begin{center}
@@ -3503,5 +3534,6 @@
 \end{document}
 
 % vim: et : tw=120 : spelllang=en_us,pl : spell :
+
 
 
