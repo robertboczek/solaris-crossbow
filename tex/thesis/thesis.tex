@@ -38,6 +38,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{fullpage}
+\usepackage{fancyhdr}
 \usepackage[pdfborder={0 0 0}]{hyperref}
 \usepackage{float}
 \usepackage{graphicx}
@@ -82,10 +83,100 @@
 
 \date{\today}
 
+\renewcommand{\headrulewidth}{0pt}
 
 \begin{document}
 
-  \maketitle
+  \newcommand{\makethesistitle}[7]
+  {
+    \thispagestyle{fancy}
+    \cfoot{Kraków 2011}
+
+    \begin{center}
+
+      {\huge #1}
+
+      \rule{\textwidth}{.5ex}
+
+      {\large #2}
+
+      \medskip
+
+      \textsc{\large #3}
+
+      \vspace{1cm}
+
+      \includegraphics{img/agh-logo.pdf}
+
+      \vspace{1cm}
+
+      \textsc{\LARGE #4}
+
+      \vspace{1.5cm}
+
+      \textsc{\Large Robert Boczek, Dawid Ciepliński}
+
+      \vspace{1.5cm}
+
+      \textsc{\textbf{\Large #5}}
+
+    \end{center}
+
+    \vspace{2cm}
+
+    \begin{tabularx}{\textwidth}{Xl}
+      & \textsc{#6:} \\
+      & prof. dr hab. inż. Krzysztof Zieliński \\
+      & \\
+      & \textsc{#7:} \\
+      & mgr inż. Marcin Jarząb
+    \end{tabularx}
+
+    \newpage
+  }
+
+  \makethesistitle{Akademia Górniczo-Hutnicza \\ im. Stanisława Staszica}
+                  {Wydział Elektrotechniki, Automatyki, Informatyki i Elektroniki}
+                  {Katedra Informatyki}
+                  {Praca Magisterska}
+                  {System komponentowy wspomagający zarządzanie \\ wielopoziomową wirtualizacją zasobów sieciowych}
+                  {Promotor}
+                  {Opiekun techniczny}
+
+  {\thispagestyle{empty}
+
+    ~
+
+    \vfill
+
+    \hfill
+    \begin{tabular*}{.75\textwidth}{p{.75\textwidth}}
+      Oświadczamy, świadomi odpowiedzialności karnej za poświadczenie nieprawdy, że niniejszą pracę dyplomową
+      wykonaliśmy osobiście i~samodzielnie (w zakresie wyszczególnionym we wstępie) i~że nie korzystaliśmy ze źródeł
+      innych niż wymienione w pracy.
+    \end{tabular*}
+
+    \vspace{2cm}
+
+    \hfill
+    \begin{tabular}{c}
+      \ldots\ldots\ldots\ldots\ldots\ldots\ldots \\
+      podpis                                     \\
+                                                 \\
+      \ldots\ldots\ldots\ldots\ldots\ldots\ldots \\
+      podpis
+    \end{tabular}
+
+    \newpage
+  }
+
+  \makethesistitle{AGH \\ University of Science and Technology}
+                  {Faculty of Electrical Engineering, Automatics, Computer Science and Electronics}
+                  {Department of Computer Science}
+                  {Master of Science Thesis}
+                  {Component-based system for management of \\ multilevel virtualization of networking resources}
+                  {Supervisor}
+                  {Technical supervisor}
 
   \tableofcontents
 
