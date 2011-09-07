@@ -1286,7 +1286,7 @@
             \includegraphics[width=.7\textwidth]{img/physical_and_virtual_switches_mapping.pdf}
           \end{center}
 
-          \caption{Mapping between physical and virtual network building elements}
+          \caption{Mapping between physical and virtual network building elements \cite{crossbow2}}
         \end{figure}
         
         Semantics assured by virtual switches is the same as provided by physical switches: 
@@ -1302,7 +1302,7 @@
         \end{enumerate}
 
         Data Link Layer connectivity between \gls{acr:vnic}s is available only when they were defined on top of the same
-        \gls{acr:nic}. 
+        \gls{acr:nic} \cite{crossbow2}. 
 
 	
       \subsection{Crossbow components}
@@ -1382,14 +1382,14 @@
         \gls{acr:vnic}s, Etherstubs management commands are presented and how bandwidth and priority values might be
         assigned to these elements. \\
 
+
         \noindent
         \begin{minipage}{\textwidth}
           \lstinputlisting[caption={\textbf{dladm} command usage examples},label={lst:uc:xbow:dladm}]{lst/dladm.sh}
         \end{minipage}
   
-        More examples can be found in \textbf{man dladm}.
+        More examples can be found in \textbf{man dladm}. \\
 
-        \medskip
 
         \textbf{flowadm} is the admin command for flow management. It might be used as follows: \\
 
@@ -1459,14 +1459,14 @@
       Resource is any part of computing system that may be modified in order to change application behaviour. Resource
       management enables more effective resource utilization and avoid wasting available ones due to load variability.
       Reserving additional capability during off-peak periods and effective sharing resources definitely increases
-      application performance.
+      application performance \cite{oracle_admin_guide}.
 
       Most of the operating systems limited the resource control just to per-process control, whereas Oracle Solaris has
       extended this concept to the task, project and zone. Due to introducing granularity levels processes, tasks, and 
       zones are efficiently controlled from excessive resource consumption. All these enhacements are available thanks 
       to resource controls (rctls) facility \cite{oracle_admin_guide}.
       
-      Solaris Operating System introduced three types of resource management control mechanisms \cite{oracle_admin_guide}:
+      Solaris Operating System introduced three types of resource management control mechanisms:
 
       \begin{enumerate}
         \item constraints - allows defining set of bounds on used resources for a workload,
@@ -1482,7 +1482,7 @@
           \includegraphics[width=.7\textwidth]{img/rctrl.png}
         \end{center}
         
-        \caption{Solaris system multilevel architecture and its resource control sets (source: http://oracle.com)} %@todo add precise url}
+        \caption{Solaris system multilevel architecture and its resource control sets \cite{oracle_admin_guide}}
 		  \end{figure}
 
 
@@ -3503,4 +3503,5 @@
 \end{document}
 
 % vim: et : tw=120 : spelllang=en_us,pl : spell :
+
 
