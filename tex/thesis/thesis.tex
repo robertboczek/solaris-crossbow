@@ -993,8 +993,8 @@
     \section*{Summary}
 
 	This chapter desribed all the requirements, both functional and non-functional which newly implemented \gls{acr:cm4j} was 
-	to fulfill. Section \ref{sec:req:env} on the other hand presented expectations towards underlying environment. In order to
-	meet all above constraints system had to be implemented on OS supporting network and resource virtualization, with ability to
+	to fulfill. Additionally section \ref{sec:req:env} presented expectations towards underlying environment. In order to
+	meet all above constraints system had to be implemented under OS supporting network and resource virtualization with ability to
 	isolate infrastucture and restrict broadcast domain. Subsequent chapter presents Solaris OS, which provides all mentioned characteristics, 
 	and which was finally chosen for \gls{acr:cm4j} underlying OS environment.
 
@@ -2688,13 +2688,6 @@
           router zones and \gls{acr:vlan} interfaces and send parts of the object model back to the Supervisor. The
           routers (together with routing tables) are merged to create single router entity that is placed in the object
           model. Auxiliary routers and \gls{acr:vlan} are then removed from the model.
-
-          \begin{figure}[h]
-            \centering
-
-            \caption{TODO}
-            \label{fig:impl:transformation}
-          \end{figure}
 
 
       \subsection{Crossbow infrastructure project}
