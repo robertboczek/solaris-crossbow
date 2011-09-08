@@ -207,49 +207,48 @@
 
     In today's world every successful organisation is based on properly designed communication network. These networks
     must deal with delay-sensitive data such as video images, real-time voice or mission-critical data. Therefore must
-    provide safe, predictable and sometimes guaranteed services. Accomplishing the required \gls{acr:qos} by controlling
-    the delay, delay variation (jitter), bandwidth and packet loss parameters is deeply hidden secret of most successful
-    end-to-end business applications. Technologies like Ethernet did not foresee future necessity of providing
-    supporting \gls{acr:qos} therefore implementing \gls{acr:qos} solutions over the Internet is such a demanding issue.
+    provide safe, predictable and, very often, guaranteed services. Accomplishing the required \gls{acr:qos} by
+    controlling the delay, delay variation (jitter), bandwidth and packet loss parameters is deeply hidden secret of
+    most successful end-to-end business applications. Technologies like Ethernet did not foresee future necessity of
+    providing \gls{acr:qos} therefore implementing \gls{acr:qos} solutions over the Internet is such a demanding issue.
     Incomplete resource reservation provided by most common OS induced further research in field of resource reservation
     and isolation. 
 
     % http://www.cisco.com/en/US/products/ps6558/products\_ios\_technology\_home.html
 
     Increasing popularity of virtualization, isolation and resource reservation in contemporary systems encourages to
-    further research. Computing models like \textbf{Cloud computing}, \textbf{Grid computing} are becoming a standard
-    and it is definitely worth knowing at least the basic concepts.
+    further research. Computing models like grid and cloud computing are becoming a standard and it is definitely worth
+    knowing at least the basic concepts.
 
 
     \section{Thesis statement}
 
-      Having all the above facts taken into account the following thesis statement was proposed: \emph{There exists a
-      component-based architecture, which enables the construction of a system, that would facilitate working with fully
+      Having all the above facts taken into account the following thesis statement was proposed: \textit{There exists a
+      component-based architecture which enables construction of a system that would facilitate working with fully
       isolated virtualized network and resources grouped by project name.}
 
-      Due to substantial lack in similar products available on market research in this area was planned.  The main
-      system responsibilities would be providing fast and efficient manner of creating any requested, virtualized
-      network structure with virtualized resources, network elements and \gls{acr:qos} guarantees.  Solaris OS together
-      with the Crossbow functionalities is becoming more and more  respectable solution in terms of resource
-      virtualization. Recently supported by network virtualization mechanism contained in the Crossbow module, Solaris
-      OS seemed to be suitable environment to proceed further research. Detailed discussion about architectural and
-      implementation aspects of proposed system were provided in separate chapter's further in the thesis.
+      Due to substantial lack in similar products available on market research in this area was planned. The main system
+      responsibilities would be providing fast and efficient manner of creating any requested, virtualized network
+      structure with virtualized resources, network elements and \gls{acr:qos} guarantees.  Solaris operating system is
+      already a respectable solution in terms os resource virtualization. Recently supported by network virtualization
+      mechanism contained in the Crossbow project, Solaris OS seems to be suitable environment to proceed further
+      research. Detailed discussion about architectural and implementation aspects of proposed system were provided in
+      separate chapters further in the thesis.
 
 
     \section{Organization of the thesis}
 
-      Thesis consists 6 chapters apart from this one. Chapter \ref{chap:bck} provides background information about
-      network and resource virtualization,  \gls{acr:qos} together with describing existing solutions in these areas.
-      Chapter number \ref{chap:req} is a chapter concerning about essential functionalities accompanied with
+      The thesis consists of six chapters apart from this one. Chapter \ref{chap:bck} provides background information
+      about network and resource virtualization, \gls{acr:qos} together with description of existing solutions in these
+      areas.  Chapter \ref{chap:req} is a chapter concerning about essential functionalities accompanied with
       non-functional requirements. Subsequent chapter \ref{chap:sol} presents Solaris OS features with special attention
-      paid to its new functionality: \textit{The Crossbow}. The following two chapters \ref{chap:arch} and
-      \ref{chap:impl} introduces to system \gls{acr:cm4j} architectural and implementation details. %todo cos madrego dopisac
-      Part of thesis in which implemented system work and usage is described is \ref{chap:cs}. In order to present all
-      implemented aspects and functionalities of \gls{acr:cm4j} system scenario with multimedia streaming server,
-      \gls{acr:vod} and end user's differentiation was prepared. Last chapter \ref{chap:sum} as the title suggests
-      summarizes performed research in the field of virtualization. In that section not only achieved goals are
-      described, but also unachieved objectives are highlighted. Possible improvements and new functionalities that
-      might be added are also mentioned in this part. 
+      paid to its new functionality: \textit{The Crossbow}. Chapters \ref{chap:arch} and \ref{chap:impl} introduce
+      \gls{acr:cm4j} system architectural and implementation details, respectively.  Part of thesis in which implemented
+      system work and usage is described is \ref{chap:cs}. In order to present all implemented aspects and
+      functionalities of \gls{acr:cm4j} system a scenario with multimedia streaming server, \gls{acr:vod} and end user
+      differentiation was prepared. Last chapter \ref{chap:sum} summarizes research performed in the field of
+      virtualization. In that section not only achieved goals are described, but also unachieved objectives are
+      highlighted. Possible improvements and new functionalities that might be added are also mentioned in this part. 
 
 
   \chapter{Technological background}
@@ -311,11 +310,10 @@
         this issues. 
 
         It was not until 1960s that virtualization was first used for better hardware utilization of some large,
-        mainframe hardware.
-	
-        Today, over 50 years later when computers got more common than ever problems of rigidity and underutilization
-        are still actual. Nowadays companies like VMWare invest more and more funds in research as they foresee that
-        virtualization will definitely become even more popular and common in the future \cite{virtualization}.
+        mainframe hardware. Today, over 50 years later when computers got more common than ever problems of rigidity and
+        underutilization are still present. Nowadays companies like VMWare invest more and more funds in research as
+        they foresee that virtualization will definitely become even more popular and common in the future
+        \cite{virtualization}.
 
 
       %\subsection{Resources that can be virtualized} 
@@ -811,7 +809,7 @@
       a subject of research.
 
 
-    \chapter{Requirements analysis}
+  \chapter{Requirements analysis}
   \label{chap:req}
 
     This chapter focuses mainly on earlier conducted requirements analysis and extracted conclusions. Established goal
@@ -826,8 +824,9 @@
 
     Section \ref{sec:req:nonfunc} describes adopted non-functional requirements towards newly created system.
 
-   Issues associated with underlying environment characteristics (\ref{sec:req:env}) such as isolation requirements (\ref{sec:req:iso}) and
-   broadcast domain preservation (\ref{sec:req:broadcast}) are discussed in the remaining part of this chapter.
+    Issues associated with underlying environment characteristics (\ref{sec:req:env}) such as isolation requirements
+    (\ref{sec:req:iso}) and broadcast domain preservation (\ref{sec:req:broadcast}) are discussed in the remaining part
+    of this chapter.
 
 
     \section{Functional requirements}
@@ -916,16 +915,15 @@
         \end{itemize}
 
 
-
     \section{Non-functional requirements}
     \label{sec:req:nonfunc}
 
       % TODO model obiektowy jak najbardziej niezalezny od systemu pod spodem
 
-      Non-functional requirements also called \textbf{qualities} of a system could be distincted between the executing
-      system and the work products (created during system development). Executing system are related to user goals and
-      are referred as run-time qualities, whereas work products are driven by the development organization’s goals and
-      referred as development-time qualities \cite{nonfunctional}.
+      Non-functional requirements also called \textbf{qualities} of a system could be distinguished between the
+      executing system and the work products (created during system development). Executing system are related to user
+      goals and are referred as run-time qualities, whereas work products are driven by the development organization’s
+      goals and referred as development-time qualities \cite{nonfunctional}.
 
       \medskip
 
@@ -972,31 +970,35 @@
       \subsection{Infrastructure isolation}
       \label{sec:req:iso}
 
+        Chosen operating system must provide mechanisms for network isolation among virtualized elements, virtualized
+        resources must be isolated as well, so that one's resource CPU/MEM usage does not affect corresponding resources
+        performing other operations.
 
-	Chosen OS must provide mechanism's for network isolation among virtualized elements, virtualized resources must 
-        be isolated as well, so that one's resource CPU/MEM usage did not affect corresponding resources performing other opeartions.
        % Network isolation is provided thanks to the Crossbow functionality which is more accurately described in the
         %chapter about Solaris OS features.
 
         % TODO what about resource isolation CPU/MEM ? 
         % TODO izolacja podczas wykorzystywania wielu maszyn polaczonych kablem
-         \subsection{Broadcast domain preservation} %DOPISAC o vlanach
-         \label{sec:req:broadcast}
 
-	Every instantiated infrastructure should preserve its broadcast domain in order to achieve network traffic isolation between 
-	different projects as it was proposed in the thesis statement. To achieve that seperate \gls{acr:vlan} per project should be created or any other 
-	equivalent approach should be adopted.
+
+      \subsection{Broadcast domain preservation} %DOPISAC o vlanach
+      \label{sec:req:broadcast}
+
+        Every instantiated infrastructure should preserve its broadcast domain in order to achieve network traffic
+        isolation between different projects as it was proposed in the thesis statement. To achieve that separate
+        \gls{acr:vlan} per project should be created or any other equivalent approach should be adopted.
+
         % TODO o vlanach
 
       % \subsection{Constraints}
-	  
+
     \section*{Summary}
 
-	This chapter desribed all the requirements, both functional and non-functional which newly implemented \gls{acr:cm4j} was 
-	to fulfill. Additionally section \ref{sec:req:env} presented expectations towards underlying environment. In order to
-	meet all above constraints system had to be implemented under OS supporting network and resource virtualization with ability to
-	isolate infrastucture and restrict broadcast domain. Subsequent chapter presents Solaris OS, which provides all mentioned characteristics, 
-	and which was finally chosen for \gls{acr:cm4j} underlying OS environment.
+      This chapter described all the requirements, both functional and non-functional, which newly implemented
+      \gls{acr:cm4j} is expected to fulfill. Additionally section \ref{sec:req:env} presented expectations towards
+      underlying environment. In order to meet all the aforementioned constraints the system had to be implemented under
+      OS supporting network and resource virtualization with ability to isolate infrastructure and restrict broadcast
+      domain.
 
 
   \chapter{Solaris 10, Solaris 11 and OpenSolaris}
