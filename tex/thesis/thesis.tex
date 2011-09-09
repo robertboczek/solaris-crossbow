@@ -29,7 +29,7 @@
 %   * numeracja - nie więcej, niż 3-poziomowa
 
 
-\documentclass[11pt]{book}
+\documentclass[11pt,openany]{book}
 \usepackage[top=3cm, bottom=4cm]{geometry}
 \usepackage[usenames,dvipsnames]{color}
 
@@ -96,7 +96,7 @@
 
       {\huge #1}
 
-      \rule{\textwidth}{.25ex}
+      \rule{\textwidth}{.15ex}
 
       {\large #2}
 
@@ -183,7 +183,7 @@
 	\begin{center}
     \textit{We would like to acknowledge the support and assistance given us by professor~Krzysztof~Zieliński and
             Marcin~Jarząb. Their generously contributed ideas, feedback and advice was of great help to us. \\
-            Finally, we would like to thank our families and friends, for their support and encouragement.}
+            Finally, we would like to thank our families and friends for their support and encouragement.}
   \end{center}
 
   \tableofcontents
@@ -192,6 +192,8 @@
 
   \newpage
 	\vspace*{2in}
+
+  % TODO  v przeniesc do wstepu
 
 	\begin{center}
    	\textit{Thesis work contribution: \\
@@ -429,14 +431,6 @@
         geographically distributed segments and create single Layer 2 segment is \gls{acr:vpls} \cite{moreno}.
         \gls{acr:vrf} is used to create logical routing entities on top of physical partitioning-capable routers.
 
-        % TODO obrazek z warstwami i przykladami? (niekoniecznie)
-
-        % ???
-        %
-        % DATA-PATH VIRT
-        % warstwa lacza danych: VLANy
-        % VPNy?
-
 
       \subsection{Virtual appliances}
       \label{sub:}
@@ -471,15 +465,13 @@
             \end{tikzpicture}
           \end{center}
 
-          \caption{Traditional application deployment stages.}
+          \caption{Traditional application deployment stages}
         \end{figure}
-
-        % TODO verify the stages
 
         Virtual appliance approach makes it possible to reduce deployment time significantly \cite{changhua}. This is
         achieved by performing most of the deployment stages once and storing the configured environment in a virtual
         appliance. The appliance can then be moved to publicly-available repository for actual deployment on host
-        systems.
+        systems. Deployment process with virtual appliances leveraged is depicted in figure \ref{fig:sol:dep-va}
 
         \begin{figure}[H]
           \begin{center}
@@ -507,7 +499,8 @@
             \end{tikzpicture}
           \end{center}
 
-          \caption{Deployment process with virtual appliances. Stage 1 is executed once.}  % TODO  < przeniesc Stage 1 do tekstu
+          \caption{Deployment process with virtual appliances}
+          \label{fig:sol:dep-va}
         \end{figure}
 
         It is possible to prepare sets of virtual appliances containing traditional services (such as application,
@@ -522,7 +515,7 @@
             \includegraphics[width=.7\textwidth]{img/solaris/virtual-appliance-infra.pdf}
           \end{center}
 
-          \caption{An example of infrastructure utilizing virtual appliances with appliance repository.}
+          \caption{An example of infrastructure utilizing virtual appliances with appliance repository}
         \end{figure}
 
 
@@ -581,8 +574,6 @@
         impossible due to the costs. Even if successful, the topology is not flexible and adjustable --- these two
         crucial requirements for simulations and experimental studies are not met.
 
-        % TODO alternatywa - symulatory
-        
         Virtual infrastructures offer an alternative approach --- the environment to be tested can be easily created,
         often within a single physical machine, and used to perform the simulations. The parameters of the whole system
         can be adjusted whenever needed. Moreover, the approach does not require specialized hardware resources, thus it
@@ -669,6 +660,8 @@
             \includegraphics[scale=.5]{img/ctx/soa-logical.png}
           \end{center}
 
+          % TODO przerysowac!
+
           \caption{Logical Service-oriented Architecture model}
           \label{fig:ctx:soa-logical}
         \end{figure}
@@ -682,6 +675,8 @@
           \begin{center}
             \includegraphics[scale=.5]{img/ctx/soa-stack.png}
           \end{center}
+
+          % TODO przerysowac!
 
           \caption{Logical layers in the SOA Solution Stack}
           \label{fig:ctx:soa-stack}
@@ -741,6 +736,9 @@
           \begin{center}
             \includegraphics[width=.7\textwidth]{img/qos/diffserv.png}
           \end{center}
+
+          % TODO przerysowac!
+
           \caption{DiffServ domain \cite{qos2}}
         \end{figure}
 
@@ -772,21 +770,23 @@
 
         IntServ requires resource reservation for certain flows or aggregated data streams. The reservation operation is
         available thanks to \gls{acr:rsvp}. Due to this reservation session initialization lasts much longer than in
-        DiffServ. \cite{qos2}
-
-        {DiffServ vs IntServ}
+        DiffServ \cite{qos2}.
 
         \begin{table}[ht]
-          \caption{DiffServ, IntServ comparison}
-          \centering % used for centering table
-          \begin{tabular}{c c}
-            \hline \hline
+          \centering
+          \begin{tabular}{|c|c|}
+            \hline
             IntServ         & DiffServ \\
+            \hline \hline
             Stateful        & Stateless \\
+            \hline
             Not scalable    & Scalable \\
+            \hline
             Stream oriented & Processing single packets \\
             \hline
           \end{tabular}
+
+          \caption{Comparison of DiffServ and IntServ}
         \end{table}
 
 
@@ -811,6 +811,9 @@
 
   \chapter{Requirements analysis}
   \label{chap:req}
+
+    % TODO  ___definicja___ glownych procesow! instancjonowanie, discovery, monitoring --- co to robi, na wysokim
+    % poziomie abstrakcji, bez szczegolow
 
     This chapter focuses mainly on earlier conducted requirements analysis and extracted conclusions. Established goal
     was to create system supporting creation of any requested, fully isolated network structure with virtual network
@@ -930,11 +933,11 @@
       Requested run-time qualities:
 
       \begin{itemize}
-        \item usability - usage should be intuitive, system should be efficient,
-        \item operational scalability - system should support additional users or sites,
-        \item configurability - configurable properties should be easy to set,
-        \item adaptable - ability to adapt to changing conditions (adding removing new nodes),
-        \item fault tolerance - system should be resistant to minor errors.
+        \item usability --- usage should be intuitive, system should be efficient,
+        \item operational scalability --- system should support additional users or sites,
+        \item configurability --- configurable properties should be easy to set,
+        \item adaptable --- ability to adapt to changing conditions (adding removing new nodes),
+        \item fault tolerance --- system should be resistant to minor errors.
       \end{itemize}
 
       \medskip
@@ -942,11 +945,11 @@
       Requested development-time qualities:
 
       \begin{itemize}
-        \item independent and reusable object model - created model should be general without system specific details,
-        \item evolvability - support for new functionalities or adjustment to new technologies,
-        \item extensibility - ability to add new earlier unspecified functionalities,
-        \item composability - system should be created in form of composable components,
-        \item reusability - ability to (re)use in future systems.
+        \item independent and reusable object model --- created model should be general without system specific details,
+        \item evolvability --- support for new functionalities or adjustment to new technologies,
+        \item extensibility --- ability to add new earlier unspecified functionalities,
+        \item composability --- system should be created in form of composable components,
+        \item reusability --- ability to (re)use in future systems.
       \end{itemize}
 
 
@@ -974,21 +977,14 @@
         resources must be isolated as well, so that one's resource CPU/MEM usage does not affect corresponding resources
         performing other operations.
 
-       % Network isolation is provided thanks to the Crossbow functionality which is more accurately described in the
-        %chapter about Solaris OS features.
 
-        % TODO what about resource isolation CPU/MEM ? 
-        % TODO izolacja podczas wykorzystywania wielu maszyn polaczonych kablem
-
-
-      \subsection{Broadcast domain preservation} %DOPISAC o vlanach
+      \subsection{Broadcast domain preservation}
       \label{sec:req:broadcast}
 
         Every instantiated infrastructure should preserve its broadcast domain in order to achieve network traffic
         isolation between different projects as it was proposed in the thesis statement. To achieve that separate
         \gls{acr:vlan} per project should be created or any other equivalent approach should be adopted.
 
-        % TODO o vlanach
 
       % \subsection{Constraints}
 
@@ -1075,8 +1071,6 @@
 
     \section{OS-level virtualization with Solaris Containers}
     \label{sec:sol:containers}
-
-      % TODO citation for WPARs
 
       The concept of lightweight (OS-level) virtualization is supported by most modern operating systems. The solutions
       are either integrated into the system's kernel and accessible as soon as it is installed (Solaris Containers, AIX
@@ -1227,6 +1221,8 @@
             \includegraphics[width=.7\textwidth]{img/crossbow.jpg}
           \end{center}
 
+          % TODO przerysowac!
+
           \caption{The Solaris Crossbow network virtualization enhancement, source: http://www.net-security.org/images/articles/crossbow.jpg}
         \end{figure}
 
@@ -1305,11 +1301,10 @@
         \cite{crossbow2}. 
         
         \begin{figure}[H]
-          \begin{center}
-            \includegraphics[width=.7\textwidth]{img/physical_and_virtual_switches_mapping.pdf}
-          \end{center}
+          \centering
+          \includegraphics[width=.7\textwidth]{img/solaris/mapping.pdf}
 
-          \caption{Mapping between physical and virtual network building elements \cite{crossbow2}}
+          \caption{Mapping between physical and virtual network building elements}
         \end{figure}
         
         Semantics assured by virtual switches is the same as provided by physical switches: 
@@ -1425,10 +1420,10 @@
 
       \subsection{Creating zone over VNIC}
 
-	Listing \ref{lst:uc:xbow:vnic-zone} shows an example of assigning VNIC to zones. Exclusive IP zones must be 
-	used when zones are to be used as containers for the virtual network. \\
+        Listing \ref{lst:uc:xbow:vnic-zone} shows an example of assigning \gls{acr:vnic} to zones. Exclusive
+        \gls{acr:ip} zones must be used when zones are to be used as containers for the virtual network. \\
 
-       \noindent
+        \noindent
         \begin{minipage}{\textwidth}
           \lstinputlisting[caption={Creating an Exclusive IP Zone Over a VNIC example},label={lst:uc:xbow:vnic-zone}]{lst/vnic-zone.sh}
         \end{minipage}
@@ -1492,20 +1487,20 @@
       Solaris Operating System introduced three types of resource management control mechanisms:
 
       \begin{enumerate}
-        \item constraints - allows defining set of bounds on used resources for a workload,
-        \item partitioning - enables binding subset of system's available resources to specific workload,
-        \item scheduling - involves predictable algorithm making sequence of allocation decisions at specific intervals.
+        \item constraints --- allows defining set of bounds on used resources for a workload,
+        \item partitioning --- enables binding subset of system's available resources to specific workload,
+        \item scheduling --- involves predictable algorithm making sequence of allocation decisions at specific
+                             intervals.
       \end{enumerate}
 
       Hierarchical architecture allows defining set of resource control sets on each level. However, if more than one is
       assigned to a resource, the smallest container's control level is enforced \cite{oracle_admin_guide}. 
 
       \begin{figure}[H]
-        \begin{center}
-          \includegraphics[width=.7\textwidth]{img/rctrl.png}
-        \end{center}
-        
-        \caption{Solaris system multilevel architecture and its resource control sets \cite{oracle_admin_guide}}
+        \centering
+        \includegraphics[width=.7\textwidth]{img/solaris/multi.pdf}
+
+        \caption{Solaris system multilevel architecture and its resource control sets}
 		  \end{figure}
 
 
@@ -2421,14 +2416,17 @@
       \gls{acr:jims} Extensions for Resource Monitoring and Management of Solaris 10 provides general architecture for
       monitoring and management applications written in Java.
 
-      \gls{acr:jims} architecture is generally based on \gls{acr:jmx} - technology for distributed resource management.
-      These managed resources in \gls{acr:jmx} are represented by MBeans which are simple Java objects registered at
-      MBean Server under specific ObjectName \cite{jims}.
+      \gls{acr:jims} architecture is generally based on \gls{acr:jmx} --- technology for distributed resource
+      management.  These managed resources in \gls{acr:jmx} are represented by MBeans which are simple Java objects
+      registered at MBean Server under specific ObjectName \cite{jims}.
     
       \begin{figure}[H]
         \begin{center}
           \includegraphics[width=0.9\textwidth]{img/jims/jmx.png}
         \end{center}
+
+        % TODO przerysowac!
+
         \caption{JMX architecture \cite{jims}}
       \end{figure}
 	
@@ -2614,6 +2612,8 @@
         In-depth description of the transformations follows together with a graphical example in figure
         \ref{fig:impl:transformation}.
 
+        % TODO obrazek!
+
 
         \subsubsection{Simple mappings}
 
@@ -2704,10 +2704,10 @@
         \begin{table}[H]
           \centering
 
-          \begin{tabular}{llp{4cm}}
-            \hline \hline
-            MBean                     & ObjectName                                  & Description                        \\
+          \begin{tabular}{|l|l|p{4cm}|}
             \hline
+            MBean                     & ObjectName                                  & Description                        \\
+            \hline \hline
             SupervisorMBean           & \textbf{Crossbow:type=Supervisor}           & Main Bean runs whole instantiation
                                                                                       process (distributes model to
                                                                                       parts and passes them to proper
@@ -2827,6 +2827,8 @@
 
           \begin{tikzpicture}[text height=1.5ex, text depth=.25ex]
 
+            % TODO kosmetyka!
+
             \begin{umlseqdiag}
 
               \umlobject{GUI}
@@ -2854,28 +2856,9 @@
 
           \end{tikzpicture}
 
-            % \begin{sequencediagram}
-
-            %   \newthread{gui}{GUI}
-            %   \newinst[2]{gtmt}{GraphToModelTranslator}
-            %   \newinst{xbownotif}{CrossbowNotification}
-            %   \newinst{progress}{ProgressShell}
-            %   \newinst{sup}{Supervisor}
-
-            %   \begin{call}{gui}{open()}{progress}{}
-            %   \begin{sdblock}{loop}{while !deployed}
-            %     \begin{call}{progress}{getProgress()}{xbownotif}{progress}
-            %     \end{call}
-            %     \begin{call}{progress}{getNewLogs()}{xbownotif}{logs}
-            %     \end{call}
-            %   \end{sdblock}
-            %   \end{call}
-            % \end{sequencediagram}
-
-            \caption{GUI side instantiation process}
-          \end{figure}
+          \caption{GUI side instantiation process}
+        \end{figure}
 		
-
 
     \section{Building and running the platform}
 		\label{sec:impl:build}
@@ -2957,6 +2940,8 @@
 
   \chapter{Case Study}
   \label{chap:cs}
+
+    % TODO  dolozyc screen(y) z GUI
 
     The chapter describes the infrastructure that was built using the implemented system. Steps necessary to restore the
     configuration are listed and described. A number of tests were performed to evaluate the created system and
