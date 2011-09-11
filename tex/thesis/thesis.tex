@@ -199,20 +199,20 @@
   \chapter{Introduction}
   \label{chap:intro}
 
-    In today's world every successful organisation is based on properly designed communication networks. These networks
+    In today's world every successful organisation is based on a properly designed communication networks. These networks
     must deal with delay-sensitive data such as real-time audio and video or other mission-critical data. Therefore,
     safe, predictable and, very often, guaranteed services have to be provided. Accomplishing the required \gls{acr:qos}
-    by controlling delay, delay variation (jitter), bandwidth and packet loss parameters is deeply hidden secret of most
+    by controlling delay, delay variation (jitter), bandwidth and packet loss parameters is a deeply hidden secret of most
     successful end-to-end business applications.
     
-    Technologies like Ethernet did not foresee \todo[inline]{raczej nie byly zaprojektowane; chyba, ze damy zrodlo} future
+    Technologies like Ethernet did not foresee \todo[inline]{raczej nie byly zaprojektowane; chyba, ze damy zrodlo} the future
     necessity of providing \gls{acr:qos} therefore implementing \gls{acr:qos} solutions over the Internet is such a
     demanding issue. Incomplete resource reservation provided by most common operating systems induced further research
-    in field of resource reservation and isolation. 
+    in the field of resource reservation and isolation. 
 
     % http://www.cisco.com/en/US/products/ps6558/products\_ios\_technology\_home.html
 
-    Increasing popularity of virtualization, isolation and resource reservation in contemporary systems encourages
+    The increasing popularity of virtualization, isolation and resource reservation in contemporary systems encourages
     further research.
 
     \todo[inline]{napisac, gdzie wirtualizacja ma zastosowanie, oprocz grid i cloud}
@@ -221,14 +221,14 @@
     \section{Thesis objective}
 
       Having all the above facts taken into account the following thesis statement was proposed: \textit{There exists a
-      component-based architecture which enables construction of a system that would facilitate working with fully
+      component-based architecture which enables construction of a system that would facilitate working with a fully
       isolated virtualized network and resources grouped by project name.}
 
-      Due to substantial lack in similar products available on market research in this area was planned. The main system
+      Due to a substantial lack in similar products available on the market research in this area was planned. The main system
       responsibilities would be providing fast and efficient manner of creating any requested, virtualized network
       structure with virtualized resources, network elements and \gls{acr:qos} guarantees.  Solaris operating system is
       already a respectable solution in terms of resource virtualization. Recently supported by network virtualization
-      mechanism contained in the Crossbow project, Solaris OS seems to be suitable environment to proceed further
+      mechanism contained in the Crossbow project, Solaris OS seems to be a suitable environment to proceed further
       research.
 
       The thesis objective is to design the architecture, implement it and verify using a series of tests.
@@ -240,7 +240,7 @@
       particular stage of the system construction process.
 
       Chapter \ref{chap:bck} provides domain information about resource and network virtualization and supplying
-      \gls{acr:qos} guarantees for \gls{acr:ip} networks. Major applications of virtualization techniques are described
+      \gls{acr:qos} guarantees for \gls{acr:ip} networks. Virtual infrastructures are described
       together with an overview of technologies in common use.
 
       Chapter \ref{chap:req} introduces crucial definitions of objects and processes discussed throughout the paper.
@@ -850,7 +850,7 @@
 
     \section*{Summary}
 
-      The chapter presented general information about resource virtualization together with examples of approaches and
+      The chapter presented general information about resource virtualization together with examples of the approaches and
       implementations being in common use in the domain. The importance of network virtualization was emphasized and
       multiple aspects of network topology virtualization were covered --- internal and external virtualization,
       partitioning and creating logical software-based networking devices. Also, one of the core concepts of virtual
@@ -858,7 +858,7 @@
 
       The selected applications of virtual network infrastructures confirm the importance of virtualization techniques
       in modern systems management, service provisioning, sophisticated software development and testing. The
-      flexibility and scalability virtualization offers compared to hardware solutions makes it a natural choice when
+      flexibility and scalability that virtualization offers compared to hardware solutions makes it a natural choice when
       building enterprise class architectural frameworks, like \gls{acr:soa}.
 
       Despite the fact that the concept of virtualization is not new, it is still one of the most discussed and
@@ -1650,21 +1650,21 @@
 
     \section*{Summary}
 
-      The chapter presented Solaris operating system with regard to resource virtualization. The stack of tools
-      integrated into the system provides extensive support for virtualization techniques: Containers facilitate
+      The chapter presented the Solaris operating system with regard to resource virtualization. The stack of tools
+      integrated into the system provides an extensive support for virtualization techniques: Containers facilitate
       OS-level resource virtualization and Crossbow, shipped with Solaris 11, makes virtualization of networking
       resources possible. Resource control subsystem gives the administrator even more fine-grained control over
-      resource utilization. Last, but not least, accounting functionality provides detailed view of resource usage
+      resource utilization. Last but not least, accounting functionality provides a detailed view of the resource usage
       history.
 
-      The features mentioned above make realization of flexible, scalable and efficient systems possible. With these
+      The features mentioned above make the realization of flexible, scalable and efficient systems possible. With these
       foundations, it is possible to build and consolidate complex network-oriented infrastructures that prove to be
       reliable, relatively easy to manage and adjust to changing requirements.
 
-      Solaris 10 OS seems to be ideal cross-platform choice for customers dealing with management of high level
+      Solaris 10 OS seems to be an ideal cross-platform choice for customers dealing with the management of high level
       services, complex system administration and high costs. It is the only open operating system which has proven
-      results running from every critical enterprise databases to high performance Web farms that is why Solaris OS is
-      becoming strategic platform for today's constantly growing demands towards operating systems
+      results running from every critical enterprise databases to high performance Web farms. That is why Solaris OS is
+      becoming strategic platform for today's constantly growing demands on operating systems
       \cite{solaris_operating_system}. 
 
 
@@ -2505,15 +2505,15 @@
 
       % TODO napisac tu cos sensownego
 
-      The chapter provided description and discussion of the system's architecture. The high-level layered design was
+      The chapter provided the description and discussion of the system's architecture. The high-level layered design was
       presented and its advantages listed. Flexible and easily-expandable resources instrumentation layer was analyzed.
-      The layer provides general-purpose abstractions over low-level system resources.  Finally, the topmost layer,
-      virtual infrastructure management, used to build complex virtual network topologies was introduced.
+      The layer provides general-purpose abstractions over low-level system resources.  Finally, the topmost layer 
+      (virtual infrastructure management) which used to build complex virtual network topologies was introduced.
 
-      The design satisfies requirements the system has to meet and ensures easy expansion when necessary. Thanks to low
+      The design satisfies requirements the system has to meet and ensures an easy expansion when necessary. Thanks to low
       coupling, new components can be integrated whenever additional functionality is needed. The created system can
-      scale to support large topology models deployed on a number of physical host preserving small amount of time
-      needed for instantiation process.
+      scale to support large topology models deployed on a number of physical hosts preserving a small amount of time
+      needed for the instantiation process.
 
 
   \chapter{The CM4J implementation}
@@ -3045,13 +3045,13 @@
     \section*{Summary}
     \label{sec:impl:summary}
 
-      This chapter introduced chosen approach to system implementation. Despite the fact that requested functionalities
-      were demanding and complex, final product meets all previously listed functional requirements. Thanks to used
-      technologies such as \gls{acr:jmx}, system with fully independent business layer (loosely coupled MBeans) was
-      implemented. These technologies also helped in fulfilling defined non-functional requirements like: evolvability,
+      This chapter introduced chosen approach to system implementation. Despite the fact that the requested functionalities
+      were demanding and complex, the final product meets all the previously listed functional requirements. Thanks to used
+      technologies such as \gls{acr:jmx}, the system with fully independent business layer (loosely coupled MBeans) was
+      implemented. These technologies also helped to fulfill the defined non-functional requirements like: evolvability,
       extensibility, composability, etc. Definitely one of the biggest advantage of this system (apart from all
-      delivered functionality provided by \gls{acr:cm4j}) is reusability as four possible usage models exist. System may
-      be managed from implemented \gls{acr:gui}, running JConsole or even from own developed (Java-based or native)
+      the delivered functionalities provided by \gls{acr:cm4j}) is reusability as four possible usage models exist. The System may
+      be managed from an implemented \gls{acr:gui}, a running JConsole or even from self developed (Java-based or native)
       application where developer can decide which part of \gls{acr:cm4j} would be used by just conforming to previously
       presented and described interfaces.
 
@@ -3555,38 +3555,38 @@
 
       The chapter presented all the steps that were undertaken to ensure the system meets the identified requirements.
       The ability to create and manage complex network topologies was demonstrated by designing and instantiating
-      multimedia oriented network with wide variety of components used. Validity and operation of deployed
+      a multimedia oriented network with a wide variety of components used. Validity and operation of deployed
       infrastructure was confirmed by the tests performed. It was shown that communication between virtual appliances is
       possible with properly configured routing tables. And, most importantly, the experiments confirmed that
-      \gls{acr:qos} policies are preserved.
+      the \gls{acr:qos} policies are preserved.
 
 
   \chapter{Summary}
   \label{chap:sum}
 
 	  The chapter summarizes the outcome of the research conducted in the area of network virtualization with special regard to 
-	  proposed thesis statement.
+	  the proposed thesis statement.
 	
-	  Section \ref{sub:sum:concl} briefly concludes research results and test-case results. Thesis statement's legitimacy and feasibility 
-		is also discussed in this section. Accomplished goals and objectives are outlined in section \ref{sub:sum:achieved} yet
-	  possible improvements that might be introduced to created system are considered in section \ref{sub:sum:further}.
+	  Section \ref{sub:sum:concl} briefly concludes the research results and the test-case results. The thesis statement's legitimacy and feasibility 
+	  is also discussed in this section. All the accomplished goals and objectives are outlined in section \ref{sub:sum:achieved}, yet
+	  possible improvements that might be introduced to the created system are considered in section \ref{sub:sum:further}.
 
     \section{Conclusions}
 		\label{sub:sum:concl}
 		
-      Proposed at the beginning of the thesis statement claiming that: \emph{There exists a layered architecture, which
-      enables the construction of a system, that would facilitate working with fully  isolated virtualized network and
+      The statement proposed at the beginning of the thesis claming that: \emph{There exists a layered architecture which
+      enables the construction of a system that would facilitate working with a fully iisolated virtualized network and
       resources grouped by project name} was deeply considered throughout this thesis by the authors.  In order to
-      fulfil proposed statement detailed requirement analysis was performed. Subsequently in order to comply with all
-      defined requirements mentioned in the thesis statement layered architectural approach was chosen. This approach
+      fulfil the proposed statement a detailed requirement analysis was performed. Subsequently in order to comply with all
+      the defined requirements mentioned in the thesis statement the layered architectural approach was chosen. This approach
       allowed to distinguish certain groups of independent, highly cohesive components. Together these components create
-      the planned system, but each one could be used separately allowing performing operations like: \gls{acr:crud}
+      the planned system, but each one could be used separately allowing to perform operations like: \gls{acr:crud}
       operations over virtual network elements, virtual resources management, etc. 
       
-      Investigation performed while working on this paper allowed the authors to understand concepts of complex network
-      virtualization and resource reservation and sharing in more details. Conducted tests additionally outlined the
-      significance of these issues and how important they are in terms of success of proper work of complex systems.
-      Encountered problems only confirmed that although very useful they are also demanding and require comprehensive
+      The investigation performed while working on this paper allowed the authors to understand the concepts of a complex network
+      virtualization and resource reservation principles and sharing in more details. The conducted tests additionally outlined the
+      significance of these issues and proved how important they are in terms of success of proper work of complex systems.
+      Encountered problems only confirmed that although very useful they are also demanding and require a comprehensive
       knowledge in a variety of computer areas. 
 
       
@@ -3595,33 +3595,33 @@
 
       % TODO o tym, ze cos sie nie udalo, bym stad wywalil do nastepnej sekcji
 		
-      In relation to achieved goals not all were unfortunately successfully finished. Time shortage and lack of people
-      did not allow for as deep insight look at this issue as was initially planned. However, some objectives are really
+      In relation to the achieved goals not all were unfortunately successfully finished. Time shortage and the lack of people
+      did not allow for as deep an insight at this issue as was initially planned. However, some objectives are really
       worth to be mentioned:
       
       \begin{itemize}
         \item Significant improvements in system configuration in comparison to manual setup,
         \item Automatic update of given network parameters,
         \item Reusability provided thanks to loosely coupled components hidden under well defined interfaces,
-        \item Presenting network topology in clear and natural way (graph format).
+        \item Presenting network topology in a clear and natural way (graph format).
       \end{itemize}
 		
-      Hopefully the presented system and whole concept of network virtualization, resource allocation and isolation 
-	    would encourage the reader to do own research in this area.
+      Hopefully the presented system and the whole concept of network virtualization, resource allocation and isolation 
+	    would encourage the reader to do his own research in this area.
 		
 
     \section{Further work}
 		\label{sub:sum:further}
 	
       There are many welcomed improvements that may be added to the \gls{acr:cm4j} system. Probably the largest
-      component initially planned was automatic resource assigner, that would run and perform automatic resource
-      assignments to nodes that run under lowest load. This assigner with attached rule-based system would gather data
-      about the load on each node and based on that decide what and where to instantiate.  Presented and discussed
+      component initially planned was an automatic resource assigner that would run and perform automatic resource
+      assignments to nodes that run under the lowest load. This assigner with an attached rule-based system would gather data
+      about the load on each node and based on that it would decide what and where to instantiate.  Unfortunately, the presented and discussed
       system in this thesis lacks that functionality. Instead, it offers manual assignments, where user selects on which
-      node new virtual resources should be created. Another not implemented yet welcomed would be semi-automatic
-      snapshot creation. Currently user can create Solaris zone from existing snapshot and use it.  Functionality where
-      created resource could be converted to snapshot and then transferred to the repository would definitely improve
-      the usability of the system.
+      node new virtual resources should be created. Another functionality not implemented, yet welcomed would be a semi-automatic
+      snapshot creation. Currently a user can create Solaris zone from existing snapshot and use it. The functionality where
+      the created resource could be converted to snapshot and then transferred to the repository would definitely improve
+      the system's usability.
 
       \todo[inline]{wiecej}
 
@@ -3635,6 +3635,7 @@
 \end{document}
 
 % vim: et : tw=120 : spelllang=en_us,pl : spell :
+
 
 
 
