@@ -136,8 +136,6 @@
     \newpage
   }
 
-  \listoftodos\newpage
-
   \makethesistitle{Akademia Górniczo-Hutnicza \\ \vspace{1ex} im. Stanisława Staszica}
                   {Wydział Elektrotechniki, Automatyki, Informatyki i Elektroniki}
                   {Katedra Informatyki}
@@ -897,42 +895,23 @@
       monitoring. This division reflects the main processes identified when working with virtual infrastructures.
       Detailed description of each group follows.
 
-      \todo[inline]{diagram: review}
-
       \begin{figure}[H]
           \centering
 
-          \begin{tikzpicture}[rotate=90]
-            \begin{umlsystem}[x=6, y=7, fill=red!10]{The CM4J core system}
-              \umlusecase[x=-4, y=4]{creation of network structure}
-              \umlusecase[x=-2, y=5.5, fill=green!20]{CRUD operations for network virtual elements}
-              \umlusecase[x=-6, y=1.5, fill=green!20]{CRUD operations for virtual resources}
-              \umlusecase[x=-6, y=8.5, fill=green!20]{applying QoS limits}
-              \umlusecase[x=0.5, y=5]{network virtual element's bandwidth monitoring}
-              \umlusecase[x=-1, y=0]{network statistics monitoring}
-              \umlusecase[x=-10, y=4]{network project structure discovery}
-              \umlusecase[x=-7, y=1, fill=green!20]{virtual resource discovery}
-              \umlusecase[x=-12, y=1, fill=green!20]{virtual elements discovery}
-              \umlusecase[x=-8, y=7, fill=green!20]{assigned QoS limits discovery}
+          \begin{tikzpicture}
+            \begin{umlsystem}[x=4, fill=red!10]{CM4J}
+              \umlusecase[x=-2, y=-1]{design virtual topology}
+              \umlusecase[x=2, y=-2]{instantiate virtual topology}
+              \umlusecase[x=2, y=-3]{discover virtual topology}
+              \umlusecase[x=-2, y=-4]{monitor virtual topology}
             \end{umlsystem}
 
-            \umlactor{user}[y=-6]
+            \umlactor[x=-3, y=-3]{user}
 
             \umlassoc{user}{usecase-1}
             \umlassoc{user}{usecase-2}
             \umlassoc{user}{usecase-3}
-            \umlassoc{user}{usecase-5}
-            \umlassoc{user}{usecase-6}
-            \umlassoc{user}{usecase-7}
-            \umlassoc{user}{usecase-8}
-            \umlassoc{user}{usecase-9}
-
-            \umlinclude[name=incl]{usecase-8}{usecase-7}
-            \umlinclude[name=incl]{usecase-9}{usecase-7}
-            \umlinclude[name=incl]{usecase-10}{usecase-7}
-            \umlinclude[name=incl]{usecase-2}{usecase-1}
-            \umlinclude[name=incl]{usecase-3}{usecase-1}
-            \umlinclude[name=incl]{usecase-4}{usecase-1}
+            \umlassoc{user}{usecase-4}
           \end{tikzpicture}
 
           \caption{Functional requirements use-case diagram.}
@@ -1199,11 +1178,9 @@
         Because of the isolation, an application failure possibly affects only the processes in the containing zone.
         Assuming no interaction between processes in separate zones, the rest of the system remains intact and can
         operate normally.
-        
-        % TODO easier recovery, independent container management
       
 
-      \subsection{Advantages of Containers technology when compared to non-virtualized environments}
+      \subsection{Advantages of Containers technology}
       \label{sub:}
 
         The architecture of Solaris Containers makes it a competitive solution as far as systems administration and
@@ -1579,8 +1556,6 @@
           \item flows defined with the IPQoS tools,
           \item links and flows created with Crossbow.
         \end{itemize}
-
-        % TODO what data can be gathered?
 
 
     \section*{Summary}
@@ -2319,8 +2294,6 @@
           
           \end{figure}
 
-          % TODO co rozumiemy przez topologie? (topology=layout+qos)
-
 
         \subsubsection{Discovery}
 
@@ -2437,15 +2410,13 @@
 
     \section*{Summary}
 
-      % TODO napisac tu cos sensownego
+      The chapter provided the description and discussion of the system's architecture. The high-level layered design
+      was presented and its advantages listed. Flexible and easily-expandable resources instrumentation layer was
+      analyzed. The layer provides general-purpose abstractions over low-level system resources.  Finally, the topmost
+      layer (virtual infrastructure management) which used to build complex virtual network topologies was introduced.
 
-      The chapter provided the description and discussion of the system's architecture. The high-level layered design was
-      presented and its advantages listed. Flexible and easily-expandable resources instrumentation layer was analyzed.
-      The layer provides general-purpose abstractions over low-level system resources.  Finally, the topmost layer 
-      (virtual infrastructure management) which used to build complex virtual network topologies was introduced.
-
-      The design satisfies requirements the system has to meet and ensures an easy expansion when necessary. Thanks to low
-      coupling, new components can be integrated whenever additional functionality is needed. The created system can
+      The design satisfies requirements the system has to meet and ensures an easy expansion when necessary. Thanks to
+      low coupling, new components can be integrated whenever additional functionality is needed. The created system can
       scale to support large topology models deployed on a number of physical hosts preserving a small amount of time
       needed for the instantiation process.
 
@@ -2648,18 +2619,56 @@
         \end{minipage}
 
 
+      \subsection{Crossbow infrastructure project}
+      \label{sec:impl:infrastructure}
+
+        The jims-crossbow-module's subproject ( The Crossbow Infrastructure ) was designed in order to provide
+        coarse operations like network structure instantiation, discovery, monitoring. 
+        Functionalities provided by MBeans may invoked from \gls{acr:gui} console, JConsole or even from self written 
+        applications by just adapting to existing interfaces and object names. 
+
+        Existing high-level MBean are described and discussed in table \ref{tab:impl:hl-mbean}.
+
+        \begin{table}[H]
+          \centering
+
+          \begin{tabular}{|l|l|p{4cm}|}
+            \hline
+            MBean                     & ObjectName                                  & Description                        \\
+            \hline \hline
+            SupervisorMBean           & \textbf{Crossbow:type=Supervisor}           & Main Bean runs whole instantiation
+                                                                                      process (distributes model to
+                                                                                      parts and passes them to proper
+                                                                                      Worker                             \\
+            \hline
+            WorkerMBean               & \textbf{Crossbow:type=XBowWorker}           & Responsible for instantiating on
+                                                                                      this node given model with regard
+                                                                                      to specified  actions              \\
+            \hline
+            RepoManagerMBean          & \textbf{Crossbow:type=RepoManager}          & Allows getting/setting path to
+                                                                                      projects placement, returns all
+                                                                                      existing projects from working
+                                                                                      path                               \\
+            \hline
+            StatisticGathererMBean    & \textbf{Crossbow:type=StatisticsGatherer}   & Provides statistics for interface
+                                                                                      or flow for specified time period  \\
+            \hline
+            CrossbowNotificationMBean & \textbf{Crossbow:type=CrossbowNotification} & Returns progress of deployment,
+                                                                                      logs with major information        \\
+            \hline
+          \end{tabular}
+
+          \caption{High-level management MBeans}
+          \label{tab:impl:hl-mbean}
+        \end{table}
+
+
       \subsection{Domain model transformations}
       \label{sec:impl:model}
-
-        % TODO ta podsekcja dalej - za infrastructure project
 
         To allow conversion between network structure (as seen by the user in \gls{acr:gui} console) and underlying
         Crossbow components, a series of transformations is performed by Worker and Supervisor nodes. These
         transformations include simple one-to-one mappings as well as more sophisticated multi-step operations.
-        In-depth description of the transformations follows together with a graphical example in figure
-        \ref{fig:impl:transformation} \todo[inline]{narysowac}.
-
-        % TODO obrazek!
 
 
         \subsubsection{Simple mappings}
@@ -2737,50 +2746,6 @@
           router zones and \gls{acr:vlan} interfaces and send parts of the object model back to the Supervisor. The
           routers (together with routing tables) are merged to create single router entity that is placed in the object
           model. Auxiliary routers and \gls{acr:vlan} are then removed from the model.
-
-
-      \subsection{Crossbow infrastructure project}
-      \label{sec:impl:infrastructure}
-
-        The jims-crossbow-module's subproject ( The Crossbow Infrastructure ) was designed in order to provide
-        coarse operations like network structure instantiation, discovery, monitoring. 
-        Functionalities provided by MBeans may invoked from \gls{acr:gui} console, JConsole or even from self written 
-        applications by just adapting to existing interfaces and object names. 
-
-        Existing high-level MBean are described and discussed in table \ref{tab:impl:hl-mbean}.
-
-        \begin{table}[H]
-          \centering
-
-          \begin{tabular}{|l|l|p{4cm}|}
-            \hline
-            MBean                     & ObjectName                                  & Description                        \\
-            \hline \hline
-            SupervisorMBean           & \textbf{Crossbow:type=Supervisor}           & Main Bean runs whole instantiation
-                                                                                      process (distributes model to
-                                                                                      parts and passes them to proper
-                                                                                      Worker                             \\
-            \hline
-            WorkerMBean               & \textbf{Crossbow:type=XBowWorker}           & Responsible for instantiating on
-                                                                                      this node given model with regard
-                                                                                      to specified  actions              \\
-            \hline
-            RepoManagerMBean          & \textbf{Crossbow:type=RepoManager}          & Allows getting/setting path to
-                                                                                      projects placement, returns all
-                                                                                      existing projects from working
-                                                                                      path                               \\
-            \hline
-            StatisticGathererMBean    & \textbf{Crossbow:type=StatisticsGatherer}   & Provides statistics for interface
-                                                                                      or flow for specified time period  \\
-            \hline
-            CrossbowNotificationMBean & \textbf{Crossbow:type=CrossbowNotification} & Returns progress of deployment,
-                                                                                      logs with major information        \\
-            \hline
-          \end{tabular}
-
-          \caption{High-level management MBeans}
-          \label{tab:impl:hl-mbean}
-        \end{table}
 			
 		
       \subsection{Data persistence}
@@ -2870,10 +2835,10 @@
             \begin{umlseqdiag}
 
               \umlobject{GUI}
-              \umlobject{Supervisor}
-              \umlobject{ProgressShell}
-              \umlobject{GraphToModelTranslator}
-              \umlobject{CrossbowNotification}
+              \umlobject[x=2]{ProgressShell}
+              \umlobject[x=5]{Supervisor}
+              \umlobject[x=9]{GraphToModelTranslator}
+              \umlobject[x=13]{CrossbowNotification}
 
               \begin{umlcall}[op={createActions(model, NetworkStructureHelper)}, return=Actions]{GUI}{GraphToModelTranslator}
               \end{umlcall}
@@ -2906,7 +2871,7 @@
       \begin{itemize}
         \item Java SE 1.6, Maven,
         \item \gls{acr:jims} sources downloaded,
-        \item jims-crossbow module\footnote{available at \url{https://github.com/robertboczek/solaris\-crossbow/tree/master/code}}
+        \item jims-crossbow module\footnote{available at \url{https://github.com/robertboczek/solaris-crossbow/tree/master/code}}
       \end{itemize}
 
       Afterwards \gls{acr:jims} project must be built. Detailed description of how to build \gls{acr:jims} is in README
@@ -3409,9 +3374,6 @@
         design becomes complicated. A consistent naming scheme is provided so that the topology can be managed when the
         system is not available.
 
-        % TODO progress bar, czy tutaj, czy w implementacji?
-        % TODO nawiazanie do deploymentu z va (chapter: solaris)
-
 
       \subsection{Online modifications}
       \label{sub:uc:enhance:online}
@@ -3535,21 +3497,21 @@
 	
       There are many welcomed improvements that may be added to the \gls{acr:cm4j} system. Probably the largest
       component initially planned was an automatic resource assigner that would run and perform automatic resource
-      assignments to nodes that run under the lowest load. This assigner with an attached rule-based system would gather data
-      about the load on each node and based on that it would decide what and where to instantiate.  Unfortunately, the presented and discussed
-      system in this thesis lacks that functionality. Instead, it offers manual assignments, where user selects on which
-      node new virtual resources should be created. Another functionality not implemented, yet welcomed would be a semi-automatic
-      snapshot creation. Currently a user can create Solaris zone from existing snapshot and use it. The functionality where
-      the created resource could be converted to snapshot and then transferred to the repository would definitely improve
-      the system's usability.
-
-      \todo[inline]{wiecej}
+      assignments to nodes that run under the lowest load. This assigner with an attached rule-based system would gather
+      data about the load on each node and based on that it would decide what and where to instantiate.  Unfortunately,
+      the presented and discussed system in this thesis lacks that functionality. Instead, it offers manual assignments,
+      where user selects on which node new virtual resources should be created. Another functionality not implemented,
+      yet welcomed would be a semi-automatic snapshot creation. Currently a user can create Solaris zone from existing
+      snapshot and use it. The functionality where the created resource could be converted to snapshot and then
+      transferred to the repository would definitely improve the system's usability.
 
 
   \printglossaries
 
   \bibliographystyle{plain}
   \bibliography{bibliography}
+
+  % TODO przejrzec bibliografie (literowki itd)
 
 
 \end{document}
