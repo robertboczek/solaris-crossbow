@@ -870,25 +870,26 @@
   \chapter{Requirements analysis}
   \label{chap:req}
 
-    \todo[inline]{przeredagowac ten akapit - bez odniesien do innych rozdzialow}
-    This chapter focuses mainly on earlier conducted requirements analysis and extracted conclusions. Established goal
-    was to create system supporting creation of any requested, fully isolated network structure with virtual network
-    elements and demanded resources recovered from selected (previously prepared) repository and fully monitored network
-    traffic. This target implicated necessity of creating functional and non-functional specification in order to avoid
-    ambiguities and skipping essential services. All these issues are described and considered in the first two
-    chapters.
+    The chapter presents initial phase of the system development --- requirements analysis. The established goal is to
+    design architecture and system implementing it that supports creation of any requested, fully isolated virtual
+    network topology with ability to monitor its operation. This objective implicates the necessity of creating
+    requirements specification in order to avoid ambiguities and skipping essential services.
 
-    Section \ref{sec:req:func} presents requested behaviors (functions or services) of the system that support user
-    goals, tasks or activities.
+    Section \ref{sec:req:spec} introduces objects and processes discussed throughout the thesis. Formal definition is
+    provided for each term. Also, high-level view of the domain is depicted to give better understanding of the subject.
 
-    Section \ref{sec:req:nonfunc} describes adopted non-functional requirements towards newly created system.
+    Section \ref{sec:req:func} lists functional requirements the architecture has to fulfill. The requirements are
+    grouped to reflect main coarse-grained processes.
+    
+    Section \ref{sec:req:nonfunc} describes two classes of identified non-functional requirements. Run-time qualities
+    (related to user goals) and development-time qualities are discussed.
 
-    Issues associated with underlying environment characteristics (\ref{sec:req:env}) such as isolation requirements
-    (\ref{sec:req:iso}) and broadcast domain preservation (\ref{sec:req:broadcast}) are discussed in the remaining part
-    of this chapter.
+    Finally, execution environment requirements are gathered in section \ref{sec:req:env}. These describe underlying
+    environment characteristics such as isolation and preservation of broadcast domain.
 
 
     \section{Domain specification}
+    \label{sec:req:spec}
 
       To provide common vocabulary, make the requirements specification clearer and avoid ambiguities, definitions of
       crucial domain elements and processes are provided in table \ref{tab:req:def}. These definitions are referred to
@@ -898,7 +899,6 @@
         \centering
 
         \begin{tabularx}{\textwidth}{|l|X|}
-
           \hline
           \multicolumn{1}{|c|}{Term}     & \multicolumn{1}{c|}{Definition}                                            \\
           \hline \hline
@@ -906,6 +906,8 @@
                                            switches, appliances, etc. together with \gls{acr:qos} policies defined    \\
           \hline
           Virtual topology model         & Abstract, implementation-independent description of a virtual topology     \\
+          \hline
+          Flow                           & A class of network traffic                                                 \\
           \hline
           Host machine                   & Physical or virtual machine with an operating system capable of hosting
                                            a virtual topology                                                         \\
@@ -939,14 +941,13 @@
         \label{fig:req:overview}
       \end{figure}
 
-      \todo[inline]{podejscie ogolne i ograniczenia, jakie my przyjmujemy}
-
 
     \section{Functional requirements}
     \label{sec:req:func}
 
-      All services of the system are divided into three groups: instantiation, discovery and monitoring. This
-      division is based on the quality of the functionality \todo[inline]{co to znaczy?}. 
+      All services of the system are divided into four groups --- topology design, instantiation, discovery and
+      monitoring. This division reflects the main processes identified when working with virtual infrastructures.
+      Detailed description of each group follows.
 
       \todo[inline]{diagram: review}
 
@@ -990,135 +991,121 @@
         \end{figure}
 
 
-      \subsection{Network design and adjustment}
+      \subsection{Virtual topology design and adjustment}
 
-        \todo[inline]{tutaj o skladaniu sieci w gui - wiekszosc z tego, co jest w Instantiation}
+        The process of network design and adjustment is among the most important considerations. It is the main
+        way the user is able to define and change virtual topologies. Virtual topology model is used to manipulate
+        virtual topologies --- no underlying details are exposed to the user or other high-level components.
+
+        The user designing a virtual topology from scratch or modifying an existing topology should be able to:
+
+        \begin{itemize}
+          \item create, modify, delete components of the topology (interfaces, switches, routers),
+          \item access appliance repository and select appliances that should be a part of the topology,
+          \item assign interfaces to appliances and routers,
+          \item enable and alter routing tables to enable communication between different \gls{acr:ip} subnetworks,
+          \item manage \gls{acr:qos} policies (assign priorities and limit bandwidth of network traffic flows),
+          \item assign parts of the model to available host machines.
+        \end{itemize}
 
 
       \subsection{Instantiation}
       \label{sec:req:func:inst}
 
-        Most of functionalities necessary during process of network instantiation (also alteration and deletion) would
-        be:
+        The system should support virtual topology instantiation --- for any correct virtual topology model it should be
+        possible to create corresponding virtual components that implement the model. Instantiation process should:
 
         \begin{itemize}
-          \item Creation of any requested virtual network element \todo[inline]{jakie network elements obslugiwane?},
-          \item Creation of any requested resource \todo[inline]{czym jest resource? definicja} from repository,
-          \item Assignation any number of links to resource,
-          \item Resource routing table modification,
-          \item Defining \gls{acr:qos} limits for links and flows \todo[inline]{zdefiniowac flow} (limits traffic assigned to specific network traffic type),
-          \item Modification or deletion of each property and element previously mentioned.
+          \item be automatic --- no extra intervention is required from user to deploy the model,
+          \item be atomic --- either all the elements of topology are instantiated successfully or the process is rolled
+                back,
+          \item support deployment of multiple topologies on a single host machine,
+          \item support topologies spanning multiple host machines,
+          \item provide optional automatic topology assignment in accordance with predefined rules.
         \end{itemize}
 
 
       \subsection{Discovery}
       \label{sec:req:func:disc}
 
-        During the process of discovery following functionalities should be accessible:
+        Instantiated virtual topologies should be discoverable automatically. The discovery process is an inverse of
+        instantiation. The required functionalities are:
 
         \begin{itemize}
-          \item Discovery and assembly of links, resources from the same project,
-          \item Detection of links assigned to a specified resource,
-          \item Discovery of flows attached to a link.
+          \item distinguishing multiple topologies deployed on a single host machine and returning separate models for
+                them,
+          \item support for topologies spanning multiple host machines.
         \end{itemize}
 
 
       \subsection{Monitoring}
       \label{sec:req:func:acc}
 
-        \todo[inline]{tutaj wiecej}
-
-        In terms of monitoring, following functionalities for properties and elements should be provided:
+        When instantiated, a topology is subject to monitoring. The user still uses the model to query particular
+        statistics --- implementation details remain hidden. Monitoring functionality should:
 
         \begin{itemize}
-          \item Monitoring of each network virtual element's bandwidth,
-          \item Checking each network virtual element's, flow's network traffic (input / output) statistics,
-          \item Displaying network traffic load chart of selected link or flow from specified time period.
+          \item allow to access interfaces, switches and routers and gather statistical data,
+          \item provide multiple levels of granularity (bit, byte, packet),
+          \item store the data so that it can be read and analyzed in the future,
+          \item present statistics in a clean and readable way.
         \end{itemize}
 
 
     \section{Non-functional requirements}
     \label{sec:req:nonfunc}
 
-      % TODO model obiektowy jak najbardziej niezalezny od systemu pod spodem
+      Two main groups of non-functional requirements (qualities) of a system can be distinguished --- there are run-time
+      qualities (related to user goals) and development-time qualities (related to development organization goals)
+      \cite{nonfunctional}.
 
-      \todo[inline]{styl}
-      Non-functional requirements also called qualities of a system could be distinguished between the
-      executing system and the work products (created during system development). Executing system are related to user
-      goals and are referred as run-time qualities, whereas work products are driven by the development organization’s
-      goals and referred as development-time qualities \cite{nonfunctional}.
-
-      \medskip
-
-      Requested run-time qualities:
+      Main run-time qualities the system should meet are:
 
       \begin{itemize}
-        \item usability --- usage should be intuitive, system should be efficient,
+        \item usability --- \gls{acr:gui} should be intuitive and allow to perform operations effectively,
         \item configurability --- configurable properties should be easy to set,
-        \item adaptable --- ability to adapt to changing conditions (adding removing new nodes \todo[inline]{jakie node-y?}),
-        \item fault tolerance --- system should be resistant to minor errors \todo[inline]{bardziej szczegolowo}.
+        \item adaptable --- ability to adapt to changing conditions (unstable underlying environment),
+        \item fault tolerance --- system should be resistant to errors (incorrect input should not break the system's
+                                  operation).
       \end{itemize}
 
-      \medskip
-
-      Requested development-time qualities:
+      Development-time requirements to fulfill are:
 
       \begin{itemize}
-        \item independent and reusable object model --- created model should be general without system specific details,
-        \item evolvability --- support for new functionalities or adjustment to new technologies,
-        \item extensibility --- ability to add new earlier unspecified functionalities \todo[inline]{open/closed principle in
-                                design},
-        \item composability --- system should be created in form of composable components \todo[inline]{coupling, cohesion},
-        \item reusability --- ability to (re)use in future systems.
+        \item independent and reusable object model --- the model should be general, independent of system-specific
+                                                        details,
+        \item evolvability --- support for new functionalities or adjustment to new technologies should be easy,
+        \item extensibility --- ability to add new, earlier unspecified functionalities; open/closed principle should be
+                                applied while designing the system,
+        \item composability --- system should be created in form of composable, highly-cohesive components,
+        \item reusability --- ability to (re)use and embed in other systems; \gls{acr:api} version dependent on required
+                              level of abstraction.
       \end{itemize}
-
-      \todo[inline]{multiple APIs depending on abstraction level required}
-      \todo[inline]{embeddable - JIMS integration}
 
 
     \section{Underlying environment characteristics}
     \label{sec:req:env}
 
-      Underlying environment should be a composition of a fully independent nodes. However, a few requisites must be
-      fulfilled by each node:
+      Underlying environment should be a composition of fully independent nodes. However, there are requirements that
+      must be fulfilled by each node to allow the system to work properly.
 
-      \begin{itemize}
-        \item OS must provide network and resource virtualization functionality,
-        \item Network accessibility between nodes must be ensured.
-      \end{itemize}
+      The chosen operating system must provide mechanisms for isolation among virtualized elements, so that one's
+      processor or memory usage does not affect corresponding resources performing other operations. Also, there cannot
+      be any interference between different topologies hosted on the same machine.
 
-    %TODO ta czesc tak srednio mi tu pasuje!!!
+      The broadcast domain has to be preserved, too --- i.e. there has to be isolation starting from the link layer of
+      the \gls{acr:osi} model. Every instantiated infrastructure should preserve its broadcast domain in order to
+      achieve network traffic isolation between different projects to fulfill the thesis statement. To achieve that,
+      separate \gls{acr:vlan} per project should be created or any other equivalent approach should be adopted.
 
-    %\section{General approach and problems it imposes}
-	
-		%Selected approach towards problem was 
-
-      \subsection{Infrastructure isolation}
-      \label{sec:req:iso}
-
-        Chosen operating system must provide mechanisms for network isolation among virtualized elements, virtualized
-        resources must be isolated as well, so that one's resource CPU/MEM usage does not affect corresponding resources
-        performing other operations.
-
-
-      \subsection{Broadcast domain preservation}
-      \label{sec:req:broadcast}
-
-        Every instantiated infrastructure should preserve its broadcast domain in order to achieve network traffic
-        isolation between different projects as it was proposed in the thesis statement. To achieve that separate
-        \gls{acr:vlan} per project should be created or any other equivalent approach should be adopted.
-
-
-      % \subsection{Constraints}
 
     \section*{Summary}
 
-      \todo[inline]{rozszerzyc}
-      This chapter described all the requirements, both functional and non-functional, which newly implemented
-      \gls{acr:cm4j} is expected to fulfill. Additionally section \ref{sec:req:env} presented expectations towards
-      underlying environment. In order to meet all the aforementioned constraints the system had to be implemented under
-      OS supporting network and resource virtualization with ability to isolate infrastructure and restrict broadcast
-      domain.
+      This chapter provided thorough analysis of system requirements. After the vocabulary of crucial terms have been
+      established, all the requirements (both functional and non-functional) which the implemented \gls{acr:cm4j} is
+      expected to fulfill were described. Also, expectations towards underlying environment were presented. In order to
+      meet all the aforementioned constraints the system has to be implemented under OS supporting network and resource
+      virtualization with ability to isolate infrastructure operation and restrict broadcast domains.
 
 
   \chapter{Solaris 10, Solaris 11 and OpenSolaris}
