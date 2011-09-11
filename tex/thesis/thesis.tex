@@ -3520,28 +3520,28 @@
   \label{chap:sum}
 
 	  The chapter summarizes the outcome of the research conducted in the area of network virtualization with special regard to 
-	  proposed thesis statement.
+	  the proposed thesis statement.
 	
-	  Section \ref{sub:sum:concl} briefly concludes research results and test-case results. Thesis statement's legitimacy and feasibility 
-		is also discussed in this section. Accomplished goals and objectives are outlined in section \ref{sub:sum:achieved} yet
-	  possible improvements that might be introduced to created system are considered in section \ref{sub:sum:further}.
+	  Section \ref{sub:sum:concl} briefly concludes the research results and the test-case results. The thesis statement's legitimacy and feasibility 
+	  is also discussed in this section. All the accomplished goals and objectives are outlined in section \ref{sub:sum:achieved}, yet
+	  possible improvements that might be introduced to the created system are considered in section \ref{sub:sum:further}.
 
     \section{Conclusions}
 		\label{sub:sum:concl}
 		
-      Proposed at the beginning of the thesis statement claiming that: \emph{There exists a layered architecture, which
-      enables the construction of a system, that would facilitate working with fully  isolated virtualized network and
+      The statement proposed at the beginning of the thesis claming that: \emph{There exists a layered architecture which
+      enables the construction of a system that would facilitate working with a fully iisolated virtualized network and
       resources grouped by project name} was deeply considered throughout this thesis by the authors.  In order to
-      fulfil proposed statement detailed requirement analysis was performed. Subsequently in order to comply with all
-      defined requirements mentioned in the thesis statement layered architectural approach was chosen. This approach
+      fulfil the proposed statement a detailed requirement analysis was performed. Subsequently in order to comply with all
+      the defined requirements mentioned in the thesis statement the layered architectural approach was chosen. This approach
       allowed to distinguish certain groups of independent, highly cohesive components. Together these components create
-      the planned system, but each one could be used separately allowing performing operations like: \gls{acr:crud}
+      the planned system, but each one could be used separately allowing to perform operations like: \gls{acr:crud}
       operations over virtual network elements, virtual resources management, etc. 
       
-      Investigation performed while working on this paper allowed the authors to understand concepts of complex network
-      virtualization and resource reservation and sharing in more details. Conducted tests additionally outlined the
-      significance of these issues and how important they are in terms of success of proper work of complex systems.
-      Encountered problems only confirmed that although very useful they are also demanding and require comprehensive
+      The investigation performed while working on this paper allowed the authors to understand the concepts of a complex network
+      virtualization and resource reservation principles and sharing in more details. The conducted tests additionally outlined the
+      significance of these issues and proved how important they are in terms of success of proper work of complex systems.
+      Encountered problems only confirmed that although very useful they are also demanding and require a comprehensive
       knowledge in a variety of computer areas. 
 
       
@@ -3550,32 +3550,32 @@
 
       % TODO o tym, ze cos sie nie udalo, bym stad wywalil do nastepnej sekcji
 		
-      In relation to achieved goals not all were unfortunately successfully finished. Time shortage and lack of people
-      did not allow for as deep insight look at this issue as was initially planned. However, some objectives are really
+      In relation to the achieved goals not all were unfortunately successfully finished. Time shortage and the lack of people
+      did not allow for as deep an insight at this issue as was initially planned. However, some objectives are really
       worth to be mentioned:
       
       \begin{itemize}
         \item Significant improvements in system configuration in comparison to manual setup,
         \item Automatic update of given network parameters,
         \item Reusability provided thanks to loosely coupled components hidden under well defined interfaces,
-        \item Presenting network topology in clear and natural way (graph format).
+        \item Presenting network topology in a clear and natural way (graph format).
       \end{itemize}
 		
-      Hopefully the presented system and whole concept of network virtualization, resource allocation and isolation 
-	    would encourage the reader to do own research in this area.
+      Hopefully the presented system and the whole concept of network virtualization, resource allocation and isolation 
+	    would encourage the reader to do his own research in this area.
 		
 
     \section{Further work}
 		\label{sub:sum:further}
 	
       There are many welcomed improvements that may be added to the \gls{acr:cm4j} system. Probably the largest
-      component initially planned was automatic resource assigner, that would run and perform automatic resource
-      assignments to nodes that run under lowest load. This assigner with attached rule-based system would gather data
-      about the load on each node and based on that decide what and where to instantiate.  Presented and discussed
+      component initially planned was an automatic resource assigner that would run and perform automatic resource
+      assignments to nodes that run under the lowest load. This assigner with an attached rule-based system would gather data
+      about the load on each node and based on that it would decide what and where to instantiate.  Unfortunately, the presented and discussed
       system in this thesis lacks that functionality. Instead, it offers manual assignments, where user selects on which
-      node new virtual resources should be created. Another not implemented yet welcomed would be semi-automatic
-      snapshot creation. Currently user can create Solaris zone from existing snapshot and use it.  Functionality where
-      created resource could be converted to snapshot and then transferred to the repository would definitely improve
+      node new virtual resources should be created. Another functionality not implemented, yet welcomed would be a semi-automatic
+      snapshot creation. Currently a user can create Solaris zone from existing snapshot and use it. The functionality where
+      the created resource could be converted to snapshot and then transferred to the repository would definitely improve
       the usability of the system.
 
       \todo[inline]{wiecej}
