@@ -390,15 +390,13 @@
 
       \subsection{OS-level virtualization}
 
-        Operating System-level virtualization is a technology consisting of virtualizing servers on an operating system
-        layer. Multiple guest operating systems may be running under the same host system, but these guest operating
-        systems must be the same, although different libraries and distributions are allowed\todo[inline]{uproscic to
-        zlozone zdanie}. OS-level virtualization may be often presented as slicing single OS to small partitions
-        (sometimes called virtual environments (VE), virtual private servers (VPS) or zones). From the end-user
-        perspective these virtualization is invisible (user receives guest OS as real server).
+        OS-level virtualization may be often presented as slicing single OS to small partitions (sometimes called
+        virtual environments, virtual private servers or zones). Multiple guest operating systems may be running under
+        the same host system, but they must share the same kernel \cite{turban}.
 
-        \todo[inline]{przyklady!}
-
+        This approach is the least flexible of all presented here but it also imposes the lowest overhead. FreeBSD
+        jails, Solaris Containers and OpenVZ are examples of OS-level virtualization implementations.
+                
 
     \section{Multilevel network virtualization}
     \label{sec:ctx:multi}
@@ -471,14 +469,6 @@
 
       \subsection{Virtual appliances}
       \label{sub:}
-
-        % ogolnie o podejsciu, przyklady
-        % can serve various purposes - ordinary network nodes (app layer: workstations, servers, proxy?) but also
-        % routers, firewalls, load balancers
-        % IMPORTANT: often host a single application
-
-        % Solaris Zones, together with other components of the Solaris OS, constitute a complete framework that
-        % implements virtual appliance approach to systems management.
 
         Virtual appliance is a \textit{pre-built, pre-configured, ready-to-run (enterprise) application packaged along
         with an optimized operating system inside a virtual machine} \cite{changhua}. The main problem virtual
@@ -623,11 +613,6 @@
         specific state when needed.
 
 
-        % Virtual infrastructure gives ability to provision new applications easily and quickly. As it is presented and
-        % described in more detail in chapter \ref{chap:cs} creating any network structure consisting of any number of
-        % virtual elements is easier than ever thanks to virtualized infrastructure. 
-
-
       \subsection{Server virtualization}
         
         There are multiple advantages of utilizing virtualization in server management. These benefits include, among
@@ -668,15 +653,6 @@
         access to isolated environment that --- as far as usage is considered --- is not different from a physical one
         and that can be expanded as needed, whereas the provider consolidates the services and makes efficient use of
         their hardware resources \cite{iaas}.
-
-        % The \gls{acr:iaas} sometimes also called \gls{acr:haas} is one of three cloud computing models, the other two
-        % are: \gls{acr:saas} and \gls{acr:paas}. This service is based on providing by the supplier whole scalable IT
-        % infrastructure depending on user demand such as virtualized hardware. The service provider owns the equipment
-        % and is responsible for housing, running and maintaining it.
-
-        % At the beginning the \gls{acr:iaas} was just renting dedicated servers services from supplier. Nowadays thanks
-        % to virtualization these are most often virtual machines. In the former case user paid for the concrete hardware
-        % (box), now client typically pays on a per-use basis.
 
 
       \subsection{The role of virtualization in Service-oriented Architecture}
@@ -723,11 +699,6 @@
     \section{QoS-aware networking}
     \label{sec:ctx:qos}
 
-      % TODO  krotki przeglad QoS w roznych sieciach, nie tylko IP, ale tez ATM, Frame Relay, Token Ring (na podst.
-      % wykl. Luke-a?)
-      %
-      % w szczegolach o QoS na IP
-
       \gls{acr:qos} is an issue in all types of networks such as \gls{acr:ip}, Token Ring, Frame Relay or even
       \gls{acr:atm}.  Each of them adapted specific approach towards this matter. \gls{acr:ip} network for instance is
       non-deterministic although there is a possiblity of packet classification using \gls{acr:cos} field. Token Ring on
@@ -735,8 +706,6 @@
       creates virtual path between sender and receiver and sets \gls{acr:qos} parameters. Despite the fact that all
       approaches are very interesting and meaningful this paper focuses mainly on the \gls{acr:ip} network and its
       approach to \gls{acr:qos}.
-
-      % IntServ, DiffServ, inne
 
       Nowadays the \gls{acr:ietf} is working on two approaches beyond the basic best-effort service to provide more
       advanced handling of packets and providing requested level of bandwidth and delay which are:
@@ -2500,7 +2469,7 @@
     (\ref{sec:impl:problems}) are described in the remaining part of this chapter.
 
 
-    \section{The \gls{acr:cm4j} project's structure }
+    \section{The CM4J project's structure}
     \label{sec:impl:structure}
 
 	The \gls{acr:cm4j} system consists of two subprojects: crossbow-gui and crossbow-jims-module. The crossbow-gui  
@@ -2619,37 +2588,36 @@
         As already mentioned each entities operation's are adjusted to their needs. Three figures \ref{fig:impl:etherstub}, 
         \ref{fig:impl:vnic}, \ref{fig:impl:flow} depict in detail each manager and its corresponding entity.
 
-
         \begin{figure}[H]
           \centering
           % TODO tikz
           \includegraphics[width=1.2\textwidth, angle=90]{img/impl/etherstub.png}
 
-	\label{fig:impl:etherstub}
           \caption{Etherstub class diagram}
-        \end{figure}        
+          \label{fig:impl:etherstub}
+        \end{figure}
 
         \begin{figure}[H]
           \centering
           %TODO tikz
           \includegraphics[width=1.2\textwidth, angle=90]{img/impl/link.png}
 
-	\label{fig:impl:vnic}
           \caption{Link (VNIC, NIC) class diagram}
-        \end{figure}        
+          \label{fig:impl:vnic}
+        \end{figure}
 
         \begin{figure}[H]
           \centering
           % TODO tikz
           \includegraphics[width=1.2\textwidth, angle=90]{img/impl/flow.png}
 
-	\label{fig:impl:flow}
           \caption{Flow class diagram}
-        \end{figure}        
+          \label{fig:impl:flow}
+        \end{figure}
 
         Due to the fact that managers and entities have been separated and that each entity is an individual MBean
         these entities can be accessed not only from Java code but also be viewed and modified from JConsole.
-		
+
 
       \subsection{Low-level functions access}
       \label{sec:impl:low}
@@ -3587,8 +3555,3 @@
 \end{document}
 
 % vim: et : tw=120 : spelllang=en_us,pl : spell :
-
-
-
-
-
