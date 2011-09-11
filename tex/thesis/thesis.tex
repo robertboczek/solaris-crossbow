@@ -280,7 +280,7 @@
 
         \begin{tabular}{|l|l|}
           \hline
-          \multicolumn{1}{|c|}{Chapter} & \multicolumn{1}{c|}{Author} \\
+          \multicolumn{1}{|c|}{Chapter} & \multicolumn{1}{c|}{Author}     \\
           \hline \hline
           \compref{chap:intro}          & Robert Boczek                   \\
           \hline
@@ -890,9 +890,54 @@
 
     \section{Domain specification}
 
-      \todo[inline]{definicje (abstrakcyjne): topology, instantiation, discovery, monitoring, host machine, underlying environment}
+      To provide common vocabulary, make the requirements specification clearer and avoid ambiguities, definitions of
+      crucial domain elements and processes are provided in table \ref{tab:req:def}. These definitions are referred to
+      throughout the subsequent discussion.
 
-      \todo[inline]{obazrek: instantiation, discovery, monitoring}
+      \begin{table}[H]
+        \centering
+
+        \begin{tabularx}{\textwidth}{|l|X|}
+
+          \hline
+          \multicolumn{1}{|c|}{Term}     & \multicolumn{1}{c|}{Definition}                                            \\
+          \hline \hline
+          Virtual topology               & Computer network topology built using virtualized links, \gls{acr:nic}s,
+                                           switches, appliances, etc. together with \gls{acr:qos} policies defined    \\
+          \hline
+          Virtual topology model         & Abstract, implementation-independent description of a virtual topology     \\
+          \hline
+          Host machine                   & Physical or virtual machine with an operating system capable of hosting
+                                           a virtual topology                                                         \\
+          \hline
+          Underlying network environment & A group of host machines connected with \gls{acr:lan}                      \\
+          \hline
+          Instantiation                  & The process of transforming virtual topology model to actual topology
+                                           deployed on host machines                                                  \\
+          \hline
+          Discovery                      & Automatic process of examining existing virtual topology and recreating
+                                           virtual topology model                                                     \\
+          \hline
+          Monitoring                     & Accessing historical information about topology operation (e.g. bandwidth
+                                           consumption)                                                               \\
+          \hline
+        \end{tabularx}
+        
+        \caption{Important problem domain terms and their definitions}
+        \label{tab:req:def}
+      \end{table}
+
+      Figure \ref{fig:req:overview} presents an overview interoperation between objects and processes defined. The
+      monitoring functionality provided is required to operate on the virtual topology model rather that the topology
+      itself.
+
+      \begin{figure}[H]
+        \centering
+        \includegraphics[width=.7\textwidth]{img/req/overview.pdf}
+
+        \caption{Important high-level objects and processes}
+        \label{fig:req:overview}
+      \end{figure}
 
       \todo[inline]{podejscie ogolne i ograniczenia, jakie my przyjmujemy}
 
