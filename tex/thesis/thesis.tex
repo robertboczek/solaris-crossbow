@@ -194,17 +194,6 @@
   \listoffigures
 
   \newpage
-	\vspace*{2in}
-
-  % TODO  v przeniesc do wstepu
-
-	\begin{center}
-   	\textit{Thesis work contribution: \\
-            Chapters written together (\ref{chap:bck}, \ref{chap:sol}, \ref{chap:sum}), \\
-            Chapters written by Dawid (\ref{chap:arch}, \ref{chap:cs}), \\
-            Chapters written by Robert (\ref{chap:intro}, \ref{chap:req}, \ref{chap:impl}), \\
-            Implementation work performed together.}
-  	\end{center}
 
 
   \chapter{Introduction}
@@ -250,32 +239,69 @@
       The remaining part of this paper is divided into seven chapters, each containing a description and discussion of
       particular stage of the system construction process.
 
-      Chapter \ref{chap:bck} provides background information about network and resource virtualization, \gls{acr:qos}
-      together with description of existing solutions in these areas. Chapter \ref{chap:req} is a chapter concerning
-      about essential functionalities accompanied with non-functional requirements. Subsequent chapter \ref{chap:sol}
-      presents Solaris OS features with special attention paid to its new functionality: \textit{The Crossbow}. Chapters
-      \ref{chap:arch} \todo[inline]{rozdzielic} and \ref{chap:impl} introduce \gls{acr:cm4j} system architectural and
-      implementation details, respectively. Part of thesis in which implemented system work and usage is described is
-      \ref{chap:cs}. In order to present all implemented aspects and functionalities of \gls{acr:cm4j} system a scenario
-      with multimedia streaming server, \gls{acr:vod} and end user differentiation was prepared. Last chapter
-      \ref{chap:sum} summarizes research performed in the field of virtualization. In that section not only achieved
-      goals are described, but also unachieved objectives are highlighted. Possible improvements and new functionalities
-      that might be added are also mentioned in this part. 
+      Chapter \ref{chap:bck} provides domain information about resource and network virtualization and supplying
+      \gls{acr:qos} guarantees for \gls{acr:ip} networks. Major applications of virtualization techniques are described
+      together with an overview of technologies in common use.
 
-      \todo[inline]{wiecej o kazdym rozdziale}
+      Chapter \ref{chap:req} introduces crucial definitions of objects and processes discussed throughout the paper.
+      Based on these definitions and constraints imposed, functional requirements and qualities of the system are
+      identified and presented.
 
+      An overview of Solaris OS is presented in chapter \ref{chap:sol}. Special attention is paid to virtualizations
+      mechanisms present in the environment and ways to manage resource consumption policies. Crossbow --- network
+      virtualization subsystem --- is then described thoroughly.
+
+      Suggested architecture of the system is introduced in chapter \ref{chap:arch}. The architecture is analyzed with
+      respect to its two main layers --- instumentation and infrastructure --- designed to provide different levels of
+      abstraction and fulfill the requirements of the system.
+
+      Chapter \ref{chap:impl} discusses implementation details of the system. It also lists problems encountered while
+      implementing the system together with chosen solutions. Integration with \gls{acr:jims} is described and system
+      verification process is summarized.
+
+      The scenario that was designed and executed to validate the operation of implemented system is examined in chapter
+      \ref{chap:cs}. The case study, inspired by multimedia systems, allows to verify that most of functionalities of the
+      system are implemented properly.
+
+      Chapter \ref{chap:sum} summarizes research performed in the field of network virtualization. Achieved goals are
+      described together with possible directions of further improvements and functionalities that may be welcomed.
+      Finally, objectives that were not completed are listed.
+      
 
     \section{Individual contributions}
+
+      The thesis is a result of joint effort of the authors. However, there are areas where particular author
+      contributed majority of the content. The division is listed in table \ref{tab:intro:contrib}.
+
+      \newcommand{\compref}[1]{\ref{#1} \nameref{#1}}
 
       \begin{table}[h]
         \centering
 
         \begin{tabular}{|l|l|}
           \hline
-          Chapter & Author \\
+          \multicolumn{1}{|c|}{Chapter} & \multicolumn{1}{c|}{Author} \\
           \hline \hline
+          \compref{chap:intro}          & Robert Boczek                   \\
+          \hline
+          \compref{chap:bck}            & Robert Boczek, Dawid Ciepliński \\
+          \hline
+          \compref{chap:req}            & Robert Boczek                   \\
+          \hline
+          \compref{chap:sol}            & Robert Boczek, Dawid Ciepliński \\
+          \hline
+          \compref{chap:arch}           & Dawid Ciepliński                \\
+          \hline
+          \compref{chap:impl}           & Robert Boczek                   \\
+          \hline
+          \compref{chap:cs}             & Dawid Ciepliński                \\
+          \hline
+          \compref{chap:sum}            & Robert Boczek, Dawid Ciepliński \\
+          \hline
         \end{tabular}
-      
+
+        \caption{Individual contributions}
+        \label{tab:intro:contrib}
       \end{table}
 
 
