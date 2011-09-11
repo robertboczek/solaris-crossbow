@@ -205,17 +205,17 @@
     by controlling delay, delay variation (jitter), bandwidth and packet loss parameters is a deeply hidden secret of most
     successful end-to-end business applications.
     
-    Technologies like Ethernet did not foresee \todo[inline]{raczej nie byly zaprojektowane; chyba, ze damy zrodlo} the future
-    necessity of providing \gls{acr:qos} therefore implementing \gls{acr:qos} solutions over the Internet is such a
-    demanding issue. Incomplete resource reservation provided by most common operating systems induced further research
-    in the field of resource reservation and isolation. 
+    Many common networking standards (like Ethernet) did not foresee the future necessity of providing \gls{acr:qos}
+    therefore implementing \gls{acr:qos} solutions over the Internet or even \gls{acr:lan} is such a demanding issue.
+    Incomplete resource reservation provided by most common operating systems induced further research in the field of
+    resource reservation and isolation. 
 
     % http://www.cisco.com/en/US/products/ps6558/products\_ios\_technology\_home.html
 
-    The increasing popularity of virtualization, isolation and resource reservation in contemporary systems encourages
-    further research.
-
-    \todo[inline]{napisac, gdzie wirtualizacja ma zastosowanie, oprocz grid i cloud}
+    The popularity of virtualization, environment isolation and resource reservation is increasing. Virtualization
+    techniques are used heavily to partition server resources, create test bed environments for simulations and
+    experiments and also as one of the components in \gls{acr:soa}. Moreover, grid and cloud computing models also
+    leverage virtualized environments. All the applications encourage further research in the field.
 
 
     \section{Thesis objective}
@@ -251,9 +251,9 @@
       mechanisms present in the environment and ways to manage resource consumption policies. Crossbow --- network
       virtualization subsystem --- is then described thoroughly.
 
-      Suggested architecture of the system is introduced in chapter \ref{chap:arch}. The architecture is analyzed with
-      respect to its two main layers --- instumentation and infrastructure --- designed to provide different levels of
-      abstraction and fulfill the requirements of the system.
+      Proposed architecture of the system, named \gls{acr:cm4j}, is introduced in chapter \ref{chap:arch}. The
+      architecture is analyzed with respect to its two main layers --- instumentation and infrastructure --- designed to
+      provide different levels of abstraction and fulfill the requirements of the system.
 
       Chapter \ref{chap:impl} discusses implementation details of the system. It also lists problems encountered while
       implementing the system together with chosen solutions. Integration with \gls{acr:jims} is described and system
@@ -333,29 +333,15 @@
     section discusses Differentiated~Services and Integrated~Services --- the solutions enabling \gls{acr:qos} in
     best-effort \gls{acr:ip} networks.
 
-    % Constantly growing demand for bandwidth in networks (especially \gls{acr:vod}, \gls{acr:voip}, RT) raises the
-    % question: 'Whether it is better to increase available bandwidth of networks or to build intelligent systems managing
-    % users traffic?'. As high bandwidth is just not enough because there are other equally important transmission
-    % parameters (delay, jitter, package missing	tolerance) there seems to be just one correct answer for this question.
-    % Creating such systems is not an easy task and many groups such as \gls{acr:ietf} are working on this problem.
-    % Currently there are three existing models performing \gls{acr:qos} in the \gls{acr:ip} network:
-
-    % \begin{enumerate}
-    %   \item best effort,
-    %   \item Intserv,
-    %   \item Diffserv.
-    % \end{enumerate}
-
-    % These models are discussed in more details in the following section.
-
 
     \section{Resource virtualization}
     \label{sec:ctx:virt}
 
-      Resource virtualization is \todo[inline]{dajmy tu bardziej ogolna definicje} in principle separation application from
-      physical hardware on which it runs. It also allows dividing single physical hardware to multiple virtualized
-      logical resources, thereby running the software under virtualized resources lowers cost, improves efficiency,
-      introduces isolation and better configurability. 
+      Virtualization is a technique that \textit{enables the sharing and/or aggregation of physical resources, such as
+      operating systems, software and IT services, in a way that hides the technical detail from the end user and
+      reduces the per unit service cost} \cite{turban}. There is a wide variety of resources that can be virtualized ---
+      whole computer platforms, software, memory, storage, data and network. In-depth description of platform (hardware)
+      and network virtualization is provided in the section.
 
 
       \subsection{The need for virtualization}
@@ -366,57 +352,50 @@
 
         It was not until 1960s that virtualization was first used for better hardware utilization of some large,
         mainframe hardware. Today, over 50 years later when computers got more common than ever problems of rigidity and
-        underutilization are still present. Nowadays companies like VMWare invest more and more funds in research as
-        they foresee that virtualization will become even more popular and common in the future \cite{virtualization}.
+        underutilization are still present. Numerous companies nowadays invest more and more funds in research as they
+        foresee that virtualization will become even more popular and common in the future \cite{virtualization}.
 
 
-      %\subsection{Resources that can be virtualized} 
+      \subsection{Common hardware virtualization techniques}
 
-      \subsection{Common approaches}
-
-        \todo[inline]{rozszerzyc - wiecej tekstu}
-
-        In terms of approaches to resource virtualization, in principle there are three existing acknowledged
-        approaches:
-
-        \begin{itemize}
-          \item{Full virtualization,}
-          \item{Partial virtualization,}
-          \item{OS-level virtualization.}
-        \end{itemize}
+        There are multiple approaches to hardware virtualization (creating abstract computing platform \cite{turban} and
+        using it to run software). The main three are full virtualization, paravirtualization and OS-level
+        virtualization. The main difference between these approaches is the level of flexibility provided and imposed
+        computation overhead.
 
 
       \subsection{Full virtualization}
 
         Full virtualization is a technological approach to virtualization also known as emulation of the underlying raw
-        hardware (native execution). This approach may be implemented with two types of hypervisors. The first one runs
-        directly on hardware, whereas the second one requires another operating system, such as Linux or Windows. There
-        are no restrictions towards operating system being run --- it has to support the underlying hardware \todo[inline]{czy o
-        to chodzilo?}.
-        In terms of running different "guest" \todo[inline]{definicja!} operating systems together no limitations exist.
+        hardware. It allows to run unmodified instances of guest operating system in the virtualized environment. 
 
-        By now, full virtualization approach implementations for x86 such as Virtual PC, VirtualBox exist and are ready
-        to use. \todo[inline]{rozszerzyc ten akapit}
+        Full virtualization offers the flexibility of running any guest operating system but at the same time it imposes
+        the highest overhead \cite{turban}. Full virtualization solutions include Virtual PC, VirtualBox and VMWare
+        software.
 
 
-      \subsection{Partial virtualization}
+      \subsection{Paravirtualization}
 
-        Also called emulation of a non-native system is based on allowing software applications written for different
-        computer hardware architecture to startup. Virtual resource emulate hardware which exists based on detailed
-        specification. Java virtual machine or 'Open firmware'\todo[inline]{definicja i zrodlo do tego}, that allows hardware to be run under any kind of CPU,
-        are the most commonly used and known representatives of this approach to resource virtualization. \todo[inline]{jak sie
-        da, to jasniej o tym, bo jest ciezkie do zrozumienia}
+        Paravirtualization is a technique that tries to avoid calls expensive to execute in a virtualized environments
+        and use special para-\gls{acr:api} instead. The calls to para-\gls{acr:api} are run in non-virtual environment
+        and therefore are more efficient \cite{crosby}.
+
+        Guest operating system has to be modified in order to run in a paravirtualized environment. Original calls have
+        to be replaced with para-\gls{acr:api} ones. This substitution can be done at the kernel or device driver level,
+        or both.
+
+        Paravirtualization provides less flexibility than full virtualization, but at the same time the overhead is
+        lower. Examples of paravirtualization solutions include Xen and Microsoft Hyper-V.
 
 
       \subsection{OS-level virtualization}
 
         Operating System-level virtualization is a technology consisting of virtualizing servers on an operating system
-        layer.  Multiple guest operating systems may be running under the same host system, but these guest operating
-        systems must be the same,
-        although different libraries and distributions are allowed\todo[inline]{uproscic to zlozone zdanie}. OS-level virtualization may be often presented as
-        slicing single OS to small partitions (sometimes called virtual environments (VE), virtual private servers (VPS)
-        or zones). From the end-user perspective these virtualization is invisible (user receives guest OS as real
-        server).
+        layer. Multiple guest operating systems may be running under the same host system, but these guest operating
+        systems must be the same, although different libraries and distributions are allowed\todo[inline]{uproscic to
+        zlozone zdanie}. OS-level virtualization may be often presented as slicing single OS to small partitions
+        (sometimes called virtual environments (VE), virtual private servers (VPS) or zones). From the end-user
+        perspective these virtualization is invisible (user receives guest OS as real server).
 
         \todo[inline]{przyklady!}
 
@@ -871,9 +850,9 @@
   \label{chap:req}
 
     The chapter presents initial phase of the system development --- requirements analysis. The established goal is to
-    design architecture and system implementing it that supports creation of any requested, fully isolated virtual
-    network topology with ability to monitor its operation. This objective implicates the necessity of creating
-    requirements specification in order to avoid ambiguities and skipping essential services.
+    design architecture and implement a system that supports creation of any requested, fully isolated virtual network
+    topology with ability to monitor its operation. This objective implicates the necessity of creating requirements
+    specification in order to avoid ambiguities and skipping essential services.
 
     Section \ref{sec:req:spec} introduces objects and processes discussed throughout the thesis. Formal definition is
     provided for each term. Also, high-level view of the domain is depicted to give better understanding of the subject.
@@ -1961,9 +1940,8 @@
         logical model and underlying resources.
 
         \begin{figure}[H]
-          \begin{center}
-            \includegraphics[width=\textwidth]{img/architecture/scope.pdf}
-          \end{center}
+          \centering
+          \includegraphics[angle=90, height=.95\textheight]{img/architecture/scope.pdf}
 
           \caption{Main stages of operation}
           \label{fig:arch:hl}
