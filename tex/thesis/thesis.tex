@@ -52,6 +52,7 @@
 \usepackage{tikz}
 % \usepackage{pgf-umlsd}
 \usepackage{tikz-uml}
+\usepackage{todonotes}
 \usepackage[acronym]{glossaries}
 \usetikzlibrary{positioning,chains,fit,scopes}
 
@@ -135,6 +136,8 @@
     \newpage
   }
 
+  \listoftodos\newpage
+
   \makethesistitle{Akademia Górniczo-Hutnicza \\ \vspace{1ex} im. Stanisława Staszica}
                   {Wydział Elektrotechniki, Automatyki, Informatyki i Elektroniki}
                   {Katedra Informatyki}
@@ -207,23 +210,26 @@
   \chapter{Introduction}
   \label{chap:intro}
 
-    In today's world every successful organisation is based on properly designed communication network. These networks
-    must deal with delay-sensitive data such as video images, real-time voice or mission-critical data. Therefore must
-    provide safe, predictable and, very often, guaranteed services. Accomplishing the required \gls{acr:qos} by
-    controlling the delay, delay variation (jitter), bandwidth and packet loss parameters is deeply hidden secret of
-    most successful end-to-end business applications. Technologies like Ethernet did not foresee future necessity of
-    providing \gls{acr:qos} therefore implementing \gls{acr:qos} solutions over the Internet is such a demanding issue.
-    Incomplete resource reservation provided by most common OS induced further research in field of resource reservation
-    and isolation. 
+    In today's world every successful organisation is based on properly designed communication networks. These networks
+    must deal with delay-sensitive data such as real-time audio and video or other mission-critical data. Therefore,
+    safe, predictable and, very often, guaranteed services have to be provided. Accomplishing the required \gls{acr:qos}
+    by controlling delay, delay variation (jitter), bandwidth and packet loss parameters is deeply hidden secret of most
+    successful end-to-end business applications.
+    
+    Technologies like Ethernet did not foresee \todo[inline]{raczej nie byly zaprojektowane; chyba, ze damy zrodlo} future
+    necessity of providing \gls{acr:qos} therefore implementing \gls{acr:qos} solutions over the Internet is such a
+    demanding issue. Incomplete resource reservation provided by most common operating systems induced further research
+    in field of resource reservation and isolation. 
 
     % http://www.cisco.com/en/US/products/ps6558/products\_ios\_technology\_home.html
 
-    Increasing popularity of virtualization, isolation and resource reservation in contemporary systems encourages to
-    further research. Computing models like grid and cloud computing are becoming a standard and it is definitely worth
-    knowing at least the basic concepts.
+    Increasing popularity of virtualization, isolation and resource reservation in contemporary systems encourages
+    further research.
+
+    \todo[inline]{napisac, gdzie wirtualizacja ma zastosowanie, oprocz grid i cloud}
 
 
-    \section{Thesis statement}
+    \section{Thesis objective}
 
       Having all the above facts taken into account the following thesis statement was proposed: \textit{There exists a
       component-based architecture which enables construction of a system that would facilitate working with fully
@@ -232,25 +238,45 @@
       Due to substantial lack in similar products available on market research in this area was planned. The main system
       responsibilities would be providing fast and efficient manner of creating any requested, virtualized network
       structure with virtualized resources, network elements and \gls{acr:qos} guarantees.  Solaris operating system is
-      already a respectable solution in terms os resource virtualization. Recently supported by network virtualization
+      already a respectable solution in terms of resource virtualization. Recently supported by network virtualization
       mechanism contained in the Crossbow project, Solaris OS seems to be suitable environment to proceed further
-      research. Detailed discussion about architectural and implementation aspects of proposed system were provided in
-      separate chapters further in the thesis.
+      research.
+
+      The thesis objective is to design the architecture, implement it and verify using a series of tests.
 
 
     \section{Organization of the thesis}
 
-      The thesis consists of six chapters apart from this one. Chapter \ref{chap:bck} provides background information
-      about network and resource virtualization, \gls{acr:qos} together with description of existing solutions in these
-      areas.  Chapter \ref{chap:req} is a chapter concerning about essential functionalities accompanied with
-      non-functional requirements. Subsequent chapter \ref{chap:sol} presents Solaris OS features with special attention
-      paid to its new functionality: \textit{The Crossbow}. Chapters \ref{chap:arch} and \ref{chap:impl} introduce
-      \gls{acr:cm4j} system architectural and implementation details, respectively.  Part of thesis in which implemented
-      system work and usage is described is \ref{chap:cs}. In order to present all implemented aspects and
-      functionalities of \gls{acr:cm4j} system a scenario with multimedia streaming server, \gls{acr:vod} and end user
-      differentiation was prepared. Last chapter \ref{chap:sum} summarizes research performed in the field of
-      virtualization. In that section not only achieved goals are described, but also unachieved objectives are
-      highlighted. Possible improvements and new functionalities that might be added are also mentioned in this part. 
+      The remaining part of this paper is divided into seven chapters, each containing a description and discussion of
+      particular stage of the system construction process.
+
+      Chapter \ref{chap:bck} provides background information about network and resource virtualization, \gls{acr:qos}
+      together with description of existing solutions in these areas. Chapter \ref{chap:req} is a chapter concerning
+      about essential functionalities accompanied with non-functional requirements. Subsequent chapter \ref{chap:sol}
+      presents Solaris OS features with special attention paid to its new functionality: \textit{The Crossbow}. Chapters
+      \ref{chap:arch} \todo[inline]{rozdzielic} and \ref{chap:impl} introduce \gls{acr:cm4j} system architectural and
+      implementation details, respectively. Part of thesis in which implemented system work and usage is described is
+      \ref{chap:cs}. In order to present all implemented aspects and functionalities of \gls{acr:cm4j} system a scenario
+      with multimedia streaming server, \gls{acr:vod} and end user differentiation was prepared. Last chapter
+      \ref{chap:sum} summarizes research performed in the field of virtualization. In that section not only achieved
+      goals are described, but also unachieved objectives are highlighted. Possible improvements and new functionalities
+      that might be added are also mentioned in this part. 
+
+      \todo[inline]{wiecej o kazdym rozdziale}
+
+
+    \section{Individual contributions}
+
+      \begin{table}[h]
+        \centering
+
+        \begin{tabular}{|l|l|}
+          \hline
+          Chapter & Author \\
+          \hline \hline
+        \end{tabular}
+      
+      \end{table}
 
 
   \chapter{Technological background}
@@ -300,9 +326,10 @@
     \section{Resource virtualization}
     \label{sec:ctx:virt}
 
-      Resource virtualization is in principle separation application from physical hardware on which it runs. It also
-      allows dividing single physical hardware to multiple virtualized logical resources, thereby running the software
-      under virtualized resources lowers cost, improves efficiency, introduces isolation and better configurability. 
+      Resource virtualization is \todo[inline]{dajmy tu bardziej ogolna definicje} in principle separation application from
+      physical hardware on which it runs. It also allows dividing single physical hardware to multiple virtualized
+      logical resources, thereby running the software under virtualized resources lowers cost, improves efficiency,
+      introduces isolation and better configurability. 
 
 
       \subsection{The need for virtualization}
@@ -314,13 +341,14 @@
         It was not until 1960s that virtualization was first used for better hardware utilization of some large,
         mainframe hardware. Today, over 50 years later when computers got more common than ever problems of rigidity and
         underutilization are still present. Nowadays companies like VMWare invest more and more funds in research as
-        they foresee that virtualization will definitely become even more popular and common in the future
-        \cite{virtualization}.
+        they foresee that virtualization will become even more popular and common in the future \cite{virtualization}.
 
 
       %\subsection{Resources that can be virtualized} 
 
       \subsection{Common approaches}
+
+        \todo[inline]{rozszerzyc - wiecej tekstu}
 
         In terms of approaches to resource virtualization, in principle there are three existing acknowledged
         approaches:
@@ -334,33 +362,37 @@
 
       \subsection{Full virtualization}
 
-        Full virtualization is a technological approach to virtualization also know as emulation of the underlying raw
+        Full virtualization is a technological approach to virtualization also known as emulation of the underlying raw
         hardware (native execution). This approach may be implemented with two types of hypervisors. The first one runs
         directly on hardware, whereas the second one requires another operating system, such as Linux or Windows. There
-        are no restrictions towards operating system being run. It just has to be supported by the underlying hardware.
-        In terms of running different "guest" operating systems together no limitations exist.
+        are no restrictions towards operating system being run --- it has to support the underlying hardware \todo[inline]{czy o
+        to chodzilo?}.
+        In terms of running different "guest" \todo[inline]{definicja!} operating systems together no limitations exist.
 
         By now, full virtualization approach implementations for x86 such as Virtual PC, VirtualBox exist and are ready
-        to use. (source: http://en.wikipedia.org/wiki/Virtual\_machine)
+        to use. \todo[inline]{rozszerzyc ten akapit}
 
 
       \subsection{Partial virtualization}
 
         Also called emulation of a non-native system is based on allowing software applications written for different
         computer hardware architecture to startup. Virtual resource emulate hardware which exists based on detailed
-        specification.  Java virtual machine or 'Open firmware' ,that allows hardware to be run under any kind of CPU,
-        are the most commonly used and known representatives of this approach to resource virtualization. (source:
-        http://en.wikipedia.org/wiki/Virtual\_machine)
+        specification. Java virtual machine or 'Open firmware'\todo[inline]{definicja i zrodlo do tego}, that allows hardware to be run under any kind of CPU,
+        are the most commonly used and known representatives of this approach to resource virtualization. \todo[inline]{jak sie
+        da, to jasniej o tym, bo jest ciezkie do zrozumienia}
 
 
       \subsection{OS-level virtualization}
 
         Operating System-level virtualization is a technology consisting of virtualizing servers on an operating system
-        layer.  Multiple guest OS may be running under the same OS, but unfortunately these guest OS must be the same,
-        although different libraries and distributions are allowed. OS-level virtualization may be often presented as
+        layer.  Multiple guest operating systems may be running under the same host system, but these guest operating
+        systems must be the same,
+        although different libraries and distributions are allowed\todo[inline]{uproscic to zlozone zdanie}. OS-level virtualization may be often presented as
         slicing single OS to small partitions (sometimes called virtual environments (VE), virtual private servers (VPS)
         or zones). From the end-user perspective these virtualization is invisible (user receives guest OS as real
-        server) (source: http://en.wikipedia.org/wiki/Virtual\_machine)
+        server).
+
+        \todo[inline]{przyklady!}
 
 
     \section{Multilevel network virtualization}
@@ -812,9 +844,7 @@
   \chapter{Requirements analysis}
   \label{chap:req}
 
-    % TODO  ___definicja___ glownych procesow! instancjonowanie, discovery, monitoring --- co to robi, na wysokim
-    % poziomie abstrakcji, bez szczegolow
-
+    \todo[inline]{przeredagowac ten akapit - bez odniesien do innych rozdzialow}
     This chapter focuses mainly on earlier conducted requirements analysis and extracted conclusions. Established goal
     was to create system supporting creation of any requested, fully isolated network structure with virtual network
     elements and demanded resources recovered from selected (previously prepared) repository and fully monitored network
@@ -832,11 +862,22 @@
     of this chapter.
 
 
+    \section{Domain specification}
+
+      \todo[inline]{definicje (abstrakcyjne): topology, instantiation, discovery, monitoring, host machine, underlying environment}
+
+      \todo[inline]{obazrek: instantiation, discovery, monitoring}
+
+      \todo[inline]{podejscie ogolne i ograniczenia, jakie my przyjmujemy}
+
+
     \section{Functional requirements}
     \label{sec:req:func}
 
-      All services of the system have been divided into three groups: instantiation, discovery and monitoring. These
-      division have been performed based on the quality of the functionality. 
+      All services of the system are divided into three groups: instantiation, discovery and monitoring. This
+      division is based on the quality of the functionality \todo[inline]{co to znaczy?}. 
+
+      \todo[inline]{diagram: review}
 
       \begin{figure}[H]
           \centering
@@ -878,6 +919,11 @@
         \end{figure}
 
 
+      \subsection{Network design and adjustment}
+
+        \todo[inline]{tutaj o skladaniu sieci w gui - wiekszosc z tego, co jest w Instantiation}
+
+
       \subsection{Instantiation}
       \label{sec:req:func:inst}
 
@@ -885,11 +931,11 @@
         be:
 
         \begin{itemize}
-          \item Creation of any requested virtual network element,
-          \item Creation of any requested resource from repository,
+          \item Creation of any requested virtual network element \todo[inline]{jakie network elements obslugiwane?},
+          \item Creation of any requested resource \todo[inline]{czym jest resource? definicja} from repository,
           \item Assignation any number of links to resource,
           \item Resource routing table modification,
-          \item Defining \gls{acr:qos} limits to links and flows (limits traffic assigned to specific network traffic type),
+          \item Defining \gls{acr:qos} limits for links and flows \todo[inline]{zdefiniowac flow} (limits traffic assigned to specific network traffic type),
           \item Modification or deletion of each property and element previously mentioned.
         \end{itemize}
 
@@ -909,6 +955,8 @@
       \subsection{Monitoring}
       \label{sec:req:func:acc}
 
+        \todo[inline]{tutaj wiecej}
+
         In terms of monitoring, following functionalities for properties and elements should be provided:
 
         \begin{itemize}
@@ -923,7 +971,8 @@
 
       % TODO model obiektowy jak najbardziej niezalezny od systemu pod spodem
 
-      Non-functional requirements also called \textbf{qualities} of a system could be distinguished between the
+      \todo[inline]{styl}
+      Non-functional requirements also called qualities of a system could be distinguished between the
       executing system and the work products (created during system development). Executing system are related to user
       goals and are referred as run-time qualities, whereas work products are driven by the development organization’s
       goals and referred as development-time qualities \cite{nonfunctional}.
@@ -934,10 +983,9 @@
 
       \begin{itemize}
         \item usability --- usage should be intuitive, system should be efficient,
-        \item operational scalability --- system should support additional users or sites,
         \item configurability --- configurable properties should be easy to set,
-        \item adaptable --- ability to adapt to changing conditions (adding removing new nodes),
-        \item fault tolerance --- system should be resistant to minor errors.
+        \item adaptable --- ability to adapt to changing conditions (adding removing new nodes \todo[inline]{jakie node-y?}),
+        \item fault tolerance --- system should be resistant to minor errors \todo[inline]{bardziej szczegolowo}.
       \end{itemize}
 
       \medskip
@@ -947,10 +995,14 @@
       \begin{itemize}
         \item independent and reusable object model --- created model should be general without system specific details,
         \item evolvability --- support for new functionalities or adjustment to new technologies,
-        \item extensibility --- ability to add new earlier unspecified functionalities,
-        \item composability --- system should be created in form of composable components,
+        \item extensibility --- ability to add new earlier unspecified functionalities \todo[inline]{open/closed principle in
+                                design},
+        \item composability --- system should be created in form of composable components \todo[inline]{coupling, cohesion},
         \item reusability --- ability to (re)use in future systems.
       \end{itemize}
+
+      \todo[inline]{multiple APIs depending on abstraction level required}
+      \todo[inline]{embeddable - JIMS integration}
 
 
     \section{Underlying environment characteristics}
@@ -990,6 +1042,7 @@
 
     \section*{Summary}
 
+      \todo[inline]{rozszerzyc}
       This chapter described all the requirements, both functional and non-functional, which newly implemented
       \gls{acr:cm4j} is expected to fulfill. Additionally section \ref{sec:req:env} presented expectations towards
       underlying environment. In order to meet all the aforementioned constraints the system had to be implemented under
@@ -2395,12 +2448,14 @@
   \chapter{The CM4J implementation}
   \label{chap:impl}
 
+    \todo[inline]{integracja z JIMSem jest za wczesnie - wg mnie powinno byc przed albo w Crossbow infrastructure project}
+
     This chapter focuses mainly on implementation details, especially on most interesting and complex problems
     encountered during the \gls{acr:cm4j} system implementation process  like integrating with \gls{acr:jims}, accessing
     low level functions, providing multiple programming models etc.
 
-    Section \ref{sec:impl:env} informs about implementation environment aspects like requested operating system,
-    libraries presence or necessary programs to be build and installed. Issues like created components facilitating
+    Section \ref{sec:impl:env} informs about \todo[inline]{inne wyrazenie} implementation environment aspects like requested operating system,
+    libraries presence or necessary programs to be built and installed. Issues like created components facilitating
     crossbow usage (\ref{sec:impl:comp}), low level function access methods (\ref{sec:impl:low}), prepared domain model
     transformation (\ref{sec:impl:model}) and adopted approach to data persistence (\ref{sec:impl:persist}) are mainly
     discussed in this section.
@@ -2413,10 +2468,14 @@
     \section{Implementation environment}
     \label{sec:impl:env}
 
+      \todo[inline]{crossbow-mbean: Java, JMX, C}
+      \todo[inline]{crossbow-gui: Java, SWT, Swing}
+      \todo[inline]{wykopac JIMSa dalej}
+
       \gls{acr:jims} Extensions for Resource Monitoring and Management of Solaris 10 provides general architecture for
       monitoring and management applications written in Java.
 
-      \gls{acr:jims} architecture is generally based on \gls{acr:jmx} --- technology for distributed resource
+      \gls{acr:jims} architecture is based on \gls{acr:jmx} --- technology for distributed resource
       management.  These managed resources in \gls{acr:jmx} are represented by MBeans which are simple Java objects
       registered at MBean Server under specific ObjectName \cite{jims}.
     
@@ -2433,14 +2492,13 @@
       \gls{acr:jmx} provides also services such as:
 
       \begin{itemize}
-        \item Notifications,
-        \item MLet (downloading dynamic modules).
+        \item Notifications \todo[inline]{rozwinac, co to},
+        \item MLet (downloading dynamic modules) \todo[inline]{rozwinac}.
       \end{itemize}
 	
-      \gls{acr:jims} supports monitoring and management under both Linux and Solaris platforms. Due to \gls{acr:jims}
-      features such as: easy maintenance (automatic modules downloading), extensibility (possibility of adding
-      additional modules) integrating with \gls{acr:jims} newly developed module (jims-crossbow) was quite an easy task
-      \cite{jims}.
+      \gls{acr:jims} supports monitoring and management under both Linux and Solaris platforms. Thanks to \gls{acr:jims}
+      features such as easy maintenance (automatic modules downloading) and extensibility (possibility of adding
+      additional modules) the task of integrating \gls{acr:cm4j} with \gls{acr:jims} is straightforward \cite{jims}.
     
       \begin{figure}[H]
         \begin{center}
@@ -2449,21 +2507,22 @@
         \caption{JIMS architecture \cite{jims}}
       \end{figure}
 	 
-      \gls{acr:jims} services(MBeans) enabling creating, reading and changing properties of zones and projects were
-      extensively used in our system during deploying (creating) requested network structure. For more information about
-      \gls{acr:jims} project please refer to the bibliography.	
+      Existing \gls{acr:jims} services enabling creating, reading and changing properties of Solaris zones are
+      extensively used in the system during instantiating requested network structure.
     
       \medskip
 	
       For the purpose of this paper two applications were implemented:
 	
       \begin{itemize}
-        \item \gls{acr:jims} module for crossbow,
-        \item \gls{acr:gui} application.
+        \item Crossbow module for \gls{acr:jims},
+        \item \gls{acr:gui} console.
       \end{itemize}
 	  
 	  \medskip
 	
+      \todo[inline]{ponizsze przynajmniej w osobnej podsekcji albo sekcji}
+
       In case of jims-crossbow module the implementation environment must consist:
 
       \begin{itemize}
@@ -2488,107 +2547,97 @@
 	  
 	  \medskip
 	  
-	  Detailed description of these two applications are provided in two separate sections beneath. 
-	  
+
 	  \section{CM4J}
 		\label{sec:impl:module}
+
+      \todo[inline]{zmienic nazwe}
 		
-      To provide fully functional system allowing all expected functionalities (described in requirement analysis
-      section) new module called ''jims-crossbow'' was implemented. Created module consists three projects:
+      To provide fully functional system allowing all expected functionalities new module called ''jims-crossbow'' was
+      implemented. Created module consists of three projects:
 
-			\begin{itemize}
-				\item{Crossbow model components - performing crossbow like operations (\textbf{jims/jims-crossbow/jims-crossbow-mbean})}
-				\item{Domain model transformation responsible for describing domain with actions 
-					(described in separate section) (\textbf{jims/jims-crossbow/jims-crossbow-model})}
-				\item{Infrastructure project for high-level management (\textbf{jims/jims-crossbow/jims-crossbow-infrastructure})}
-			\end{itemize}
+      \begin{itemize}
+        \item Crossbow model components - performing crossbow like operations (\textbf{jims-crossbow-mbean}),
+        \item Domain model transformation responsible for describing domain with actions (\textbf{jims-crossbow-model}),
+        \item Infrastructure project for high-level management (\textbf{jims-crossbow-infrastructure}).
+      \end{itemize}
 
-		      \begin{figure}[H]
-        			\begin{center}
-			          \includegraphics[width=1.26\textwidth, angle=90]{img/impl/jims_and_cm4j.png}
-			\end{center}
-		          \caption{The Crossbow module integrated with JIMS \cite{jims}}
-		      \end{figure}
+      \begin{figure}[H]
+        % TODO przerysowac, zwezic
+        \centering
+        \includegraphics[width=1.26\textwidth, angle=90]{img/impl/jims_and_cm4j.png}
+
+        \caption{The Crossbow module integrated with JIMS \cite{jims}}
+      \end{figure}
 		
-		\subsection{Crossbow components implementation details}
-			\label{sec:impl:comp}
-	
-		In terms of crossbow components, two kinds of them have been distinguished:
 
-		\begin{itemize}
-			\item Managers,
-			\item Entities.
-		\end{itemize}
+      \subsection{Crossbow components implementation details}
+      \label{sec:impl:comp}
 
-		Managers basically provide operations for entity discovery and general management. The following managers have
-		been created:
+        \begin{itemize}
+          \item Plumb / unplumb operation, 
+          \item Setting interface up or down operation,
+          \item Reading and updating \gls{acr:mac}, \gls{acr:ip} address,
+          \item Getting parent link name operation,
+          \item Checking whether \gls{acr:vnic} was created under Etherstub or \gls{acr:nic},
+          \item Reading / adding properties such as bandwidth limit, \gls{acr:vnic} packets priority.
+        \end{itemize}
 
-		\begin{itemize}
-			\item VNicManager,
-			\item EtherstubManager,
-			\item FlowManager.
-		\end{itemize}
-
-    Another component type is entity which is basically equivalent of single crossbow entity like \gls{acr:vnic},
-    Etherstub. These entities appear as MBeans and are registered at MBean servers and may be distinguished by name. Each bean contains basic information
-    about entity like name, assigned properties and other attributes depending on their type. For example VNic entity provides following operations and attributes:
-
-	\begin{itemize}
-		\item Plumb / unplumb opeartion, 
-		\item Setting interface up or down operation,
-		\item Reading and updating MAC, ip address,
-		\item Getting parent link name operation,
-		\item Checking whether \gls{acr:vnic} was created under Etherstub or \gls{acr:nic},
-		\item Reading / adding properties such as bandwidth limit,  \gls{acr:vnic} packets priority.
-	\end{itemize}
-
-	As already mentioned each entities operation's are adjusted to their needs. Three figures below depicts in detail each manager and their corresponding entity.
+        As already mentioned each entities operation's are adjusted to their needs. Three figures below \todo[inline]{reference
+        them, describe} depict in detail each manager and its corresponding entity.
 
 
         \begin{figure}[H]
-          \begin{center}
-            \includegraphics[width=1.2\textwidth, angle=90]{img/impl/etherstub.png}
-          \end{center}
+          \centering
+          % TODO tikz
+          \includegraphics[width=1.2\textwidth, angle=90]{img/impl/etherstub.png}
+
           \caption{Etherstub class diagram}
         \end{figure}        
 
         \begin{figure}[H]
-          \begin{center}
-            \includegraphics[width=1.2\textwidth, angle=90]{img/impl/link.png}
-          \end{center}
-          \caption{Link (VNic, Nic) class diagram}
+          \centering
+          %TODO tikz
+          \includegraphics[width=1.2\textwidth, angle=90]{img/impl/link.png}
+
+          \caption{Link (VNIC, NIC) class diagram}
         \end{figure}        
 
         \begin{figure}[H]
-          \begin{center}
-            \includegraphics[width=1.2\textwidth, angle=90]{img/impl/flow.png}
-          \end{center}
+          \centering
+          % TODO tikz
+          \includegraphics[width=1.2\textwidth, angle=90]{img/impl/flow.png}
+
           \caption{Flow class diagram}
         \end{figure}        
 
-		Due to the fact that managers and entities have been separated and that each entity is an individual MBean these
-		entities can be accessed not only from java code but also be viewed and modified from jconsole.
+        Thanks to the fact that managers and entities have been separated and that each entity is an individual MBean
+        these entities can be accessed not only from Java code but also be viewed and modified from JConsole.
 
-		\begin{figure}[H]
-			\begin{center}
-			\includegraphics[width=0.9\textwidth]{img/impl/crossbowLibsDiagram.pdf}
-			\end{center}
-			\caption{Jims-crossbow components, shared libraries and crossbow native libraries relationship}
-		\end{figure} 
+        \todo[inline]{strzalki na \ref{fig:impl:jc-components} w dobra strone?}
+
+        \begin{figure}[H]
+          \centering
+          \includegraphics[width=0.9\textwidth]{img/impl/crossbowLibsDiagram.pdf}
+
+          \caption{Jims-crossbow components, shared libraries and crossbow native libraries relationship}
+          \label{fig:impl:jc-components}
+        \end{figure} 
 		
+
       \subsection{Low-level functions access}
       \label{sec:impl:low}
 
-        \gls{acr:jims} layered architecture implicated the demand for an approach towards accessing low-level functions.
+        \gls{acr:jims} layered architecture implicated \todo[inline]{to nie wynikalo z designu JIMSa} the demand for an approach towards accessing low-level functions.
         In developed application these approaches were adjusted to existing conditions so that for accessing functions
-        from shared libraries \gls{acr:jna} was used and for doing more complex operations on low-level scripts were
-        written and Java ProcessBuilder invoked. Created jims-crossbow module contains shared library allowing
+        from shared libraries \gls{acr:jna} was used and for doing more complex low-level operations shell scripts were
+        written. Created jims-crossbow module contains shared library allowing
         \gls{acr:crud} operations which subsequently are being accessed by \gls{acr:jna}, whereas most of \gls{acr:jims}
         low-level access was done through running shell scripts. Although running scripts by ProcessBuilder is faster in
-        some cases accessing native libraries through libraries like \gls{acr:jna} or \gls{acr:jni} gives more
+        some cases \todo[inline]{np. kiedy?} accessing native libraries through libraries like \gls{acr:jna} or \gls{acr:jni} gives more
         configurational advantage and does not require shell script writing ability.
 
-        Listing \ref{lst:impl:low:jna} presents abbreviated example of \gls{acr:jna} access to native libraries. The
+        Listing \ref{lst:impl:low:jna} presents reduced example of \gls{acr:jna} access to native libraries. The
         corresponding native code in C language is shown in figure \ref{lst:impl:low:jnac}. \\
 
 
@@ -2606,11 +2655,13 @@
       \subsection{Domain model transformations}
       \label{sec:impl:model}
 
+        % TODO ta podsekcja dalej - za infrastructure project
+
         To allow conversion between network structure (as seen by the user in \gls{acr:gui} console) and underlying
         Crossbow components, a series of transformations is performed by Worker and Supervisor nodes. These
         transformations include simple one-to-one mappings as well as more sophisticated multi-step operations.
         In-depth description of the transformations follows together with a graphical example in figure
-        \ref{fig:impl:transformation}.
+        \ref{fig:impl:transformation} \todo[inline]{narysowac}.
 
         % TODO obrazek!
 
@@ -2695,11 +2746,11 @@
       \subsection{Crossbow infrastructure project}
       \label{sec:impl:infrastructure}
 
-        As already mentioned whole system is based on \gls{acr:jmx} technology and externs existing \gls{acr:jims}
-        project. All that provides separation layer. Operations provided by MBean's may invoked from created
-        \gls{acr:gui}, JConsole or even from own applications by just adapting to existing interfaces and object names. 
+        The whole system is based on \gls{acr:jmx} technology and externs \todo[inline]{?} existing \gls{acr:jims}
+        project. All that provides separation layer. Operations provided by MBeans may invoked from 
+        \gls{acr:gui} console, JConsole or even from own applications by adapting to existing interfaces and object names. 
 
-        Existing high-level MBean are described and discussed the table below:
+        Existing high-level MBean are described and discussed in table \ref{tab:impl:hl-mbean}.
 
         \begin{table}[H]
           \centering
@@ -2722,18 +2773,6 @@
                                                                                       existing projects from working
                                                                                       path                               \\
             \hline
-            FlowManagerMBean          & \textbf{Crossbow:type=FlowManager}          & Provides \gls{acr:crud} operations
-                                                                                      for Flows                          \\
-            \hline
-            EtherstubManagerMBean     & \textbf{Crossbow:type=EtherstubManager}     & Provides \gls{acr:crud} operations
-                                                                                      for etherstubs                     \\
-            \hline
-            VNicManagerMBean          & \textbf{Crossbow:type=VNicManager}          & Provides \gls{acr:crud} operations
-                                                                                      for \gls{acr:vnic}s                \\
-            \hline
-            VlanManagerMBean          & \textbf{Crossbow:type=VlanManager}          & \gls{acr:vlan} creation and
-                                                                                      management                         \\
-            \hline
             StatisticGathererMBean    & \textbf{Crossbow:type=StatisticsGatherer}   & Provides statistics for interface
                                                                                       or flow for specified time period  \\
             \hline
@@ -2743,19 +2782,21 @@
           \end{tabular}
 
           \caption{High-level management MBeans}
+          \label{tab:impl:hl-mbean}
         \end{table}
 			
 		
       \subsection{Data persistence}
       \label{sec:impl:persist}
 
-        Although created system does not provide data persistence in databases or any other formats persistence is
+        Although created system does not provide data persistence in databases or any other formats \todo[inline]{nasza
+        persystencja to jest jakis tam format} persistence is
         provided. Persistence is provided on two levels: first is on \gls{acr:gui} level where user may save created
-        network structure that would be then serialized into file and second on the \gls{acr:jims} nodes. During
+        network structure that is then serialized into file and second on the \gls{acr:jims} nodes. During
         creation, discovery, removing network elements precise naming conventions are preserved. Due to this convention
         whole network is persistent and does not require any additional databases or files. Since generated names are
-        complex manual modification or creation of elements is not recommended as it is easy to make hard to find bugs.
-        Created \gls{acr:gui} is provided for this purposes.
+        complex, manual modification or creation of elements is not recommended as it is easy to introduce make to find
+        errors --- created \gls{acr:gui} is provided for this purposes.
 
         With regard to statistics, flow's statistics are gathered and managed by operating system whereas \gls{acr:vnic}'s
         traffic load is gathered starting from every single \gls{acr:jims} restart.
@@ -2790,29 +2831,29 @@
         Complexity of created system implies necessity of preparing tools verifying correctness of the system. In order
         to achieve this verification tests on each level of our system were prepared. Starting from (low-level) shared
         libraries, where unit tests for methods in \textbf{C} were implemented, through \gls{acr:jmx} level (with mocks)
-        up to integration tests testing creating whole network structure.
+        up to integration tests testing creating whole network structure. \todo[inline]{rozszerzyc}
       
         Additionally verification on the \gls{acr:gui} side of the system was provided where network to be created is
-        verified in respect of proper names, \gls{acr:ip} addresses, etc.
+        verified in respect of proper names, \gls{acr:ip} addresses, etc. \todo[inline]{ten akapit do sekcji o GUI}
 
 
       \section{GUI application}
       \label{sec:impl:gui}
 		
-        Created \gls{acr:gui} application facilitates usage of \gls{acr:jims} and newly implemented Crossbow module for
+        \gls{acr:gui} application developed facilitates usage of \gls{acr:jims} and newly implemented Crossbow module for
         \gls{acr:jims}. Apart from project verification performed in the pre-instantiation stage, \gls{acr:gui}
         application is based on invoking \gls{acr:jmx} Bean's operation and presenting received responses.
 
         Implemented \gls{acr:gui} application allows:
 
         \begin{itemize}
-          \item Connecting to jims-gateway,
-          \item Creating, modifying and removing desired network structure with requested virtual appliances,
-          \item Discovering already created projects,
-          \item Detailed information about links and flows like bandwidth load presented in charts for requested time
-                periods,
-          \item Automatic logging using ssh to selected (already deployed) nodes and opening \gls{acr:gui}-type
-                terminal.
+          \item Connecting to \gls{acr:jims} Gateway \todo[inline]{czy mamy to zdefiniowane?},
+          \item Designing desired network structure with requested virtual appliances,
+          \item Discovering and modifying already created projects,
+          \item Detailed information about links and flows like bandwidth consumption presented in charts for requested
+                time periods,
+          \item Automatic logging using \gls{acr:ssh} to selected (already deployed) nodes and opening
+                \gls{acr:gui}-like terminal emulator.
         \end{itemize}		
 
         \begin{figure}[H]
@@ -2827,7 +2868,7 @@
 
           \begin{tikzpicture}[text height=1.5ex, text depth=.25ex]
 
-            % TODO kosmetyka!
+            % TODO kosmetyka! review!
 
             \begin{umlseqdiag}
 
@@ -2866,54 +2907,58 @@
       To build and run the platform the following prerequisites are required:
 
       \begin{itemize}
-        \item Java SE 1.6, maven,
+        \item Java SE 1.6, Maven,
         \item \gls{acr:jims} sources downloaded,
-        \item jims-crossbow module downloaded from \\ https://github.com/robertboczek/solaris\-crossbow/tree/master/code.
+        \item jims-crossbow module\footnote{available at \url{https://github.com/robertboczek/solaris\-crossbow/tree/master/code}}
       \end{itemize}
 
-      Afterwards \gls{acr:jims} project must be built. Detailed description of how to build \gls{acr:jims} is in \textbf{README} file
-      located at the main catalog of \gls{acr:jims} sources. One of the most common problems are missing jars that unfortunately
-      must be manually downloaded and installed in the local repository.
+      Afterwards \gls{acr:jims} project must be built. Detailed description of how to build \gls{acr:jims} is in README
+      file located at the main directory of \gls{acr:jims} sources.
 
       Subsequently jims-crossbow module should be copied to the main folder containing \gls{acr:jims} and then build. The script
       \textbf{inst-crossbow-lib.sh} must be	later executed to copy shared libraries *.so files to /usr/lib folder.
 
-      If everything went well another step is running \gls{acr:jims}:
+      If everything goes well, another step is running \gls{acr:jims}:
 
       \begin{itemize}
         \item jims-gateway: .../jims-gateway/bin/jims-agent.sh [-b host\_address] start|stop|restart,
         \item jims-agent: .../jims-agent/bin/jims-agent.sh [-b host\_address] start|stop|restart.
       \end{itemize}
 
-      On the main node just single jims-gateway should be run and on the rest nodes as many jims-agents as it is required. For more
-      information about \textbf{\gls{acr:jims}} and its architecture please refer to bibliography.
+      On the main node just single jims-gateway should be run and on the remaining nodes as many jims-agents as it is
+      required. For more information about \textbf{\gls{acr:jims}} and its architecture please refer to bibliography.
 
-      If jims-agent or jims-gateway did not started it is worth to see logs files, located respectively at
-      target/.../jims-agent/var/jims/log/agent.log and target/.../jims-gateway/var/jims/log/agent.log
-      It also recommended to have logs opened during \gls{acr:jims} start to see whether any exception was thrown (\textbf{tail
-      -f target/.../jims\-gateway/var/jims/log/agent.log})
+      If jims-agent or jims-gateway do not start, it is worth to see log files, located respectively at
+      target/.../jims-agent/var/jims/log/agent.log and target/.../jims-gateway/var/jims/log/agent.log It is also
+      recommended to have the log file opened during \gls{acr:jims} start to see whether any exception was thrown (tail
+      -f target/.../jims\-gateway/var/jims/log/agent.log)
 
+      \todo[inline]{styl}
       \gls{acr:jims} has \gls{acr:jmx}-based architecture so each jims-agent and jims-gateway can be accessed through
-      jconsole. In order to do that start jconsole, select remote process and enter type: \\
+      JConsole. In order to do that start JConsole, select remote process and enter type: \\
       \textbf{service:jmx:rmi:///jndi/rmi://address:port/jims} where \textbf{address} and \textbf{port} is concrete
       address and port under which \gls{acr:jims} was started. \textbf{JConsole} allows browsing registered mbeans and
-      performing \gls{acr:crud} operations. Especially in case of the crossbow module it allows these operations as the
-      figure below presents:
+      performing \gls{acr:crud} operations. Especially in case of the crossbow module it allows these operations as
+      figure \ref{fig:impl:xbow-jconsole} presents.
 
-	  \begin{figure}[H]
-        \begin{center}
-            \includegraphics[width=1.0\textwidth]{img/impl/jconsole.png}
-        \end{center}
+      \begin{figure}[H]
+        \centering
+        \includegraphics[width=1.0\textwidth]{img/impl/jconsole.png}
+
         \caption{The Crossbow module registered MBeans example}
+        \label{fig:impl:xbow-jconsole}
       \end{figure}
-	  
-	  Building \gls{acr:gui}, which is located at \textbf{jims/jims-crossbow/jims-crossbow-gui}, requires just maven. Application may 
-	  be imported to eclipse and then built and run or built from console using maven (\textbf{ mvn assembly:assembly })
-	  and executed \textbf{java -cp target/jims-crossbow-gui-3.0.0-exe.jar org.jims.modules.crossbow.gui.Gui}
+
+      Building \gls{acr:gui}, which is located at \textbf{jims/jims-crossbow/jims-crossbow-gui}, requires Maven.
+      Application may be imported to Eclipse and then built and run or built from console using Maven (\textbf{mvn
+      assembly:assembly}) and executed (\textbf{java -cp target/jims-crossbow-gui-3.0.0-exe.jar
+      org.jims.modules.crossbow.gui.Gui}).
 
 
     \section{Load balancing / Deployment}
     \label{sec:impl:problems}
+
+      % TODO do req analysis
 	  
 		Although at first load balancing was planned, created system does not support it. This matter is further 
 		discussed in \textbf{'Further work'} section in the \textbf{Summary} chapter.
@@ -2922,20 +2967,22 @@
 		features stresses the lack of transactional support. Although in our system in case of errors introduced changes
 		are usually removed, there is no guarantee that it will actually happen. Due to possible further errors caused during 
 		restoring previous system state. In that case these partial changes must be removed manually from each node
-		involved in this failing deployment attempt which generally imposes specialistic knowledge of underlying environment. 
+		involved in this failing deployment attempt which generally imposes specialistic knowledge of underlying
+    environment. \todo[inline]{do summary} 
+
 
     \section*{Summary}
     \label{sec:impl:summary}
 
-      This chapter introduced to accepted approach to system implementation. Despite the fact that requested
-      functionalities were very demanding and quite complex, final product meets all previously listed functional
-      requirements. Thanks to used technologies such as \gls{acr:jmx}, system with fully independent business layer
-      (loosely coupled MBeans) was implemented. These technologies also helped in fulfilling defined non-functional
-      requirements like: evolvability, extensibility, composability, etc. Definitely one of the biggest advantage of
-      this system (apart from all delivered functionality provided by \gls{acr:cm4j}) is reusability as three possible
-      usage models exist. System may be managed from implemented \gls{acr:gui}, running jconsole or even from own
-      developed application where developer can decide which part of \gls{acr:cm4j} would be used by just
-      conforming to previously presented and described interfaces.
+      This chapter introduced chosen approach to system implementation. Despite the fact that requested functionalities
+      were demanding and complex, final product meets all previously listed functional requirements. Thanks to used
+      technologies such as \gls{acr:jmx}, system with fully independent business layer (loosely coupled MBeans) was
+      implemented. These technologies also helped in fulfilling defined non-functional requirements like: evolvability,
+      extensibility, composability, etc. Definitely one of the biggest advantage of this system (apart from all
+      delivered functionality provided by \gls{acr:cm4j}) is reusability as four possible usage models exist. System may
+      be managed from implemented \gls{acr:gui}, running JConsole or even from own developed (Java-based or native)
+      application where developer can decide which part of \gls{acr:cm4j} would be used by just conforming to previously
+      presented and described interfaces.
 
 
   \chapter{Case Study}
@@ -3446,63 +3493,66 @@
   \chapter{Summary}
   \label{chap:sum}
 
-	  This chapter summarizes the outcome of the research authors conducted in the area of network virtualization with special regard to 
+	  The chapter summarizes the outcome of the research conducted in the area of network virtualization with special regard to 
 	  proposed thesis statement.
 	
 	  Section \ref{sub:sum:concl} briefly concludes research results and test-case results. Thesis statement's legitimacy and feasibility 
-		is also discussed in this section. Realized goals and objectives are outlined in section \ref{sub:sum:achieved} yet
+		is also discussed in this section. Accomplished goals and objectives are outlined in section \ref{sub:sum:achieved} yet
 	  possible improvements that might be introduced to created system are considered in section \ref{sub:sum:further}.
 
     \section{Conclusions}
 		\label{sub:sum:concl}
 		
-		Proposed at the beginning of the thesis statement claiming that: 
-		\emph{There exists a layered architecture, which enables the construction of a system, that would facilitate working with 
-		fully  isolated virtualized network and resources grouped by project name} was deeply considered throughout this thesis by 
-		the authors. 
-		In order to fulfil proposed statement detailed requirement analysis was performed. Subsequently in order to comply
-    with
-		all defined requirements mentioned in the thesis statement layered architectural approach was chosen. This approach allowed 
-		to distinguish certain groups of independent, highly cohesive components. Together these components create the planned
-		system, but each one could be used separately allowing performing operations like: \gls{acr:crud} operations over virtual network elements, 
-		virtual resources management, etc. 
-		
-		Investigation performed while working on this paper allowed the authors to understand concepts of complex network virtualization,
-		resource reservation in more details. Conducted tests additionally outlined the significance of these issues and how important they
-		are in terms of success of proper work of complex systems. Encountered problems only confirmed that although very useful 
-		they are also quite demanding and require comprehensive knowledge in all computer areas. 
-		
+      Proposed at the beginning of the thesis statement claiming that: \emph{There exists a layered architecture, which
+      enables the construction of a system, that would facilitate working with fully  isolated virtualized network and
+      resources grouped by project name} was deeply considered throughout this thesis by the authors.  In order to
+      fulfil proposed statement detailed requirement analysis was performed. Subsequently in order to comply with all
+      defined requirements mentioned in the thesis statement layered architectural approach was chosen. This approach
+      allowed to distinguish certain groups of independent, highly cohesive components. Together these components create
+      the planned system, but each one could be used separately allowing performing operations like: \gls{acr:crud}
+      operations over virtual network elements, virtual resources management, etc. 
+      
+      Investigation performed while working on this paper allowed the authors to understand concepts of complex network
+      virtualization and resource reservation and sharing in more details. Conducted tests additionally outlined the
+      significance of these issues and how important they are in terms of success of proper work of complex systems.
+      Encountered problems only confirmed that although very useful they are also demanding and require comprehensive
+      knowledge in a variety of computer areas. 
+
+      
     \section{Achieved goals}
 		\label{sub:sum:achieved}
 
-    % TODO o tym, ze cos sie nie udalo, bym stad wywalil do nastepnego rozdzialu
+      % TODO o tym, ze cos sie nie udalo, bym stad wywalil do nastepnej sekcji
 		
-		In relation to achieved goals not all were unfortunately successfully finished. Time shortage and lack of people did not allow 
-		for as deep insight look at this issue as was initially planned. However, some objectives are really worth to
-		be mentioned:
-	  
-		\begin{itemize}
-			\item Significant improvements in system configuration in comparison to manual setup,
-			\item Automatic update of the given network parameters,
-			\item Reusability provided thanks to loosely coupled components hidden under well defined interfaces,
-			\item Presenting network topology in clear and natural way (graph format).
-		\end{itemize}
+      In relation to achieved goals not all were unfortunately successfully finished. Time shortage and lack of people
+      did not allow for as deep insight look at this issue as was initially planned. However, some objectives are really
+      worth to be mentioned:
+      
+      \begin{itemize}
+        \item Significant improvements in system configuration in comparison to manual setup,
+        \item Automatic update of given network parameters,
+        \item Reusability provided thanks to loosely coupled components hidden under well defined interfaces,
+        \item Presenting network topology in clear and natural way (graph format).
+      \end{itemize}
 		
-	    Hopefully the presented system and whole concept of network virtualization, resource allocation and isolation 
+      Hopefully the presented system and whole concept of network virtualization, resource allocation and isolation 
 	    would encourage the reader to do own research in this area.
 		
+
     \section{Further work}
 		\label{sub:sum:further}
 	
-	In terms of the future work there are many welcomed improvements that may be added to the \gls{acr:cm4j} system.
-	Probably the largest component, which was initially planned, was automatic resource assigner, that would run and 
-	perform automatic resource assignments to nodes that run under lowest load. This assigner with attached rule-based
-	system would gather data about the load on each node and based on that decide what and where to instantiate. 
-	Presented and discussed system in this thesis lacks that functionality. Instead, it offers manual assignments, where 
-	user selects on which node new virtual resources should be created. Another not implemented yet welcomed would 
-	be semi-automatic snapshot creation. Currently user can create Solaris zone from existing snapshot and use it. 
-	Functionality where created resource could be converted to snapshot and then transferred to the repository would 
-	definitely improve the usability of the system.
+      There are many welcomed improvements that may be added to the \gls{acr:cm4j} system. Probably the largest
+      component initially planned was automatic resource assigner, that would run and perform automatic resource
+      assignments to nodes that run under lowest load. This assigner with attached rule-based system would gather data
+      about the load on each node and based on that decide what and where to instantiate.  Presented and discussed
+      system in this thesis lacks that functionality. Instead, it offers manual assignments, where user selects on which
+      node new virtual resources should be created. Another not implemented yet welcomed would be semi-automatic
+      snapshot creation. Currently user can create Solaris zone from existing snapshot and use it.  Functionality where
+      created resource could be converted to snapshot and then transferred to the repository would definitely improve
+      the usability of the system.
+
+      \todo[inline]{wiecej}
 
 
   \printglossaries
