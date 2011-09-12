@@ -3461,11 +3461,8 @@
     \section{Achieved goals}
 		\label{sub:sum:achieved}
 
-      % TODO o tym, ze cos sie nie udalo, bym stad wywalil do nastepnej sekcji
-		
-      In relation to the achieved goals not all were unfortunately successfully finished. Time shortage and the lack of people
-      did not allow for as deep an insight at this issue as was initially planned. However, some objectives are really
-      worth to be mentioned:
+	Research in the area of networking virtualization approaches together with implemented \gls{acr:cm4j} system resulted
+	in achieving  really worth to be mentioned objectives:
       
       \begin{itemize}
         \item Significant improvements in system configuration in comparison to manual setup,
@@ -3475,21 +3472,24 @@
       \end{itemize}
 		
       Hopefully the presented system and the whole concept of network virtualization, resource allocation and isolation 
-	    would encourage the reader to do his own research in this area.
+	    would encourage the reader to do his own study in this area.
 		
 
     \section{Further work}
 		\label{sub:sum:further}
 	
+      In relation to the achieved goals not all were unfortunately successfully finished. Time shortage and the lack of people
+      did not allow for as deep an insight at all issues as was initially planned. Since \gls{acr:cm4j} is an open source project
+      editing and adding additional functionalities would be desirable.
       There are many welcomed improvements that may be added to the \gls{acr:cm4j} system. Probably the largest
       component initially planned was an automatic resource assigner that would run and perform automatic resource
-      assignments to nodes that run under the lowest load. This assigner with an attached rule-based system would gather
-      data about the load on each node and based on that it would decide what and where to instantiate.  Unfortunately,
-      the presented and discussed system in this thesis lacks that functionality. Instead, it offers manual assignments,
-      where user selects on which node new virtual resources should be created. Another functionality not implemented,
-      yet welcomed would be a semi-automatic snapshot creation. Currently a user can create Solaris zone from existing
-      snapshot and use it. The functionality where the created resource could be converted to snapshot and then
-      transferred to the repository would definitely improve the system's usability.
+      assignments to nodes that run under the lowest load. This assigner with an attached rule-based system would gather data
+      about the load on each node and based on that it would decide what and where to instantiate.  Unfortunately, the presented and discussed
+      system in this thesis lacks that functionality. Instead, it offers manual assignments, where user selects on which
+      node new virtual resources should be created. Another functionality not implemented, yet welcomed would be a semi-automatic
+      snapshot creation. Currently a user can create Solaris zone from existing snapshot and use it. The functionality where
+      the created resource could be converted to snapshot and then transferred to the repository would definitely improve
+      the system's usability. 
 
 
   \printglossaries
@@ -3503,4 +3503,5 @@
 \end{document}
 
 % vim: et : tw=120 : spelllang=en_us,pl : spell :
+
 
