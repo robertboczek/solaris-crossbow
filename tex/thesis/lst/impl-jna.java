@@ -18,13 +18,11 @@ public class JNALinkHelper implements LinkHelper {
     String filePath = libraryPath + File.separator + LIB_NAME;
     handle = (LinkHandle) Native.loadLibrary(filePath,
                                              LinkHandle.class);
-
     handle.init();
   }
   
   public int setIpAddress(String link, String ipAddress)
     throws LinkException, ValidationException {
-
     return handle.set_ip_address(link, ipAddress);
   }
 }
