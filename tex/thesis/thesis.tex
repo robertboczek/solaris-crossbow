@@ -2256,29 +2256,6 @@
             
             \end{tikzpicture}
 
-            % \begin{sequencediagram}
-
-            %   \newthread{gui}{GUI}
-            %   \newinst[2]{sup}{Supervisor}
-            %   \newinst[4]{wrks}{Worker}
-            %   \newinst[2]{var}{VA Repository}
-
-            %   \begin{call}{gui}{getIds()}{var}{appliance IDs}
-            %   \end{call}
-
-            %   \begin{call}{gui}{instantiate(model)}{sup}{}
-            %     \begin{callself}{sup}{transform(model)}{adjusted model}
-            %     \end{callself}
-            %     \begin{sdblock}{loop}{for each worker with model assigned}
-            %       \begin{call}{sup}{instantiate(parts of the model)}{wrks}{}
-            %         \begin{call}{wrks}{getAppliance(id)}{var}{virtual appliance}
-            %         \end{call}
-            %       \end{call}
-            %     \end{sdblock}
-            %   \end{call}
-            % 
-            % \end{sequencediagram}
-
             \caption{Topology instantiation}
           
           \end{figure}
@@ -2327,23 +2304,6 @@
 
             \end{tikzpicture}
 
-            % \begin{sequencediagram}
-
-            %   \newthread{gui}{GUI}
-            %   \newinst[2]{sup}{Supervisor}
-            %   \newinst[4]{wrk}{Worker}
-
-            %   \begin{call}{gui}{discover()}{sup}{model}
-            %     \begin{sdblock}{loop}{for each worker}
-            %       \begin{call}{sup}{discover()}{wrk}{parts of the model}
-            %       \end{call}
-            %     \end{sdblock}
-            %     \begin{callself}{sup}{merge(parts of the model)}{model}
-            %     \end{callself}
-            %   \end{call}
-            % 
-            % \end{sequencediagram}
-
             \caption{Topology discovery}
             \label{fig:arch:seqdis}
           
@@ -2378,19 +2338,6 @@
               \end{umlseqdiag}
 
             \end{tikzpicture}
-
-            % \begin{sequencediagram}
-
-            %   \newthread{gui}{GUI}
-            %   \newinst[2]{gat}{StatisticsGatherer}
-            %   \newinst[2]{ent}{Entity object}
-
-            %   \begin{call}{gui}{getStatistics()}{gat}{statistics}
-            %     \begin{call}{gat}{getStatistics()}{ent}{statistics}
-            %     \end{call}
-            %   \end{call}
-            % 
-            % \end{sequencediagram}
 
             \caption{Topology monitoring}
             \label{fig:arch:seqmon}
@@ -3266,7 +3213,7 @@
 
             \useasboundingbox (current bounding box);
 
-            \node [right=of img.north east] {bandwidth $[\mathrm{MB}/\mathrm{s}]$};
+            \node [right=of img.north east] {bandwidth $[\mathrm{B}/\mathrm{s}]$};
           \end{tikzpicture}
 
           \caption{8Mbps bandwidth limitation}
@@ -3293,7 +3240,7 @@
 
             \useasboundingbox (current bounding box);
 
-            \node [right=of img.north east] {bandwidth $[\mathrm{MB}/\mathrm{s}]$};
+            \node [right=of img.north east] {bandwidth $[\mathrm{B}/\mathrm{s}]$};
           \end{tikzpicture}
 
           \caption{VOD traffic bandwidth consumption compared to high-priority RTP streams}
@@ -3321,7 +3268,7 @@
 
             \useasboundingbox (current bounding box);
 
-            \node [right=of img.north east] {bandwidth $[\mathrm{MB}/\mathrm{s}]$};
+            \node [right=of img.north east] {bandwidth $[\mathrm{B}/\mathrm{s}]$};
           \end{tikzpicture}
 
           \caption{Distribution of available bandwidth between streaming clients}
