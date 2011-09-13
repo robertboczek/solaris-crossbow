@@ -2814,9 +2814,9 @@
   }%
   %
   \ifnum\tikzumlInCreateCall=1%
-    \draw (\tikzumlCreateCallObjectSrc -| \tikzumlobjectX,0) node[tikzuml object box style] (\tikzumlObjectName) {\tikzumlObjectName:\tikzumlobjectclass};%
+    \draw (\tikzumlCreateCallObjectSrc -| \tikzumlobjectX,0) node[tikzuml object box style] (\tikzumlObjectName) {:\tikzumlobjectclass};%
   \else%
-    \node[tikzuml object box style] (\tikzumlObjectName) at (\tikzumlobjectX,\tikzumlobjectY) {\tikzumlObjectName:\tikzumlobjectclass};%
+    \node[tikzuml object box style] (\tikzumlObjectName) at (\tikzumlobjectX,\tikzumlobjectY) {:\tikzumlobjectclass};%
   \fi%
   %
   \ifthenelse{\equal{\tikzumlobjectstereo}{multi}}{%
