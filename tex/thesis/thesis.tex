@@ -1738,12 +1738,12 @@
               
               \begin{umlseqdiag}
 
-                \umlobject[class=Client]{Client}
-                \umlobject[class=Manager]{Manager}
-                \umlobject[class=Native library]{Native library}
-                \umlobject[class=Publisher]{Publisher}
+                \umlobject[class=Client, anon]{Client}
+                \umlobject[class=Manager, anon]{Manager}
+                \umlobject[class=Native library, anon]{Native library}
+                \umlobject[class=Publisher, anon]{Publisher}
 
-                \begin{umlcall}[op={create(entity)}]{Client}{Manager}
+                \begin{umlcall}[op={create(entity)}, dt=5]{Client}{Manager}
                   \begin{umlcall}[op={create(entity)}]{Manager}{Native library}
                   \end{umlcall}
                   \begin{umlfragment}[inner ysep=2]
@@ -2218,10 +2218,10 @@
               
               \begin{umlseqdiag}
 
-                \umlobject[class=GUI]{GUI}
-                \umlobject[class=Supervisor]{Supervisor}
-                \umlobject[class=Worker, x=10]{Worker}
-                \umlobject[class= VA Repository, x=14]{VA Repository}
+                \umlobject[class=GUI, anon]{GUI}
+                \umlobject[class=Supervisor, anon]{Supervisor}
+                \umlobject[class=Worker, anon, x=10]{Worker}
+                \umlobject[class= VA Repository, anon, x=14]{VA Repository}
 
                 \begin{umlcall}[op={getIds()}, return={appliance IDs}, dt=5]{GUI}{VA Repository}
                 \end{umlcall}
@@ -2272,9 +2272,9 @@
 
               \begin{umlseqdiag}
 
-                \umlobject[class=GUI]{GUI}
-                \umlobject[class=Supervisor]{Supervisor}
-                \umlmulti[class=Worker]{Worker}
+                \umlobject[class=GUI, anon]{GUI}
+                \umlobject[class=Supervisor, anon]{Supervisor}
+                \umlmulti[class=Worker, anon]{Worker}
 
                 \begin{umlcall}[op={discover()}, return=model, dt=5]{GUI}{Supervisor}
                   \begin{umlfragment}[type=loop]
@@ -2311,9 +2311,9 @@
 
               \begin{umlseqdiag}
 
-                \umlobject[class=GUI]{GUI}
-                \umlobject[class=StatisticsGatherer]{StatisticsGatherer}
-                \umlobject[class=Entity object]{Entity object}
+                \umlobject[class=GUI, anon]{GUI}
+                \umlobject[class=StatisticsGatherer, anon]{StatisticsGatherer}
+                \umlobject[class=Entity object, anon]{Entity object}
 
                 \begin{umlcall}[op={getStatistics()}, return=statistics, dt=5]{GUI}{StatisticsGatherer}
                   \begin{umlcall}[op={getStatistics()}, return={statistics}]{StatisticsGatherer}{Entity object}
@@ -2704,10 +2704,10 @@
 
             \begin{umlseqdiag}
 
-              \umlobject[class=GUI]{GUI}
-              \umlobject[class=Supervisor]{Supervisor}
-              \umlobject[class=ProgressShell]{ProgressShell}
-              \umlobject[class=CrossbowNotification]{CrossbowNotification}
+              \umlobject[class=GUI, anon]{GUI}
+              \umlobject[class=Supervisor, anon]{Supervisor}
+              \umlobject[class=ProgressShell, anon]{ProgressShell}
+              \umlobject[class=CrossbowNotification, anon]{CrossbowNotification}
 
               \begin{umlcall}[op={resetTotal(nodes count)}, dt=5]{GUI}{CrossbowNotification}
               \end{umlcall}

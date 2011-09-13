@@ -2779,7 +2779,7 @@
   \stepcounter{tikzumlObjectNum}%
   %
   \pgfkeys{/tikzuml/obj/.cd, x/.initial={tikzumlEmpty}, y/.initial=0, stereo/.initial=object, class/.initial={}, scale/.initial=1,%
-                             draw/.initial=\tikzumldrawcolor, fill/.initial=\tikzumlfillobjectcolor, text/.initial=\tikzumltextcolor,%
+                             draw/.initial=\tikzumldrawcolor, fill/.initial=\tikzumlfillobjectcolor, text/.initial=\tikzumltextcolor, anon/.initial=no, anon/.default=yes,%
                              .unknown/.code={%
                                  \let\keyname=\pgfkeyscurrentname%
                                  \errmessage{TIKZUML ERROR : invalid option \keyname in umlobj}%
@@ -2787,13 +2787,15 @@
   \pgfkeys{/tikzuml/obj/.cd, #1}%
   \pgfkeys{/tikzuml/obj/.cd, x/.get=\tikzumlobjectX, y/.get=\tikzumlobjectY, stereo/.get=\tikzumlobjectstereo, class/.get=\tikzumlobjectclass,%
                              scale/.get=\tikzumlobjectscale,%
-                             draw/.get=\tikzumlobjectdraw, fill/.get=\tikzumlobjectfill, text/.get=\tikzumlobjecttext}%
+                             draw/.get=\tikzumlobjectdraw, fill/.get=\tikzumlobjectfill, text/.get=\tikzumlobjecttext, anon/.get=\tikzumlobjectanon}%
   %
   \ifthenelse{\equal{\tikzumlobjectX}{tikzumlEmpty}}{%
     \pgfmathsetmacro{\tikzumlobjectX}{4*(\thetikzumlObjectNum-1)}%
   }{}%
   %
   \def\tikzumlObjectName{#2}%
+	\def\tikzumlObjectNameLabel{}%
+	\ifthenelse{\equal{\tikzumlobjectanon}{no}}{\def\tikzumlObjectNameLabel{\tikzumlObjectName}}{\def\tikzumlObjectNameLabel{}}%
   \expandafter\xdef\csname tikzumlLastChild@\tikzumlObjectName \endcsname{\tikzumlObjectName}%
   %
   \ifnum\thetikzumlObjectNum=1%
@@ -2814,9 +2816,9 @@
   }%
   %
   \ifnum\tikzumlInCreateCall=1%
-    \draw (\tikzumlCreateCallObjectSrc -| \tikzumlobjectX,0) node[tikzuml object box style] (\tikzumlObjectName) {:\tikzumlobjectclass};%
+    \draw (\tikzumlCreateCallObjectSrc -| \tikzumlobjectX,0) node[tikzuml object box style] (\tikzumlObjectName) {\tikzumlObjectNameLabel:\tikzumlobjectclass};%
   \else%
-    \node[tikzuml object box style] (\tikzumlObjectName) at (\tikzumlobjectX,\tikzumlobjectY) {:\tikzumlobjectclass};%
+    \node[tikzuml object box style] (\tikzumlObjectName) at (\tikzumlobjectX,\tikzumlobjectY) {\tikzumlObjectNameLabel:\tikzumlobjectclass};%
   \fi%
   %
   \ifthenelse{\equal{\tikzumlobjectstereo}{multi}}{%
