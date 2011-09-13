@@ -2362,9 +2362,13 @@
 
     \section{Java Management Extensions}
 
-      Project's architecture is based on \gls{acr:jmx} architecture which is a technology used for distributed resource
-      management and control. These managed resources in \gls{acr:jmx} are represented by MBeans which are Java objects
-      registered at MBean Server under specific ObjectName \cite{jims}.
+      \gls{acr:jmx} is a technology for distributed resource management and control. Resources that can be managed,
+      include applications, system objects, and physical devices. Managed resources are repre
+      
+      
+      
+      These managed resources in \gls{acr:jmx} are represented by MBeans which are Java objects registered at MBean
+      Server under specific ObjectName \cite{jims}.
 
       \begin{figure}[h]
         \begin{center}
@@ -2385,8 +2389,6 @@
 
 
     \section{JMX-based Infrastructure Monitoring System}
-
-      The jims-crossbow-module was designed in order to extend existing \gls{acr:jims} system and integrate with it.
 
       \gls{acr:jims} supports monitoring and management under both Linux and Solaris platforms. Thanks to \gls{acr:jims}
       features such as easy maintenance (automatic modules downloading) and extensibility (possibility of adding
@@ -2410,9 +2412,17 @@
       \subsection{Implementation environment}
       \label{sec:impl:env}
 
-        The implementation environment requirements to each of two subprojects comprising \gls{acr:cm4j} system are
-        different.
-	
+        Crossbow components can be manipulated with either native libraries or command line tools (dladlm, flowadm)
+        supplied with the operating system. Both methods are used in \gls{acr:cm4j} implementation --- to provide
+        coarse-grained operations, another layer of abstraction is added with higher-level C libraries and shell scripts.
+
+        To allow easy access to native code, \gls{acr:jna} library is used. \gls{acr:jna} mediates between Java and C
+        code by performing all the necessary function call and data structure translations. Shell scripts can be invoked
+        directly by \gls{acr:jre} --- they are executed in separate system processes.
+
+        Classes that implement specific MBean interfaces use \gls{acr:jna} and shell scripts to provide the
+        functionalities required.
+
 
       \subsection{Crossbow components implementation details}
       \label{sec:impl:comp}
