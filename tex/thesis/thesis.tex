@@ -2420,19 +2420,21 @@
         code by performing all the necessary function call and data structure translations. Shell scripts can be invoked
         directly by \gls{acr:jre} --- they are executed in separate system processes.
 
-        Classes that implement specific MBean interfaces use \gls{acr:jna} and shell scripts to provide the
-        functionalities required.
+        Classes that implement specific MBean interfaces use high-level operations exposed by \gls{acr:jna} wrappers and
+        shell scripts to provide the functionalities required.
 
 
       \subsection{Crossbow components implementation details}
       \label{sec:impl:comp}
 
-        As already mentioned each entities operation's are adjusted to their needs. Three figures \ref{fig:impl:etherstub}, 
-        \ref{fig:impl:vnic}, \ref{fig:impl:flow} depict in detail each manager and its corresponding entity.
+        Figures \ref{fig:impl:etherstub}, \ref{fig:impl:vnic} and \ref{fig:impl:flow} present the way in which Crossbow
+        instrumentation is designed and implemented. For each Crossbow component, appropriate manager and entity
+        interface are provided. Implementations of manager interface realize NotificationListener \gls{acr:jmx}
+        interface to provide periodic discovery operation.
 
         \begin{figure}[H]
           \centering
-          \includegraphics[width=.85\textheight, angle=90]{img/impl/etherstub.pdf}
+          \includegraphics[width=.8\textheight, angle=90]{img/impl/etherstub.pdf}
 
           \caption{Etherstub class diagram}
           \label{fig:impl:etherstub}
@@ -2453,9 +2455,6 @@
           \caption{Flow class diagram}
           \label{fig:impl:flow}
         \end{figure}
-
-        Thanks to the fact that managers and entities have been separated and that each entity is an individual MBean,
-        these entities can be accessed not only from Java code but also be viewed and modified from JConsole.
 
 
       \subsection{Low-level functions access}
