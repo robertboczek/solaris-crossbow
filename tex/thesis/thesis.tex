@@ -2450,7 +2450,7 @@
 
         \begin{figure}[H]
           \centering
-          \includegraphics[width=.85\textheight, angle=90]{img/impl/flow.pdf}
+          \includegraphics[width=.95\textheight, angle=90]{img/impl/flow.pdf}
 
           \caption{Flow class diagram}
           \label{fig:impl:flow}
@@ -2460,20 +2460,13 @@
       \subsection{Low-level functions access}
       \label{sec:impl:low}
 
-        \gls{acr:jims} layered architecture together with crossbow dladm and flowadm library implicated the demand for 
-        an approach towards accessing low-level functions.
-
-        In developed application these approaches were adjusted to existing conditions so that for accessing functions
-        from shared libraries \gls{acr:jna} was used and for doing more complex low-level operations shell scripts were
-        written. Created jims-crossbow module contains shared library allowing \gls{acr:crud} operations which
-        subsequently are accessed by \gls{acr:jna}, whereas most of \gls{acr:jims} low-level access is done through
-        running shell scripts. Although running scripts by ProcessBuilder is faster in implementation, accessing native
-        libraries through libraries like \gls{acr:jna} or \gls{acr:jni} gives more configurational advantage and does
-        not require shell script writing skills.
+        \gls{acr:jna} is used by resources instrumentation subsystem to access Crossbow native libraries. However, the
+        libraries are not accessed directly --- there exists additional native layer between \gls{acr:jna} and Crossbow
+        routines. This layer provides consistent coarse-grained interface together with data structures for Crossbow
+        components manipulation.
 
         Listing \ref{lst:impl:low:jna} presents reduced example of \gls{acr:jna} access to native libraries. The
         corresponding native code in C language is shown in figure \ref{lst:impl:low:jnac}. \\
-
 
         \noindent
           \begin{minipage}{\textwidth}
@@ -2490,38 +2483,20 @@
 
       \subsection{Implementation environment}
 
-        In case of the jims-crossbow-module the implementation environment must consist of:
+        Most of components present in the virtual infrastructure management layer are implemented as \gls{acr:jmx}
+        MBeans. To manipulate Crossbow infrastructure, proper Manager and Entity objects are used by the layer.
 
-        \begin{itemize}
-          \item GCC compiler --- for building jims-crossbow shared libraries,
-          \item dladm and flowadm libraries.
-        \end{itemize}
-	
-        The demand for crossbow libraries (flowadm, dladm) implicated that implementation environment must have been
-        Solaris 11 or any other system supporting Crossbow.
-
-        \gls{acr:gui} application is developed in Java using \gls{acr:swt} and Swing graphic libraries. The project is
-        managed with maven and thanks to maven profiles feature can be built and run on operating systems like:
-
-        \begin{itemize}
-          \item Solaris,
-          \item Linux x86,
-          \item Windows x86.
-        \end{itemize}
-
-        \gls{acr:swt} core libraries for these operating systems were provided in repository, so the only requirement is
-        to have one of the aforementioned operating systems together with Java SE 1.6 and Maven 2.x installed.
+        The \gls{acr:gui} console is also developed in Java language. It uses \gls{acr:swt} and Swing widget libraries
+        extensively. Except for \gls{acr:swt} libraries, the \gls{acr:gui} module does not require specific operating
+        system to run. Thus, \gls{acr:gui} console can be executed on any system that \gls{acr:swt} supports.
 
 
-      \subsection{Crossbow infrastructure project}
+      \subsection{Main components}
       \label{sec:impl:infrastructure}
 
-        The jims-crossbow-module's subproject (The Crossbow Infrastructure) was designed in order to provide coarse
-        operations like network structure instantiation, discovery, monitoring. Functionalities provided by MBeans may
-        invoked from \gls{acr:gui} console, JConsole or even from self written applications by just adapting to existing
-        interfaces and object names. 
-
-        Existing high-level MBean are described and discussed in table \ref{tab:impl:hl-mbean}.
+        Functionalities provided by MBeans may be invoked from \gls{acr:gui} console, JConsole or even from third-party
+        applications by just conforming to existing interfaces and object names. Existing high-level MBeans are
+        described in table \ref{tab:impl:hl-mbean}.
 
         \begin{table}[H]
           \centering
@@ -2530,11 +2505,10 @@
             \hline
             MBean                     & Description                                                                      \\
             \hline \hline
-            SupervisorMBean           & Main Bean runs whole instantiation process (distributes model to parts and
-                                        passes them to proper Worker                                                     \\
+            SupervisorMBean           & Manages the instantiation process (distributes model to parts and passes them to
+                                        proper Worker nodes)                                                             \\
             \hline
-            WorkerMBean               & Responsible for instantiating on this node given model with regard to specified
-                                        actions                                                                          \\
+            WorkerMBean               & Responsible for applying specified actions to part of object model               \\
             \hline
             RepoManagerMBean          & Allows getting/setting path to projects placement, returns all existing projects
                                         from working path                                                                \\
@@ -2638,16 +2612,10 @@
       \subsection{Data persistence}
       \label{sec:impl:persist}
 
-        Although created system does not provide data persistence in databases, persistence in a bit unusual way  is
-        provided. It is guaranteed on two levels: first is on \gls{acr:gui} level where user may save created network
-        structure that is then serialized into file and second is on the \gls{acr:jims} nodes. During creation,
-        discovery, removing network elements precise naming conventions are preserved. Due to this convention whole
-        network is persistent and does not require any additional databases or files. Since generated names are complex,
-        manual modification or creation of elements is not recommended as it is easy to introduce make to find errors
-        --- created \gls{acr:gui} is provided for this purposes.
-
-        With regard to statistics, flow's statistics are gathered and managed by operating system whereas
-        \gls{acr:vnic}'s traffic load is gathered starting from every single \gls{acr:jims} restart.
+        \gls{acr:cm4j} does not use the traditional approach to persistence with storing data in a database. Instead,
+        carefully designed component naming schemes are used for this purpose. Names of components reflect hierarchical
+        structure --- there is information about project, type of Crossbow component and, for interfaces, zone name it
+        is attached to. Table \ref{tab:impl:naming} presents all the naming schemes used.
 
         \begin{table}[H]
           \centering
@@ -2672,25 +2640,45 @@
           \label{tab:impl:naming}
         \end{table}
 
+        For accessing flow statistics, mechanisms provided by the operating system are used --- traffic history is
+        managed directly by Crossbow libraries. \gls{acr:vnic} statistics are gathered by a specialized
+        StatisticsGathererMBean.
+
+        There is also possibility of saving a virtual topology designed avoiding the process of instantiation. The
+        \gls{acr:gui} console provides means to save a topology to a file and then restore it whenever needed. The
+        functionality is especially useful when network connection is lost and one does not want to lose the network
+        design.
+
 
       \subsection{Integration with JIMS}
+
+        \gls{acr:jims} is used as execution environment for \gls{acr:cm4j} --- it provides Zone management functionality
+        and MBean Server to host \gls{acr:cm4j} objects. Node discovery and dynamic module loading features of
+        \gls{acr:jims} are also used extensively by \gls{acr:cm4j}. The integration is depicted in figure
+        \ref{fig:impl:integration}.
+
+        \begin{figure}[H]
+
+          \caption{}
+          \label{fig:impl:integration}
+        \end{figure}
 
 
       \subsection{GUI console}
       \label{ssec:impl:gui}
 		
-        Developed \gls{acr:gui} application facilitates usage of the \gls{acr:jims} and newly implemented the
-        jims-crossbow-module. Apart from project verification performed in the pre-instantiation stage, \gls{acr:gui}
-        application is based on invoking \gls{acr:jmx} Bean operation's and presenting received responses.
+        Designed \gls{acr:gui} console provides an easy way to manipulate virtual network topologies. Apart from project
+        verification performed in pre-instantiation stage, \gls{acr:gui} application is based on invoking \gls{acr:jmx}
+        MBean operations and presenting received responses.
 
-        Implemented \gls{acr:gui} application allows:
+        Implemented \gls{acr:gui} application supports:
 
         \begin{itemize}
           \item Connecting to \gls{acr:jims} Gateway,
           \item Designing desired network structure with requested virtual appliances,
           \item Discovering and modifying already created projects,
-          \item Detailed information about links and flows like bandwidth consumption presented in charts for requested
-                time periods,
+          \item Accessing detailed information about links and flows like bandwidth consumption presented in charts for
+                requested time periods,
           \item Automatic logging using \gls{acr:ssh} to selected (already deployed) nodes and opening
                 \gls{acr:gui}-like terminal emulator.
         \end{itemize}
@@ -2702,9 +2690,12 @@
           \caption{GUI application}
         \end{figure}
 
-        In relation to verification on the \gls{acr:gui} side of the system proper names, \gls{acr:ip} addresses, name
-        duplicates and all necessary attributes are verified. Probability of future instantiation process failure is
-        significantly reduced thanks to this verification, although not totally prevented.
+        As far as topology verification is considered, proper names, \gls{acr:ip} addresses, name duplicates and all
+        mandatory attributes are verified. Probability of future instantiation process failure is significantly reduced
+        thanks to this verification.
+
+        Figure \ref{fig:impl:guiseq} presents interaction between \gls{acr:gui} and other components of th system while
+        performing the instantiation operation.
 
         \begin{figure}[H]
           \centering
@@ -2735,7 +2726,8 @@
 
           \end{tikzpicture}
 
-          \caption{GUI side instantiation process}
+          \caption{Topology instantiation with GUI component}
+          \label{fig:impl:guiseq}
         \end{figure}
 
 
@@ -2745,51 +2737,66 @@
       \subsection{CM4J source code organization}
       \label{sec:impl:structure}
 
-        The \gls{acr:cm4j} system consists of two subprojects: crossbow-gui and crossbow-jims-module. The crossbow-gui
-        (based on Java, \gls{acr:swt} and Swing technologies) was created to facilitate working with implemented
-        crossbow-jims-module. Without the \gls{acr:gui}, working with the system would be a lot more complex and would
-        require specialized knowledge. Core functionalities are placed in the crossbow-jims-module subproject. During
-        the implementation process of the crossbow-jims-module Java, \gls{acr:jmx} and C language were used.
+        \gls{acr:cm4j} source code is grouped into subprojects, as shown in figure \ref{fig:impl:org}.
+
+        \begin{figure}[H]
+          \centering
+          \begin{tabular}{l}
+            \texttt{jims-crossbow}                    \\
+            \texttt{|-- jims-crossbow-gui}            \\
+            \texttt{|-- jims-crossbow-infrastructure} \\
+            \texttt{|-- jims-crossbow-model}          \\
+            \texttt{+-- jims-crossbow-native}
+          \end{tabular}
+
+          \caption{Source code organization}
+          \label{fig:impl:org}
+        \end{figure}
+
+        \texttt{jims-crossbow-gui} module contains \gls{acr:gui} console source code.
+        \texttt{jims-crossbow-infrastructure} module contains all the virtual infrastructure components. Domain model is
+        implemented in \texttt{jims-crossbow-model} module. Native libraries are present in
+        \texttt{jims-crossbow-native} subproject.
 
 
       \subsection{Building the source code}
 
-        To build and run the platform the following prerequisites are required:
+        Following prerequisites have to be present in the system to build and run the platform:
 
         \begin{itemize}
-          \item Java SE 1.6, Maven,
-          \item \gls{acr:jims} sources downloaded,
-          \item jims-crossbow module\footnote{available at \url{https://github.com/robertboczek/solaris-crossbow/tree/master/code}}
+          \item C compiler (for instance, \gls{acr:gcc}),
+          \item Java SE 1.6 compiler and \gls{acr:jre}, Maven,
+          \item \gls{acr:jims} source code,
+          \item jims-crossbow module\footnote{available at
+                \url{https://github.com/robertboczek/solaris-crossbow/tree/master/code}}
         \end{itemize}
 
-        Afterwards \gls{acr:jims} project must be built. Detailed description of how to build \gls{acr:jims} is in
-        README file located at the main directory of \gls{acr:jims} sources.
-
-        Subsequently jims-crossbow module should be copied to the main folder containing \gls{acr:jims} and then build.
-        The script inst-crossbow-lib.sh must be later executed to copy shared libraries *.so files to /usr/lib folder.
-
+        \gls{acr:jims} project has to be built first (Detailed description on how to build \gls{acr:jims} can be found
+        in README file located in the main directory of \gls{acr:jims} sources). After \gls{acr:jims} is built,
+        jims-crossbow module has to be copied to \gls{acr:jims} main directory and compiled with Maven (Detailed
+        instructions are available in the module's README file).
+        
 
       \subsection{Running CM4J}
 
-        If everything goes well, another step is running \gls{acr:jims}:
+        To run \gls{acr:jims} Gateway, following command should be issued:
 
-        \begin{itemize}
-          \item jims-gateway: \texttt{.../jims-gateway/bin/jims-agent.sh [-b host\_address] start | stop | restart},
-          \item jims-agent: \texttt{.../jims-agent/bin/jims-agent.sh [-b host\_address] start | stop | restart}.
-        \end{itemize}
+        \texttt{.../jims-gateway/bin/jims-agent.sh [-b host\_address] start | stop | restart}
 
-        On the main node just single jims-gateway should be run and on the remaining nodes as many jims-agents as it is
-        required. For more information about \gls{acr:jims} and its architecture please refer to bibliography.
+        \noindent
+        \gls{acr:jims} Agent is started with following command:
 
-        If jims-agent or jims-gateway do not start, it is worth to see log files, located respectively at
-        \texttt{jims-agent/var/jims/log/agent.log} and \texttt{jims-gateway/var/jims/log/agent.log}. It is also
-        recommended to have the log file opened during \gls{acr:jims} start to see whether any exception was thrown
-        (\texttt{tail -f jims\-gateway/var/jims/log/agent.log})
+        \texttt{.../jims-agent/bin/jims-agent.sh [-b host\_address] start | stop | restart}
+
+        On the main node, single jims-gateway should be run and on the remaining nodes as many jims-agents as it is
+        required. If jims-agent or jims-gateway do not start, it is recommended to see log files, located respectively
+        at \texttt{jims-agent/var/jims/log/agent.log} and \texttt{jims-gateway/var/jims/log/agent.log}. It is also
+        recommended to have the log file opened during \gls{acr:jims} start to see whether any exception was thrown.
 
         \gls{acr:jims} has \gls{acr:jmx}-based architecture so each jims-agent and jims-gateway can be accessed through
-        JConsole. In order to do that start JConsole, select remote process and enter type: \\
-        \texttt{service:jmx:rmi:///jndi/rmi://address:port/jims} where address and port is concrete address and port under
-        which \gls{acr:jims} was started. The JConsole allows browsing registered mbeans and performing \gls{acr:crud}
+        JConsole. In order to do that JConsole should be launched (with address set to
+        \texttt{service:jmx:rmi:///jndi/rmi://address:port/jims}, where address and port is concrete address and port
+        under which \gls{acr:jims} is started). JConsole allows browsing registered MBeans and performing \gls{acr:crud}
         operations. Especially in case of the crossbow module it allows these operations as figure
         \ref{fig:impl:xbow-jconsole} presents.
 
@@ -2801,23 +2808,9 @@
           \label{fig:impl:xbow-jconsole}
         \end{figure}
 
-        Building \gls{acr:gui}, which is located at 'jims/jims-crossbow/jims-crossbow-gui', requires Maven.
-        Application may be imported to Eclipse and then built and run or built from console using Maven (\texttt{mvn
-        assembly:assembly}) and executed: \\
-        \texttt{java -cp target/jims-crossbow-gui-3.0.0-exe.jar org.jims.modules.crossbow.gui.Gui}.
-
 
     % \section{The jims-crossbow-module implementation details}
     % \label{sec:impl:module}
-
-    %   To provide fully functional system allowing all expected functionalities new \gls{acr:jims} module called
-    %   jims-crossbow-module was implemented. Created module consists of another three projects:
-
-    %   \begin{itemize}
-    %     \item Crossbow model components performing Crossbow operations (\textbf{jims-crossbow-mbean}),
-    %     \item Domain model transformation responsible for describing domain with actions (\textbf{jims-crossbow-model}),
-    %     \item Infrastructure project for high-level topology management (\textbf{jims-crossbow-infrastructure}).
-    %   \end{itemize}
 
     %   \begin{figure}[H]
     %     \centering
@@ -2830,25 +2823,18 @@
     \section{System verification}
     \label{sec:impl:verif}
   
-      Complexity of created system implies necessity of preparing tools verifying correctness of the system. In order to
-      achieve this verification tests on each level of our system were prepared. Starting from (low-level) shared
-      libraries, where unit tests for methods in C were implemented, through \gls{acr:jmx} level (with mocks) up to
-      integration tests testing creating whole network structure. All prepared tests helped in finding most obvious
-      mistakes and prepared system for testing with gui with lower risk of damaging underlying OS.  
+      Complexity of created system implies necessity of preparing tools that verify correctness of the system. In order
+      to achieve this, verification tests on each level of the system were prepared and performed.
 
+      There are unit tests implemented for native libraries written in C language. cmockery\footnote{available at
+      \url{http://code.google.com/p/cmockery}} library is utilized to create test suites with mock objects support.
 
-    \section{Deployment issues}
-    \label{sec:impl:problems}
+      JUnit and Mockito\footnote{available at \url{http://code.google.com/p/mockito}} libraries are used to unit test
+      Java modules. Also, integration tests are provided by jims-crossbow-infrastructure package.
 
-      \todo[inline]{wykopac do summary}
-		
-      In terms of deployment, potential problems are easy to indicate. Use of \gls{acr:jims} functionality and related
-      \gls{acr:jmx} features stresses the lack of transactional support. Although in our system in case of errors
-      introduced changes are usually removed, there is no guarantee that it will actually happen. Due to possible
-      further errors caused during restoring previous system state. In that case these partial changes must be removed
-      manually from each node involved in this failing deployment attempt which generally imposes specialistic knowledge
-      of underlying environment.
-
+      All the tests performed help to significantly reduce the number of possible programming errors and allow reliable
+      operation of the system.
+      
 
     \section*{Summary}
     \label{sec:impl:summary}
@@ -3384,6 +3370,20 @@
 
   \chapter{Summary}
   \label{chap:sum}
+
+    % TODO
+    %
+    % \section{Deployment issues}
+    % \label{sec:impl:problems}
+
+    %   \todo[inline]{wykopac do summary}
+		% 
+    %   In terms of deployment, potential problems are easy to indicate. Use of \gls{acr:jims} functionality and related
+    %   \gls{acr:jmx} features stresses the lack of transactional support. Although in our system in case of errors
+    %   introduced changes are usually removed, there is no guarantee that it will actually happen. Due to possible
+    %   further errors caused during restoring previous system state. In that case these partial changes must be removed
+    %   manually from each node involved in this failing deployment attempt which generally imposes specialistic knowledge
+    %   of underlying environment.
 
     The chapter summarizes the outcome of the research conducted in the area of network virtualization with special
     regard to the thesis statement.
