@@ -35,6 +35,7 @@
 
 
 % \usepackage[polish]{babel}
+\usepackage{dirtree}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{fullpage}
@@ -2741,13 +2742,15 @@
 
         \begin{figure}[H]
           \centering
-          \begin{tabular}{l}
-            \texttt{jims-crossbow}                    \\
-            \texttt{|-- jims-crossbow-gui}            \\
-            \texttt{|-- jims-crossbow-infrastructure} \\
-            \texttt{|-- jims-crossbow-model}          \\
-            \texttt{+-- jims-crossbow-native}
-          \end{tabular}
+          \parbox{.45\textwidth}{\dirtree{%
+            .1 jims.
+            .2 jims-crossbow.
+            .3 jims-crossbow-gui.
+            .3 jims-crossbow-infrastructure.
+            .3 jims-crossbow-model.
+            .3 jims-crossbow-native.
+            .3 pom.xml.
+          }}
 
           \caption{Source code organization}
           \label{fig:impl:org}
@@ -2822,12 +2825,15 @@
 
     \section{System verification}
     \label{sec:impl:verif}
+
+      % TODO code coverage
   
       Complexity of created system implies necessity of preparing tools that verify correctness of the system. In order
       to achieve this, verification tests on each level of the system were prepared and performed.
 
       There are unit tests implemented for native libraries written in C language. cmockery\footnote{available at
       \url{http://code.google.com/p/cmockery}} library is utilized to create test suites with mock objects support.
+      Native code testing is integrated with Maven and is executed as part of the build process.
 
       JUnit and Mockito\footnote{available at \url{http://code.google.com/p/mockito}} libraries are used to unit test
       Java modules. Also, integration tests are provided by jims-crossbow-infrastructure package.
