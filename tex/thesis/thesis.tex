@@ -64,6 +64,8 @@
 
 % include Acronyms
 \input{acr.tex}
+\renewcommand*{\glsclearpage}{\clearpage}
+\glstoctrue
 \makeglossaries
 
 \setlength{\headheight}{15pt}
@@ -184,8 +186,8 @@
 	\vspace*{\fill}
 
 	\begin{center}
-    \textit{We wish to acknowledge the support and assistance given us by professor~Krzysztof~Zieliński and
-            Marcin~Jarząb. Their generously contributed ideas, feedback and advice was of great help to us. \\
+    \textit{We wish to acknowledge the support and assistance given us by \\ professor~Krzysztof~Zieliński and
+            Marcin~Jarząb. \\ Their generously contributed ideas, feedback and advice were of great help to us. \\
             We also wish to thank our families and friends for their support and encouragement.}
   \end{center}
 
@@ -287,23 +289,32 @@
 
         \begin{tabular}{|l|l|}
           \hline
-          \multicolumn{1}{|c|}{Chapter} & \multicolumn{1}{c|}{Author}     \\
+          \multicolumn{1}{|c|}{Chapter} & \multicolumn{1}{c|}{Author} \\
           \hline \hline
-          \compref{chap:intro}          & Robert Boczek                   \\
+          \compref{chap:intro}          & Robert Boczek               \\
           \hline
-          \compref{chap:bck}            & Robert Boczek, Dawid Ciepliński \\
+          \compref{sec:ctx:virt}        & Robert Boczek               \\
+          \compref{sec:ctx:multi}       & Dawid Ciepliński            \\
+          \compref{sec:ctx:infra}       & Dawid Ciepliński            \\
+          \compref{sec:ctx:qos}         & Robert Boczek               \\
           \hline
-          \compref{chap:req}            & Robert Boczek, Dawid Ciepliński \\
+          \compref{sec:req:spec}        & Dawid Ciepliński            \\
+          \compref{sec:req:func}        & Robert Boczek               \\
+          \compref{sec:req:nonfunc}     & Robert Boczek               \\
+          \compref{sec:req:env}         & Robert Boczek               \\
           \hline
-          \compref{chap:sol}            & Robert Boczek, Dawid Ciepliński \\
+          \compref{sec:sol:general}     & Dawid Ciepliński            \\
+          \compref{sec:sol:containers}  & Dawid Ciepliński            \\
+          \compref{sec:sol:xbow}        & Robert Boczek               \\
+          \compref{sec:sol:res}         & Robert Boczek               \\
           \hline
-          \compref{chap:arch}           & Dawid Ciepliński                \\
+          \compref{chap:arch}           & Dawid Ciepliński            \\
           \hline
-          \compref{chap:impl}           & Robert Boczek                   \\
+          \compref{chap:impl}           & Robert Boczek               \\
           \hline
-          \compref{chap:cs}             & Dawid Ciepliński                \\
+          \compref{chap:cs}             & Dawid Ciepliński            \\
           \hline
-          \compref{chap:sum}            & Robert Boczek, Dawid Ciepliński \\
+          \compref{chap:sum}            & Robert Boczek               \\
           \hline
         \end{tabular}
 
@@ -2346,37 +2357,48 @@
   \chapter{The CM4J system implementation}
   \label{chap:impl}
 
-    This chapter focuses mainly on implementation details, especially on most interesting and complex problems
-    encountered during the \gls{acr:cm4j} system implementation process like integrating with \gls{acr:jims}, accessing
-    low level functions, providing multiple programming models etc.
+    This chapter focuses on implementation details, especially on most interesting and complex problems encountered
+    during the \gls{acr:cm4j} system implementation. Integration with \gls{acr:jims}, accessing low-level functions,
+    providing multiple programming \gls{acr:api}s are described, among others.
 
-    The \gls{acr:cm4j} project's implementation structure is presented in section \ref{sec:impl:structure}, whereas
-    section \ref{sec:impl:env} discusses implementation environment aspects like requested operating system, libraries
-    presence or necessary programs to be built and installed. Issues like created components facilitating Crossbow
-    usage, low level function access methods, prepared domain model transformation and adopted approach to data
-    persistence are mainly discussed in this section.
+    Section \ref{sec:impl:jmx} provides a brief overview of \gls{acr:jmx} technology. \gls{acr:jmx} is used extensively
+    by the system --- all the components run inside \gls{acr:jmx} Agent environment.
 
-    Issues like implemented system verification, detailed description of necessary steps for build completion
-    (\ref{sec:impl:build}), load balancing problems and other potentially hard to solve issues (\ref{sec:impl:problems})
-    are described in the remaining part of this chapter.
+    Section \ref{sec:impl:jims} introduces \gls{acr:jims} --- \gls{acr:jmx}-based monitoring and management system.
+    \gls{acr:jims} provides important functionality for Solaris management that, integrated with \gls{acr:cm4j}, allows
+    to build powerful, high-level tools.
+
+    Section \ref{sec:impl:instr} describes implementation details of resources instrumentation layer. Programming
+    languages and libraries used to develop the layer are listed. Internal layer design and the method to access native
+    libraries are presented.
+
+    Section \ref{sec:impl:vim} presents virtual infrastructure management layer internals. Main components are listed,
+    transformations performed to instantiate complex object models are discussed and data persistence mechanisms are
+    introduced. This layer builds on top of resources instrumentation layer and integrates with \gls{acr:jims} to
+    provide its full functionality. Integration with \gls{acr:jims} is described and an overview of \gls{acr:gui}
+    console is provided.
+
+    Section \ref{sec:impl:build} contains information needed to build and run \gls{acr:jims} and \gls{acr:cm4j}. Source
+    code organization, building and running process details are listed.
+
+    Section \ref{sec:impl:verif} describes steps taken while developing the system to ensure its high quality. Overview
+    of testing and mocking libraries supporting the process of development is provided.
 
 
     \section{Java Management Extensions}
+    \label{sec:impl:jmx}
 
       \gls{acr:jmx} is a technology for distributed resource management and control. Resources that can be managed,
-      include applications, system objects, and physical devices. Managed resources are repre
-      
-      
-      
-      These managed resources in \gls{acr:jmx} are represented by MBeans which are Java objects registered at MBean
-      Server under specific ObjectName \cite{jims}.
+      include applications, system objects, and physical devices. Managed resources are are represented by MBeans which
+      are Java objects registered at MBean Server under specific ObjectName \cite{jims}. Figure \ref{fig:impl:jmx-arch}
+      presents the architecture of \gls{acr:jmx}.
 
       \begin{figure}[h]
-        \begin{center}
-          \includegraphics[width=0.7\textwidth]{img/jims/jmx.png}
-        \end{center}
+        \centering
+        \includegraphics[width=.9\textwidth]{img/jims/jmx.png}
 
         \caption{JMX architecture \cite{jims}}
+        \label{fig:impl:jmx-arch}
       \end{figure}
 
       \gls{acr:jmx} provides also services such as:
@@ -2390,25 +2412,35 @@
 
 
     \section{JMX-based Infrastructure Monitoring System}
+    \label{sec:impl:jims}
 
-      \gls{acr:jims} supports monitoring and management under both Linux and Solaris platforms. Thanks to \gls{acr:jims}
-      features such as easy maintenance (automatic modules downloading) and extensibility (possibility of adding
-      additional modules) the task of integrating \gls{acr:cm4j} with \gls{acr:jims} is straightforward \cite{jims}.
+      \gls{acr:jims} supports platform monitoring and management under both Linux and Solaris platforms. Thanks to
+      \gls{acr:jims} features such as easy maintenance (automatic modules downloading) and extensibility, integration
+      \gls{acr:cm4j} with \gls{acr:jims} is straightforward \cite{jims}.
     
       \begin{figure}[H]
-        \begin{center}
-          \includegraphics[width=0.7\textwidth]{img/jims/jims.png}
-        \end{center}
+        \centering
+        \includegraphics[width=.9\textwidth]{img/jims/jims.png}
+        
         \caption{JIMS architecture \cite{jims}}
       \end{figure}
 
-      The \gls{acr:jims} Extensions for Resource Monitoring and Management of Solaris 10 provides general architecture
-      for monitoring and management applications written in Java. Existing \gls{acr:jims} services enabling creating,
-      reading and changing properties of Solaris zones are extensively used in the system during instantiation of
-      requested virtual topologies.
+      \gls{acr:jims} Extensions for Resource Monitoring and Management of Solaris 10 provides general architecture for
+      infrastructure monitoring and management. Existing \gls{acr:jims} services enabling creating, reading and changing
+      properties of Solaris components are extensively used in the system during instantiation of requested virtual
+      topologies. Design of the subsystem is presented in figure \ref{fig:impl:jims-ext}.
+
+      \begin{figure}[H]
+        \centering
+        \includegraphics[width=.9\textwidth]{img/impl/jims_and_cm4j.png}
+
+        \caption{Design of JIMS Extensions for Solaris}
+        \label{fig:impl:jims-ext}
+      \end{figure}
 
 
     \section{Crossbow resources instrumentation}
+    \label{sec:impl:instr}
 
       \subsection{Implementation environment}
       \label{sec:impl:env}
@@ -2435,7 +2467,7 @@
 
         \begin{figure}[H]
           \centering
-          \includegraphics[width=.8\textheight, angle=90]{img/impl/etherstub.pdf}
+          \includegraphics[width=.95\textheight, angle=90]{img/impl/etherstub.pdf}
 
           \caption{Etherstub class diagram}
           \label{fig:impl:etherstub}
@@ -2481,6 +2513,7 @@
 
 
     \section{Virtual infrastructure management}
+    \label{sec:impl:vim}
 
       \subsection{Implementation environment}
 
@@ -2496,8 +2529,8 @@
       \label{sec:impl:infrastructure}
 
         Functionalities provided by MBeans may be invoked from \gls{acr:gui} console, JConsole or even from third-party
-        applications by just conforming to existing interfaces and object names. Existing high-level MBeans are
-        described in table \ref{tab:impl:hl-mbean}.
+        applications conforming to existing interfaces and object names. Existing high-level MBeans are described in
+        table \ref{tab:impl:hl-mbean}.
 
         \begin{table}[H]
           \centering
@@ -2618,7 +2651,7 @@
         structure --- there is information about project, type of Crossbow component and, for interfaces, zone name it
         is attached to. Table \ref{tab:impl:naming} presents all the naming schemes used.
 
-        \begin{table}[H]
+        \begin{table}[h]
           \centering
 
           \begin{tabular}{|c|c|c|}
@@ -2641,12 +2674,11 @@
           \label{tab:impl:naming}
         \end{table}
 
-        For accessing flow statistics, mechanisms provided by the operating system are used --- traffic history is
-        managed directly by Crossbow libraries. \gls{acr:vnic} statistics are gathered by a specialized
-        StatisticsGathererMBean.
+        To access flow statistics, mechanisms provided by the operating system are used --- traffic history is managed
+        directly by Crossbow libraries. \gls{acr:vnic} statistics are gathered by specialized StatisticsGathererMBean.
 
-        There is also possibility of saving a virtual topology designed avoiding the process of instantiation. The
-        \gls{acr:gui} console provides means to save a topology to a file and then restore it whenever needed. The
+        There is also possibility of saving a virtual topology design avoiding the process of instantiation. The
+        \gls{acr:gui} console provides means to save a topology to a file and then restore it whenever needed. This
         functionality is especially useful when network connection is lost and one does not want to lose the network
         design.
 
@@ -2656,13 +2688,13 @@
         \gls{acr:jims} is used as execution environment for \gls{acr:cm4j} --- it provides Zone management functionality
         and MBean Server to host \gls{acr:cm4j} objects. Node discovery and dynamic module loading features of
         \gls{acr:jims} are also used extensively by \gls{acr:cm4j}. The integration is depicted in figure
-        \ref{fig:impl:integration}.
-
-        \todo{wiecej o dynamicznym ladowaniu modulow z repo}
+        \ref{fig:impl:integration}. Highlighted components are part of \gls{acr:cm4j} system.
 
         \begin{figure}[H]
+          \centering
+          \includegraphics[width=.8\textwidth]{img/impl/integration.pdf}
 
-          \caption{}
+          \caption{CM4J and JIMS integration}
           \label{fig:impl:integration}
         \end{figure}
 
@@ -2680,15 +2712,15 @@
           \item Connecting to \gls{acr:jims} Gateway,
           \item Designing desired network structure with requested virtual appliances,
           \item Discovering and modifying already created projects,
-          \item Accessing detailed information about links and flows like bandwidth consumption presented in charts for
+          \item Accessing detailed information about links and flows (bandwidth consumption) presented in charts for
                 requested time periods,
           \item Automatic logging using \gls{acr:ssh} to selected (already deployed) nodes and opening
                 \gls{acr:gui}-like terminal emulator.
         \end{itemize}
 
-        \begin{figure}[H]
+        \begin{figure}[h]
           \centering
-          \includegraphics[width=0.7\textwidth]{img/impl/gui.png}
+          \includegraphics[width=.8\textwidth]{img/impl/gui.png}
 
           \caption{GUI application}
         \end{figure}
@@ -2697,8 +2729,8 @@
         mandatory attributes are verified. Probability of future instantiation process failure is significantly reduced
         thanks to this verification.
 
-        Figure \ref{fig:impl:guiseq} presents interaction between \gls{acr:gui} and other components of th system while
-        performing the instantiation operation.
+        Figure \ref{fig:impl:guiseq} presents interaction between \gls{acr:gui} and other components of the system while
+        the instantiation operation is performed.
 
         \begin{figure}[H]
           \centering
@@ -2736,6 +2768,11 @@
 
     \section{Building and running the platform}
     \label{sec:impl:build}
+
+      The section describes steps necessary to build and run \gls{acr:cm4j} system. First, organization of source code
+      is presented together with brief description. Then, the process of building the platform is outlined. Finally, the
+      process of running the platform is presented.
+
 
       \subsection{CM4J source code organization}
       \label{sec:impl:structure}
@@ -2786,50 +2823,36 @@
 
         To run \gls{acr:jims} Gateway, following command should be issued:
 
-        \texttt{.../jims-gateway/bin/jims-agent.sh [-b host\_address] start | stop | restart}
+        \texttt{jims-gateway/bin/jims-agent.sh -b <host address> start}
 
         \noindent
         \gls{acr:jims} Agent is started with following command:
 
-        \texttt{.../jims-agent/bin/jims-agent.sh [-b host\_address] start | stop | restart}
+        \texttt{jims-agent/bin/jims-agent.sh -b <host address> start}
 
-        On the main node, single jims-gateway should be run and on the remaining nodes as many jims-agents as it is
-        required. If jims-agent or jims-gateway do not start, it is recommended to see log files, located respectively
-        at \texttt{jims-agent/var/jims/log/agent.log} and \texttt{jims-gateway/var/jims/log/agent.log}. It is also
-        recommended to have the log file opened during \gls{acr:jims} start to see whether any exception was thrown.
+        There should be one \gls{acr:jims} Gateway run and as many \gls{acr:jims} Agents as needed. If \gls{acr:jims}
+        Gateway or \gls{acr:jims} Agent do not start, it is recommended to see log files which are located at
+        \texttt{jims-gateway/var/jims/log/agent.log} and \texttt{jims-agent/var/jims/log/agent.log}, respectively. It is
+        also recommended to have the log file opened during \gls{acr:jims} start to see whether any exception was
+        thrown.
 
-        \gls{acr:jims} has \gls{acr:jmx}-based architecture so each jims-agent and jims-gateway can be accessed through
-        JConsole. In order to do that JConsole should be launched (with address set to
-        \texttt{service:jmx:rmi:///jndi/rmi://address:port/jims}, where address and port is concrete address and port
-        under which \gls{acr:jims} is started). JConsole allows browsing registered MBeans and performing \gls{acr:crud}
-        operations. Especially in case of the crossbow module it allows these operations as figure
-        \ref{fig:impl:xbow-jconsole} presents.
+        As \gls{acr:jims} is based on \gls{acr:jmx}, every \gls{acr:jims} Gateway and \gls{acr:jims} Agent can be
+        accessed with JConsole. JConsole allows to browse registered MBeans and perform \gls{acr:crud} operations. An
+        example of using JConsole to manipulate MBean objects is presented in figure \ref{fig:impl:xbow-jconsole}.
+        
 
         \begin{figure}[H]
           \centering
           \includegraphics[width=1.0\textwidth]{img/impl/jconsole.png}
 
-          \caption{The Crossbow module registered MBeans example}
+          \caption{Accessing CM4J components with JConsole}
           \label{fig:impl:xbow-jconsole}
         \end{figure}
-
-
-    % \section{The jims-crossbow-module implementation details}
-    % \label{sec:impl:module}
-
-    %   \begin{figure}[H]
-    %     \centering
-    %     \includegraphics[width=1.26\textwidth, angle=90]{img/impl/jims_and_cm4j.png}
-
-    %     \caption{The Crossbow module integrated with JIMS \cite{jims}}
-    %   \end{figure}
 		
 
     \section{System verification}
     \label{sec:impl:verif}
 
-      % TODO code coverage
-  
       Complexity of created system implies necessity of preparing tools that verify correctness of the system. In order
       to achieve this, verification tests on each level of the system were prepared and performed.
 
@@ -2847,15 +2870,17 @@
     \section*{Summary}
     \label{sec:impl:summary}
 
-      This chapter introduced chosen approach to system implementation. Despite the fact that the requested
-      functionalities were demanding and complex, the final product meets all the previously listed functional
-      requirements. Thanks to used technologies such as \gls{acr:jmx}, the system with fully independent business layer
-      (loosely coupled MBeans) was implemented. These technologies also helped to fulfill the defined non-functional
-      requirements like: evolvability, extensibility, composability, etc. Definitely one of the biggest advantage of
-      this system (apart from all the delivered functionalities provided by \gls{acr:cm4j}) is reusability as four
-      possible usage models exist. The System may be managed from an implemented \gls{acr:gui}, a running JConsole or
-      even from self developed (Java-based or native) application where developer can decide which part of
-      \gls{acr:cm4j} would be used by just conforming to previously presented and described interfaces.
+      This chapter presented the chosen approach to system implementation. Despite the fact that requested
+      functionalities were demanding and complex, the final product meets all the previously listed requirements. Thanks
+      to technologies used, the system with fully independent business layer (loosely coupled MBeans) was implemented.
+      These technologies also helped to fulfill defined non-functional requirements (evolvability, extensibility,
+      composability, etc.).
+      
+      One of the biggest advantages of this system (apart from all the delivered functionalities provided by
+      \gls{acr:cm4j}) is definitely its flexibility, as four possible usage models exist. The system may be managed with
+      implemented \gls{acr:gui}, JConsole or third-party (Java-based or native) application. The developer has the
+      freedom to decide, which part of \gls{acr:cm4j} would be used by just conforming to previously presented and
+      described interfaces.
 
 
   \chapter{Case Study}
@@ -3457,6 +3482,8 @@
   \printglossaries
 
   \bibliographystyle{plain}
+  \clearpage
+  \addcontentsline{toc}{chapter}{Bibliography}
   \bibliography{bibliography}
 
 \end{document}

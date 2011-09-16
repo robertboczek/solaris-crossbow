@@ -1,6 +1,9 @@
 public interface LinkHandle extends Library {
+
   public int set_ip_address(String link, String address);
+
 }
+
 
 public class JNALinkHelper implements LinkHelper {
 
@@ -15,14 +18,17 @@ public class JNALinkHelper implements LinkHelper {
    * @param libraryPath Path to native library
    */
   public JNALinkHelper(String libraryPath) {
+
     String filePath = libraryPath + File.separator + LIB_NAME;
     handle = (LinkHandle) Native.loadLibrary(filePath,
                                              LinkHandle.class);
     handle.init();
+
   }
   
   public int setIpAddress(String link, String ipAddress)
     throws LinkException, ValidationException {
     return handle.set_ip_address(link, ipAddress);
   }
+
 }

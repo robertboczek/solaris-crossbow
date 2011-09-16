@@ -1,8 +1,4 @@
-#ifndef LINK_IP_H
-#define LINK_IP_H
-
 #include <link/types.h>
-
 
 /**
  * \brief  Sets new ip address to link.
@@ -15,5 +11,3 @@
  * \return  XBOW_STATUS_OPERATION_FAILURE  when operation failed
  */
 int set_ip_address(char* link, char* address);
-
-#endif
