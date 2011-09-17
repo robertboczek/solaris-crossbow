@@ -18,7 +18,8 @@ public interface SupervisorMBean {
 
 	/**
 	 * Discovers all the topologies created.
-	 * Returns topology names together with domain model representation.
+	 * Returns topology names together with
+	 * domain model representation.
 	 */
 	public Map< String, Pair< ObjectModel, Assignments > > discover();
 

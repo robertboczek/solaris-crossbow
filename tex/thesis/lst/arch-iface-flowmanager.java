@@ -1,4 +1,5 @@
-public interface FlowManagerMBean extends GenericManager< FlowMBean > {
+public interface FlowManagerMBean extends GenericManager< FlowMBean >
+{
 
 	public List< String > getFlows();
 

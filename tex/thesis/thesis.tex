@@ -183,15 +183,16 @@
                   {Technical supervisor}
 
   \thispagestyle{empty}
-	\vspace*{\fill}
+  \vspace*{\fill}
 
-	\begin{center}
-    \textit{We wish to acknowledge the support and assistance given us by \\ professor~Krzysztof~Zieliński and
-            Marcin~Jarząb. \\ Their generously contributed ideas, feedback and advice were of great help to us. \\
+  \begin{center}
+    \textit{We wish to acknowledge the support and assistance given us by \\
+            professor~Krzysztof~Zieliński and Marcin~Jarząb. \\
+            Their generously contributed ideas, feedback and advice were of great help to us. \\
             We also wish to thank our families and friends for their support and encouragement.}
   \end{center}
 
-	\vspace*{\fill}
+  \vspace*{\fill}
 
   \tableofcontents
 
@@ -209,13 +210,11 @@
   \chapter{Introduction}
   \label{chap:intro}
 
-    % TODO napisac porzadnie! calosc!
-
     In today's world every successful organization is based on properly designed communication networks. These networks
     must deal with delay-sensitive data such as real-time audio and video or other mission-critical information.
-    Therefore, safe, predictable and, very often, guaranteed services have to be provided. Accomplishing the required
-    \gls{acr:qos} by controlling delay, delay variation (jitter), bandwidth and packet loss parameters is a deeply
-    hidden secret of most successful end-to-end business applications.
+    Therefore, safe, predictable and, very often, guaranteed services have to be provided. Achieving the required
+    \gls{acr:qos} level by controlling delay, delay variation, bandwidth consumption and packet loss parameters is a
+    deeply hidden secret of most successful end-to-end business applications.
     
     Many common networking standards did not foresee the future necessity of supporting \gls{acr:qos} policies.
     Therefore, implementing \gls{acr:qos} solutions over the Internet or even \gls{acr:lan} is such a demanding issue.
@@ -223,24 +222,27 @@
     field of resource reservation and isolation. 
 
     The popularity of virtualization techniques is increasing. Virtualization is used heavily to partition server
-    resources, create test bed environments for simulations and experiments and also as one of the components in
+    resources, create test bed environments for simulations and experiments and as one of the core components in
     \gls{acr:soa}. Moreover, grid and cloud computing models also leverage virtualized environments. All the
     applications encourage more research in the field.
 
 
     \section{Thesis objective}
 
-      Having all the above facts taken into account the following thesis statement is proposed: \textit{There exists a
-      component-based architecture which enables construction of a system that would facilitate working with a fully
-      isolated virtualized network resources grouped by project name}.
+      \newcommand{\statement}{There exists a component-based architecture which enables construction of a system that
+                              would facilitate working with fully isolated virtualized network resources grouped in
+                              projects}
 
-      Due to substantial lack in similar products available on the market, research in this area has been planned. The
-      main system responsibilities would be providing fast and efficient way of creating any requested, virtualized
-      network structure with \gls{acr:qos} guarantees. Solaris operating system is already a respectable solution as far
-      as resource virtualization is considered. Recently supported by network virtualization mechanism contained in the
-      Crossbow project, Solaris OS seems to be a suitable environment to proceed further research.
+      Having all the above facts taken into account the following thesis statement is proposed: \textit{\statement}.
 
-      The thesis objective is to design the architecture, implement it and verify using a series of tests.
+      Due to substantial lack of similar products available on the market, research in the area has been planned. The
+      main system responsibilities are providing fast and efficient way of creating any requested, virtualized network
+      structure with \gls{acr:qos} guarantees. Solaris operating system is already a respectable solution as far as
+      resource virtualization is considered. Supported by network virtualization mechanisms contained in the Crossbow
+      project, Solaris seems to be a suitable environment to proceed with further research.
+
+      The thesis objective is to verify if the component-based architecture in question exists. If the answer is
+      positive, the system will be implemented and verified using a series of tests.
 
 
     \section{Organization of the thesis}
@@ -249,31 +251,31 @@
       particular stage of the system construction process.
 
       Chapter \ref{chap:bck} provides domain information about resource and network virtualization and supplying
-      \gls{acr:qos} guarantees for \gls{acr:ip} networks. Virtual infrastructures are described together with an
-      overview of technologies in common use.
+      \gls{acr:qos} guarantees for networks based on \gls{acr:ip}. Virtual infrastructures are described together with
+      an overview of technologies in common use.
 
-      Chapter \ref{chap:req} introduces crucial definitions of objects and processes discussed throughout the paper.
-      Based on these definitions and constraints imposed, functional requirements and qualities of the system are
-      identified and presented.
+      Chapter \ref{chap:req} introduces definitions of objects and processes discussed throughout the paper. Based on
+      these definitions and imposed constraints, functional requirements and qualities of the system are identified and
+      presented.
 
-      An overview of Solaris OS is presented in chapter \ref{chap:sol}. Special attention is paid to virtualization
-      mechanisms present in the environment and ways to manage resource consumption policies. Crossbow --- network
-      virtualization subsystem --- is then described thoroughly.
+      An overview of Solaris operating system is presented in chapter \ref{chap:sol}. Special attention is paid to
+      virtualization mechanisms present in the environment and ways to manage resource consumption policies. Crossbow
+      --- network virtualization subsystem --- is then described thoroughly.
 
       Proposed architecture of the system, named \gls{acr:cm4j}, is introduced in chapter \ref{chap:arch}. The
-      architecture is analyzed with respect to its two main layers --- instrumentation and infrastructure --- designed
-      to provide different levels of abstraction and fulfill the requirements of the system.
+      architecture is analyzed with respect to its two main layers --- instrumentation and infrastructure --- which are
+      designed to provide different levels of abstraction and to fulfil the requirements of the system.
 
       Chapter \ref{chap:impl} discusses implementation details of the system. It also lists problems encountered while
       implementing the system together with chosen solutions to these problems. Integration with \gls{acr:jims} is
       described and system verification process is summarized.
 
       The scenario that was designed and executed to validate the operation of implemented system is examined in chapter
-      \ref{chap:cs}. The case study, inspired by multimedia systems, allows to verify that most of functionalities of
+      \ref{chap:cs}. The case study, inspired by multimedia systems, allows to verify whether most of functionalities of
       the system are implemented properly.
 
-      Chapter \ref{chap:sum} summarizes research performed in the field of network virtualization. Achieved goals are
-      described together with possible directions of further improvements and functionalities that may be welcomed.
+      Chapter \ref{chap:sum} summarizes the research performed in the field of network virtualization. Achieved goals
+      are described together with possible directions of further improvements and functionalities that may be welcomed.
       Finally, objectives that were not completed are listed.
       
 
@@ -318,7 +320,7 @@
           \hline
         \end{tabular}
 
-        \caption{Individual contributions}
+        \caption{Individual contribution of each author}
         \label{tab:intro:contrib}
       \end{table}
 
@@ -408,9 +410,9 @@
 
       \subsection{OS-level virtualization}
 
-        OS-level virtualization may be often presented as slicing single OS to small partitions (sometimes called
-        virtual environments, virtual private servers or zones). Multiple guest operating systems may be running under
-        the same host system, but they must share the same kernel \cite{turban}.
+        OS-level virtualization may be often presented as slicing single operating system to small partitions (sometimes
+        called virtual environments, virtual private servers or zones). Multiple guest operating systems may be running
+        under the same host system, but they must share the same kernel \cite{turban}.
 
         This approach is the least flexible of all presented here but it also imposes the lowest overhead. FreeBSD
         jails, Solaris Containers and OpenVZ are examples of OS-level virtualization implementations.
@@ -439,10 +441,10 @@
         virtualization means using existing physical infrastructure (comprising multiple nodes) to build subnetworks on
         top of it.
 
-        As far as internal virtualization is considered, the main building blocks are virtual network interface cards
-        and virtual switches. These components establish logical links between virtual appliances (counterparts of
-        physical machines). Examples of internal virtualization solutions include Xen domains, VirtualBox internal
-        networks \cite{vboxum} and Solaris Containers with Crossbow technology.
+        As far as internal virtualization is considered, main building blocks are virtual network interface cards and
+        virtual switches. These components establish logical links between virtual appliances (counterparts of physical
+        machines). Examples of internal virtualization solutions include Xen domains, VirtualBox internal networks
+        \cite{vboxum} and Solaris Containers with Crossbow technology.
 
         External virtualization is implemented with Layer 2 switches aware of \gls{acr:vlan} technology. With these
         devices, entire network is split into fully-isolated parts, each becoming a new independent network. Routers can
@@ -454,7 +456,7 @@
         
         \begin{figure}[H]
           \centering
-          \includegraphics[width=.5\textwidth]{img/ctx/vnet-types.pdf}
+          \includegraphics[width=.4\textwidth]{img/ctx/vnet-types.pdf}
 
           \caption{Internal and external network virtualization}
           \label{fig:ctx:nvtypes}
@@ -559,7 +561,7 @@
             \includegraphics[width=.7\textwidth]{img/solaris/virtual-appliance-infra.pdf}
           \end{center}
 
-          \caption{An example of infrastructure utilizing virtual appliances with appliance repository}
+          \caption{Infrastructure utilizing virtual appliances with appliance repository}
         \end{figure}
 
 
@@ -571,8 +573,8 @@
         are applicable to enable network traffic differentiation. The solution allows to easily consolidate network
         topologies of arbitrary complexity and size.
 
-        Thanks to the integration of multiple network-centric virtualization techniques, there are numerous advantages
-        of the approach:
+        Thanks to the integration of multiple network-centric virtualization techniques, the approach has numerous
+        advantages:
 
         \begin{itemize}
 
@@ -687,7 +689,7 @@
 
         \begin{figure}[h]
           \begin{center}
-            \includegraphics[scale=.5]{img/ctx/soa-logical.png}
+            \includegraphics[width=.8\textwidth]{img/ctx/soa-logical.png}
           \end{center}
 
           \caption{Logical Service-oriented Architecture model \cite{soa-foundation}}
@@ -701,7 +703,7 @@
 
         \begin{figure}[h]
           \begin{center}
-            \includegraphics[scale=.5]{img/ctx/soa-stack.png}
+            \includegraphics[width=.8\textwidth]{img/ctx/soa-stack.png}
           \end{center}
 
           \caption{Logical layers in the SOA Solution Stack \cite{soa-stack}}
@@ -762,8 +764,8 @@
 
         This architecture distinguishes two major components: packet marking using the IPv4 \gls{acr:tos} byte or TC in
         IPv6 and \gls{acr:phb}. Redefined \gls{acr:tos} field now uses 6 bits for packet classification and is called
-        \gls{acr:dscp}.  \gls{acr:phb} defines how packet should be treated due to its priority. Accepted policy should
-        be consistent within the domain.
+        \gls{acr:dscp}. \gls{acr:phb} defines how a packet should be treated. Accepted policy should be consistent
+        within the domain.
 
 
       \subsection{IntServ}
@@ -827,7 +829,7 @@
     Section \ref{sec:req:spec} introduces objects and processes discussed throughout the thesis. Formal definition is
     provided for each term. Also, high-level view of the domain is depicted to give better understanding of the subject.
 
-    Section \ref{sec:req:func} lists functional requirements the architecture has to fulfill. The requirements are
+    Section \ref{sec:req:func} lists functional requirements the architecture has to fulfil. The requirements are
     grouped to reflect main coarse-grained processes.
     
     Section \ref{sec:req:nonfunc} describes two classes of identified non-functional requirements. Run-time qualities
@@ -897,7 +899,7 @@
 
       \begin{figure}[H]
         \centering
-        \includegraphics[width=.7\textwidth]{img/req/overview.pdf}
+        \includegraphics[width=.8\textwidth]{img/req/overview.pdf}
 
         \caption{Important high-level objects and processes}
         \label{fig:req:overview}
@@ -1013,7 +1015,7 @@
                                   operation).
       \end{itemize}
 
-      Development-time requirements to fulfill are:
+      Development-time requirements to fulfil are:
 
       \begin{itemize}
         \item independent and reusable object model --- the model should be general, independent of system-specific
@@ -1031,15 +1033,15 @@
     \label{sec:req:env}
 
       Underlying environment should be a composition of fully independent nodes. However, there are requirements that
-      must be fulfilled by each node to allow the system to work properly.
+      must be met by each node to allow the system to work properly.
 
       Chosen operating system must provide mechanisms for isolation among virtualized elements, so that one's processor
-      or memory usage does not affect corresponding resources performing other operations. Also, there cannot be any
+      or memory usage does not affect corresponding resources performing other operations. Also, there must not be any
       interference between different topologies hosted on the same machine.
 
       The broadcast domain has to be preserved, too --- i.e. there has to be isolation starting from the link layer of
       the \gls{acr:osi} model. Every instantiated infrastructure should preserve its broadcast domain in order to
-      achieve network traffic isolation between different projects to fulfill the thesis statement. To achieve that,
+      achieve network traffic isolation between different projects to fulfil the thesis statement. To achieve that,
       separate \gls{acr:vlan} per project should be created or any other equivalent approach should be adopted.
 
 
@@ -1047,7 +1049,7 @@
 
       This chapter provided thorough analysis of system requirements. After the vocabulary of crucial terms have been
       established, all the requirements (both functional and non-functional) which the implemented \gls{acr:cm4j} is
-      expected to fulfill were described. Also, expectations towards underlying environment were presented. In order to
+      expected to fulfil were described. Also, expectations towards underlying environment were presented. In order to
       meet all the aforementioned constraints the system has to be implemented under OS supporting network and resource
       virtualization with ability to isolate infrastructure operation and restrict broadcast domains.
 
@@ -1114,10 +1116,10 @@
         \caption{The variety of resources that can be virtualized with Solaris OS}
       \end{figure}
 
-      As it can be seen, the Solaris operating system is accompanied by vast variety of virtualization-supporting
-      subsystems. This multiplicity and flexibility makes it a promising platform for service provisioning and building
-      even more abstract architectures on top of it. The following sections describe selected aspects of the system in
-      more detail.
+      As it can be seen, the Solaris OS is accompanied by vast variety of \mbox{virtualization-supporting} subsystems.
+      This multiplicity and flexibility makes it a promising platform for service provisioning and building even more
+      abstract architectures on top of it. The following sections describe selected aspects of the system in more
+      detail.
 
 
     \section{OS-level virtualization with Solaris Containers}
@@ -1156,7 +1158,7 @@
             \includegraphics[width=0.7\textwidth]{img/solaris/zones-high-level.pdf}
           \end{center}
 
-          \caption{Solaris Zones high-level view}
+          \caption{High-level view of Solaris Zones}
         \end{figure}
 
 
@@ -1437,23 +1439,23 @@
 
       \subsection{Running examples of flowadm and dladm command}
 
-        \textbf{dladm} and \textbf{flowadm} are two basic administrative commands for dealing with the Crossbow's
-        components. Below a few general examples of their usage are presented.
+        \texttt{dladm} and \texttt{flowadm} are two basic administrative commands for dealing with the Crossbow's
+        components. General examples of their usage are presented below.
   
-        \textbf{dladm} is the admin command for crossbow datalinks elements management. Below a few examples of
-        \gls{acr:vnic}s, Etherstubs management commands are presented and how bandwidth and priority values might be
-        assigned to these elements. \\
+        \texttt{dladm} is the admin command for Crossbow data links elements management. Examples of \gls{acr:vnic}s,
+        Etherstubs management commands are presented and how bandwidth and priority values might be assigned to these
+        elements. \\
 
         \noindent
         \begin{minipage}{\textwidth}
-          \lstinputlisting[caption={\textbf{dladm} command usage examples},label={lst:uc:xbow:dladm}]{lst/dladm.sh}
+          \lstinputlisting[caption={\texttt{dladm} command usage examples},label={lst:uc:xbow:dladm}]{lst/dladm.sh}
         \end{minipage}
 
-        \textbf{flowadm} is the admin command for flow management. It might be used as follows: \\
+        \texttt{flowadm} is the admin command for flow management. It might be used as follows: \\
 
         \noindent
         \begin{minipage}{\textwidth}
-          \lstinputlisting[caption={\textbf{flowadm} command usage examples},label={lst:uc:xbow:flowadm}]{lst/flowadm.sh}
+          \lstinputlisting[caption={\texttt{flowadm} command usage examples},label={lst:uc:xbow:flowadm}]{lst/flowadm.sh}
         \end{minipage}
 
 
@@ -1464,7 +1466,7 @@
 
         \noindent
         \begin{minipage}{\textwidth}
-          \lstinputlisting[caption={Creating an Exclusive IP Zone Over a VNIC example},label={lst:uc:xbow:vnic-zone}]{lst/vnic-zone.sh}
+          \lstinputlisting[caption={Creating an Exclusive IP Zone Over a VNIC},label={lst:uc:xbow:vnic-zone}]{lst/vnic-zone.sh}
         \end{minipage}
 
 
@@ -1581,7 +1583,7 @@
       \cite{solaris_operating_system}. 
 
 
-  \chapter{The CM4J system architecture}
+  \chapter{CM4J architecture}
   \label{chap:arch}
 
     The chapter discusses architectural aspects of the created system. First, the operating environment is discussed
@@ -1599,10 +1601,10 @@
     presented and main classes of objects analyzed. Interactions between the objects are depicted and, finally, the
     listing showing all the crucial classes belonging to the layer follows.
 
-    Section \ref{sec:arch:vi} describes the topmost layer of the whole system --- virtual infrastructure management. The
-    layer functionality is presented, then data model used is introduced and discussed and main components of the layer
-    are described together with their interdependencies and interactions. Extensive description of the layer's three
-    main use-cases --- instantiation, discovery, monitoring --- follows.
+    Section \ref{sec:arch:vi} describes the topmost layer of the whole system --- virtual infrastructure management.
+    Functionality of the layer is presented, then data model used is introduced and discussed and main components of the
+    layer are described together with their interdependencies and interactions. Extensive description of the layer's
+    three main use-cases --- instantiation, discovery, monitoring --- follows.
 
 
     \section{Operating environment}
@@ -1623,7 +1625,7 @@
     
       \begin{figure}[H]
         \begin{center}
-          \includegraphics[width=.8\textwidth]{img/architecture/deployment.pdf}
+          \includegraphics[width=.7\textwidth]{img/architecture/deployment.pdf}
         \end{center}
 
         \caption{Deployment diagram for the system}
@@ -1869,9 +1871,13 @@
         the topology, nodes responsible for discovery of available physical hosts, and mappers which translate between
         logical model and underlying resources.
 
+        \vfill
+
+        ~
+
         \begin{figure}[H]
           \centering
-          \includegraphics[width=.8\textwidth]{img/architecture/scope.pdf}
+          \includegraphics[angle=90, height=.95\textheight]{img/architecture/scope.pdf}
 
           \caption{Main stages of operation}
           \label{fig:arch:hl}
@@ -1922,7 +1928,7 @@
 
                       \umlemptyclass[x=4, y=-3]{Endpoint}
 
-                      \umlclass[y=-8]{RoutingTable}
+                      \umlclass[x=-4, y=-9]{RoutingTable}
                       {
                         + staticRoutes : List( IpAddress, IpAddress )
                       }
@@ -1932,7 +1938,7 @@
 
                       \umlemptyclass[x=6, y=-5]{Interface}
 
-                      \umlclass[x=8, y=-8]{IpAddress}
+                      \umlclass[x=6, y=-8]{IpAddress}
                       {
                         + address : String \\
                         + netmask : int
@@ -1942,8 +1948,8 @@
                       \umlinherit{Appliance}{Resource}
                       \umlinherit{Router}{Appliance}
 
-                      \umlaggreg[geometry=-|]{Router}{RoutingTable}
-                      \umlaggreg[geometry=-|, arg2=0..1]{Interface}{IpAddress}
+                      \umlaggreg{Router}{RoutingTable}
+                      \umlaggreg[arg2=0..1]{Interface}{IpAddress}
 
                       \umlinherit{Endpoint}{Resource}
                       \umlinherit{Switch}{Endpoint}
@@ -2017,9 +2023,9 @@
 
                         \umlemptyclass[x=3, y=1]{Filter}
 
-                        \umlemptyclass[x=7, y=-2]{AnyFilter}
+                        \umlemptyclass[x=6.5, y=-2]{AnyFilter}
 
-                        \umlclass[x=7, y=-5]{PortFilter}
+                        \umlclass[x=6.5, y=-5]{PortFilter}
                         {
                           + protocol : String \\
                           + port : int \\
@@ -2027,13 +2033,13 @@
                         }
                         {}
 
-                        \umlclass[x=7, y=-8]{TransportFilter}
+                        \umlclass[x=6.5, y=-8]{TransportFilter}
                         {
                           + protocol : String
                         }
                         {}
 
-                        \umlclass[x=-2, y=-8]{IpFilter}
+                        \umlclass[x=-1.5, y=-8]{IpFilter}
                         {
                           + address : String \\
                           + netmask : int \\
@@ -2173,7 +2179,6 @@
           Worker components perform all the low-level operations, including model to underlying entity mapping (and vice
           versa). Workers do not transform the model in any way --- all they do is provide well-defined rules for
           instantiation (including naming schemes) and discovery. Multiple workers are managed by the supervisor.
-
           Public interface of worker component is presented in listing \ref{lst:arch:iface:worker}. \\
 
           \noindent
@@ -2354,7 +2359,7 @@
       needed for the instantiation process.
 
 
-  \chapter{The CM4J system implementation}
+  \chapter{CM4J implementation}
   \label{chap:impl}
 
     This chapter focuses on implementation details, especially on most interesting and complex problems encountered
@@ -2432,7 +2437,7 @@
 
       \begin{figure}[H]
         \centering
-        \includegraphics[width=.9\textwidth]{img/impl/jims_and_cm4j.png}
+        \includegraphics[width=\textwidth]{img/impl/jims_and_cm4j.png}
 
         \caption{Design of JIMS Extensions for Solaris}
         \label{fig:impl:jims-ext}
@@ -2464,6 +2469,10 @@
         instrumentation is designed and implemented. For each Crossbow component, appropriate manager and entity
         interface are provided. Implementations of manager interface realize NotificationListener \gls{acr:jmx}
         interface to provide periodic discovery operation.
+
+        \vfill
+
+        ~
 
         \begin{figure}[H]
           \centering
@@ -2843,7 +2852,7 @@
 
         \begin{figure}[H]
           \centering
-          \includegraphics[width=1.0\textwidth]{img/impl/jconsole.png}
+          \includegraphics[width=.8\textwidth]{img/impl/jconsole.png}
 
           \caption{Accessing CM4J components with JConsole}
           \label{fig:impl:xbow-jconsole}
@@ -2858,13 +2867,10 @@
 
       There are unit tests implemented for native libraries written in C language. cmockery\footnote{available at
       \url{http://code.google.com/p/cmockery}} library is utilized to create test suites with mock objects support.
-      Native code testing is integrated with Maven and is executed as part of the build process.
-
-      JUnit and Mockito\footnote{available at \url{http://code.google.com/p/mockito}} libraries are used to unit test
-      Java modules. Also, integration tests are provided by jims-crossbow-infrastructure package.
-
-      All the tests performed help to significantly reduce the number of possible programming errors and allow reliable
-      operation of the system.
+      Native code testing is integrated with Maven and is executed as part of the build process. JUnit and
+      Mockito\footnote{available at \url{http://code.google.com/p/mockito}} libraries are used to unit test Java
+      modules. Also, integration tests are provided by jims-crossbow-infrastructure package.  All the tests performed
+      help to significantly reduce the number of possible programming errors and allow reliable operation of the system.
       
 
     \section*{Summary}
@@ -2873,7 +2879,7 @@
       This chapter presented the chosen approach to system implementation. Despite the fact that requested
       functionalities were demanding and complex, the final product meets all the previously listed requirements. Thanks
       to technologies used, the system with fully independent business layer (loosely coupled MBeans) was implemented.
-      These technologies also helped to fulfill defined non-functional requirements (evolvability, extensibility,
+      These technologies also helped to fulfil defined non-functional requirements (evolvability, extensibility,
       composability, etc.).
       
       One of the biggest advantages of this system (apart from all the delivered functionalities provided by
@@ -3376,7 +3382,7 @@
       tools may seem to be challenging. However, thanks to clear and consistent naming scheme, experienced user is able
       to tweak an existing topology manually, using utilities provided by the operating system.
 
-      Created topologies fulfill the requirements of isolation and traffic differentiation that respects defined
+      Created topologies fulfil the requirements of isolation and traffic differentiation that respects defined
       \gls{acr:qos} policies. This is achieved thanks to Crossbow technology itself as well as carefully designed object
       model transformations.
 
@@ -3430,20 +3436,18 @@
     \section{Conclusions}
     \label{sub:sum:concl}
 
-      The statement proposed at the beginning of the thesis claiming that: \emph{There exists a component-based
-      architecture which enables construction of a system that would facilitate working with a fully isolated
-      virtualized network resources grouped by project name} was deeply considered throughout this thesis by the
-      authors. In order to fulfill the proposed statement, a detailed requirement analysis was performed. Subsequently
-      in order to comply with all the defined requirements mentioned in the thesis statement the layered architectural
-      approach was chosen. This approach allowed to distinguish certain groups of independent, highly cohesive
-      components. Together these components create the planned system, but each one can be used separately allowing to
-      perform more specific operations.
+      The statement proposed at the beginning of the thesis (\textit{\statement}) was deeply considered by authors
+      throughout this thesis. In order to fulfil the proposed statement, a detailed requirement analysis was performed.
+      Subsequently in order to comply with all the defined requirements mentioned in the thesis statement the layered
+      architectural approach was chosen. This approach allowed to distinguish certain groups of independent, highly
+      cohesive components. Together these components create the planned system, but each one can be used separately
+      allowing to perform more specific operations.
 
       The investigation performed while working on this paper allowed the authors to understand the concepts of complex
       network virtualization and resource reservation principles and sharing in more detail. The conducted tests
       additionally emphasized significance of these issues and proved how important they are in terms of successful
-      operation of complex systems. Encountered problems confirmed that although very useful, virtual topologies
-      management is also demanding and requires comprehensive knowledge in a variety of computer areas.
+      operation of complex systems. Encountered problems confirmed that --- although very useful --- virtual topologies
+      management is demanding and requires comprehensive knowledge in a variety of computer areas.
 
 
     \section{Achieved goals}
@@ -3466,17 +3470,16 @@
     \section{Further work}
 		\label{sub:sum:further}
 	
-      In relation to the achieved goals not all were successfully finished. Time shortage and the lack of people did not
-      allow for as deep an insight at all issues as it was initially planned. There are many welcomed improvements that
-      may be added to the \gls{acr:cm4j} system. The largest component initially planned was an automatic resource
-      assigner that would run and perform automatic resource assignments to nodes that run under the lowest load. This
-      assigner with an attached rule-based system would gather data about the load on each node and based on that it
-      would decide what and where to instantiate. Unfortunately, the presented and discussed system in this thesis lacks
-      that functionality. Instead, it offers manual assignments, where the user selects on which node new virtual
-      resources should be created. Another functionality not implemented, yet welcomed would be a semi-automatic
-      snapshot creation. Currently the user can create Solaris zone from existing snapshot and use it. The functionality
-      where the created resource could be converted to snapshot and then transferred to the repository would definitely
-      improve the system's usability. 
+      In relation to the achieved goals not all were successfully finished. Time shortage did not allow for as deep an
+      insight at all issues as it was initially planned. There are many welcomed improvements that may be added to the
+      \gls{acr:cm4j} system. The largest component initially planned was an automatic resource assigner that would run
+      and perform automatic resource assignments to nodes that run under the lowest load. This assigner with an attached
+      rule-based system would gather data about the load on each node and based on that it would decide what and where
+      to instantiate. Unfortunately, presented system lacks that functionality. Instead, it offers manual assignments,
+      where the user selects on which node new virtual resources should be created. Another functionality not
+      implemented yet welcomed is semi-automatic snapshot creation. Currently the user can create Solaris zone from
+      existing snapshot and use it. The functionality where the created resource could be converted to snapshot and then
+      transferred to the repository would definitely improve overall system usability. 
 
 
   \printglossaries

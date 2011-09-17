@@ -10,7 +10,8 @@ public interface WorkerMBean {
 	) throws ModelInstantiationException;
 
 	/**
-	 * Analyzes present system entities and reconstructs the domain model.
+	 * Analyzes present system entities and
+	 * reconstructs the domain model.
 	 */
 	public Map< String, Pair< ObjectModel, Assignments > > discover();
 
