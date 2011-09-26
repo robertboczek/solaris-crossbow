@@ -26,7 +26,7 @@
 \title{Component-based system for management of multilevel virtualization of networking resources}
 \subtitle{System komponentowy wspomagający wielopoziomową wirtualizację zasobów sieciowych}
 \author{Robert Boczek \and Dawid Ciepliński}
-\institute{AGH University of Science and Technology \\ ~ \\ Faculty of Electrical Engineering, Automatics, Computer Science and Electronics \\ ~ \\ Department of Computer Science \\ ~ \\ Kraków, Poland}
+\institute{AGH University of Science and Technology \\ ~  Faculty of Electrical Engineering, Automatics, Computer Science and Electronics \\ ~ Department of Computer Science \\ ~ Kraków, Poland}
 \date{28.09.2011}
 
 \begin{document}
@@ -41,7 +41,7 @@
 		\begin{itemize}
 			\item<1-> General information
 			\item<2-> Motivation
-			\item<3-> Thesis aim
+			\item<3-> System overview
 			\item<4-> Project schedule
 			\item<5-> The CM4J system ( Core, Gui )
 			\item<6-> Tests results
@@ -55,7 +55,7 @@
 		\begin{itemize}
 			\item \textbf{General information}
 			\item Motivation
-			\item Thesis aim
+			\item System overview
 			\item Project schedule
 			\item The CM4J system ( Core, Gui )
 			\item Tests results
@@ -67,10 +67,11 @@
 	\begin{frame}{General information}
 
 		\begin{itemize}
-			\item Meeting JIMS framework and Solaris OS during one of courses at the university
+			\item Meeting JIMS framework and Solaris OS during \mbox{\textit{network services implementation tools}} course at the university
 			\item Solaris Crossbow functionality
-			\item Idea of creating new JIMS module using the Crossbow
-			
+			\item Idea of creating new JIMS module that utilizes the Crossbow
+			\\ ~
+
 			\item Supervisor: \textbf{prof. dr hab. inż. Krzysztof Zieliński}
 			\item Technical supervisor: \textbf{mgr Marcin Jarząb}
 		\end{itemize}
@@ -82,7 +83,7 @@
 		\begin{itemize}
 			\item General information
 			\item \textbf{Motivation}
-			\item Thesis aim
+			\item System overview
 			\item Project schedule
 			\item The CM4J system ( Core, Gui )
 			\item Tests results
@@ -93,10 +94,15 @@
 
 	\begin{frame}{Motivation}
 		\begin{itemize}
-			\item Interest in distributed systems, computer networking
 			\item Lack of applications offering creation of virtualized networks
-			\item Desire to learn the crossbow library and Solaris OS
-		\end{itemize}
+			\item Verifying the Crossbow as a tool supporting network virtualization			
+			\item Desire to learn the Crossbow library and Solaris OS
+			\item More insight into the QoS mechanisms
+		\end{itemize} \pause
+
+		\begin{center}
+			\it{There exists a component-based architecture which enables construction of a system that would facilitate working with fully isolated virtualized network resources grouped in projects}
+		\end{center}
 	\end{frame}
 
 	\begin{frame}{Agenda}
@@ -104,7 +110,7 @@
 		\begin{itemize}
 			\item General information
 			\item Motivation
-			\item \textbf{Thesis aim}
+			\item \textbf{System overview}
 			\item Project schedule
 			\item The CM4J system ( Core, Gui )
 			\item Tests results
@@ -113,10 +119,12 @@
 
 	\end{frame}
 
-	\begin{frame}{Thesis aim}
-		\begin{itemize}
-			\item "There exists a component-based architecture which enables construction of a system that would facilitate working with fully isolated virtualized network resources grouped in projects"
-		\end{itemize}
+	\begin{frame}{System overview}
+		
+		\begin{figure}
+		   \includegraphics[width=\textwidth]{img/scope.pdf}
+		\end{figure}
+
 	\end{frame}
 
 	\begin{frame}{Agenda}
@@ -124,7 +132,7 @@
 		\begin{itemize}
 			\item General information
 			\item Motivation
-			\item Thesis aim
+			\item System overview
 			\item \textbf{Project schedule}
 			\item The CM4J system ( Core, Gui )
 			\item Tests results
@@ -133,9 +141,9 @@
 
 	\end{frame}
 
-	\begin{frame}{The CM4J system presentation}
+	\begin{frame}{Project schedule}
 
-		\framebox{\includegraphics[width=\textwidth]{img/schedule.png}}
+		\framebox{\includegraphics[width=\textwidth]{img/schedule.pdf}}
 
 	\end{frame}
 
@@ -144,7 +152,7 @@
 		\begin{itemize}
 			\item General information
 			\item Motivation
-			\item Thesis aim
+			\item System overview
 			\item Project schedule
 			\item \textbf{The CM4J system ( Core, Gui )}
 			\item Tests results
@@ -171,11 +179,11 @@
 			\begin{itemize}
 				\item Designing desired network structure with requested virtual appliances,
 				\item Discovering and modifying already created projects,
-				\item Monitoring ( charts displaying )
+				\item Monitoring
 				\item Automatic logging using Secure Shell (SSH)
 			\end{itemize}
-		\column{1.5in}
-			\framebox{\includegraphics[width=1.5in]{img/gui-design.png}}
+		\column{1.8in}
+			\framebox{\includegraphics[width=2.0in]{img/gui-design.png}}
 		\end{columns}
 
 	\end{frame}
@@ -185,7 +193,7 @@
 		\begin{itemize}
 			\item General information
 			\item Motivation
-			\item Thesis aim
+			\item System overview
 			\item Project schedule
 			\item The CM4J system ( Core, Gui )
 			\item \textbf{Tests results}
@@ -198,21 +206,10 @@
 
 		System tested with respect for:
 		\begin{itemize}
-			\item{\only<1->{Facilitating working with virtualized network resources}}
-			\item{\only<2->{Fault tolerance}}
-			\item{\only<3->{Scalability ( working on many physical machines )}}
+			\item{Facilitating working with virtualized network resources}\pause
+			\item{Verifing applied QoS constraints}\pause
+			\item{Scalability ( working on many physical machines )}
 		\end{itemize}
-	\end{frame}
-
-	\begin{frame}{Tests results}
-
-		\begin{itemize}
-			\item Prepared multimedia test case
-			\item Streaming server and VOD server
-			\item Client differentiation
-			\item Different scenarios used
-		\end{itemize}
-
 	\end{frame}
 
 	\begin{frame}{Tests results}
@@ -230,8 +227,6 @@
 			\item Topology design created with GUI
 			\item Online modifications performed
 			\item Monitoring
-			\item Fault tolerance for basic errors
-			\item Run on single and multiple machines
 		\end{itemize}
 
 	\end{frame}
@@ -241,7 +236,7 @@
 		\begin{itemize}
 			\item General information
 			\item Motivation
-			\item Thesis aim
+			\item System overview
 			\item Project schedule
 			\item The CM4J system ( Core, Gui )
 			\item Tests results
@@ -258,7 +253,7 @@
 			\item Met every production process step: requirements analysis, feasibility analysis, architecture design, implementation, test
 			\item Master of science thesis creation
 			\item Thesis statement proved by performed tests
-			\item Expectations for future system's improvemnts and utilization together with JIMS
+			\item Expectations for future system's improvements and utilization together with JIMS
 		\end{itemize}
 
 	\end{frame}
